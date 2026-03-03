@@ -1,0 +1,73 @@
+import { NextResponse } from 'next/server';
+import connectDB from '@/lib/db';
+import Message from '@/models/Message';
+import { cleanText } from '@/lib/profanity';
+import crypto from 'crypto';
+import { cookies } from 'next/headers';
+import { verifyToken } from '@/lib/auth';
+
+// Basic in-memory rate limiting
+const rateLimit = new Map<string, number>();
+const LIMIT_TIME = 30 * 1000; // 30 seconds between posts
+
+export async function GET(req: Request) {
+    try {
+        await connectDB();
+        const { searchParams } = new URL(req.url);
+        const productId = searchParams.get('productId');
+
+        let query = {};
+        if (productId) {
+            query = { productId };
+        }
+
+        const messages = await Message.find(query).sort({ createdAt: -1 });
+        return NextResponse.json(messages);
+    } catch (error) {
+        return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 });
+    }
+}
+
+import { MessageSchema } from '@/lib/validation';
+
+export async function POST(req: Request) {
+    try {
+        await connectDB();
+        const rawBody = await req.json();
+        const body = MessageSchema.parse(rawBody);
+        const { content, productId } = body;
+
+        // Rate limiting logic
+        const ip = req.headers.get('x-forwarded-for') || 'anonymous';
+        const ipHash = crypto.createHash('md5').update(ip).digest('hex');
+
+        const now = Date.now();
+        const lastPost = rateLimit.get(ipHash);
+        if (lastPost && now - lastPost < LIMIT_TIME) {
+            return NextResponse.json(
+                { error: `Please wait ${Math.ceil((LIMIT_TIME - (now - lastPost)) / 1000)}s before posting again.` },
+                { status: 429 }
+            );
+        }
+
+        const cleanedContent = cleanText(content);
+
+        // Check if user is an admin
+        const cookieStore = await cookies();
+        const token = cookieStore.get('admin_token')?.value;
+        const isAdmin = token ? !!verifyToken(token) : false;
+
+        const message = await Message.create({
+            content: cleanedContent,
+            productId: productId || undefined,
+            ipHash,
+            isAdmin,
+        });
+
+        rateLimit.set(ipHash, now);
+
+        return NextResponse.json(message, { status: 201 });
+    } catch (error: any) {
+        return NextResponse.json({ error: error.errors?.[0]?.message || 'Failed to post message' }, { status: 400 });
+    }
+}
