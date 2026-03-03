@@ -9,6 +9,8 @@ interface Message {
     _id: string;
     content: string;
     isAdmin?: boolean;
+    parentId?: string;
+    replyToContent?: string;
     createdAt: string;
 }
 
@@ -18,6 +20,7 @@ export default function ForumPage() {
     const [loading, setLoading] = useState(true);
     const [posting, setPosting] = useState(false);
     const [error, setError] = useState('');
+    const [replyingTo, setReplyingTo] = useState<Message | null>(null);
 
     const fetchMessages = async () => {
         try {
@@ -52,13 +55,17 @@ export default function ForumPage() {
             const res = await fetch('/api/messages', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content }),
+                body: JSON.stringify({
+                    content,
+                    parentId: replyingTo?._id
+                }),
             });
 
             const data = await res.json();
 
             if (res.ok) {
                 setContent('');
+                setReplyingTo(null);
                 fetchMessages();
             } else {
                 setError(data.error || 'Failed to post message');
@@ -103,9 +110,27 @@ export default function ForumPage() {
                                 </div>
                                 <div>
                                     <h2 className="text-2xl font-black text-slate-800 tracking-tight">Post Anonymously</h2>
-                                    <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Share insights with the community</p>
+                                    <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">{replyingTo ? 'Replying to conversation' : 'Share insights with the community'}</p>
                                 </div>
                             </div>
+
+                            {replyingTo && (
+                                <div className="mb-6 bg-slate-50/80 border border-slate-200 p-4 rounded-xl relative group animate-in fade-in slide-in-from-top-2">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="text-[10px] font-black text-primary uppercase tracking-widest flex items-center gap-2">
+                                            <span className="w-1 h-3 bg-primary rounded-full"></span>
+                                            Replying to
+                                        </span>
+                                        <button
+                                            onClick={() => setReplyingTo(null)}
+                                            className="text-[10px] font-black text-slate-400 hover:text-rose-500 transition-colors uppercase tracking-widest"
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+                                    <p className="text-sm text-slate-600 font-medium italic truncate">"{replyingTo.content}"</p>
+                                </div>
+                            )}
 
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="relative">
@@ -132,7 +157,7 @@ export default function ForumPage() {
                                                 <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                                                 PUBLISHING...
                                             </span>
-                                        ) : 'SHARE MESSAGE'}
+                                        ) : replyingTo ? 'POST REPLY' : 'SHARE MESSAGE'}
                                     </Button>
                                 </div>
                                 {error && (
@@ -184,9 +209,17 @@ export default function ForumPage() {
                                         </div>
                                         <div className="flex-1 space-y-4">
                                             <div className="flex justify-between items-start mb-2">
-                                                <p className="text-slate-700 text-lg leading-relaxed font-medium whitespace-pre-wrap selection:bg-primary/10 antialiased">
-                                                    {msg.content}
-                                                </p>
+                                                <div className="space-y-2 flex-1">
+                                                    {msg.replyToContent && (
+                                                        <div className="inline-flex items-center gap-2 bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-lg mb-2">
+                                                            <span className="text-lg opacity-40">➥</span>
+                                                            <p className="text-xs font-bold text-slate-400 italic">"{msg.replyToContent}"</p>
+                                                        </div>
+                                                    )}
+                                                    <p className="text-slate-700 text-lg leading-relaxed font-medium whitespace-pre-wrap selection:bg-primary/10 antialiased">
+                                                        {msg.content}
+                                                    </p>
+                                                </div>
                                                 {msg.isAdmin && (
                                                     <span className="flex-shrink-0 bg-amber-100 text-amber-700 text-[9px] font-black px-2 py-1 rounded-md tracking-tighter uppercase border border-amber-200 animate-pulse">
                                                         Admin
@@ -197,12 +230,23 @@ export default function ForumPage() {
                                                 <span className="flex items-center gap-1.5">
                                                     🕰️ {formatRelativeTime(msg.createdAt)}
                                                 </span>
-                                                <button
-                                                    onClick={() => handleReport(msg._id)}
-                                                    className="px-3 py-1.5 rounded-lg hover:bg-rose-50 hover:text-rose-500 transition-all duration-300"
-                                                >
-                                                    REPORT
-                                                </button>
+                                                <div className="flex items-center gap-4">
+                                                    <button
+                                                        onClick={() => {
+                                                            setReplyingTo(msg);
+                                                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                                                        }}
+                                                        className="px-3 py-1.5 rounded-lg hover:bg-primary/5 hover:text-primary transition-all duration-300 flex items-center gap-1.5"
+                                                    >
+                                                        REPLY
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleReport(msg._id)}
+                                                        className="px-3 py-1.5 rounded-lg hover:bg-rose-50 hover:text-rose-500 transition-all duration-300"
+                                                    >
+                                                        REPORT
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

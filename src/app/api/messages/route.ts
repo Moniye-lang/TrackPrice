@@ -35,7 +35,7 @@ export async function POST(req: Request) {
         await connectDB();
         const rawBody = await req.json();
         const body = MessageSchema.parse(rawBody);
-        const { content, productId } = body;
+        const { content, productId, parentId } = body;
 
         // Rate limiting logic
         const ip = req.headers.get('x-forwarded-for') || 'anonymous';
@@ -57,11 +57,21 @@ export async function POST(req: Request) {
         const token = cookieStore.get('admin_token')?.value;
         const isAdmin = token ? !!verifyToken(token) : false;
 
+        let replyToContent = undefined;
+        if (parentId) {
+            const parentMsg = await Message.findById(parentId);
+            if (parentMsg) {
+                replyToContent = parentMsg.content.substring(0, 50) + (parentMsg.content.length > 50 ? '...' : '');
+            }
+        }
+
         const message = await Message.create({
             content: cleanedContent,
             productId: productId || undefined,
             ipHash,
             isAdmin,
+            parentId: parentId || undefined,
+            replyToContent,
         });
 
         rateLimit.set(ipHash, now);

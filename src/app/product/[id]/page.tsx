@@ -19,6 +19,8 @@ interface Message {
     _id: string;
     content: string;
     isAdmin?: boolean;
+    parentId?: string;
+    replyToContent?: string;
     createdAt: string;
 }
 
@@ -30,6 +32,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     const [loading, setLoading] = useState(true);
     const [posting, setPosting] = useState(false);
     const [error, setError] = useState('');
+    const [replyingTo, setReplyingTo] = useState<Message | null>(null);
 
     const fetchData = async () => {
         try {
@@ -78,13 +81,18 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             const res = await fetch('/api/messages', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content, productId: id }),
+                body: JSON.stringify({
+                    content,
+                    productId: id,
+                    parentId: replyingTo?._id
+                }),
             });
 
             const data = await res.json();
 
             if (res.ok) {
                 setContent('');
+                setReplyingTo(null);
                 fetchData();
             } else {
                 setError(data.error || 'Failed to post message');
@@ -164,9 +172,27 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                     </div>
                                     <div>
                                         <h2 className="text-2xl font-black text-slate-800 tracking-tight">Product Discussion</h2>
-                                        <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Post anonymously about this item</p>
+                                        <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">{replyingTo ? 'Replying to insight' : 'Post anonymously about this item'}</p>
                                     </div>
                                 </div>
+
+                                {replyingTo && (
+                                    <div className="mb-6 bg-slate-50/80 border border-slate-200 p-4 rounded-xl relative group animate-in fade-in slide-in-from-top-2">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <span className="text-[10px] font-black text-primary uppercase tracking-widest flex items-center gap-2">
+                                                <span className="w-1 h-3 bg-primary rounded-full"></span>
+                                                Replying to
+                                            </span>
+                                            <button
+                                                onClick={() => setReplyingTo(null)}
+                                                className="text-[10px] font-black text-slate-400 hover:text-rose-500 transition-colors uppercase tracking-widest"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                        <p className="text-sm text-slate-600 font-medium italic truncate">"{replyingTo.content}"</p>
+                                    </div>
+                                )}
 
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     <div className="relative">
@@ -186,7 +212,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                     </div>
                                     <div className="flex justify-end">
                                         <Button type="submit" className="w-full sm:w-auto px-10 py-4 shadow-glow font-black tracking-wide" disabled={posting}>
-                                            {posting ? 'PUBLISHING...' : 'POST MESSAGE'}
+                                            {posting ? 'PUBLISHING...' : replyingTo ? 'POST REPLY' : 'POST MESSAGE'}
                                         </Button>
                                     </div>
                                     {error && (
@@ -220,17 +246,35 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                             </div>
                                             <div className="flex-1 space-y-4">
                                                 <div className="flex justify-between items-start mb-2">
-                                                    <p className="text-slate-700 text-lg leading-relaxed font-medium whitespace-pre-wrap antialiased">
-                                                        {msg.content}
-                                                    </p>
+                                                    <div className="space-y-2 flex-1">
+                                                        {msg.replyToContent && (
+                                                            <div className="inline-flex items-center gap-2 bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-lg mb-2">
+                                                                <span className="text-lg opacity-40">➥</span>
+                                                                <p className="text-xs font-bold text-slate-400 italic">"{msg.replyToContent}"</p>
+                                                            </div>
+                                                        )}
+                                                        <p className="text-slate-700 text-lg leading-relaxed font-medium whitespace-pre-wrap antialiased">
+                                                            {msg.content}
+                                                        </p>
+                                                    </div>
                                                     {msg.isAdmin && (
                                                         <span className="flex-shrink-0 bg-primary/10 text-primary text-[9px] font-black px-2 py-1 rounded-md tracking-tighter uppercase border border-primary/20 animate-pulse">
                                                             Admin
                                                         </span>
                                                     )}
                                                 </div>
-                                                <div className="pt-4 border-t border-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                                    {formatRelativeTime(msg.createdAt)}
+                                                <div className="pt-4 border-t border-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-widest flex justify-between items-center">
+                                                    <span>{formatRelativeTime(msg.createdAt)}</span>
+                                                    <button
+                                                        onClick={() => {
+                                                            setReplyingTo(msg);
+                                                            const section = document.querySelector('section');
+                                                            if (section) section.scrollIntoView({ behavior: 'smooth' });
+                                                        }}
+                                                        className="px-3 py-1.5 rounded-lg hover:bg-primary/5 hover:text-primary transition-all duration-300"
+                                                    >
+                                                        REPLY
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
