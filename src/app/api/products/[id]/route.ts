@@ -3,6 +3,7 @@ import connectDB from '@/lib/db';
 import Product from '@/models/Product';
 import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
+import { isValidObjectId } from '@/lib/utils';
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret');
 
@@ -18,15 +19,26 @@ async function isAdmin() {
 }
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
+    let productId = 'unknown';
     try {
         const { id } = await params;
+        productId = id;
+
+        if (!isValidObjectId(productId)) {
+            console.log(`[Product ID GET] Invalid ID format: ${productId}`);
+            return NextResponse.json({ error: 'Invalid product ID' }, { status: 400 });
+        }
+
+        console.log(`[Product ID GET] Requested ID: ${productId}`);
         await connectDB();
-        const product = await Product.findById(id);
+        const product = await Product.findById(productId);
         if (!product) {
+            console.log(`[Product ID GET] Product not found: ${productId}`);
             return NextResponse.json({ error: 'Product not found' }, { status: 404 });
         }
         return NextResponse.json(product);
     } catch (error) {
+        console.error(`[Product ID GET] Error for ID ${productId}:`, error);
         return NextResponse.json({ error: 'Failed to fetch product' }, { status: 400 });
     }
 }

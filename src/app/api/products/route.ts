@@ -3,6 +3,7 @@ import connectDB from '@/lib/db';
 import Product from '@/models/Product';
 import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
+import { escapeRegex } from '@/lib/utils';
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret');
 
@@ -25,9 +26,11 @@ export async function GET(req: Request) {
         const category = searchParams.get('category');
         const sort = searchParams.get('sort') || 'newest';
 
+        console.log(`[Products GET] search=${search}, category=${category}, sort=${sort}`);
+
         let query: any = {};
         if (search) {
-            query.name = { $regex: search, $options: 'i' };
+            query.name = { $regex: escapeRegex(search), $options: 'i' };
         }
         if (category && category !== 'All') {
             query.category = category;
@@ -40,9 +43,16 @@ export async function GET(req: Request) {
         else sortOption.createdAt = -1;
 
         const products = await Product.find(query).sort(sortOption);
+        console.log(`[Products GET] Found ${products.length} products`);
         return NextResponse.json(products);
-    } catch (error) {
-        console.error('Fetch products error:', error);
+    } catch (error: any) {
+        console.error('[Products GET] error:', error);
+
+        // Return 400 for Mongoose CastError or Query errors
+        if (error.name === 'CastError' || error.name === 'ValidationError') {
+            return NextResponse.json({ error: 'Invalid query parameters' }, { status: 400 });
+        }
+
         return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
     }
 }
@@ -57,10 +67,13 @@ export async function POST(req: Request) {
     try {
         await connectDB();
         const rawBody = await req.json();
+        console.log('[Products POST] Request body:', rawBody);
         const body = ProductSchema.parse(rawBody);
         const product = await Product.create(body);
+        console.log('[Products POST] Created product:', product._id);
         return NextResponse.json(product, { status: 201 });
     } catch (error: any) {
+        console.error('[Products POST] error:', error);
         return NextResponse.json({ error: error.errors?.[0]?.message || 'Failed to create product' }, { status: 400 });
     }
 }

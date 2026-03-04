@@ -60,9 +60,7 @@ export default function Home() {
               Forum
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
             </Link>
-            <Button variant="primary" className="hidden sm:flex">
-              Sign Up
-            </Button>
+           
           </nav>
         </div>
       </header>
