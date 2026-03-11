@@ -3,7 +3,7 @@ import connectDB from '@/lib/db';
 import Product from '@/models/Product';
 import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
-import { isValidObjectId } from '@/lib/utils';
+import { isValidObjectId } from '@/lib/db-utils';
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret');
 
