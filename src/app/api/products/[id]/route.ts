@@ -37,9 +37,18 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
             return NextResponse.json({ error: 'Product not found' }, { status: 404 });
         }
         return NextResponse.json(product);
-    } catch (error) {
-        console.error(`[Product ID GET] Error for ID ${productId}:`, error);
-        return NextResponse.json({ error: 'Failed to fetch product' }, { status: 400 });
+    } catch (error: any) {
+        console.error(`[Product ID GET] Detailed Error for ID ${productId}:`, {
+            name: error.name,
+            message: error.message,
+            stack: error.stack
+        });
+
+        if (error.name === 'CastError' || error.name === 'BSONError') {
+            return NextResponse.json({ error: 'Invalid product ID format', details: error.message }, { status: 400 });
+        }
+
+        return NextResponse.json({ error: 'Internal Server Error', details: error.message }, { status: 500 });
     }
 }
 

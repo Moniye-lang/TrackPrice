@@ -46,14 +46,22 @@ export async function GET(req: Request) {
         console.log(`[Products GET] Found ${products.length} products`);
         return NextResponse.json(products);
     } catch (error: any) {
-        console.error('[Products GET] error:', error);
+        console.error('[Products GET] Detailed Error:', {
+            name: error.name,
+            message: error.message,
+            stack: error.stack,
+            query: error.query
+        });
 
         // Return 400 for Mongoose CastError or Query errors
-        if (error.name === 'CastError' || error.name === 'ValidationError') {
-            return NextResponse.json({ error: 'Invalid query parameters' }, { status: 400 });
+        if (error.name === 'CastError' || error.name === 'ValidationError' || error.name === 'BSONError') {
+            return NextResponse.json({
+                error: 'Invalid query parameters',
+                details: error.message
+            }, { status: 400 });
         }
 
-        return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
+        return NextResponse.json({ error: 'Failed to fetch products', details: error.message }, { status: 500 });
     }
 }
 
@@ -73,7 +81,15 @@ export async function POST(req: Request) {
         console.log('[Products POST] Created product:', product._id);
         return NextResponse.json(product, { status: 201 });
     } catch (error: any) {
-        console.error('[Products POST] error:', error);
-        return NextResponse.json({ error: error.errors?.[0]?.message || 'Failed to create product' }, { status: 400 });
+        console.error('[Products POST] Detailed Error:', {
+            name: error.name,
+            message: error.message,
+            stack: error.stack,
+            errors: error.errors
+        });
+        return NextResponse.json({
+            error: error.errors?.[0]?.message || error.message || 'Failed to create product',
+            details: error.name
+        }, { status: 400 });
     }
 }
