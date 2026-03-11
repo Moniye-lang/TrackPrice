@@ -9,11 +9,19 @@ const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_
 
 async function isAdmin() {
     const token = (await cookies()).get('token')?.value;
-    if (!token) return false;
+    if (!token) {
+        console.log('[isAdmin] No token found in cookies');
+        return false;
+    }
     try {
         const { payload } = await jwtVerify(token, JWT_SECRET);
-        return payload.role === 'admin';
-    } catch (error) {
+        if (payload.role !== 'admin') {
+            console.log(`[isAdmin] Role mismatch: ${payload.role}`);
+            return false;
+        }
+        return true;
+    } catch (error: any) {
+        console.log(`[isAdmin] JWT Verification failed: ${error.message}`);
         return false;
     }
 }
@@ -76,7 +84,17 @@ export async function POST(req: Request) {
         await connectDB();
         const rawBody = await req.json();
         console.log('[Products POST] Request body:', rawBody);
-        const body = ProductSchema.parse(rawBody);
+
+        const result = ProductSchema.safeParse(rawBody);
+        if (!result.success) {
+            console.error('[Products POST] Validation Error:', result.error.issues);
+            return NextResponse.json({
+                error: 'Validation failed',
+                details: result.error.issues.map((e: any) => `${e.path.join('.')}: ${e.message}`).join(', ')
+            }, { status: 400 });
+        }
+
+        const body = result.data;
         const product = await Product.create(body);
         console.log('[Products POST] Created product:', product._id);
         return NextResponse.json(product, { status: 201 });
@@ -85,10 +103,10 @@ export async function POST(req: Request) {
             name: error.name,
             message: error.message,
             stack: error.stack,
-            errors: error.errors
+            issues: error.issues
         });
         return NextResponse.json({
-            error: error.errors?.[0]?.message || error.message || 'Failed to create product',
+            error: error.message || 'Failed to create product',
             details: error.name
         }, { status: 400 });
     }

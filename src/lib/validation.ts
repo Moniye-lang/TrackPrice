@@ -4,7 +4,7 @@ export const ProductSchema = z.object({
     name: z.string().min(1, "Name is required").max(100),
     price: z.number().positive("Price must be positive"),
     category: z.string().min(1, "Category is required"),
-    imageUrl: z.string().url("Must be a valid URL"),
+    imageUrl: z.string().min(1, "Image URL is required"),
 });
 
 export const MessageSchema = z.object({

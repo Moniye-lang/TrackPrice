@@ -17,6 +17,8 @@ export default function AdminDashboard() {
     const [loading, setLoading] = useState(true);
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
     const [showForm, setShowForm] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [submitting, setSubmitting] = useState(false);
 
     // Form states
     const [name, setName] = useState('');
@@ -43,6 +45,8 @@ export default function AdminDashboard() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError(null);
+        setSubmitting(true);
         const payload = { name, price: Number(price), category, imageUrl };
 
         try {
@@ -55,14 +59,21 @@ export default function AdminDashboard() {
                 body: JSON.stringify(payload),
             });
 
+            const data = await res.json();
+
             if (res.ok) {
                 setShowForm(false);
                 setEditingProduct(null);
                 resetForm();
                 fetchProducts();
+            } else {
+                setError(data.error || data.details || 'Failed to save product');
             }
         } catch (error) {
             console.error('Failed to save product');
+            setError('An unexpected error occurred');
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -106,6 +117,11 @@ export default function AdminDashboard() {
                     <h2 className="text-xl font-semibold mb-4">
                         {editingProduct ? 'Edit Product' : 'Add New Product'}
                     </h2>
+                    {error && (
+                        <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm font-medium">
+                            {error}
+                        </div>
+                    )}
                     <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="md:col-span-2">
                             <label className="block text-sm font-medium mb-1">Product Name</label>
@@ -124,11 +140,11 @@ export default function AdminDashboard() {
                             <Input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} required />
                         </div>
                         <div className="md:col-span-2 flex justify-end gap-2 mt-2">
-                            <Button type="button" variant="secondary" onClick={() => setShowForm(false)}>
+                            <Button type="button" variant="secondary" onClick={() => { setShowForm(false); setError(null); }} disabled={submitting}>
                                 Cancel
                             </Button>
-                            <Button type="submit">
-                                {editingProduct ? 'Update Product' : 'Create Product'}
+                            <Button type="submit" disabled={submitting}>
+                                {submitting ? 'Saving...' : editingProduct ? 'Update Product' : 'Create Product'}
                             </Button>
                         </div>
                     </form>
