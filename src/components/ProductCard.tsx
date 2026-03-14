@@ -10,6 +10,9 @@ interface ProductCardProps {
         category: string;
         imageUrl: string;
         lastUpdated: string;
+        confidenceLevel?: 'Low' | 'Medium' | 'High';
+        reportCount?: number;
+        flagged?: boolean;
     };
 }
 
@@ -37,9 +40,31 @@ export function ProductCard({ product }: ProductCardProps) {
                         <span className="text-3xl font-black text-slate-900 tracking-tight">
                             ₦{product.price.toFixed(2)}
                         </span>
-                        <span className="text-xs font-bold text-primary bg-primary/5 px-2 py-0.5 rounded-md">
-                            BEST PRICE
-                        </span>
+                        {product.flagged ? (
+                            <span className="text-xs font-bold text-rose-500 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200">
+                                FLAGGED
+                            </span>
+                        ) : product.confidenceLevel === 'High' ? (
+                            <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                                VERIFIED
+                            </span>
+                        ) : (
+                            <span className="text-xs font-bold text-amber-500 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
+                                ESTIMATE
+                            </span>
+                        )}
+                    </div>
+                </div>
+
+                <div className="mt-4 flex items-center gap-4 text-xs font-medium text-slate-500">
+                    <div className="flex items-center gap-1">
+                        <span className={`w-2 h-2 rounded-full ${product.confidenceLevel === 'High' ? 'bg-emerald-500' :
+                                product.confidenceLevel === 'Medium' ? 'bg-amber-500' : 'bg-rose-500'
+                            }`} />
+                        {product.confidenceLevel || 'Low'} Confidence
+                    </div>
+                    <div className="flex items-center gap-1">
+                        👥 {product.reportCount || 0} Reports
                     </div>
                 </div>
 

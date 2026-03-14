@@ -60,7 +60,16 @@ export default function Home() {
               Forum
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
             </Link>
-
+            <div className="flex items-center gap-4">
+              <Link href="/login" className="text-slate-600 hover:text-primary font-semibold transition-colors">
+                Log In
+              </Link>
+              <Link href="/register">
+                <Button variant="primary" className="px-5 py-2 text-sm">
+                  Sign Up
+                </Button>
+              </Link>
+            </div>
           </nav>
         </div>
       </header>

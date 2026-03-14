@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui-base';
+import { Menu, X } from 'lucide-react';
 
 export default function AdminLayout({
     children,
@@ -11,6 +12,7 @@ export default function AdminLayout({
     children: React.ReactNode;
 }) {
     const [loading, setLoading] = useState(true);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const router = useRouter();
     const pathname = usePathname();
 
@@ -50,23 +52,52 @@ export default function AdminLayout({
         );
     }
 
+    if (pathname === '/admin/login') {
+        return <>{children}</>;
+    }
+
     return (
-        <div className="min-h-screen bg-gray-100 flex">
+        <div className="min-h-screen bg-gray-100 flex overflow-hidden">
+            {/* Mobile Header with Hamburger */}
+            <div className="md:hidden flex items-center justify-between bg-white p-4 border-b absolute top-0 w-full z-20 shadow-sm">
+                <h2 className="text-xl font-bold text-gray-800">TrackPrice Admin</h2>
+                <button
+                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    className="p-2 -mr-2 text-gray-600 hover:text-gray-900 focus:outline-none"
+                    aria-label="Toggle Menu"
+                >
+                    {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+                </button>
+            </div>
+
             {/* Sidebar */}
-            <aside className="w-64 bg-white shadow-md flex flex-col">
-                <div className="p-6 border-b">
+            <aside className={`
+                fixed inset-y-0 left-0 z-30 w-64 bg-white shadow-xl flex flex-col transform transition-transform duration-300 ease-in-out 
+                md:relative md:translate-x-0 md:shadow-md
+                ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
+            `}>
+                <div className="p-6 border-b flex items-center justify-between">
                     <h2 className="text-xl font-bold text-gray-800">TrackPrice Admin</h2>
+                    {/* Close button inside sidebar for mobile */}
+                    <button
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="md:hidden text-gray-500 hover:text-gray-700"
+                    >
+                        <X size={24} />
+                    </button>
                 </div>
-                <nav className="flex-1 p-4 space-y-2">
+                <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
                     <Link
                         href="/admin/dashboard"
-                        className="block px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700 font-medium"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={`block px-4 py-2 rounded-lg font-medium transition-colors ${pathname === '/admin/dashboard' ? 'bg-primary/10 text-primary' : 'hover:bg-gray-100 text-gray-700'}`}
                     >
                         Products
                     </Link>
                     <Link
                         href="/admin/messages"
-                        className="block px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700 font-medium"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={`block px-4 py-2 rounded-lg font-medium transition-colors ${pathname === '/admin/messages' ? 'bg-primary/10 text-primary' : 'hover:bg-gray-100 text-gray-700'}`}
                     >
                         Forum Messages
                     </Link>
@@ -78,8 +109,16 @@ export default function AdminLayout({
                 </div>
             </aside>
 
+            {/* Overlay for mobile backdrop */}
+            {isMobileMenuOpen && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-20 md:hidden backdrop-blur-sm transition-opacity"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                />
+            )}
+
             {/* Main Content */}
-            <main className="flex-1 p-8 overflow-y-auto">
+            <main className="flex-1 p-4 md:p-8 overflow-y-auto pt-20 md:pt-8 w-full h-screen">
                 {children}
             </main>
         </div>

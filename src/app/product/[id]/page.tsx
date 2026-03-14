@@ -13,6 +13,9 @@ interface Product {
     category: string;
     imageUrl: string;
     lastUpdated: string;
+    confidenceLevel?: 'Low' | 'Medium' | 'High';
+    reportCount?: number;
+    flagged?: boolean;
 }
 
 interface Message {
@@ -33,6 +36,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     const [posting, setPosting] = useState(false);
     const [error, setError] = useState('');
     const [replyingTo, setReplyingTo] = useState<Message | null>(null);
+    const [verifying, setVerifying] = useState(false);
+    const [verifyMsg, setVerifyMsg] = useState('');
 
     const fetchData = async () => {
         try {
@@ -69,6 +74,32 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     useEffect(() => {
         fetchData();
     }, [id]);
+
+    const handleVerifyPrice = async () => {
+        if (!product) return;
+        setVerifying(true);
+        setVerifyMsg('');
+
+        try {
+            const res = await fetch(`/api/products/${product._id}/update`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ price: product.price }),
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                setVerifyMsg('Thank you! Price verified successfully.');
+                fetchData(); // Refresh to get updated confidence
+            } else {
+                setVerifyMsg(data.error || 'Failed to verify price.');
+            }
+        } catch (err) {
+            setVerifyMsg('An error occurred while verifying.');
+        } finally {
+            setVerifying(false);
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -142,9 +173,41 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                         <div className="p-8 space-y-6">
                             <div>
                                 <h1 className="text-4xl font-black text-slate-800 tracking-tight leading-none mb-4">{product.name}</h1>
-                                <div className="flex items-baseline gap-2">
+                                <div className="flex flex-wrap items-baseline gap-3 mb-4">
                                     <span className="text-5xl font-black text-slate-900 tracking-tighter">₦{product.price.toFixed(2)}</span>
-                                    <span className="text-xs font-bold text-primary bg-primary/5 px-2 py-1 rounded-md">LIVE PRICE</span>
+                                    {product.flagged ? (
+                                        <span className="text-xs font-bold text-rose-500 bg-rose-50 px-2 py-1 rounded-md border border-rose-200">FLAGGED</span>
+                                    ) : product.confidenceLevel === 'High' ? (
+                                        <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-200">VERIFIED</span>
+                                    ) : (
+                                        <span className="text-xs font-bold text-amber-500 bg-amber-50 px-2 py-1 rounded-md border border-amber-200">ESTIMATE</span>
+                                    )}
+                                </div>
+                                <div className="flex items-center gap-4 text-sm font-medium text-slate-500 mb-6">
+                                    <div className="flex items-center gap-1.5">
+                                        <span className={`w-2.5 h-2.5 rounded-full ${product.confidenceLevel === 'High' ? 'bg-emerald-500' :
+                                                product.confidenceLevel === 'Medium' ? 'bg-amber-500' : 'bg-rose-500'
+                                            }`} />
+                                        {product.confidenceLevel || 'Low'} Confidence
+                                    </div>
+                                    <div className="flex items-center gap-1.5">
+                                        👥 {product.reportCount || 0} Reports
+                                    </div>
+                                </div>
+
+                                <div className="space-y-3">
+                                    <Button
+                                        onClick={handleVerifyPrice}
+                                        disabled={verifying}
+                                        className="w-full py-4 text-sm font-black tracking-wide shadow-glow"
+                                    >
+                                        {verifying ? 'VERIFYING...' : 'VERIFY THIS PRICE'}
+                                    </Button>
+                                    {verifyMsg && (
+                                        <p className={`text-sm font-bold p-3 rounded-xl border ${verifyMsg.includes('success') ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-rose-50 text-rose-600 border-rose-200'}`}>
+                                            {verifyMsg}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
 
