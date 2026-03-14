@@ -60,13 +60,13 @@ export default function Home() {
               Forum
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
             </Link>
-           
+
           </nav>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="relative py-24 px-4 overflow-hidden">
+      <section className="relative py-16 md:py-24 px-4 overflow-hidden">
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold mb-6 animate-fade-in">
             <span className="relative flex h-2 w-2">
@@ -75,10 +75,10 @@ export default function Home() {
             </span>
             LIVE PRICE TRACKING
           </div>
-          <h1 className="text-6xl font-black mb-6 tracking-tight text-slate-900 leading-[1.1]">
+          <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tight text-slate-900 leading-[1.1]">
             Track Prices in <span className="text-primary italic">Real-Time</span>
           </h1>
-          <p className="text-slate-500 mb-10 text-xl font-medium max-w-2xl mx-auto">
+          <p className="text-slate-500 mb-10 text-lg md:text-xl font-medium max-w-2xl mx-auto">
             Never miss a deal again. Monitor price drops, set alerts, and discuss with the community anonymously.
           </p>
 
@@ -104,7 +104,7 @@ export default function Home() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-16">
-        <div className="flex flex-col lg:flex-row justify-between items-end mb-12 gap-8">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-12 gap-6 lg:gap-8">
           <div className="space-y-4">
             <h2 className="text-3xl font-black text-slate-900 tracking-tight">Trending Deals</h2>
             <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
