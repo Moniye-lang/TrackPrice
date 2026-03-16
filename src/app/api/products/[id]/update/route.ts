@@ -50,7 +50,10 @@ function removeOutliers(values: number[]) {
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
         const { id } = await params;
-        const { price } = await req.json();
+        const body = await req.json();
+        const price = body?.price;
+
+        console.log('[Price Update] Starting:', { productId: id, price });
 
         if (!price || typeof price !== 'number' || price <= 0) {
             return NextResponse.json({ error: 'Valid price is required' }, { status: 400 });
@@ -230,7 +233,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         });
 
     } catch (error: any) {
-        console.error('[Price Update] Error:', error);
+        console.error('[Price Update] CRITICAL ERROR:', {
+            message: error.message,
+            stack: error.stack,
+            productId: (await params).id
+        });
         return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
     }
 }
