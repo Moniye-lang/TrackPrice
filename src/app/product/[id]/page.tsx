@@ -7,11 +7,22 @@ import { formatRelativeTime } from '@/lib/utils';
 import Link from 'next/link';
 import { use } from 'react';
 
-suggestions ?: Array<{
+interface Product {
+    _id: string;
+    name: string;
     price: number;
-    userName: string;
-    createdAt: string;
-}>;
+    category: string;
+    imageUrl: string;
+    lastUpdated: string;
+    lastUpdatedBy?: string;
+    confidenceLevel?: 'Low' | 'Medium' | 'High';
+    reportCount?: number;
+    flagged?: boolean;
+    suggestions?: Array<{
+        price: number;
+        userName: string;
+        createdAt: string;
+    }>;
 }
 
 interface Message {
