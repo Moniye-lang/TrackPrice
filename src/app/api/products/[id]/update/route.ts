@@ -52,8 +52,11 @@ function removeOutliers(values: number[]) {
 }
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
+    let productId: string = 'unknown';
     try {
-        const { id } = await params;
+        const resolvedParams = await params;
+        productId = resolvedParams.id;
+
         let body: any;
         try {
             body = await req.json();
@@ -63,19 +66,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         }
 
         const price = body?.price;
-        console.log('[Price Update] Starting:', { productId: id, price });
+        console.log('[Price Update] Starting:', { productId, price });
 
         if (price === undefined || price === null || typeof price !== 'number' || price <= 0) {
             return NextResponse.json({ error: 'Valid price is required' }, { status: 400 });
         }
 
         const decodedToken = await getUserFromToken();
-        console.log('[Price Update] Auth Check:', {
-            hasToken: !!decodedToken,
-            tokenId: decodedToken?.id,
-            tokenRole: decodedToken?.role
-        });
-
         if (!decodedToken || !decodedToken.id) {
             return NextResponse.json({ error: 'Authentication required to update price. Anonymous updates are not allowed.' }, { status: 401 });
         }
@@ -84,7 +81,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
         const user = await User.findById(decodedToken.id);
         if (!user) {
-            console.error('[Price Update] Auth Success but User not found in DB:', decodedToken.id);
+            console.error('[Price Update] User not found in DB:', decodedToken.id);
             return NextResponse.json({ error: 'User not found' }, { status: 401 });
         }
 
@@ -92,18 +89,14 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             return NextResponse.json({ error: 'Your account has been banned from submitting price updates.' }, { status: 403 });
         }
 
-        // Fetch Gamification Rules
-        let rule = await GamificationRule.findOne();
-        if (!rule) {
-            rule = await GamificationRule.create({}); // fallback to defaults
-        }
-
-        const product = await Product.findById(id);
+        const product = await Product.findById(productId);
         if (!product) {
             return NextResponse.json({ error: 'Product not found' }, { status: 404 });
         }
 
-        // 1. Spam Prevention & Daily Limits (Relaxed for testing: 10 seconds)
+        console.log('[Price Update] Pre-check passed', { userId: user._id, productId: product._id });
+
+        // 1. Spam Prevention & Daily Limits (Relaxed for testing)
         const relaxationPeriod = 10 * 1000;
         const limitTime = new Date(Date.now() - relaxationPeriod);
         const existingUpdate = await PriceUpdate.findOne({
@@ -113,57 +106,48 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         });
 
         if (existingUpdate) {
-            return NextResponse.json({ error: 'You have already updated this product in the last 24 hours.' }, { status: 429 });
+            return NextResponse.json({ error: 'You have already updated this product recently.' }, { status: 429 });
         }
 
-        // Check daily limit for rewards
+        // Fetch Gamification Rules
+        let rule = await GamificationRule.findOne();
+        if (!rule) rule = await GamificationRule.create({});
+
+        // Check daily limit
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-
         if (!user.lastRewardedDate || user.lastRewardedDate < today) {
             user.rewardedUpdatesToday = 0;
             user.lastRewardedDate = today;
         }
 
         if (user.rewardedUpdatesToday >= rule.dailyUpdateLimit) {
-            return NextResponse.json({ error: 'Daily update limit reached. You can no longer earn points today.' }, { status: 429 });
+            return NextResponse.json({ error: 'Daily update limit reached.' }, { status: 429 });
         }
 
-        // Create the individual price update record
-        const userId = user._id || decodedToken.id;
-        const updateData = {
+        // 2. Create the update record
+        console.log('[Price Update] Creating Record...');
+        const newUpdate = await PriceUpdate.create({
             productId: product._id,
-            userId: userId,
+            userId: user._id,
             price: price,
-            status: 'pending' // Defaults to pending
-        };
-
-        console.log('[Price Update] Creating Record:', {
-            productId: product._id,
-            userId: userId,
-            hasUser: !!user,
-            hasTokenId: !!decodedToken.id
+            status: 'pending'
         });
 
-        const newUpdate = new PriceUpdate(updateData);
-        await newUpdate.save();
-
-        // 2. Fetch all recent updates to calculate median & verification
+        // 3. Process verification
         const recentUpdates = await PriceUpdate.find({
             productId: product._id,
-            createdAt: { $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } // Last 7 days
+            createdAt: { $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) }
         }).populate('userId', 'reputationLevel points');
 
         const rawPrices = recentUpdates.map(u => u.price);
         const validPrices = removeOutliers(rawPrices);
         const newMedianPrice = calculateMedian(validPrices);
 
-        // 3. Calculate Trust Weight & Confidence
         let totalWeight = 0;
         let validReportCount = 0;
 
         for (const update of recentUpdates) {
-            // Only count if within acceptable outlier range (approximate check based on median)
             if (validPrices.includes(update.price)) {
                 validReportCount++;
                 const updaterReputation = (update.userId as any)?.reputationLevel || 'Beginner';
@@ -171,45 +155,40 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             }
         }
 
-        let confidenceLevel = 'Low';
-        if (validReportCount >= 5) confidenceLevel = 'High';
-        else if (validReportCount >= 2) confidenceLevel = 'Medium';
+        console.log('[Price Update] Calculated Weight:', { totalWeight, threshold: rule.verificationThreshold });
 
         product.reportCount = validReportCount;
-        product.confidenceLevel = confidenceLevel as 'Low' | 'Medium' | 'High';
+        product.confidenceLevel = (validReportCount >= 5 ? 'High' : validReportCount >= 2 ? 'Medium' : 'Low') as any;
 
-        // 4. Verification Logic
         if (totalWeight >= rule.verificationThreshold) {
-            // Update the main product price
+            console.log('[Price Update] Threshold reached, updating product...');
 
-            // Safeguard: check for massive percentage change
-            const diffPercent = Math.abs(newMedianPrice - product.price) / product.price;
-            if (diffPercent > 0.50) { // 50% change
+            // Safeguard against division by zero or NaN
+            const oldPrice = product.price || 1;
+            const diffPercent = Math.abs(newMedianPrice - oldPrice) / oldPrice;
+
+            if (diffPercent > 0.50) {
                 product.flagged = true;
-                // Keep the old price until unflagged manually, but store the requested state
             } else {
                 product.price = newMedianPrice;
                 product.flagged = false;
                 product.lastUpdated = new Date();
-                product.lastUpdatedBy = user.name || undefined;
+                product.lastUpdatedBy = user.name || 'Anonymous';
             }
-
             product.updateRequested = false;
 
-            // Mark updates as verified and award points if not already awarded
-            const pointsToAward = rule.pointsPerUpdate;
+            // Mark updates verified & award points
             for (const update of recentUpdates) {
                 if (validPrices.includes(update.price) && update.status === 'pending') {
-                    update.status = 'verified';
-                    await update.save();
+                    await PriceUpdate.findByIdAndUpdate(update._id, { status: 'verified' });
 
                     const updaterId = (update.userId as any)?._id || update.userId;
                     if (updaterId) {
                         const updater = await User.findById(updaterId);
                         if (updater && updater.rewardedUpdatesToday < rule.dailyUpdateLimit) {
-                            updater.points += pointsToAward;
+                            updater.points += rule.pointsPerUpdate;
                             updater.rewardedUpdatesToday += 1;
-                            // Promotion logic
+
                             if (updater.points >= 500 && updater.reputationLevel === 'Beginner') {
                                 updater.reputationLevel = 'Trusted Contributor';
                             } else if (updater.points >= 2000 && updater.reputationLevel === 'Trusted Contributor') {
@@ -221,21 +200,19 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
                 }
             }
 
-            // Check if there was an open Price Request, resolve it and award bonus
             const openRequest = await PriceRequest.findOne({ productId: product._id, status: 'open' });
             if (openRequest) {
                 openRequest.status = 'fulfilled';
-                openRequest.fulfilledBy = user._id; // The user who pushed it over the threshold gets the bonus
+                openRequest.fulfilledBy = user._id;
                 await openRequest.save();
-
-                user.points += rule.bonusPointsRequest; // Bonus points for fulfilling a request
+                user.points += rule.bonusPointsRequest;
             }
-        } else {
-            // Not enough weight yet, store the pending state (keep the old price)
         }
 
         await product.save();
-        await user.save(); // Save initial update count/points if modified
+        await user.save();
+
+        console.log('[Price Update] Finished Successfully');
 
         return NextResponse.json({
             message: 'Price update submitted successfully',
@@ -246,9 +223,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     } catch (error: any) {
         console.error('[Price Update] CRITICAL ERROR:', {
+            name: error.name,
             message: error.message,
             stack: error.stack,
-            productId: (await params).id
+            productId
         });
         return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
     }
