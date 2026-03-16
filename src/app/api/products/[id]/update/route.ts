@@ -25,7 +25,11 @@ async function getUserFromToken() {
     const token = (await cookies()).get('token')?.value;
     if (!token) return null;
     try {
-        return verifyToken(token) as unknown as DecodedToken;
+        const decoded = verifyToken(token);
+        if (decoded && typeof decoded === 'object') {
+            return decoded as unknown as DecodedToken;
+        }
+        return null;
     } catch {
         return null;
     }
@@ -50,12 +54,18 @@ function removeOutliers(values: number[]) {
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
         const { id } = await params;
-        const body = await req.json();
-        const price = body?.price;
+        let body: any;
+        try {
+            body = await req.json();
+        } catch (e) {
+            console.warn('[Price Update] Failed to parse JSON body');
+            return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+        }
 
+        const price = body?.price;
         console.log('[Price Update] Starting:', { productId: id, price });
 
-        if (!price || typeof price !== 'number' || price <= 0) {
+        if (price === undefined || price === null || typeof price !== 'number' || price <= 0) {
             return NextResponse.json({ error: 'Valid price is required' }, { status: 400 });
         }
 
@@ -66,7 +76,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             tokenRole: decodedToken?.role
         });
 
-        if (!decodedToken || typeof decodedToken.id !== 'string') {
+        if (!decodedToken || !decodedToken.id) {
             return NextResponse.json({ error: 'Authentication required to update price. Anonymous updates are not allowed.' }, { status: 401 });
         }
 
@@ -74,6 +84,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
         const user = await User.findById(decodedToken.id);
         if (!user) {
+            console.error('[Price Update] Auth Success but User not found in DB:', decodedToken.id);
             return NextResponse.json({ error: 'User not found' }, { status: 401 });
         }
 
@@ -192,8 +203,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
                     update.status = 'verified';
                     await update.save();
 
-                    if (update.userId) {
-                        const updater = await User.findById(update.userId);
+                    const updaterId = (update.userId as any)?._id || update.userId;
+                    if (updaterId) {
+                        const updater = await User.findById(updaterId);
                         if (updater && updater.rewardedUpdatesToday < rule.dailyUpdateLimit) {
                             updater.points += pointsToAward;
                             updater.rewardedUpdatesToday += 1;
