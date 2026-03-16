@@ -20,12 +20,24 @@ async function getAdminFromToken() {
 export async function GET() {
     try {
         const decodedToken = await getAdminFromToken();
-        if (!decodedToken || typeof (decodedToken as any).id !== 'string') {
+        const userId = (decodedToken as any)?.id;
+
+        console.log('[Admin Analytics Auth]', {
+            hasToken: !!decodedToken,
+            userId
+        });
+
+        if (!decodedToken || typeof userId !== 'string') {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
         await connectDB();
-        const adminUser = await User.findById((decodedToken as any).id);
+        const adminUser = await User.findById(userId);
+
+        console.log('[Admin Analytics DB Result]', {
+            userFound: !!adminUser,
+            dbRole: adminUser?.role
+        });
 
         if (!adminUser || adminUser.role !== 'admin') {
             return NextResponse.json({ error: 'Forbidden. Admin access required.' }, { status: 403 });
