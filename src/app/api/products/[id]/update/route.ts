@@ -158,6 +158,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
                 product.price = newMedianPrice;
                 product.flagged = false;
                 product.lastUpdated = new Date();
+                product.lastUpdatedBy = user.name || undefined;
             }
 
             product.updateRequested = false;

@@ -12,6 +12,7 @@ export interface IProduct extends Document {
     updateRequested: boolean;
     priceHistory: Array<{ price: number, verifiedAt: Date }>;
     lastUpdated: Date;
+    lastUpdatedBy?: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -32,6 +33,7 @@ const ProductSchema: Schema = new Schema(
             verifiedAt: { type: Date, default: Date.now }
         }],
         lastUpdated: { type: Date, default: Date.now },
+        lastUpdatedBy: { type: String, default: null },
     },
     {
         timestamps: true,

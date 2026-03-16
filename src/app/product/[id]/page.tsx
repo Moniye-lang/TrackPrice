@@ -14,6 +14,7 @@ interface Product {
     category: string;
     imageUrl: string;
     lastUpdated: string;
+    lastUpdatedBy?: string;
     confidenceLevel?: 'Low' | 'Medium' | 'High';
     reportCount?: number;
     flagged?: boolean;
@@ -346,12 +347,17 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                 )}
                             </div>
 
-                            <div className="pt-4 border-t border-slate-200/50 flex items-center justify-between text-xs font-black text-slate-400 uppercase tracking-widest">
-                                <span>Updated {formatRelativeTime(product.lastUpdated)}</span>
-                                <span className="flex items-center gap-1 text-primary">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                                    ACTIVE
-                                </span>
+                            <div className="pt-4 border-t border-slate-200/50 flex flex-col gap-1 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                <div className="flex items-center justify-between">
+                                    <span>Updated {formatRelativeTime(product.lastUpdated)}</span>
+                                    <span className="flex items-center gap-1 text-primary">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                                        ACTIVE
+                                    </span>
+                                </div>
+                                {product.lastUpdatedBy && (
+                                    <span className="text-slate-300">By {product.lastUpdatedBy}</span>
+                                )}
                             </div>
                         </div>
                     </Card>

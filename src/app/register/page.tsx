@@ -6,6 +6,7 @@ import { Button, Input, Card } from '@/components/ui-base';
 import Link from 'next/link';
 
 export default function RegisterPage() {
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -21,7 +22,7 @@ export default function RegisterPage() {
             const res = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ name, email, password }),
             });
 
             const data = await res.json();
@@ -48,6 +49,18 @@ export default function RegisterPage() {
                 </div>
 
                 <form onSubmit={handleRegister} className="space-y-5">
+                    <div>
+                        <label className="block text-sm font-bold text-slate-700 mb-2">
+                            Full Name
+                        </label>
+                        <Input
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder="John Doe"
+                            required
+                        />
+                    </div>
                     <div>
                         <label className="block text-sm font-bold text-slate-700 mb-2">
                             Email Address

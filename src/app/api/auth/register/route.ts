@@ -8,8 +8,11 @@ const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_
 
 export async function POST(req: Request) {
     try {
-        const { email, password } = await req.json();
+        const { name, email, password } = await req.json();
 
+        if (!name || name.trim().length < 2) {
+            return NextResponse.json({ error: 'A display name (at least 2 characters) is required.' }, { status: 400 });
+        }
         if (!email || !password || password.length < 6) {
             return NextResponse.json({ error: 'Valid email and password (min 6 characters) are required.' }, { status: 400 });
         }
@@ -24,16 +27,17 @@ export async function POST(req: Request) {
         // Add regular user role
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = new User({
+            name: name.trim(),
             email,
             password: hashedPassword,
-            role: 'user', // Explicitly regular user
+            role: 'user',
             points: 0,
             reputationLevel: 'Beginner'
         });
 
         await user.save();
 
-        const token = await new SignJWT({ id: user._id, email: user.email, role: user.role })
+        const token = await new SignJWT({ id: user._id, name: user.name, email: user.email, role: user.role })
             .setProtectedHeader({ alg: 'HS256' })
             .setExpirationTime('24h')
             .sign(JWT_SECRET);
