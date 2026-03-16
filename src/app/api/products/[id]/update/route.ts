@@ -89,12 +89,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             return NextResponse.json({ error: 'Product not found' }, { status: 404 });
         }
 
-        // 1. Spam Prevention & Daily Limits
-        const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        // 1. Spam Prevention & Daily Limits (Relaxed for testing: 10 seconds)
+        const relaxationPeriod = 10 * 1000;
+        const limitTime = new Date(Date.now() - relaxationPeriod);
         const existingUpdate = await PriceUpdate.findOne({
             productId: product._id,
             userId: user._id,
-            createdAt: { $gte: oneDayAgo }
+            createdAt: { $gte: limitTime }
         });
 
         if (existingUpdate) {
@@ -115,12 +116,20 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         }
 
         // Create the individual price update record
-        const updateData: any = {
+        const userId = user._id || decodedToken.id;
+        const updateData = {
             productId: product._id,
-            userId: user._id,
+            userId: userId,
             price: price,
             status: 'pending' // Defaults to pending
         };
+
+        console.log('[Price Update] Creating Record:', {
+            productId: product._id,
+            userId: userId,
+            hasUser: !!user,
+            hasTokenId: !!decodedToken.id
+        });
 
         const newUpdate = new PriceUpdate(updateData);
         await newUpdate.save();
