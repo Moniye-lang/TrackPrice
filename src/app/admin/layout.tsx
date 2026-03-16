@@ -92,7 +92,28 @@ export default function AdminLayout({
                         onClick={() => setIsMobileMenuOpen(false)}
                         className={`block px-4 py-2 rounded-lg font-medium transition-colors ${pathname === '/admin/dashboard' ? 'bg-primary/10 text-primary' : 'hover:bg-gray-100 text-gray-700'}`}
                     >
+                        Dashboard
+                    </Link>
+                    <Link
+                        href="/admin/products"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={`block px-4 py-2 rounded-lg font-medium transition-colors ${pathname === '/admin/products' ? 'bg-primary/10 text-primary' : 'hover:bg-gray-100 text-gray-700'}`}
+                    >
                         Products
+                    </Link>
+                    <Link
+                        href="/admin/users"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={`block px-4 py-2 rounded-lg font-medium transition-colors ${pathname === '/admin/users' ? 'bg-primary/10 text-primary' : 'hover:bg-gray-100 text-gray-700'}`}
+                    >
+                        Users
+                    </Link>
+                    <Link
+                        href="/admin/verification"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={`block px-4 py-2 rounded-lg font-medium transition-colors ${pathname === '/admin/verification' ? 'bg-primary/10 text-primary' : 'hover:bg-gray-100 text-gray-700'}`}
+                    >
+                        Verification Queue
                     </Link>
                     <Link
                         href="/admin/messages"
@@ -100,6 +121,13 @@ export default function AdminLayout({
                         className={`block px-4 py-2 rounded-lg font-medium transition-colors ${pathname === '/admin/messages' ? 'bg-primary/10 text-primary' : 'hover:bg-gray-100 text-gray-700'}`}
                     >
                         Forum Messages
+                    </Link>
+                    <Link
+                        href="/admin/settings"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={`block px-4 py-2 rounded-lg font-medium transition-colors ${pathname === '/admin/settings' ? 'bg-primary/10 text-primary' : 'hover:bg-gray-100 text-gray-700'}`}
+                    >
+                        Gamification Setup
                     </Link>
                 </nav>
                 <div className="p-4 border-t">

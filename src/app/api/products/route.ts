@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import Product from '@/models/Product';
+import Message from '@/models/Message';
 import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
 import { escapeRegex } from '@/lib/utils';
@@ -52,7 +53,24 @@ export async function GET(req: Request) {
 
         const products = await Product.find(query).sort(sortOption);
         console.log(`[Products GET] Found ${products.length} products`);
-        return NextResponse.json(products);
+
+        // Aggregate message counts for all fetched products in a single query
+        const productIds = products.map((p: any) => p._id);
+        const messageCounts = await Message.aggregate([
+            { $match: { productId: { $in: productIds } } },
+            { $group: { _id: '$productId', count: { $sum: 1 } } },
+        ]);
+        const countMap: Record<string, number> = {};
+        for (const item of messageCounts) {
+            countMap[item._id.toString()] = item.count;
+        }
+
+        const productsWithCounts = products.map((p: any) => ({
+            ...p.toObject(),
+            messageCount: countMap[p._id.toString()] ?? 0,
+        }));
+
+        return NextResponse.json(productsWithCounts);
     } catch (error: any) {
         console.error('[Products GET] Detailed Error:', {
             name: error.name,

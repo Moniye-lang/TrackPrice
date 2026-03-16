@@ -4,12 +4,11 @@ import Product from '@/models/Product';
 import User from '@/models/User';
 import PriceUpdate from '@/models/PriceUpdate';
 import PriceRequest from '@/models/PriceRequest';
+import GamificationRule from '@/models/GamificationRule';
 import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret');
-const VERIFICATION_THRESHOLD = 5; // Total weight needed to verify a price (e.g., 5 Beginners, or 1 Beginner + 1 Trusted, etc.)
-const DAILY_MAX_REWARDED_UPDATES = 20;
 
 const REPUTATION_WEIGHTS = {
     'Beginner': 1,
@@ -59,9 +58,20 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         }
 
         await connectDB();
+
         const user = await User.findById(decodedToken.id);
         if (!user) {
             return NextResponse.json({ error: 'User not found' }, { status: 401 });
+        }
+
+        if (user.isBanned) {
+            return NextResponse.json({ error: 'Your account has been banned from submitting price updates.' }, { status: 403 });
+        }
+
+        // Fetch Gamification Rules
+        let rule = await GamificationRule.findOne();
+        if (!rule) {
+            rule = await GamificationRule.create({}); // fallback to defaults
         }
 
         const product = await Product.findById(id);
@@ -69,7 +79,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             return NextResponse.json({ error: 'Product not found' }, { status: 404 });
         }
 
-        // 1. Spam Prevention
+        // 1. Spam Prevention & Daily Limits
         const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
         const existingUpdate = await PriceUpdate.findOne({
             productId: product._id,
@@ -90,17 +100,19 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             user.lastRewardedDate = today;
         }
 
-        if (user.rewardedUpdatesToday >= DAILY_MAX_REWARDED_UPDATES) {
+        if (user.rewardedUpdatesToday >= rule.dailyUpdateLimit) {
             return NextResponse.json({ error: 'Daily update limit reached. You can no longer earn points today.' }, { status: 429 });
         }
 
         // Create the individual price update record
-        const newUpdate = new PriceUpdate({
+        const updateData: any = {
             productId: product._id,
             userId: user._id,
             price: price,
             status: 'pending' // Defaults to pending
-        });
+        };
+
+        const newUpdate = new PriceUpdate(updateData);
         await newUpdate.save();
 
         // 2. Fetch all recent updates to calculate median & verification
@@ -121,7 +133,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             // Only count if within acceptable outlier range (approximate check based on median)
             if (validPrices.includes(update.price)) {
                 validReportCount++;
-                const updaterReputation = (update.userId as any).reputationLevel || 'Beginner';
+                const updaterReputation = (update.userId as any)?.reputationLevel || 'Beginner';
                 totalWeight += REPUTATION_WEIGHTS[updaterReputation as keyof typeof REPUTATION_WEIGHTS] || 1;
             }
         }
@@ -134,7 +146,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         product.confidenceLevel = confidenceLevel as 'Low' | 'Medium' | 'High';
 
         // 4. Verification Logic
-        if (totalWeight >= VERIFICATION_THRESHOLD) {
+        if (totalWeight >= rule.verificationThreshold) {
             // Update the main product price
 
             // Safeguard: check for massive percentage change
@@ -151,23 +163,25 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             product.updateRequested = false;
 
             // Mark updates as verified and award points if not already awarded
-            const pointsToAward = 10;
+            const pointsToAward = rule.pointsPerUpdate;
             for (const update of recentUpdates) {
                 if (validPrices.includes(update.price) && update.status === 'pending') {
                     update.status = 'verified';
                     await update.save();
 
-                    const updater = await User.findById(update.userId);
-                    if (updater && updater.rewardedUpdatesToday < DAILY_MAX_REWARDED_UPDATES) {
-                        updater.points += pointsToAward;
-                        updater.rewardedUpdatesToday += 1;
-                        // Promotion logic
-                        if (updater.points >= 500 && updater.reputationLevel === 'Beginner') {
-                            updater.reputationLevel = 'Trusted Contributor';
-                        } else if (updater.points >= 2000 && updater.reputationLevel === 'Trusted Contributor') {
-                            updater.reputationLevel = 'Elite Contributor';
+                    if (update.userId) {
+                        const updater = await User.findById(update.userId);
+                        if (updater && updater.rewardedUpdatesToday < rule.dailyUpdateLimit) {
+                            updater.points += pointsToAward;
+                            updater.rewardedUpdatesToday += 1;
+                            // Promotion logic
+                            if (updater.points >= 500 && updater.reputationLevel === 'Beginner') {
+                                updater.reputationLevel = 'Trusted Contributor';
+                            } else if (updater.points >= 2000 && updater.reputationLevel === 'Trusted Contributor') {
+                                updater.reputationLevel = 'Elite Contributor';
+                            }
+                            await updater.save();
                         }
-                        await updater.save();
                     }
                 }
             }
@@ -179,19 +193,18 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
                 openRequest.fulfilledBy = user._id; // The user who pushed it over the threshold gets the bonus
                 await openRequest.save();
 
-                user.points += 20; // Bonus points for fulfilling a request
-                await user.save();
+                user.points += rule.bonusPointsRequest; // Bonus points for fulfilling a request
             }
         } else {
             // Not enough weight yet, store the pending state (keep the old price)
         }
 
         await product.save();
-        await user.save(); // Save initial update count if modified
+        await user.save(); // Save initial update count/points if modified
 
         return NextResponse.json({
             message: 'Price update submitted successfully',
-            verified: totalWeight >= VERIFICATION_THRESHOLD,
+            verified: totalWeight >= rule.verificationThreshold,
             confidenceLevel: product.confidenceLevel,
             newMedianPrice: newMedianPrice
         });

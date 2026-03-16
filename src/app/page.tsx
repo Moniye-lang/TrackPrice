@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { ProductCard } from '@/components/ProductCard';
+import { Navbar } from '@/components/Navbar';
 import { Input, Button } from '@/components/ui-base';
-import Link from 'next/link';
 
 export default function Home() {
   const [products, setProducts] = useState<any[]>([]);
@@ -49,30 +49,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-mesh selection:bg-primary/20">
-      {/* Header */}
-      <header className="glass sticky top-4 z-50 mx-4 mt-4 rounded-2xl shadow-premium">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="text-2xl font-black text-primary tracking-tighter hover:scale-105 transition-transform">
-            TrackPrice<span className="text-accent">.</span>
-          </Link>
-          <nav className="flex items-center gap-8">
-            <Link href="/forum" className="text-slate-600 hover:text-primary font-display font-semibold transition-colors relative group">
-              Forum
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
-            </Link>
-            <div className="flex items-center gap-4">
-              <Link href="/login" className="text-slate-600 hover:text-primary font-semibold transition-colors">
-                Log In
-              </Link>
-              <Link href="/register">
-                <Button variant="primary" className="px-5 py-2 text-sm">
-                  Sign Up
-                </Button>
-              </Link>
-            </div>
-          </nav>
-        </div>
-      </header>
+      <Navbar />
 
       {/* Hero Section */}
       <section className="relative py-16 md:py-24 px-4 overflow-hidden">

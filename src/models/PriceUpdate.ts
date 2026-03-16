@@ -23,6 +23,10 @@ const PriceUpdateSchema: Schema = new Schema(
 
 PriceUpdateSchema.index({ productId: 1, userId: 1, createdAt: -1 });
 
-const PriceUpdate: Model<IPriceUpdate> = mongoose.models.PriceUpdate || mongoose.model<IPriceUpdate>('PriceUpdate', PriceUpdateSchema);
+// Force clear Next.js cached model instance so the updated schema rules apply
+if (mongoose.models.PriceUpdate) {
+    delete mongoose.models.PriceUpdate;
+}
+const PriceUpdate: Model<IPriceUpdate> = mongoose.model<IPriceUpdate>('PriceUpdate', PriceUpdateSchema);
 
 export default PriceUpdate;

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Button, Card } from '@/components/ui-base';
+import { Navbar } from '@/components/Navbar';
 import { formatRelativeTime } from '@/lib/utils';
 import Link from 'next/link';
 import { use } from 'react';
@@ -27,6 +28,13 @@ interface Message {
     createdAt: string;
 }
 
+interface AuthUser {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+}
+
 export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
     const [product, setProduct] = useState<Product | null>(null);
@@ -36,13 +44,42 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     const [posting, setPosting] = useState(false);
     const [error, setError] = useState('');
     const [replyingTo, setReplyingTo] = useState<Message | null>(null);
+
+    // Auth state
+    const [authUser, setAuthUser] = useState<AuthUser | null>(null);
+    const [authLoading, setAuthLoading] = useState(true);
+
+    // Verify existing price
     const [verifying, setVerifying] = useState(false);
     const [verifyMsg, setVerifyMsg] = useState('');
+
+    // Update price (propose a new price)
+    const [showUpdateForm, setShowUpdateForm] = useState(false);
+    const [newPrice, setNewPrice] = useState('');
+    const [updatingPrice, setUpdatingPrice] = useState(false);
+    const [updateMsg, setUpdateMsg] = useState('');
+
+    useEffect(() => {
+        const fetchAuth = async () => {
+            try {
+                const res = await fetch('/api/auth/me');
+                if (res.ok) {
+                    const data = await res.json();
+                    setAuthUser(data.user);
+                }
+            } catch {
+                // not logged in
+            } finally {
+                setAuthLoading(false);
+            }
+        };
+        fetchAuth();
+    }, []);
 
     const fetchData = async () => {
         try {
             const [productRes, messagesRes] = await Promise.all([
-                fetch(`/api/products/${id}`), // Note: We need a GET endpoint for single product
+                fetch(`/api/products/${id}`),
                 fetch(`/api/messages?productId=${id}`),
             ]);
 
@@ -75,6 +112,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         fetchData();
     }, [id]);
 
+    // Verify = confirm the existing price is correct
     const handleVerifyPrice = async () => {
         if (!product) return;
         setVerifying(true);
@@ -89,8 +127,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             const data = await res.json();
 
             if (res.ok) {
-                setVerifyMsg('Thank you! Price verified successfully.');
-                fetchData(); // Refresh to get updated confidence
+                setVerifyMsg('✓ Thank you! Price confirmed.');
+                fetchData();
             } else {
                 setVerifyMsg(data.error || 'Failed to verify price.');
             }
@@ -101,7 +139,37 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    // Update = propose a different price
+    const handleUpdatePrice = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!product || !newPrice) return;
+        setUpdatingPrice(true);
+        setUpdateMsg('');
+
+        try {
+            const res = await fetch(`/api/products/${product._id}/update`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ price: Number(newPrice) }),
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                setUpdateMsg('✓ Price update submitted! It will be verified by the community.');
+                setNewPrice('');
+                setShowUpdateForm(false);
+                fetchData();
+            } else {
+                setUpdateMsg(data.error || 'Failed to submit update.');
+            }
+        } catch (err) {
+            setUpdateMsg('An error occurred.');
+        } finally {
+            setUpdatingPrice(false);
+        }
+    };
+
+    const handleSubmitMessage = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!content.trim()) return;
 
@@ -136,44 +204,48 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     };
 
     if (loading) {
-        return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+        return (
+            <div className="min-h-screen bg-mesh">
+                <Navbar />
+                <div className="flex items-center justify-center py-32">
+                    <div className="text-center">
+                        <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                        <p className="font-bold text-slate-500">Loading product...</p>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     if (!product) {
-        return <div className="min-h-screen flex items-center justify-center">Product not found.</div>;
+        return (
+            <div className="min-h-screen bg-mesh">
+                <Navbar />
+                <div className="flex items-center justify-center py-32">
+                    <p className="text-slate-500 font-bold">Product not found.</p>
+                </div>
+            </div>
+        );
     }
 
     return (
         <div className="min-h-screen bg-mesh selection:bg-primary/20">
-            {/* Header */}
-            <header className="glass sticky top-4 z-50 mx-4 mt-4 rounded-2xl shadow-premium">
-                <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-                    <Link href="/" className="text-2xl font-black text-primary tracking-tighter hover:scale-105 transition-transform">
-                        TrackPrice<span className="text-accent">.</span>
-                    </Link>
-                    <nav className="flex items-center gap-8">
-                        <Link href="/" className="text-slate-600 hover:text-primary font-display font-semibold transition-colors relative group">
-                            Back to Products
-                            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
-                        </Link>
-                    </nav>
-                </div>
-            </header>
+            <Navbar />
 
-            <main className="max-w-7xl mx-auto px-4 py-16 grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <main className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-3 gap-12">
                 {/* Product Info Section */}
                 <div className="lg:col-span-1">
                     <Card className="sticky top-24 p-0 overflow-hidden border-none shadow-premium bg-white/40 glass">
-                        <div className="relative h-80 w-full overflow-hidden">
+                        <div className="relative h-72 w-full overflow-hidden">
                             <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" />
                             <div className="absolute top-4 right-4 glass px-3 py-1 rounded-full text-[10px] font-black tracking-widest text-primary uppercase shadow-sm">
                                 {product.category}
                             </div>
                         </div>
-                        <div className="p-8 space-y-6">
+                        <div className="p-6 space-y-5">
                             <div>
-                                <h1 className="text-4xl font-black text-slate-800 tracking-tight leading-none mb-4">{product.name}</h1>
-                                <div className="flex flex-wrap items-baseline gap-3 mb-4">
+                                <h1 className="text-3xl font-black text-slate-800 tracking-tight leading-tight mb-3">{product.name}</h1>
+                                <div className="flex flex-wrap items-baseline gap-3 mb-3">
                                     <span className="text-5xl font-black text-slate-900 tracking-tighter">₦{product.price.toFixed(2)}</span>
                                     {product.flagged ? (
                                         <span className="text-xs font-bold text-rose-500 bg-rose-50 px-2 py-1 rounded-md border border-rose-200">FLAGGED</span>
@@ -183,38 +255,99 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                         <span className="text-xs font-bold text-amber-500 bg-amber-50 px-2 py-1 rounded-md border border-amber-200">ESTIMATE</span>
                                     )}
                                 </div>
-                                <div className="flex items-center gap-4 text-sm font-medium text-slate-500 mb-6">
+                                <div className="flex items-center gap-4 text-sm font-medium text-slate-500 mb-5">
                                     <div className="flex items-center gap-1.5">
                                         <span className={`w-2.5 h-2.5 rounded-full ${product.confidenceLevel === 'High' ? 'bg-emerald-500' :
-                                                product.confidenceLevel === 'Medium' ? 'bg-amber-500' : 'bg-rose-500'
+                                            product.confidenceLevel === 'Medium' ? 'bg-amber-500' : 'bg-rose-500'
                                             }`} />
                                         {product.confidenceLevel || 'Low'} Confidence
                                     </div>
-                                    <div className="flex items-center gap-1.5">
-                                        👥 {product.reportCount || 0} Reports
-                                    </div>
+                                    <div>👥 {product.reportCount || 0} Reports</div>
                                 </div>
 
-                                <div className="space-y-3">
-                                    <Button
-                                        onClick={handleVerifyPrice}
-                                        disabled={verifying}
-                                        className="w-full py-4 text-sm font-black tracking-wide shadow-glow"
-                                    >
-                                        {verifying ? 'VERIFYING...' : 'VERIFY THIS PRICE'}
-                                    </Button>
-                                    {verifyMsg && (
-                                        <p className={`text-sm font-bold p-3 rounded-xl border ${verifyMsg.includes('success') ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-rose-50 text-rose-600 border-rose-200'}`}>
-                                            {verifyMsg}
-                                        </p>
-                                    )}
-                                </div>
+                                {/* Price Action Buttons — Auth aware */}
+                                {!authLoading && (
+                                    <div className="space-y-3">
+                                        {authUser ? (
+                                            <>
+                                                {/* Verify existing price */}
+                                                <Button
+                                                    onClick={handleVerifyPrice}
+                                                    disabled={verifying}
+                                                    variant="glass"
+                                                    className="w-full py-3 text-sm font-black tracking-wide"
+                                                >
+                                                    {verifying ? 'Confirming...' : '✓ Confirm This Price'}
+                                                </Button>
+                                                {verifyMsg && (
+                                                    <p className={`text-sm font-bold p-3 rounded-xl border ${verifyMsg.startsWith('✓') ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-rose-50 text-rose-600 border-rose-200'}`}>
+                                                        {verifyMsg}
+                                                    </p>
+                                                )}
+
+                                                {/* Suggest a different price */}
+                                                {!showUpdateForm ? (
+                                                    <Button
+                                                        onClick={() => { setShowUpdateForm(true); setUpdateMsg(''); }}
+                                                        className="w-full py-3 text-sm font-black tracking-wide shadow-glow"
+                                                    >
+                                                        📝 Update Price
+                                                    </Button>
+                                                ) : (
+                                                    <form onSubmit={handleUpdatePrice} className="space-y-3 p-4 bg-white/60 rounded-2xl border border-primary/20 shadow-inner">
+                                                        <p className="text-xs font-black text-primary uppercase tracking-widest">Suggest New Price</p>
+                                                        <input
+                                                            type="number"
+                                                            min="0"
+                                                            step="0.01"
+                                                            placeholder={`Current: ₦${product.price.toFixed(2)}`}
+                                                            value={newPrice}
+                                                            onChange={(e) => setNewPrice(e.target.value)}
+                                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-800 font-bold text-lg focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition"
+                                                            required
+                                                        />
+                                                        {updateMsg && (
+                                                            <p className={`text-xs font-bold p-2 rounded-lg ${updateMsg.startsWith('✓') ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
+                                                                {updateMsg}
+                                                            </p>
+                                                        )}
+                                                        <div className="flex gap-2">
+                                                            <Button type="button" variant="secondary" className="flex-1 text-xs py-2 font-bold" onClick={() => setShowUpdateForm(false)}>
+                                                                Cancel
+                                                            </Button>
+                                                            <Button type="submit" className="flex-1 text-xs py-2 font-bold shadow-glow" disabled={updatingPrice}>
+                                                                {updatingPrice ? 'Submitting...' : 'Submit'}
+                                                            </Button>
+                                                        </div>
+                                                    </form>
+                                                )}
+                                            </>
+                                        ) : (
+                                            /* Not logged in — show prompt */
+                                            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-center space-y-3">
+                                                <p className="text-sm font-bold text-slate-600">
+                                                    Sign in to confirm or update this price
+                                                </p>
+                                                <div className="flex gap-2">
+                                                    <Link href="/login" className="flex-1">
+                                                        <button className="w-full py-2.5 rounded-xl border border-slate-300 text-sm font-bold text-slate-700 hover:bg-white transition-colors">
+                                                            Log In
+                                                        </button>
+                                                    </Link>
+                                                    <Link href="/register" className="flex-1">
+                                                        <button className="w-full py-2.5 rounded-xl bg-primary text-white text-sm font-bold shadow-glow hover:bg-primary/90 transition-colors">
+                                                            Sign Up
+                                                        </button>
+                                                    </Link>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
 
-                            <div className="pt-6 border-t border-slate-200/50 flex items-center justify-between text-xs font-black text-slate-400 uppercase tracking-widest">
-                                <span className="flex items-center gap-1.5">
-                                    🕰️ UPDATED {formatRelativeTime(product.lastUpdated)}
-                                </span>
+                            <div className="pt-4 border-t border-slate-200/50 flex items-center justify-between text-xs font-black text-slate-400 uppercase tracking-widest">
+                                <span>Updated {formatRelativeTime(product.lastUpdated)}</span>
                                 <span className="flex items-center gap-1 text-primary">
                                     <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                                     ACTIVE
@@ -225,7 +358,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 </div>
 
                 {/* Discussion Section */}
-                <div className="lg:col-span-2 space-y-12">
+                <div className="lg:col-span-2 space-y-10">
+                    {/* Post a message */}
                     <section className="relative">
                         <Card className="glass !bg-white/40 border-white/60 p-8 relative overflow-hidden">
                             <div className="relative z-10">
@@ -235,7 +369,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                     </div>
                                     <div>
                                         <h2 className="text-2xl font-black text-slate-800 tracking-tight">Product Discussion</h2>
-                                        <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">{replyingTo ? 'Replying to insight' : 'Post anonymously about this item'}</p>
+                                        <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">
+                                            {replyingTo ? 'Replying to insight' : `${messages.length} ${messages.length === 1 ? 'message' : 'messages'} · Post anonymously`}
+                                        </p>
                                     </div>
                                 </div>
 
@@ -257,7 +393,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                     </div>
                                 )}
 
-                                <form onSubmit={handleSubmit} className="space-y-6">
+                                <form onSubmit={handleSubmitMessage} className="space-y-6">
                                     <div className="relative">
                                         <textarea
                                             className="w-full p-6 bg-white/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-300 min-h-[140px] resize-none text-slate-700 text-lg placeholder:text-slate-300 shadow-inner"
@@ -288,6 +424,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                         </Card>
                     </section>
 
+                    {/* Messages list */}
                     <section className="space-y-6">
                         <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                             <h3 className="text-2xl font-black text-slate-800 tracking-tight">Recent Insights</h3>

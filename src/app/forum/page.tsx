@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Button, Input, Card } from '@/components/ui-base';
+import { Button, Card } from '@/components/ui-base';
+import { Navbar } from '@/components/Navbar';
 import { formatRelativeTime } from '@/lib/utils';
-import Link from 'next/link';
 
 interface Message {
     _id: string;
@@ -83,20 +83,7 @@ export default function ForumPage() {
 
     return (
         <div className="min-h-screen bg-mesh selection:bg-primary/20">
-            {/* Header */}
-            <header className="glass sticky top-4 z-50 mx-4 mt-4 rounded-2xl shadow-premium">
-                <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-                    <Link href="/" className="text-2xl font-black text-primary tracking-tighter hover:scale-105 transition-transform">
-                        TrackPrice<span className="text-accent">.</span> Forum
-                    </Link>
-                    <nav className="flex items-center gap-8">
-                        <Link href="/" className="text-slate-600 hover:text-primary font-display font-semibold transition-colors relative group">
-                            Back to Products
-                            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
-                        </Link>
-                    </nav>
-                </div>
-            </header>
+            <Navbar />
 
             <main className="max-w-4xl mx-auto px-4 py-16 scroll-mt-24">
                 {/* Form Section */}

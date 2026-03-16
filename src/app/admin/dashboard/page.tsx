@@ -1,198 +1,140 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Button, Input, Card } from '@/components/ui-base';
-
-interface Product {
-    _id: string;
-    name: string;
-    price: number;
-    category: string;
-    imageUrl: string;
-    lastUpdated: string;
-}
+import { Card } from '@/components/ui-base';
 
 export default function AdminDashboard() {
-    const [products, setProducts] = useState<Product[]>([]);
+    const [stats, setStats] = useState<any>(null);
     const [loading, setLoading] = useState(true);
-    const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-    const [showForm, setShowForm] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [submitting, setSubmitting] = useState(false);
-
-    // Form states
-    const [name, setName] = useState('');
-    const [price, setPrice] = useState('');
-    const [category, setCategory] = useState('');
-    const [imageUrl, setImageUrl] = useState('');
-
-    const fetchProducts = async () => {
-        setLoading(true);
-        try {
-            const res = await fetch('/api/products');
-            const data = await res.json();
-            setProducts(data);
-        } catch (error) {
-            console.error('Failed to fetch products');
-        } finally {
-            setLoading(false);
-        }
-    };
 
     useEffect(() => {
-        fetchProducts();
+        const fetchAnalytics = async () => {
+            try {
+                const res = await fetch('/api/admin/analytics');
+                if (res.ok) {
+                    const data = await res.json();
+                    setStats(data);
+                }
+            } catch (error) {
+                console.error('Failed to fetch analytics', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchAnalytics();
     }, []);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError(null);
-        setSubmitting(true);
-        const payload = { name, price: Number(price), category, imageUrl };
+    if (loading) {
+        return <div className="text-center py-20 font-medium text-slate-500">Loading Analytics Dashboard...</div>;
+    }
 
-        try {
-            const url = editingProduct ? `/api/products/${editingProduct._id}` : '/api/products';
-            const method = editingProduct ? 'PUT' : 'POST';
-
-            const res = await fetch(url, {
-                method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-            });
-
-            const data = await res.json();
-
-            if (res.ok) {
-                setShowForm(false);
-                setEditingProduct(null);
-                resetForm();
-                fetchProducts();
-            } else {
-                setError(data.error || data.details || 'Failed to save product');
-            }
-        } catch (error) {
-            console.error('Failed to save product');
-            setError('An unexpected error occurred');
-        } finally {
-            setSubmitting(false);
-        }
-    };
-
-    const handleEdit = (product: Product) => {
-        setEditingProduct(product);
-        setName(product.name);
-        setPrice(product.price.toString());
-        setCategory(product.category);
-        setImageUrl(product.imageUrl);
-        setShowForm(true);
-    };
-
-    const handleDelete = async (id: string) => {
-        if (!confirm('Are you sure you want to delete this product?')) return;
-        try {
-            const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
-            if (res.ok) fetchProducts();
-        } catch (error) {
-            console.error('Failed to delete product');
-        }
-    };
-
-    const resetForm = () => {
-        setName('');
-        setPrice('');
-        setCategory('');
-        setImageUrl('');
-    };
+    if (!stats) {
+        return <div className="text-center py-20 text-rose-500">Failed to load analytics.</div>;
+    }
 
     return (
-        <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold">Manage Products</h1>
-                <Button onClick={() => { setShowForm(true); setEditingProduct(null); resetForm(); }}>
-                    Add New Product
-                </Button>
+        <div className="space-y-8">
+            <h1 className="text-3xl font-black text-slate-800 tracking-tight">Analytics Overview</h1>
+
+            {/* Top Level Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <Card className="p-6 bg-white border border-slate-100 shadow-sm">
+                    <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Total Users</p>
+                    <p className="text-4xl font-black text-slate-800">{stats.stats.totalUsers}</p>
+                </Card>
+                <Card className="p-6 bg-white border border-slate-100 shadow-sm">
+                    <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Products Tracked</p>
+                    <p className="text-4xl font-black text-slate-800">{stats.stats.totalProducts}</p>
+                </Card>
+                <Card className="p-6 bg-white border border-slate-100 shadow-sm">
+                    <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Total Updates</p>
+                    <p className="text-4xl font-black text-slate-800">{stats.stats.totalUpdates}</p>
+                </Card>
+                <Card className="p-6 bg-amber-50 border border-amber-100 shadow-sm">
+                    <p className="text-sm font-bold text-amber-500 uppercase tracking-widest mb-2">Pending Verifications</p>
+                    <p className="text-4xl font-black text-amber-600">{stats.stats.pendingUpdates}</p>
+                </Card>
             </div>
 
-            {showForm && (
-                <Card className="max-w-2xl mx-auto">
-                    <h2 className="text-xl font-semibold mb-4">
-                        {editingProduct ? 'Edit Product' : 'Add New Product'}
-                    </h2>
-                    {error && (
-                        <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm font-medium">
-                            {error}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Confidence Distribution */}
+                <Card className="p-6">
+                    <h2 className="text-lg font-black text-slate-800 mb-6">Price Confidence Distribution</h2>
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                            <span className="flex items-center gap-2 font-bold text-emerald-600"><div className="w-3 h-3 rounded-full bg-emerald-500" /> High Confidence</span>
+                            <span className="font-black text-slate-700">{stats.confidenceDistribution.High || 0}</span>
                         </div>
-                    )}
-                    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="md:col-span-2">
-                            <label className="block text-sm font-medium mb-1">Product Name</label>
-                            <Input value={name} onChange={(e) => setName(e.target.value)} required />
+                        <div className="w-full bg-slate-100 rounded-full h-2">
+                            <div className="bg-emerald-500 h-2 rounded-full" style={{ width: `${Math.max(5, ((stats.confidenceDistribution.High || 0) / stats.stats.totalProducts) * 100)}%` }}></div>
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Price (₦)</label>
-                            <Input type="number" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} required />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Category</label>
-                            <Input value={category} onChange={(e) => setCategory(e.target.value)} required />
-                        </div>
-                        <div className="md:col-span-2">
-                            <label className="block text-sm font-medium mb-1">Image URL</label>
-                            <Input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} required />
-                        </div>
-                        <div className="md:col-span-2 flex justify-end gap-2 mt-2">
-                            <Button type="button" variant="secondary" onClick={() => { setShowForm(false); setError(null); }} disabled={submitting}>
-                                Cancel
-                            </Button>
-                            <Button type="submit" disabled={submitting}>
-                                {submitting ? 'Saving...' : editingProduct ? 'Update Product' : 'Create Product'}
-                            </Button>
-                        </div>
-                    </form>
-                </Card>
-            )}
 
-            {loading ? (
-                <div className="text-center py-10">Loading products...</div>
-            ) : (
-                <div className="grid grid-cols-1 gap-4">
-                    <Card className="overflow-x-auto">
-                        <table className="w-full text-left">
-                            <thead className="border-b">
-                                <tr>
-                                    <th className="py-2 px-4">Name</th>
-                                    <th className="py-2 px-4">Category</th>
-                                    <th className="py-2 px-4">Price</th>
-                                    <th className="py-2 px-4">Last Updated</th>
-                                    <th className="py-2 px-4 text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {products.map((product) => (
-                                    <tr key={product._id} className="border-b hover:bg-gray-50">
-                                        <td className="py-3 px-4 flex items-center gap-3">
-                                            <img src={product.imageUrl} alt={product.name} className="w-10 h-10 rounded object-cover" />
-                                            <span className="font-medium">{product.name}</span>
-                                        </td>
-                                        <td className="py-3 px-4">{product.category}</td>
-                                        <td className="py-3 px-4 font-bold">₦{product.price.toFixed(2)}</td>
-                                        <td className="py-3 px-4 text-sm text-gray-500">
-                                            {new Date(product.lastUpdated).toLocaleString()}
-                                        </td>
-                                        <td className="py-3 px-4 text-right space-x-2">
-                                            <Button variant="secondary" onClick={() => handleEdit(product)} className="px-3 py-1">
-                                                Edit
-                                            </Button>
-                                            <Button variant="danger" onClick={() => handleDelete(product._id)} className="px-3 py-1">
-                                                Delete
-                                            </Button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </Card>
-                </div>
-            )}
+                        <div className="flex items-center justify-between pt-4">
+                            <span className="flex items-center gap-2 font-bold text-amber-500"><div className="w-3 h-3 rounded-full bg-amber-500" /> Medium Confidence</span>
+                            <span className="font-black text-slate-700">{stats.confidenceDistribution.Medium || 0}</span>
+                        </div>
+                        <div className="w-full bg-slate-100 rounded-full h-2">
+                            <div className="bg-amber-500 h-2 rounded-full" style={{ width: `${Math.max(2, ((stats.confidenceDistribution.Medium || 0) / stats.stats.totalProducts) * 100)}%` }}></div>
+                        </div>
+
+                        <div className="flex items-center justify-between pt-4">
+                            <span className="flex items-center gap-2 font-bold text-rose-500"><div className="w-3 h-3 rounded-full bg-rose-500" /> Low Confidence</span>
+                            <span className="font-black text-slate-700">{stats.confidenceDistribution.Low || 0}</span>
+                        </div>
+                        <div className="w-full bg-slate-100 rounded-full h-2">
+                            <div className="bg-rose-500 h-2 rounded-full" style={{ width: `${Math.max(1, ((stats.confidenceDistribution.Low || 0) / stats.stats.totalProducts) * 100)}%` }}></div>
+                        </div>
+                    </div>
+                </Card>
+
+                {/* Top Contributors */}
+                <Card className="p-6">
+                    <h2 className="text-lg font-black text-slate-800 mb-6">Top Contributors</h2>
+                    <div className="space-y-4">
+                        {stats.topContributors.map((user: any, i: number) => (
+                            <div key={user._id} className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                <div className="flex items-center gap-4">
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-sm ${i === 0 ? 'bg-amber-100 text-amber-600' : 'bg-slate-100 text-slate-500'}`}>
+                                        #{i + 1}
+                                    </div>
+                                    <div>
+                                        <p className="font-bold text-slate-800">{user.name}</p>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{user.reputationLevel}</p>
+                                    </div>
+                                </div>
+                                <div className="text-right">
+                                    <p className="font-black text-primary">{user.points} pts</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </Card>
+            </div>
+
+            {/* Dispute Products */}
+            <Card className="p-6 border-rose-100 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>
+                <h2 className="text-lg font-black text-slate-800 mb-6">High Dispute / Flagged Products</h2>
+                {stats.disputeProducts.length === 0 ? (
+                    <p className="text-sm font-medium text-slate-500 italic">No highly disputed products currently.</p>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {stats.disputeProducts.map((prod: any) => (
+                            <div key={prod._id} className="p-4 rounded-xl border border-slate-100 bg-slate-50 flex justify-between items-center">
+                                <div>
+                                    <p className="font-bold text-slate-800">{prod.name}</p>
+                                    <p className="text-sm font-medium text-slate-500">₦{prod.price}</p>
+                                </div>
+                                <div className="flex gap-2">
+                                    {prod.flagged && <span className="bg-rose-100 text-rose-600 px-2 py-1 rounded text-xs font-bold uppercase">Flagged</span>}
+                                    <span className="bg-slate-200 text-slate-600 px-2 py-1 rounded text-xs font-bold">{prod.reportCount} Reports</span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </Card>
+
         </div>
     );
 }

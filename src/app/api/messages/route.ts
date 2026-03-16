@@ -16,9 +16,13 @@ export async function GET(req: Request) {
         const { searchParams } = new URL(req.url);
         const productId = searchParams.get('productId');
 
-        let query = {};
+        let query: Record<string, any> = {};
         if (productId) {
+            // Return messages for a specific product
             query = { productId };
+        } else {
+            // Return ONLY general forum messages, NOT product-specific ones
+            query = { productId: { $exists: false } };
         }
 
         const messages = await Message.find(query).sort({ createdAt: -1 });

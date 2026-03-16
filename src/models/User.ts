@@ -8,6 +8,7 @@ export interface IUser extends Document {
     reputationLevel: 'Beginner' | 'Trusted Contributor' | 'Elite Contributor';
     rewardedUpdatesToday: number;
     lastRewardedDate: Date | null;
+    isBanned: boolean;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -25,6 +26,7 @@ const UserSchema: Schema = new Schema(
         },
         rewardedUpdatesToday: { type: Number, default: 0 },
         lastRewardedDate: { type: Date, default: null },
+        isBanned: { type: Boolean, default: false },
     },
     {
         timestamps: true,
