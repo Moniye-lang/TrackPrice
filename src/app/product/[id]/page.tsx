@@ -7,17 +7,11 @@ import { formatRelativeTime } from '@/lib/utils';
 import Link from 'next/link';
 import { use } from 'react';
 
-interface Product {
-    _id: string;
-    name: string;
+suggestions ?: Array<{
     price: number;
-    category: string;
-    imageUrl: string;
-    lastUpdated: string;
-    lastUpdatedBy?: string;
-    confidenceLevel?: 'Low' | 'Medium' | 'High';
-    reportCount?: number;
-    flagged?: boolean;
+    userName: string;
+    createdAt: string;
+}>;
 }
 
 interface Message {
@@ -361,6 +355,26 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                             </div>
                         </div>
                     </Card>
+
+                    {/* Community Suggestions Section */}
+                    {product.suggestions && product.suggestions.length > 0 && (
+                        <div className="mt-8 space-y-4">
+                            <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest px-2">Community Suggestions</h3>
+                            <div className="space-y-3">
+                                {product.suggestions.map((suggestion, idx) => (
+                                    <div key={idx} className="glass bg-white/40 p-4 rounded-2xl border-none shadow-premium flex justify-between items-center group hover:bg-white/60 transition-all">
+                                        <div>
+                                            <p className="text-xl font-black text-slate-800 tracking-tighter">₦{suggestion.price.toFixed(2)}</p>
+                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Proposed by {suggestion.userName}</p>
+                                        </div>
+                                        <div className="text-[10px] font-black text-primary/40 group-hover:text-primary transition-colors">
+                                            {formatRelativeTime(suggestion.createdAt)}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Discussion Section */}

@@ -1,18 +1,16 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import Product from '@/models/Product';
-import { cookies } from 'next/headers';
-import { jwtVerify } from 'jose';
-import { isValidObjectId } from '@/lib/db-utils';
+import PriceUpdate from '@/models/PriceUpdate';
 
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret');
+import { verifyToken } from '@/lib/auth';
 
 async function isAdmin() {
     const token = (await cookies()).get('token')?.value;
     if (!token) return false;
     try {
-        const { payload } = await jwtVerify(token, JWT_SECRET);
-        return payload.role === 'admin';
+        const payload: any = verifyToken(token);
+        return payload?.role === 'admin';
     } catch (error) {
         return false;
     }
@@ -31,12 +29,30 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
         console.log(`[Product ID GET] Requested ID: ${productId}`);
         await connectDB();
-        const product = await Product.findById(productId);
+        const product = await Product.findById(productId).lean();
         if (!product) {
             console.log(`[Product ID GET] Product not found: ${productId}`);
             return NextResponse.json({ error: 'Product not found' }, { status: 404 });
         }
-        return NextResponse.json(product);
+
+        // Fetch recent pending suggestions
+        const suggestions = await PriceUpdate.find({
+            productId,
+            status: 'pending'
+        })
+            .populate('userId', 'name')
+            .sort({ createdAt: -1 })
+            .limit(5)
+            .lean();
+
+        return NextResponse.json({
+            ...product,
+            suggestions: suggestions.map((s: any) => ({
+                price: s.price,
+                userName: s.userId?.name || 'Anonymous',
+                createdAt: s.createdAt
+            }))
+        });
     } catch (error: any) {
         console.error(`[Product ID GET] Detailed Error for ID ${productId}:`, {
             name: error.name,
