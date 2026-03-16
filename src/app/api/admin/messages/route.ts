@@ -2,16 +2,14 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import Message from '@/models/Message';
 import { cookies } from 'next/headers';
-import { jwtVerify } from 'jose';
-
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret');
+import { verifyToken } from '@/lib/auth';
 
 async function isAdmin() {
     const token = (await cookies()).get('token')?.value;
     if (!token) return false;
     try {
-        const { payload } = await jwtVerify(token, JWT_SECRET);
-        return payload.role === 'admin';
+        const decodedToken = verifyToken(token) as any;
+        return decodedToken?.role === 'admin';
     } catch (error) {
         return false;
     }

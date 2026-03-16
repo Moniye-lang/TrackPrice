@@ -2,17 +2,14 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import User from '@/models/User';
 import AuditLog from '@/models/AuditLog';
+import { verifyToken } from '@/lib/auth';
 import { cookies } from 'next/headers';
-import { jwtVerify } from 'jose';
-
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret');
 
 async function getAdminFromToken() {
     const token = (await cookies()).get('token')?.value;
     if (!token) return null;
     try {
-        const { payload } = await jwtVerify(token, JWT_SECRET);
-        return payload;
+        return verifyToken(token);
     } catch {
         return null;
     }
@@ -22,12 +19,12 @@ async function getAdminFromToken() {
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
         const decodedToken = await getAdminFromToken();
-        if (!decodedToken || typeof decodedToken.id !== 'string') {
+        if (!decodedToken || typeof (decodedToken as any).id !== 'string') {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
         await connectDB();
-        const adminUser = await User.findById(decodedToken.id);
+        const adminUser = await User.findById((decodedToken as any).id);
 
         if (!adminUser || adminUser.role !== 'admin') {
             return NextResponse.json({ error: 'Forbidden. Admin access required.' }, { status: 403 });
