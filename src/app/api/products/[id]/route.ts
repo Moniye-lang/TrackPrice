@@ -1,4 +1,8 @@
+import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import connectDB from '@/lib/db';
+import Product from '@/models/Product';
+import PriceUpdate from '@/models/PriceUpdate';
 import { isValidObjectId } from '@/lib/db-utils';
 import { verifyToken } from '@/lib/auth';
 
