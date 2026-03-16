@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import User from '@/models/User';
-import * as bcrypt from 'bcryptjs';
-import { signToken } from '@/lib/auth';
-import { serialize } from 'cookie';
+import { hashPassword, signToken } from '@/lib/auth';
 
 // JWT secret is handled in @/lib/auth
 
@@ -26,7 +24,7 @@ export async function POST(req: Request) {
         }
 
         // Add regular user role
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await hashPassword(password);
         const user = new User({
             name: name.trim(),
             email,
@@ -40,21 +38,20 @@ export async function POST(req: Request) {
 
         const token = signToken({ id: user._id, name: user.name, email: user.email, role: user.role });
 
-        const cookie = serialize('token', token, {
+        const response = NextResponse.json(
+            { message: 'Registration successful', role: user.role },
+            { status: 201 }
+        );
+
+        response.cookies.set('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
+            sameSite: 'lax',
             maxAge: 60 * 60 * 24, // 1 day
             path: '/',
         });
 
-        return NextResponse.json(
-            { message: 'Registration successful', role: user.role },
-            {
-                status: 201,
-                headers: { 'Set-Cookie': cookie },
-            }
-        );
+        return response;
     } catch (error: any) {
         console.error('[Register API] Error:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

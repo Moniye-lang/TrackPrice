@@ -12,8 +12,12 @@ export const comparePassword = async (password: string, hashed: string) => {
     return await bcrypt.compare(password, hashed);
 };
 
-export const signToken = (payload: object) => {
-    return jwt.sign(payload, JWT_SECRET, { expiresIn: '1d' });
+export const signToken = (payload: any) => {
+    // Ensure ID is a string for consistency
+    const cleanPayload = { ...payload };
+    if (cleanPayload.id) cleanPayload.id = cleanPayload.id.toString();
+
+    return jwt.sign(cleanPayload, JWT_SECRET, { expiresIn: '1d' });
 };
 
 export const verifyToken = (token: string) => {

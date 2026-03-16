@@ -57,6 +57,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         }
 
         const decodedToken = await getUserFromToken();
+        console.log('[Price Update] Auth Check:', {
+            hasToken: !!decodedToken,
+            tokenId: decodedToken?.id,
+            tokenRole: decodedToken?.role
+        });
+
         if (!decodedToken || typeof decodedToken.id !== 'string') {
             return NextResponse.json({ error: 'Authentication required to update price. Anonymous updates are not allowed.' }, { status: 401 });
         }
