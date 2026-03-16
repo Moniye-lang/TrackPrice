@@ -2,9 +2,10 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import User from '@/models/User';
 import * as bcrypt from 'bcryptjs';
-import { SignJWT } from 'jose';
+import { signToken } from '@/lib/auth';
+import { serialize } from 'cookie';
 
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret');
+// JWT secret is handled in @/lib/auth
 
 export async function POST(req: Request) {
     try {
@@ -37,22 +38,23 @@ export async function POST(req: Request) {
 
         await user.save();
 
-        const token = await new SignJWT({ id: user._id, name: user.name, email: user.email, role: user.role })
-            .setProtectedHeader({ alg: 'HS256' })
-            .setExpirationTime('24h')
-            .sign(JWT_SECRET);
+        const token = signToken({ id: user._id, name: user.name, email: user.email, role: user.role });
 
-        const response = NextResponse.json({ message: 'Registration successful', role: user.role });
-
-        response.cookies.set('token', token, {
+        const cookie = serialize('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
-            maxAge: 24 * 60 * 60, // 24 hours
+            maxAge: 60 * 60 * 24, // 1 day
             path: '/',
         });
 
-        return response;
+        return NextResponse.json(
+            { message: 'Registration successful', role: user.role },
+            {
+                status: 201,
+                headers: { 'Set-Cookie': cookie },
+            }
+        );
     } catch (error: any) {
         console.error('[Register API] Error:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

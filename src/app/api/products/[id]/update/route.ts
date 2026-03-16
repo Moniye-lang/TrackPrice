@@ -6,9 +6,7 @@ import PriceUpdate from '@/models/PriceUpdate';
 import PriceRequest from '@/models/PriceRequest';
 import GamificationRule from '@/models/GamificationRule';
 import { cookies } from 'next/headers';
-import { jwtVerify } from 'jose';
-
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret');
+import { verifyToken } from '@/lib/auth';
 
 const REPUTATION_WEIGHTS = {
     'Beginner': 1,
@@ -16,12 +14,18 @@ const REPUTATION_WEIGHTS = {
     'Elite Contributor': 10,
 };
 
+interface DecodedToken {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+}
+
 async function getUserFromToken() {
     const token = (await cookies()).get('token')?.value;
     if (!token) return null;
     try {
-        const { payload } = await jwtVerify(token, JWT_SECRET);
-        return payload;
+        return verifyToken(token) as unknown as DecodedToken;
     } catch {
         return null;
     }
