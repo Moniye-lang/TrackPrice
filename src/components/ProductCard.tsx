@@ -11,6 +11,7 @@ interface ProductCardProps {
         maxPrice?: number;
         category: string;
         imageUrl: string;
+        storeLocation?: string;
         lastUpdated: string;
         confidenceLevel?: 'Low' | 'Medium' | 'High';
         reportCount?: number;
@@ -69,6 +70,12 @@ export function ProductCard({ product }: ProductCardProps) {
                                 )}
                             </div>
                         </div>
+
+                        {product.storeLocation && (
+                            <p className="text-[11px] font-bold text-slate-400 flex items-center gap-1 mb-3">
+                                <span className="text-primary/60 text-xs">📍</span> {product.storeLocation}
+                            </p>
+                        )}
 
                         <div className="flex items-baseline gap-1 mt-1">
                             <span className="text-3xl font-black text-slate-900 tracking-tightest group-hover:text-primary transition-colors">
