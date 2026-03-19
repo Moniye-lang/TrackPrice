@@ -72,7 +72,7 @@ export function ProductCard({ product }: ProductCardProps) {
                         </div>
 
                         {product.storeLocation && (
-                            <p className="text-[11px] font-bold text-slate-400 flex items-center gap-1 mb-3">
+                            <p className="text-[14px] font-bold text-[#000000] flex items-center gap-1 mb-3">
                                 <span className="text-primary/60 text-xs">📍</span> {product.storeLocation}
                             </p>
                         )}
