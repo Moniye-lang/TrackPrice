@@ -31,6 +31,12 @@ interface Message {
     _id: string;
     content: string;
     isAdmin?: boolean;
+    productId?: {
+        _id: string;
+        name: string;
+        price: number;
+        maxPrice?: number;
+    };
     parentId?: string;
     replyToContent?: string;
     createdAt: string;
@@ -494,6 +500,13 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                             <div className="flex-1 space-y-4">
                                                 <div className="flex justify-between items-start mb-2">
                                                     <div className="space-y-2 flex-1">
+                                                        {msg.productId && (
+                                                            <div className="flex items-center gap-2 mb-2">
+                                                                <span className="text-[10px] font-bold text-slate-400">
+                                                                    Verified at: {formatPriceRange(msg.productId.price, msg.productId.maxPrice)}
+                                                                </span>
+                                                            </div>
+                                                        )}
                                                         {msg.replyToContent && (
                                                             <div className="inline-flex items-center gap-2 bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-lg mb-2">
                                                                 <span className="text-lg opacity-40">➥</span>

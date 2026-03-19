@@ -25,7 +25,9 @@ export async function GET(req: Request) {
             query = { productId: { $exists: false } };
         }
 
-        const messages = await Message.find(query).sort({ createdAt: -1 });
+        const messages = await Message.find(query)
+            .populate('productId', 'name price maxPrice')
+            .sort({ createdAt: -1 });
         return NextResponse.json(messages);
     } catch (error) {
         return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 });
