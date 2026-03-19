@@ -5,6 +5,7 @@ import User from '@/models/User';
 import PriceUpdate from '@/models/PriceUpdate';
 import PriceRequest from '@/models/PriceRequest';
 import GamificationRule from '@/models/GamificationRule';
+import { parsePriceRange } from '@/lib/price-utils';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/auth';
 
@@ -128,10 +129,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
         // 2. Create the update record
         console.log('[Price Update] Creating Record...');
+        const parsedPrice = parsePriceRange(price);
         const newUpdate = await PriceUpdate.create({
             productId: product._id,
             userId: user._id,
-            price: price,
+            price: parsedPrice.price,
+            maxPrice: parsedPrice.maxPrice,
             storeLocation: storeLocation,
             status: 'pending'
         });

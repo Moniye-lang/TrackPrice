@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import PriceRequest from '@/models/PriceRequest';
 import Product from '@/models/Product';
+import { parsePriceRange } from '@/lib/price-utils';
 import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
 
@@ -20,7 +21,7 @@ async function getUserFromToken() {
 
 export async function POST(req: Request) {
     try {
-        const { productId, storeLocation } = await req.json();
+        const { productId, storeLocation, price } = await req.json();
 
         if (!productId) {
             return NextResponse.json({ error: 'Product ID is required' }, { status: 400 });
@@ -46,10 +47,13 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'There is already an open price request for this product.' }, { status: 409 });
         }
 
+        const parsedPrice = price ? parsePriceRange(price) : { price: 0 };
         const newRequest = new PriceRequest({
             productId: product._id,
             requesterId: decodedToken.id,
             storeLocation,
+            price: parsedPrice.price,
+            maxPrice: parsedPrice.maxPrice,
             status: 'open'
         });
         await newRequest.save();

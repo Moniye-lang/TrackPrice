@@ -4,6 +4,8 @@ export interface IPriceRequest extends Document {
     productId: mongoose.Types.ObjectId;
     requesterId: mongoose.Types.ObjectId;
     storeLocation?: string;
+    price?: number;
+    maxPrice?: number;
     status: 'open' | 'fulfilled';
     fulfilledBy?: mongoose.Types.ObjectId;
     createdAt: Date;
@@ -15,6 +17,8 @@ const PriceRequestSchema: Schema = new Schema(
         productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true, index: true },
         requesterId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
         storeLocation: { type: String },
+        price: { type: Number },
+        maxPrice: { type: Number },
         status: { type: String, enum: ['open', 'fulfilled'], default: 'open' },
         fulfilledBy: { type: Schema.Types.ObjectId, ref: 'User' },
     },

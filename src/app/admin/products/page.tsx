@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { Button, Input, Card } from '@/components/ui-base';
+import { formatPriceRange } from '@/lib/price-utils';
 
 interface Product {
     _id: string;
     name: string;
     price: number;
+    maxPrice?: number;
     category: string;
     imageUrl: string;
     storeLocation?: string;
@@ -51,7 +53,13 @@ export default function AdminProducts() {
         e.preventDefault();
         setError(null);
         setSubmitting(true);
-        const payload = { name, price: Number(price), category, imageUrl, storeLocation };
+        const payload = {
+            name,
+            price,
+            category,
+            imageUrl,
+            storeLocation
+        };
 
         try {
             const url = editingProduct ? `/api/products/${editingProduct._id}` : '/api/products';
@@ -134,8 +142,8 @@ export default function AdminProducts() {
                             <Input value={name} onChange={(e) => setName(e.target.value)} required placeholder="e.g. Rice 50kg" />
                         </div>
                         <div>
-                            <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">Base Price (₦)</label>
-                            <Input type="number" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} required placeholder="0.00" />
+                            <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">Price / Range (e.g. 1000 or 1000-2000)</label>
+                            <Input value={price} onChange={(e) => setPrice(e.target.value)} required placeholder="1000 or 1000-2000" />
                         </div>
                         <div>
                             <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">Category</label>
@@ -188,7 +196,7 @@ export default function AdminProducts() {
                                         </td>
                                         <td className="py-4 px-6 text-slate-600 font-medium">{product.category}</td>
                                         <td className="py-4 px-6 text-slate-500 text-sm italic">{product.storeLocation || 'N/A'}</td>
-                                        <td className="py-4 px-6 font-black text-slate-900">₦{product.price.toFixed(2)}</td>
+                                        <td className="py-4 px-6 font-black text-slate-900">{formatPriceRange(product.price, product.maxPrice)}</td>
                                         <td className="py-4 px-6 text-xs font-bold text-slate-400 uppercase tracking-widest">
                                             {new Date(product.lastUpdated).toLocaleDateString()}
                                         </td>

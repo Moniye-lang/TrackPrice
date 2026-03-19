@@ -5,6 +5,7 @@ import Product from '@/models/Product';
 import PriceUpdate from '@/models/PriceUpdate';
 import { isValidObjectId } from '@/lib/db-utils';
 import { verifyToken } from '@/lib/auth';
+import { parsePriceRange } from '@/lib/price-utils';
 
 async function isAdmin() {
     const token = (await cookies()).get('token')?.value;
@@ -90,8 +91,14 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         const updateData: any = { ...body };
 
         // Update lastUpdated only if price changes
-        if (body.price !== undefined && body.price !== existingProduct.price) {
-            updateData.lastUpdated = new Date();
+        if (body.price !== undefined) {
+            const parsed = parsePriceRange(body.price);
+            updateData.price = parsed.price;
+            updateData.maxPrice = parsed.maxPrice;
+
+            if (updateData.price !== existingProduct.price || updateData.maxPrice !== existingProduct.maxPrice) {
+                updateData.lastUpdated = new Date();
+            }
         }
 
         const product = await Product.findByIdAndUpdate(id, updateData, { new: true });

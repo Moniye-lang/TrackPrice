@@ -4,6 +4,7 @@ export interface IPriceUpdate extends Document {
     productId: mongoose.Types.ObjectId;
     userId: mongoose.Types.ObjectId;
     price: number;
+    maxPrice?: number;
     storeLocation?: string;
     status: 'pending' | 'verified' | 'rejected';
     createdAt: Date;
@@ -15,6 +16,7 @@ const PriceUpdateSchema: Schema = new Schema(
         productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true, index: true },
         userId: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
         price: { type: Number, required: true },
+        maxPrice: { type: Number },
         storeLocation: { type: String },
         status: { type: String, enum: ['pending', 'verified', 'rejected'], default: 'pending' },
     },

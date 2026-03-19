@@ -53,8 +53,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
         // Apply it over
         const oldPrice = product.price;
+        const oldMaxPrice = product.maxPrice;
         product.price = update.price;
-        product.priceHistory.push({ price: update.price, verifiedAt: new Date() });
+        product.maxPrice = update.maxPrice;
+        product.priceHistory.push({ price: update.price, maxPrice: update.maxPrice, verifiedAt: new Date() });
         product.flagged = false;
         product.updateRequested = false;
         product.lastUpdated = new Date();
@@ -84,7 +86,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
                 updateId: update._id,
                 productId: product._id,
                 oldPrice: oldPrice,
-                newPrice: update.price
+                oldMaxPrice: oldMaxPrice,
+                newPrice: update.price,
+                newMaxPrice: update.maxPrice
             }
         });
 

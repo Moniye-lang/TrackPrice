@@ -6,11 +6,13 @@ import { Navbar } from '@/components/Navbar';
 import { formatRelativeTime } from '@/lib/utils';
 import Link from 'next/link';
 import { use } from 'react';
+import { formatPriceRange } from '@/lib/price-utils';
 
 interface Product {
     _id: string;
     name: string;
     price: number;
+    maxPrice?: number;
     category: string;
     imageUrl: string;
     lastUpdated: string;
@@ -158,7 +160,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    price: Number(newPrice),
+                    price: newPrice,
                     storeLocation: suggestionLocation
                 }),
             });
@@ -257,7 +259,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                             <div>
                                 <h1 className="text-3xl font-black text-slate-800 tracking-tight leading-tight mb-3">{product.name}</h1>
                                 <div className="flex flex-wrap items-baseline gap-3 mb-3">
-                                    <span className="text-5xl font-black text-slate-900 tracking-tighter">₦{product.price.toFixed(2)}</span>
+                                    <span className="text-5xl font-black text-slate-900 tracking-tighter">
+                                        {formatPriceRange(product.price, product.maxPrice)}
+                                    </span>
                                     {product.flagged ? (
                                         <span className="text-xs font-bold text-rose-500 bg-rose-50 px-2 py-1 rounded-md border border-rose-200">FLAGGED</span>
                                     ) : product.confidenceLevel === 'High' ? (
@@ -306,12 +310,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                                     </Button>
                                                 ) : (
                                                     <form onSubmit={handleUpdatePrice} className="space-y-3 p-4 bg-white/60 rounded-2xl border border-primary/20 shadow-inner">
-                                                        <p className="text-xs font-black text-primary uppercase tracking-widest">Suggest New Price</p>
+                                                        <p className="text-xs font-black text-primary uppercase tracking-widest">Suggest New Price / Range</p>
                                                         <input
-                                                            type="number"
-                                                            min="0"
-                                                            step="0.01"
-                                                            placeholder={`Current: ₦${product.price.toFixed(2)}`}
+                                                            type="text"
+                                                            placeholder="e.g. 1000 or 1000-2000"
                                                             value={newPrice}
                                                             onChange={(e) => setNewPrice(e.target.value)}
                                                             className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-800 font-bold text-lg focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition"
@@ -389,7 +391,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                 {product.suggestions.map((suggestion, idx) => (
                                     <div key={idx} className="glass bg-white/40 p-4 rounded-2xl border-none shadow-premium flex justify-between items-center group hover:bg-white/60 transition-all">
                                         <div>
-                                            <p className="text-xl font-black text-slate-800 tracking-tighter">₦{suggestion.price.toFixed(2)}</p>
+                                            <p className="text-xl font-black text-slate-800 tracking-tighter">{formatPriceRange(suggestion.price)}</p>
                                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Proposed by {suggestion.userName}</p>
                                         </div>
                                         <div className="text-[10px] font-black text-primary/40 group-hover:text-primary transition-colors">

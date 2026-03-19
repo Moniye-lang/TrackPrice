@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Button, Card } from '@/components/ui-base';
+import { formatPriceRange } from '@/lib/price-utils';
 
 interface PriceUpdate {
     _id: string;
@@ -9,6 +10,7 @@ interface PriceUpdate {
         _id: string;
         name: string;
         price: number;
+        maxPrice?: number;
         imageUrl: string;
         category: string;
         flagged: boolean;
@@ -22,6 +24,7 @@ interface PriceUpdate {
         isBanned: boolean;
     };
     price: number;
+    maxPrice?: number;
     status: string;
     createdAt: string;
 }
@@ -134,7 +137,7 @@ export default function AdminVerificationQueue() {
                                                     <span className="bg-rose-100 text-rose-700 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest">Flagged</span>
                                                 )}
                                             </div>
-                                            <p className="text-sm text-slate-500 font-medium mt-1">Current verified price: <span className="font-black text-slate-700">₦{update.product?.price || 0}</span></p>
+                                            <p className="text-sm text-slate-500 font-medium mt-1">Current verified price: <span className="font-black text-slate-700">{formatPriceRange(update.product?.price || 0, update.product?.maxPrice)}</span></p>
                                         </div>
                                     </div>
 
@@ -142,7 +145,7 @@ export default function AdminVerificationQueue() {
                                     <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 flex-1 text-center relative overflow-hidden">
                                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-300 to-transparent"></div>
                                         <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Proposed Price</p>
-                                        <div className="text-3xl font-black text-primary">₦{update.price}</div>
+                                        <div className="text-3xl font-black text-primary">{formatPriceRange(update.price, update.maxPrice)}</div>
                                         {update.product && (
                                             <div className="mt-2 text-xs font-bold text-slate-500">
                                                 {(((update.price - update.product.price) / update.product.price) * 100).toFixed(1)}% change

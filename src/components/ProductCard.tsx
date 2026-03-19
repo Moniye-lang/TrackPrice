@@ -1,12 +1,14 @@
 import Link from 'next/link';
 import { formatRelativeTime } from '@/lib/utils';
 import { Card } from '@/components/ui-base';
+import { formatPriceRange } from '@/lib/price-utils';
 
 interface ProductCardProps {
     product: {
         _id: string;
         name: string;
         price: number;
+        maxPrice?: number;
         category: string;
         imageUrl: string;
         lastUpdated: string;
@@ -40,7 +42,7 @@ export function ProductCard({ product }: ProductCardProps) {
                         </h3>
                         <div className="flex items-baseline gap-1 mt-2">
                             <span className="text-3xl font-black text-slate-900 tracking-tight">
-                                ₦{product.price.toFixed(2)}
+                                {formatPriceRange(product.price, product.maxPrice)}
                             </span>
                             {product.flagged ? (
                                 <span className="text-xs font-bold text-rose-500 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200">

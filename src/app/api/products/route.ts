@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import Product from '@/models/Product';
 import Message from '@/models/Message';
+import { parsePriceRange } from '@/lib/price-utils';
 import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
 import { escapeRegex } from '@/lib/utils';
@@ -112,7 +113,7 @@ export async function POST(req: Request) {
             }, { status: 400 });
         }
 
-        const body = result.data;
+        const body = { ...result.data, ...parsePriceRange(result.data.price) };
         const product = await Product.create(body);
         console.log('[Products POST] Created product:', product._id);
         return NextResponse.json(product, { status: 201 });
