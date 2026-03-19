@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui-base';
+import { formatPriceRange } from '@/lib/price-utils';
 
 export default function AdminDashboard() {
     const [stats, setStats] = useState<any>(null);
@@ -123,7 +124,7 @@ export default function AdminDashboard() {
                             <div key={prod._id} className="p-4 rounded-xl border border-slate-100 bg-slate-50 flex justify-between items-center">
                                 <div>
                                     <p className="font-bold text-slate-800">{prod.name}</p>
-                                    <p className="text-sm font-medium text-slate-500">₦{prod.price}</p>
+                                    <p className="text-sm font-medium text-slate-500">{formatPriceRange(prod.price, prod.maxPrice)}</p>
                                 </div>
                                 <div className="flex gap-2">
                                     {prod.flagged && <span className="bg-rose-100 text-rose-600 px-2 py-1 rounded text-xs font-bold uppercase">Flagged</span>}

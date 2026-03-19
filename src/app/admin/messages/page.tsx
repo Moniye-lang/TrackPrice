@@ -2,10 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import { Button, Card } from '@/components/ui-base';
+import { formatPriceRange } from '@/lib/price-utils';
 
 interface Message {
     _id: string;
     content: string;
+    productId?: {
+        _id: string;
+        name: string;
+        price: number;
+        maxPrice?: number;
+    };
     createdAt: string;
 }
 
@@ -42,24 +49,34 @@ export default function ForumModeration() {
 
     return (
         <div className="space-y-6">
-            <h1 className="text-2xl font-bold">Forum Moderation</h1>
+            <h1 className="text-3xl font-black text-slate-800 tracking-tight">Forum Moderation</h1>
 
             {loading ? (
-                <div className="text-center py-10">Loading messages...</div>
+                <div className="text-center py-10 font-medium text-slate-500">Loading messages...</div>
             ) : (
-                <div className="space-y-4">
+                <div className="space-y-6">
                     {messages.length === 0 ? (
-                        <p className="text-gray-500">No messages found.</p>
+                        <Card className="py-12 text-center text-slate-400 font-medium border-dashed border-2">No messages found.</Card>
                     ) : (
                         messages.map((msg) => (
-                            <Card key={msg._id} className="flex justify-between items-start gap-4">
-                                <div className="flex-1">
-                                    <p className="text-gray-800">{msg.content}</p>
-                                    <span className="text-xs text-gray-500 mt-2 block">
-                                        {new Date(msg.createdAt).toLocaleString()}
-                                    </span>
+                            <Card key={msg._id} className="flex justify-between items-start gap-6 p-6 hover:shadow-premium transition-all">
+                                <div className="flex-1 space-y-3">
+                                    {msg.productId && (
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <span className="text-[10px] font-black bg-primary/10 text-primary px-2 py-0.5 rounded uppercase tracking-widest">
+                                                {msg.productId.name}
+                                            </span>
+                                            <span className="text-[10px] font-bold text-slate-400">
+                                                Current Price: {formatPriceRange(msg.productId.price, msg.productId.maxPrice)}
+                                            </span>
+                                        </div>
+                                    )}
+                                    <p className="text-slate-700 text-lg font-medium leading-relaxed">{msg.content}</p>
+                                    <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                        <span>{new Date(msg.createdAt).toLocaleString()}</span>
+                                    </div>
                                 </div>
-                                <Button variant="danger" onClick={() => handleDelete(msg._id)} className="px-3 py-1 text-sm">
+                                <Button variant="danger" onClick={() => handleDelete(msg._id)} className="px-4 py-2 text-xs font-bold tracking-wide">
                                     Delete
                                 </Button>
                             </Card>
