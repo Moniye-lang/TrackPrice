@@ -9,6 +9,7 @@ interface Product {
     price: number;
     category: string;
     imageUrl: string;
+    storeLocation?: string;
     lastUpdated: string;
 }
 
@@ -25,6 +26,7 @@ export default function AdminProducts() {
     const [price, setPrice] = useState('');
     const [category, setCategory] = useState('');
     const [imageUrl, setImageUrl] = useState('');
+    const [storeLocation, setStoreLocation] = useState('');
 
     const fetchProducts = async () => {
         setLoading(true);
@@ -49,7 +51,7 @@ export default function AdminProducts() {
         e.preventDefault();
         setError(null);
         setSubmitting(true);
-        const payload = { name, price: Number(price), category, imageUrl };
+        const payload = { name, price: Number(price), category, imageUrl, storeLocation };
 
         try {
             const url = editingProduct ? `/api/products/${editingProduct._id}` : '/api/products';
@@ -85,6 +87,7 @@ export default function AdminProducts() {
         setPrice(product.price.toString());
         setCategory(product.category);
         setImageUrl(product.imageUrl);
+        setStoreLocation(product.storeLocation || '');
         setShowForm(true);
     };
 
@@ -103,6 +106,7 @@ export default function AdminProducts() {
         setPrice('');
         setCategory('');
         setImageUrl('');
+        setStoreLocation('');
     };
 
     return (
@@ -141,6 +145,10 @@ export default function AdminProducts() {
                             <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">Image URL</label>
                             <Input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} required placeholder="https://..." />
                         </div>
+                        <div className="md:col-span-2">
+                            <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">Store / Market / Location</label>
+                            <Input value={storeLocation} onChange={(e) => setStoreLocation(e.target.value)} placeholder="e.g. Mile 12 Market, Shoprite" />
+                        </div>
                         <div className="md:col-span-2 flex justify-end gap-3 mt-4">
                             <Button type="button" variant="secondary" onClick={() => { setShowForm(false); setError(null); }} disabled={submitting}>
                                 Cancel
@@ -163,6 +171,7 @@ export default function AdminProducts() {
                                 <tr>
                                     <th className="py-4 px-6 text-xs font-black text-slate-400 uppercase tracking-widest">Name</th>
                                     <th className="py-4 px-6 text-xs font-black text-slate-400 uppercase tracking-widest">Category</th>
+                                    <th className="py-4 px-6 text-xs font-black text-slate-400 uppercase tracking-widest">Store</th>
                                     <th className="py-4 px-6 text-xs font-black text-slate-400 uppercase tracking-widest">Price</th>
                                     <th className="py-4 px-6 text-xs font-black text-slate-400 uppercase tracking-widest">Last Updated</th>
                                     <th className="py-4 px-6 text-xs font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
@@ -178,6 +187,7 @@ export default function AdminProducts() {
                                             <span className="font-bold text-slate-800">{product.name}</span>
                                         </td>
                                         <td className="py-4 px-6 text-slate-600 font-medium">{product.category}</td>
+                                        <td className="py-4 px-6 text-slate-500 text-sm italic">{product.storeLocation || 'N/A'}</td>
                                         <td className="py-4 px-6 font-black text-slate-900">₦{product.price.toFixed(2)}</td>
                                         <td className="py-4 px-6 text-xs font-bold text-slate-400 uppercase tracking-widest">
                                             {new Date(product.lastUpdated).toLocaleDateString()}

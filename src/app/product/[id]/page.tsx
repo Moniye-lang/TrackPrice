@@ -62,6 +62,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     // Update price (propose a new price)
     const [showUpdateForm, setShowUpdateForm] = useState(false);
     const [newPrice, setNewPrice] = useState('');
+    const [suggestionLocation, setSuggestionLocation] = useState('');
     const [updatingPrice, setUpdatingPrice] = useState(false);
     const [updateMsg, setUpdateMsg] = useState('');
 
@@ -156,13 +157,17 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             const res = await fetch(`/api/products/${product._id}/update`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ price: Number(newPrice) }),
+                body: JSON.stringify({
+                    price: Number(newPrice),
+                    storeLocation: suggestionLocation
+                }),
             });
             const data = await res.json();
 
             if (res.ok) {
                 setUpdateMsg('✓ Price update submitted! It will be verified by the community.');
                 setNewPrice('');
+                setSuggestionLocation('');
                 setShowUpdateForm(false);
                 fetchData();
             } else {
@@ -310,6 +315,15 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                                             value={newPrice}
                                                             onChange={(e) => setNewPrice(e.target.value)}
                                                             className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-800 font-bold text-lg focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition"
+                                                            required
+                                                        />
+                                                        <p className="text-xs font-black text-primary uppercase tracking-widest mt-2">Store / Market Location</p>
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Where did you find this price?"
+                                                            value={suggestionLocation}
+                                                            onChange={(e) => setSuggestionLocation(e.target.value)}
+                                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-800 font-medium text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition"
                                                             required
                                                         />
                                                         {updateMsg && (

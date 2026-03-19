@@ -66,7 +66,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         }
 
         const price = body?.price;
-        console.log('[Price Update] Starting:', { productId, price });
+        const storeLocation = body?.storeLocation;
+        console.log('[Price Update] Starting:', { productId, price, storeLocation });
 
         if (price === undefined || price === null || typeof price !== 'number' || price <= 0) {
             return NextResponse.json({ error: 'Valid price is required' }, { status: 400 });
@@ -131,6 +132,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             productId: product._id,
             userId: user._id,
             price: price,
+            storeLocation: storeLocation,
             status: 'pending'
         });
 

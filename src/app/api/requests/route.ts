@@ -20,7 +20,7 @@ async function getUserFromToken() {
 
 export async function POST(req: Request) {
     try {
-        const { productId } = await req.json();
+        const { productId, storeLocation } = await req.json();
 
         if (!productId) {
             return NextResponse.json({ error: 'Product ID is required' }, { status: 400 });
@@ -49,6 +49,7 @@ export async function POST(req: Request) {
         const newRequest = new PriceRequest({
             productId: product._id,
             requesterId: decodedToken.id,
+            storeLocation,
             status: 'open'
         });
         await newRequest.save();

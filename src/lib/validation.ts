@@ -5,6 +5,7 @@ export const ProductSchema = z.object({
     price: z.number().positive("Price must be positive"),
     category: z.string().min(1, "Category is required"),
     imageUrl: z.string().min(1, "Image URL is required"),
+    storeLocation: z.string().optional(),
 });
 
 export const MessageSchema = z.object({
