@@ -52,7 +52,9 @@ export async function GET(req: Request) {
         else if (sort === 'updated') sortOption.lastUpdated = -1;
         else sortOption.createdAt = -1;
 
-        const products = await Product.find(query).sort(sortOption);
+        const products = await Product.find(query)
+            .populate('storeId')
+            .sort(sortOption);
         console.log(`[Products GET] Found ${products.length} products`);
 
         // Aggregate message counts for all fetched products in a single query

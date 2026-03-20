@@ -2,10 +2,14 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IProduct extends Document {
     name: string;
+    brand?: string;
+    variant?: string;
+    size?: string;
     price: number;
     maxPrice?: number;
     category: string;
-    storeLocation?: string;
+    storeId?: mongoose.Types.ObjectId;
+    storeLocation?: string; // Kept for transition/migration
     imageUrl: string;
     reportCount: number;
     confidenceLevel: 'Low' | 'Medium' | 'High';
@@ -21,9 +25,13 @@ export interface IProduct extends Document {
 const ProductSchema: Schema = new Schema(
     {
         name: { type: String, required: true },
+        brand: { type: String, trim: true },
+        variant: { type: String, trim: true },
+        size: { type: String, trim: true },
         price: { type: Number, required: true },
         maxPrice: { type: Number },
         category: { type: String, required: true },
+        storeId: { type: Schema.Types.ObjectId, ref: 'Store' },
         storeLocation: { type: String },
         imageUrl: { type: String, required: true },
         reportCount: { type: Number, default: 0 },

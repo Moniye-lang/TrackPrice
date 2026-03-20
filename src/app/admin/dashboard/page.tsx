@@ -112,6 +112,34 @@ export default function AdminDashboard() {
                 </Card>
             </div>
 
+            {/* Price Conflict Alerts */}
+            {stats.priceConflicts && stats.priceConflicts.length > 0 && (
+                <Card className="p-6 border-amber-200 relative overflow-hidden bg-amber-50/30">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
+                    <div className="flex items-center gap-2 mb-6">
+                        <span className="text-xl">⚠️</span>
+                        <h2 className="text-lg font-black text-slate-800">Critical Price Conflicts ({'>'}50% Change)</h2>
+                    </div>
+                    <div className="space-y-4">
+                        {stats.priceConflicts.map((conflict: any) => (
+                            <div key={conflict._id} className="p-4 rounded-xl border border-amber-200 bg-white shadow-sm flex flex-wrap justify-between items-center gap-4">
+                                <div>
+                                    <p className="font-bold text-slate-800">{conflict.productName}</p>
+                                    <div className="flex items-center gap-2 mt-1">
+                                        <span className="text-xs font-bold text-slate-400">Current: {formatPriceRange(conflict.currentPrice)}</span>
+                                        <span className="text-lg font-black text-rose-500">→ {formatPriceRange(conflict.proposedPrice)}</span>
+                                    </div>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Impact Alert</p>
+                                    <span className="bg-rose-500 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase">High Volatility</span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </Card>
+            )}
+
             {/* Dispute Products */}
             <Card className="p-6 border-rose-100 relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>
@@ -135,7 +163,6 @@ export default function AdminDashboard() {
                     </div>
                 )}
             </Card>
-
         </div>
     );
 }

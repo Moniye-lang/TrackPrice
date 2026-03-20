@@ -11,14 +11,24 @@ import { formatPriceRange } from '@/lib/price-utils';
 interface Product {
     _id: string;
     name: string;
+    brand?: string;
+    variant?: string;
+    size?: string;
     price: number;
     maxPrice?: number;
     category: string;
+    storeId?: {
+        _id: string;
+        name: string;
+        area: string;
+        city: string;
+    };
+    storeLocation?: string;
     imageUrl: string;
+    confidenceLevel: string;
+    reportCount: number;
     lastUpdated: string;
     lastUpdatedBy?: string;
-    confidenceLevel?: 'Low' | 'Medium' | 'High';
-    reportCount?: number;
     flagged?: boolean;
     suggestions?: Array<{
         price: number;
@@ -74,6 +84,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     const [updatingPrice, setUpdatingPrice] = useState(false);
     const [updateMsg, setUpdateMsg] = useState('');
 
+    // Feedback
+    const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
+
     useEffect(() => {
         const fetchAuth = async () => {
             try {
@@ -127,11 +140,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         fetchData();
     }, [id]);
 
-    // Verify = confirm the existing price is correct
     const handleVerifyPrice = async () => {
         if (!product) return;
         setVerifying(true);
         setVerifyMsg('');
+        setFeedbackMessage(null);
 
         try {
             const res = await fetch(`/api/products/${product._id}/update`, {
@@ -143,6 +156,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
             if (res.ok) {
                 setVerifyMsg('✓ Thank you! Price confirmed.');
+                setFeedbackMessage(`Awesome! Your confirmation helps maintain accuracy for ${Math.floor(Math.random() * 50) + 10} shoppers! 🚀`);
+                setTimeout(() => setFeedbackMessage(null), 6000);
                 fetchData();
             } else {
                 setVerifyMsg(data.error || 'Failed to verify price.');
@@ -154,12 +169,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         }
     };
 
-    // Update = propose a different price
     const handleUpdatePrice = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!product || !newPrice) return;
         setUpdatingPrice(true);
         setUpdateMsg('');
+        setFeedbackMessage(null);
 
         try {
             const res = await fetch(`/api/products/${product._id}/update`, {
@@ -173,7 +188,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             const data = await res.json();
 
             if (res.ok) {
-                setUpdateMsg('✓ Price update submitted! It will be verified by the community.');
+                setUpdateMsg('✓ Price update submitted!');
+                setFeedbackMessage(`Legendary! Your update will help countless people find the best prices. ✨`);
+                setTimeout(() => setFeedbackMessage(null), 6000);
                 setNewPrice('');
                 setSuggestionLocation('');
                 setShowUpdateForm(false);
@@ -263,7 +280,15 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                         </div>
                         <div className="p-6 space-y-5">
                             <div>
-                                <h1 className="text-3xl font-black text-slate-800 tracking-tight leading-tight mb-3">{product.name}</h1>
+                                <p className="text-xs font-black text-primary uppercase tracking-[0.2em] mb-1">
+                                    {product.category} {product.brand && `• ${product.brand}`}
+                                </p>
+                                <h1 className="text-3xl font-black text-slate-800 tracking-tight leading-tight mb-2">{product.name}</h1>
+                                {(product.variant || product.size) && (
+                                    <p className="text-xs font-bold text-slate-400 mb-4 uppercase tracking-widest">
+                                        {product.variant} {product.size && `| ${product.size}`}
+                                    </p>
+                                )}
                                 <div className="flex flex-wrap items-baseline gap-3 mb-3">
                                     <span className="text-5xl font-black text-slate-900 tracking-tighter">
                                         {formatPriceRange(product.price, product.maxPrice)}
@@ -276,6 +301,14 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                         <span className="text-xs font-bold text-amber-500 bg-amber-50 px-2 py-1 rounded-md border border-amber-200">ESTIMATE</span>
                                     )}
                                 </div>
+
+                                {(product.storeId || product.storeLocation) && (
+                                    <p className="text-sm font-bold text-[#000000] flex items-center gap-2 mb-5">
+                                        <span className="text-lg">📍</span>
+                                        {product.storeId ? `${product.storeId.name} (${product.storeId.area}, ${product.storeId.city})` : product.storeLocation}
+                                    </p>
+                                )}
+
                                 <div className="flex items-center gap-4 text-sm font-medium text-slate-500 mb-5">
                                     <div className="flex items-center gap-1.5">
                                         <span className={`w-2.5 h-2.5 rounded-full ${product.confidenceLevel === 'High' ? 'bg-emerald-500' :
@@ -372,9 +405,15 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                         )}
                                     </div>
                                 )}
+
+                                {feedbackMessage && (
+                                    <div className="animate-bounce-subtle bg-emerald-500 text-white px-4 py-3 rounded-xl font-bold text-xs shadow-premium flex items-center gap-2 border border-emerald-400 mt-4">
+                                        <span>✨</span> {feedbackMessage}
+                                    </div>
+                                )}
                             </div>
 
-                            <div className="pt-4 border-t border-slate-200/50 flex flex-col gap-1 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            <div className="pt-4 border-t border-slate-200/50 flex flex-col gap-1 text-[10px] font-black text-slate-400 uppercase tracking-widest p-6">
                                 <div className="flex items-center justify-between">
                                     <span>Updated {formatRelativeTime(product.lastUpdated)}</span>
                                     <span className="flex items-center gap-1 text-primary">

@@ -80,7 +80,28 @@ export async function GET() {
             if (level._id) formattedConfidenceDist[level._id as 'High' | 'Medium' | 'Low'] = level.count;
         });
 
-        // 5. Overall System Stats
+        // 5. Price Conflicts (>50% difference from current price)
+        const pendingUpdatesWithProducts = await PriceUpdate.find({ status: 'pending' })
+            .populate('productId', 'name price')
+            .sort({ createdAt: -1 })
+            .limit(20);
+
+        const priceConflicts = pendingUpdatesWithProducts.filter((update: any) => {
+            if (!update.productId) return false;
+            const currentPrice = update.productId.price;
+            const newPrice = update.price;
+            const diff = Math.abs(newPrice - currentPrice);
+            return diff / currentPrice > 0.5;
+        }).map((update: any) => ({
+            _id: update._id,
+            productName: update.productId.name,
+            currentPrice: update.productId.price,
+            proposedPrice: update.price,
+            userId: update.userId,
+            createdAt: update.createdAt
+        }));
+
+        // 6. Overall System Stats
         const totalUsers = await User.countDocuments();
         const totalProducts = await Product.countDocuments();
         const totalUpdates = await PriceUpdate.countDocuments();
@@ -89,6 +110,7 @@ export async function GET() {
         return NextResponse.json({
             topProducts,
             disputeProducts,
+            priceConflicts,
             topContributors,
             confidenceDistribution: formattedConfidenceDist,
             stats: {

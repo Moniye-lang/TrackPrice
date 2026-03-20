@@ -7,10 +7,19 @@ interface ProductCardProps {
     product: {
         _id: string;
         name: string;
+        brand?: string;
+        variant?: string;
+        size?: string;
         price: number;
         maxPrice?: number;
         category: string;
         imageUrl: string;
+        storeId?: {
+            _id: string;
+            name: string;
+            area: string;
+            city: string;
+        };
         storeLocation?: string;
         lastUpdated: string;
         confidenceLevel?: 'Low' | 'Medium' | 'High';
@@ -52,6 +61,7 @@ export function ProductCard({ product }: ProductCardProps) {
                     <div className="mb-auto">
                         <div className="flex justify-between items-start gap-2 mb-2">
                             <h3 className="text-xl font-black text-slate-800 line-clamp-1 group-hover:text-primary transition-colors duration-300 antialiased">
+                                {product.brand && <span className="text-primary/70">{product.brand} </span>}
                                 {product.name}
                             </h3>
                             <div className="flex-shrink-0">
@@ -71,9 +81,16 @@ export function ProductCard({ product }: ProductCardProps) {
                             </div>
                         </div>
 
-                        {product.storeLocation && (
+                        {(product.variant || product.size) && (
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">
+                                {product.variant} {product.size && `| ${product.size}`}
+                            </p>
+                        )}
+
+                        {(product.storeId || product.storeLocation) && (
                             <p className="text-[14px] font-bold text-[#000000] flex items-center gap-1 mb-3">
-                                <span className="text-primary/60 text-xs">📍</span> {product.storeLocation}
+                                <span className="text-primary/60 text-xs">📍</span>
+                                {product.storeId ? `${product.storeId.name} (${product.storeId.area}, ${product.storeId.city})` : product.storeLocation}
                             </p>
                         )}
 

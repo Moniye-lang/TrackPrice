@@ -135,7 +135,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             userId: user._id,
             price: parsedPrice.price,
             maxPrice: parsedPrice.maxPrice,
-            storeLocation: storeLocation,
+            storeId: body.storeId || undefined,
+            storeLocation: storeLocation, // Fallback
             status: 'pending'
         });
 
@@ -163,7 +164,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         console.log('[Price Update] Calculated Weight:', { totalWeight, threshold: rule.verificationThreshold });
 
         product.reportCount = validReportCount;
-        product.confidenceLevel = (validReportCount >= 5 ? 'High' : validReportCount >= 2 ? 'Medium' : 'Low') as any;
+        product.confidenceLevel = (totalWeight >= 15 ? 'High' : totalWeight >= 5 ? 'Medium' : 'Low') as any;
 
         if (totalWeight >= rule.verificationThreshold) {
             console.log('[Price Update] Threshold reached, updating product...');
