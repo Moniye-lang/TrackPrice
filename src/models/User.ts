@@ -9,6 +9,9 @@ export interface IUser extends Document {
     reputationLevel: 'Beginner' | 'Trusted Contributor' | 'Elite Contributor';
     rewardedUpdatesToday: number;
     lastRewardedDate: Date | null;
+    city?: string;
+    currentStreak: number;
+    lastStreakUpdate: Date | null;
     isBanned: boolean;
     createdAt: Date;
     updatedAt: Date;
@@ -28,6 +31,9 @@ const UserSchema: Schema = new Schema(
         },
         rewardedUpdatesToday: { type: Number, default: 0 },
         lastRewardedDate: { type: Date, default: null },
+        city: { type: String, trim: true },
+        currentStreak: { type: Number, default: 0 },
+        lastStreakUpdate: { type: Date, default: null },
         isBanned: { type: Boolean, default: false },
     },
     {

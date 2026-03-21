@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { ProductCard } from '@/components/ProductCard';
 import { Navbar } from '@/components/Navbar';
 import { Input, Button } from '@/components/ui-base';
@@ -11,6 +12,35 @@ export default function Home() {
   const [category, setCategory] = useState('All');
   const [sort, setSort] = useState('newest');
   const [loading, setLoading] = useState(true);
+  const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
+  const [staleProducts, setStaleProducts] = useState<any[]>([]);
+  const [recentUpdates, setRecentUpdates] = useState<any[]>([]);
+  const [leaderboard, setLeaderboard] = useState<any[]>([]);
+
+  const fetchHomepageData = async () => {
+    try {
+      const [featRes, staleRes, recentRes, leaderRes] = await Promise.all([
+        fetch('/api/products?featured=true'),
+        fetch('/api/products?stale=true'),
+        fetch('/api/products?sort=updated'),
+        fetch('/api/admin/analytics'),
+      ]);
+
+      if (featRes.ok) setFeaturedProducts((await featRes.json()).slice(0, 4));
+      if (staleRes.ok) setStaleProducts((await staleRes.json()).slice(0, 5));
+      if (recentRes.ok) setRecentUpdates((await recentRes.json()).slice(0, 5));
+      if (leaderRes.ok) {
+        const data = await leaderRes.json();
+        setLeaderboard(data.topContributors || []);
+      }
+    } catch (error) {
+      console.error('Failed to fetch homepage data');
+    }
+  };
+
+  useEffect(() => {
+    fetchHomepageData();
+  }, []);
 
   const categories = ['All', 'Electronics', 'Clothing', 'Home', 'Groceries', 'Books'];
 
@@ -88,65 +118,164 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Featured Section */}
+      {featuredProducts.length > 0 && !search && category === 'All' && (
+        <section className="max-w-7xl mx-auto px-4 py-12">
+          <div className="flex justify-between items-end mb-8">
+            <div>
+              <h2 className="text-2xl font-black text-slate-800 tracking-tight">Featured Prices</h2>
+              <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">Verified & Popular</p>
+            </div>
+            <div className="h-px bg-slate-100 flex-1 mx-8 mb-2 hidden md:block"></div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {featuredProducts.map(p => <ProductCard key={p._id} product={p} />)}
+          </div>
+        </section>
+      )}
+
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-16">
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-12 gap-6 lg:gap-8">
-          <div className="space-y-4">
-            <h2 className="text-3xl font-black text-slate-900 tracking-tight">Trending Deals</h2>
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setCategory(cat)}
-                  className={`px-6 py-2.5 rounded-xl text-sm font-display font-bold transition-all whitespace-nowrap ${category === cat
-                    ? 'bg-primary text-white shadow-glow'
-                    : 'bg-white text-slate-500 hover:bg-slate-50 border border-slate-100 shadow-sm'
-                    }`}
-                >
-                  {cat}
-                </button>
+      <main className="max-w-7xl mx-auto px-4 py-16 grid grid-cols-1 lg:grid-cols-4 gap-12">
+        <div className="lg:col-span-3">
+          <div className="flex flex-col lg:flex-row justify-between items-stretch lg:items-end mb-12 gap-6 lg:gap-8 overflow-hidden">
+            <div className="space-y-4 flex-1 min-w-0">
+              <h2 className="text-3xl font-black text-slate-900 tracking-tight">Trending Deals</h2>
+              <div className="flex items-center gap-2 overflow-x-auto pb-4 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
+                {categories.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setCategory(cat)}
+                    className={`px-6 py-2.5 rounded-xl text-sm font-display font-bold transition-all whitespace-nowrap ${category === cat
+                      ? 'bg-primary text-white shadow-glow'
+                      : 'bg-white text-slate-500 hover:bg-slate-50 border border-slate-100 shadow-sm'
+                      }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4 bg-white/50 p-1.5 rounded-xl border border-slate-100 shadow-sm">
+              <span className="text-xs font-bold text-slate-400 pl-3">SORT BY</span>
+              <select
+                value={sort}
+                onChange={(e) => setSort(e.target.value)}
+                className="bg-transparent border-none py-1.5 px-3 text-sm font-bold text-slate-700 focus:ring-0 cursor-pointer"
+              >
+                <option value="newest">Newest First</option>
+                <option value="price_asc">Price: Low to High</option>
+                <option value="price_desc">Price: High to Low</option>
+                <option value="updated">Recently Updated</option>
+              </select>
+            </div>
+          </div>
+
+          {loading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="h-[400px] glass rounded-3xl relative overflow-hidden">
+                  <div className="absolute inset-0 animate-shimmer" />
+                </div>
               ))}
             </div>
-          </div>
-
-          <div className="flex items-center gap-4 bg-white/50 p-1.5 rounded-xl border border-slate-100 shadow-sm">
-            <span className="text-xs font-bold text-slate-400 pl-3">SORT BY</span>
-            <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value)}
-              className="bg-transparent border-none py-1.5 px-3 text-sm font-bold text-slate-700 focus:ring-0 cursor-pointer"
-            >
-              <option value="newest">Newest First</option>
-              <option value="price_asc">Price: Low to High</option>
-              <option value="price_desc">Price: High to Low</option>
-              <option value="updated">Recently Updated</option>
-            </select>
-          </div>
+          ) : products.length === 0 ? (
+            <div className="text-center py-20 bg-slate-50/50 rounded-3xl border-2 border-dashed border-slate-200">
+              <div className="bg-white w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+                <span className="text-4xl">🔍</span>
+              </div>
+              <h3 className="text-2xl font-black text-slate-700 mb-2">No products found</h3>
+              <p className="text-slate-400 font-medium mb-6">Can't find what you're looking for? Help the community by requesting it!</p>
+              <Link href="/request-product">
+                <Button className="px-8 py-3 font-black text-sm tracking-widest uppercase shadow-glow">
+                  Request Product
+                </Button>
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {products.map((product) => (
+                <ProductCard key={product._id} product={product} />
+              ))}
+            </div>
+          )}
         </div>
 
-        {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-              <div key={i} className="h-[400px] glass rounded-3xl relative overflow-hidden">
-                <div className="absolute inset-0 animate-shimmer" />
+        {/* Sidebar */}
+        <div className="space-y-12">
+          {/* Stale Prices / Needs Update */}
+          {staleProducts.length > 0 && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-black text-slate-800 uppercase tracking-[0.2em]">Needs Update</h3>
+                <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
               </div>
-            ))}
-          </div>
-        ) : products.length === 0 ? (
-          <div className="text-center py-32 glass rounded-3xl border-2 border-dashed border-slate-200">
-            <div className="bg-slate-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-4xl">🔍</span>
+              <div className="space-y-4">
+                {staleProducts.map((p: any) => (
+                  <Link key={p._id} href={`/product/${p._id}`} className="flex items-center gap-4 group">
+                    <div className="w-12 h-12 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0">
+                      <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-bold text-slate-800 text-sm truncate group-hover:text-primary transition-colors">{p.name}</h4>
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Stale for 14+ days</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
             </div>
-            <h3 className="text-2xl font-black text-slate-700 mb-2">No deals found</h3>
-            <p className="text-slate-400 font-medium">Try adjusting your filters or search terms.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {products.map((product) => (
-              <ProductCard key={product._id} product={product} />
-            ))}
-          </div>
-        )}
+          )}
+
+          {/* Recently Updated */}
+          {recentUpdates.length > 0 && (
+            <div className="space-y-6">
+              <h3 className="text-sm font-black text-slate-800 uppercase tracking-[0.2em]">Live Feed</h3>
+              <div className="space-y-4">
+                {recentUpdates.map((p: any) => (
+                  <Link key={p._id} href={`/product/${p._id}`} className="flex items-center gap-4 group">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-bold text-slate-700 text-sm truncate">{p.name}</h4>
+                      <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest group-hover:translate-x-1 transition-transform">
+                        Just Updated
+                      </p>
+                    </div>
+                    <span className="font-black text-slate-900 text-xs">₦{p.price.toLocaleString()}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Leaderboard Snippet */}
+          {leaderboard.length > 0 && (
+            <div className="p-6 bg-slate-900 rounded-3xl shadow-premium border border-slate-800">
+              <h3 className="text-xs font-black text-primary uppercase tracking-[0.3em] mb-6">Top Analysts</h3>
+              <div className="space-y-6">
+                {leaderboard.slice(0, 3).map((user: any, i: number) => (
+                  <div key={user._id} className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-black ${i === 0 ? 'bg-amber-400 text-amber-900' :
+                        i === 1 ? 'bg-slate-300 text-slate-800' :
+                          'bg-orange-400 text-orange-900'
+                        }`}>
+                        {i + 1}
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-white">{user.name}</p>
+                        <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{user.reputationLevel}</p>
+                      </div>
+                    </div>
+                    <p className="text-[10px] font-black text-primary">{user.points} pts</p>
+                  </div>
+                ))}
+              </div>
+              <Link href="/leaderboard" className="block text-center mt-8 pt-6 border-t border-slate-800 text-[10px] font-black text-slate-400 hover:text-white transition-colors uppercase tracking-widest">
+                View Full Rankings
+              </Link>
+            </div>
+          )}
+        </div>
       </main>
     </div>
   );

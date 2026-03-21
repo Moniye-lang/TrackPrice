@@ -123,11 +123,18 @@ export default function AdminLayout({
                         Forum Messages
                     </Link>
                     <Link
+                        href="/admin/product-requests"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={`block px-4 py-2 rounded-lg font-medium transition-colors ${pathname === '/admin/product-requests' ? 'bg-primary/10 text-primary' : 'hover:bg-gray-100 text-gray-700'}`}
+                    >
+                        Product Requests
+                    </Link>
+                    <Link
                         href="/admin/settings"
                         onClick={() => setIsMobileMenuOpen(false)}
                         className={`block px-4 py-2 rounded-lg font-medium transition-colors ${pathname === '/admin/settings' ? 'bg-primary/10 text-primary' : 'hover:bg-gray-100 text-gray-700'}`}
                     >
-                        Gamification Setup
+                        Gamification Settings
                     </Link>
                 </nav>
                 <div className="p-4 border-t">

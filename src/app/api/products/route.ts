@@ -35,8 +35,10 @@ export async function GET(req: Request) {
         const search = searchParams.get('search');
         const category = searchParams.get('category');
         const sort = searchParams.get('sort') || 'newest';
+        const featured = searchParams.get('featured') === 'true';
+        const stale = searchParams.get('stale') === 'true';
 
-        console.log(`[Products GET] search=${search}, category=${category}, sort=${sort}`);
+        console.log(`[Products GET] search=${search}, category=${category}, sort=${sort}, featured=${featured}, stale=${stale}`);
 
         let query: any = {};
         if (search) {
@@ -44,6 +46,14 @@ export async function GET(req: Request) {
         }
         if (category && category !== 'All') {
             query.category = category;
+        }
+        if (featured) {
+            query.isFeatured = true;
+        }
+        if (stale) {
+            // Stale = not updated in 14 days
+            const twoWeeksAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
+            query.lastUpdated = { $lt: twoWeeksAgo };
         }
 
         let sortOption: any = {};

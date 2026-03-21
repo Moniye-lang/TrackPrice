@@ -8,6 +8,7 @@ export interface IProduct extends Document {
     price: number;
     maxPrice?: number;
     category: string;
+    isFeatured?: boolean;
     storeId?: mongoose.Types.ObjectId;
     storeLocation?: string; // Kept for transition/migration
     imageUrl: string;
@@ -37,6 +38,7 @@ const ProductSchema: Schema = new Schema(
         reportCount: { type: Number, default: 0 },
         confidenceLevel: { type: String, enum: ['Low', 'Medium', 'High'], default: 'Low' },
         flagged: { type: Boolean, default: false },
+        isFeatured: { type: Boolean, default: false },
         updateRequested: { type: Boolean, default: false },
         priceHistory: [{
             price: { type: Number, required: true },

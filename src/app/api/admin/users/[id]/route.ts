@@ -41,12 +41,14 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         const oldState = {
             points: targetUser.points,
             reputationLevel: targetUser.reputationLevel,
-            isBanned: targetUser.isBanned
+            isBanned: targetUser.isBanned,
+            role: targetUser.role
         };
 
         if (body.points !== undefined) targetUser.points = body.points;
         if (body.reputationLevel !== undefined) targetUser.reputationLevel = body.reputationLevel;
         if (body.isBanned !== undefined) targetUser.isBanned = body.isBanned;
+        if (body.role !== undefined) targetUser.role = body.role;
 
         await targetUser.save();
 
@@ -61,7 +63,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
                 new: {
                     points: targetUser.points,
                     reputationLevel: targetUser.reputationLevel,
-                    isBanned: targetUser.isBanned
+                    isBanned: targetUser.isBanned,
+                    role: targetUser.role
                 }
             }
         });

@@ -99,6 +99,44 @@ export default function AdminProducts() {
         setShowForm(true);
     };
 
+    const handleDuplicate = async (id: string) => {
+        if (!confirm('Are you sure you want to duplicate this product?')) return;
+        try {
+            const res = await fetch(`/api/admin/products/${id}/duplicate`, { method: 'POST' });
+            if (res.ok) {
+                fetchProducts();
+            } else {
+                const data = await res.json();
+                alert(data.error || 'Failed to duplicate product');
+            }
+        } catch (error) {
+            console.error('Failed to duplicate product');
+        }
+    };
+
+    const [mergeSourceId, setMergeSourceId] = useState<string | null>(null);
+
+    const handleMerge = async (targetId: string) => {
+        if (!mergeSourceId || mergeSourceId === targetId) return;
+        if (!confirm('Merge all price updates and messages from the source product into this one? The source product will be DELETED.')) return;
+        try {
+            const res = await fetch('/api/admin/products/merge', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sourceId: mergeSourceId, targetId }),
+            });
+            if (res.ok) {
+                setMergeSourceId(null);
+                fetchProducts();
+            } else {
+                const data = await res.json();
+                alert(data.error || 'Merge failed');
+            }
+        } catch (error) {
+            console.error('Merge failed');
+        }
+    };
+
     const handleDelete = async (id: string) => {
         if (!confirm('Are you sure you want to delete this product?')) return;
         try {
@@ -182,6 +220,7 @@ export default function AdminProducts() {
                                     <th className="py-4 px-6 text-xs font-black text-slate-400 uppercase tracking-widest">Store</th>
                                     <th className="py-4 px-6 text-xs font-black text-slate-400 uppercase tracking-widest">Price</th>
                                     <th className="py-4 px-6 text-xs font-black text-slate-400 uppercase tracking-widest">Last Updated</th>
+                                    <th className="py-4 px-6 text-xs font-black text-slate-400 uppercase tracking-widest text-center">Featured</th>
                                     <th className="py-4 px-6 text-xs font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
                                 </tr>
                             </thead>
@@ -200,7 +239,37 @@ export default function AdminProducts() {
                                         <td className="py-4 px-6 text-xs font-bold text-slate-400 uppercase tracking-widest">
                                             {new Date(product.lastUpdated).toLocaleDateString()}
                                         </td>
-                                        <td className="py-4 px-6 text-right space-x-2">
+                                        <td className="py-4 px-6 text-center">
+                                            <button
+                                                onClick={async () => {
+                                                    const res = await fetch(`/api/products/${product._id}`, {
+                                                        method: 'PUT',
+                                                        headers: { 'Content-Type': 'application/json' },
+                                                        body: JSON.stringify({ isFeatured: !product.isFeatured }),
+                                                    });
+                                                    if (res.ok) fetchProducts();
+                                                }}
+                                                className={`w-10 h-6 rounded-full transition-colors relative ${product.isFeatured ? 'bg-primary' : 'bg-slate-200'}`}
+                                            >
+                                                <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${product.isFeatured ? 'left-5' : 'left-1'}`} />
+                                            </button>
+                                        </td>
+                                        <td className="py-4 px-6 text-right space-x-2 whitespace-nowrap">
+                                            {mergeSourceId ? (
+                                                mergeSourceId === product._id ? (
+                                                    <button onClick={() => setMergeSourceId(null)} className="text-xs font-black text-rose-500 uppercase mr-3">Cancel Merge</button>
+                                                ) : (
+                                                    <button onClick={() => handleMerge(product._id)} className="text-xs font-black text-emerald-500 uppercase mr-3">Merge Into This</button>
+                                                )
+                                            ) : (
+                                                <button onClick={() => setMergeSourceId(product._id)} className="text-xs font-black text-amber-500 hover:text-amber-700 uppercase tracking-widest mr-3">Merge</button>
+                                            )}
+                                            <button
+                                                onClick={() => handleDuplicate(product._id)}
+                                                className="text-xs font-black text-primary hover:text-primary/70 transition-colors uppercase tracking-widest mr-3"
+                                            >
+                                                Duplicate
+                                            </button>
                                             <Button variant="secondary" onClick={() => handleEdit(product)} className="px-3 py-1.5 text-xs font-bold">
                                                 Edit
                                             </Button>

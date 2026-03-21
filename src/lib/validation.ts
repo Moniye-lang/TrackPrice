@@ -10,6 +10,7 @@ export const ProductSchema = z.object({
     imageUrl: z.string().min(1, "Image URL is required"),
     storeId: z.string().optional(),
     storeLocation: z.string().optional(),
+    isFeatured: z.boolean().optional(),
 });
 
 export const MessageSchema = z.object({

@@ -192,7 +192,28 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
                     if (updaterId) {
                         const updater = await User.findById(updaterId);
                         if (updater && updater.rewardedUpdatesToday < rule.dailyUpdateLimit) {
-                            updater.points += rule.pointsPerUpdate;
+                            // Streak Logic
+                            const now = new Date();
+                            const todayStr = now.toDateString();
+                            const lastStreakStr = updater.lastStreakUpdate ? new Date(updater.lastStreakUpdate).toDateString() : null;
+
+                            if (lastStreakStr !== todayStr) {
+                                const yesterday = new Date();
+                                yesterday.setDate(yesterday.getDate() - 1);
+                                const yesterdayStr = yesterday.toDateString();
+
+                                if (lastStreakStr === yesterdayStr) {
+                                    updater.currentStreak += 1;
+                                } else {
+                                    updater.currentStreak = 1;
+                                }
+                                updater.lastStreakUpdate = now;
+                            }
+
+                            // Bonus for high streaks
+                            const streakBonus = Math.floor(updater.currentStreak / 5) * 5; // +5 points every 5 days
+
+                            updater.points += rule.pointsPerUpdate + streakBonus;
                             updater.rewardedUpdatesToday += 1;
 
                             if (updater.points >= 500 && updater.reputationLevel === 'Beginner') {

@@ -105,8 +105,8 @@ export default function AdminUsers() {
                                         </div>
                                         <div className="mt-2">
                                             <span className={`px-2 py-1 rounded text-[10px] font-black uppercase tracking-widest ${user.reputationLevel === 'Elite Contributor' ? 'bg-amber-100 text-amber-700' :
-                                                    user.reputationLevel === 'Trusted Contributor' ? 'bg-blue-100 text-blue-700' :
-                                                        'bg-slate-100 text-slate-600'
+                                                user.reputationLevel === 'Trusted Contributor' ? 'bg-blue-100 text-blue-700' :
+                                                    'bg-slate-100 text-slate-600'
                                                 }`}>
                                                 {user.reputationLevel}
                                             </span>
@@ -142,6 +142,36 @@ export default function AdminUsers() {
                                                 }}
                                             >
                                                 Adjust Points
+                                            </Button>
+
+                                            {/* Role Toggle */}
+                                            <Button
+                                                variant="secondary"
+                                                className="px-3 py-1 text-[10px] font-bold"
+                                                disabled={actionLoading === user._id}
+                                                onClick={() => {
+                                                    const newRole = user.role === 'admin' ? 'user' : 'admin';
+                                                    if (confirm(`Are you sure you want to change ${user.name}'s role to ${newRole}?`)) {
+                                                        handleUpdateUser(user._id, { role: newRole });
+                                                    }
+                                                }}
+                                            >
+                                                {user.role === 'admin' ? 'Remove Admin' : 'Make Admin'}
+                                            </Button>
+
+                                            {/* Reputation Adjust */}
+                                            <Button
+                                                variant="secondary"
+                                                className="px-3 py-1 text-[10px] font-bold"
+                                                disabled={actionLoading === user._id}
+                                                onClick={() => {
+                                                    const levels = ['Beginner', 'Trusted Contributor', 'Elite Contributor'];
+                                                    const currentIdx = levels.indexOf(user.reputationLevel);
+                                                    const nextIdx = (currentIdx + 1) % levels.length;
+                                                    handleUpdateUser(user._id, { reputationLevel: levels[nextIdx] });
+                                                }}
+                                            >
+                                                Tier ⇡
                                             </Button>
 
                                             {/* Ban / Unban */}

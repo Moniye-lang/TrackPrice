@@ -321,83 +321,82 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
                                 {/* Price Action Buttons — Auth aware */}
                                 {!authLoading && (
-                                    <div className="space-y-3">
+                                    <div className="space-y-4">
                                         {authUser ? (
-                                            <>
-                                                {/* Verify existing price */}
-                                                <Button
-                                                    onClick={handleVerifyPrice}
-                                                    disabled={verifying}
-                                                    variant="glass"
-                                                    className="w-full py-3 text-sm font-black tracking-wide"
-                                                >
-                                                    {verifying ? 'Confirming...' : '✓ Confirm This Price'}
-                                                </Button>
-                                                {verifyMsg && (
-                                                    <p className={`text-sm font-bold p-3 rounded-xl border ${verifyMsg.startsWith('✓') ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-rose-50 text-rose-600 border-rose-200'}`}>
-                                                        {verifyMsg}
-                                                    </p>
-                                                )}
-
-                                                {/* Suggest a different price */}
+                                            <div className="bg-slate-900 rounded-3xl p-6 shadow-2xl border border-slate-800">
+                                                <h3 className="text-primary text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-center">Is this price still correct?</h3>
                                                 {!showUpdateForm ? (
-                                                    <Button
-                                                        onClick={() => { setShowUpdateForm(true); setUpdateMsg(''); }}
-                                                        className="w-full py-3 text-sm font-black tracking-wide shadow-glow"
-                                                    >
-                                                        📝 Update Price
-                                                    </Button>
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <Button
+                                                            onClick={handleVerifyPrice}
+                                                            disabled={verifying}
+                                                            className="bg-emerald-500 hover:bg-emerald-600 text-white font-black py-4 rounded-2xl shadow-glow-sm"
+                                                        >
+                                                            {verifying ? '...' : 'YES'}
+                                                        </Button>
+                                                        <Button
+                                                            onClick={() => setShowUpdateForm(true)}
+                                                            className="bg-rose-500 hover:bg-rose-600 text-white font-black py-4 rounded-2xl"
+                                                        >
+                                                            NO
+                                                        </Button>
+                                                    </div>
                                                 ) : (
-                                                    <form onSubmit={handleUpdatePrice} className="space-y-3 p-4 bg-white/60 rounded-2xl border border-primary/20 shadow-inner">
-                                                        <p className="text-xs font-black text-primary uppercase tracking-widest">Suggest New Price / Range</p>
+                                                    <form onSubmit={handleUpdatePrice} className="space-y-4 animate-in fade-in zoom-in-95 duration-200">
+                                                        <div className="relative">
+                                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-primary font-black">₦</span>
+                                                            <input
+                                                                type="text"
+                                                                placeholder="Enter new price"
+                                                                value={newPrice}
+                                                                onChange={(e) => setNewPrice(e.target.value)}
+                                                                className="w-full pl-10 pr-4 py-4 rounded-2xl bg-slate-800 border-none text-white font-black text-xl placeholder:text-slate-600 focus:ring-2 focus:ring-primary outline-none transition"
+                                                                required
+                                                                autoFocus
+                                                            />
+                                                        </div>
                                                         <input
                                                             type="text"
-                                                            placeholder="e.g. 1000 or 1000-2000"
-                                                            value={newPrice}
-                                                            onChange={(e) => setNewPrice(e.target.value)}
-                                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-800 font-bold text-lg focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition"
-                                                            required
-                                                        />
-                                                        <p className="text-xs font-black text-primary uppercase tracking-widest mt-2">Store / Market Location</p>
-                                                        <input
-                                                            type="text"
-                                                            placeholder="Where did you find this price?"
+                                                            placeholder="Store Location (e.g. Aisle 4)"
                                                             value={suggestionLocation}
                                                             onChange={(e) => setSuggestionLocation(e.target.value)}
-                                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-800 font-medium text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition"
+                                                            className="w-full px-4 py-3 rounded-xl bg-slate-800 border-none text-slate-300 font-bold text-xs placeholder:text-slate-600 outline-none"
                                                             required
                                                         />
-                                                        {updateMsg && (
-                                                            <p className={`text-xs font-bold p-2 rounded-lg ${updateMsg.startsWith('✓') ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
-                                                                {updateMsg}
-                                                            </p>
-                                                        )}
                                                         <div className="flex gap-2">
-                                                            <Button type="button" variant="secondary" className="flex-1 text-xs py-2 font-bold" onClick={() => setShowUpdateForm(false)}>
-                                                                Cancel
+                                                            <Button type="button" variant="secondary" className="flex-1 text-[10px] py-3 font-black bg-slate-800 text-slate-400 hover:text-white border-none" onClick={() => setShowUpdateForm(false)}>
+                                                                CANCEL
                                                             </Button>
-                                                            <Button type="submit" className="flex-1 text-xs py-2 font-bold shadow-glow" disabled={updatingPrice}>
-                                                                {updatingPrice ? 'Submitting...' : 'Submit'}
+                                                            <Button type="submit" className="flex-1 text-[10px] py-3 font-black shadow-glow uppercase" disabled={updatingPrice}>
+                                                                {updatingPrice ? '...' : 'SUBMIT NOW'}
                                                             </Button>
                                                         </div>
                                                     </form>
                                                 )}
-                                            </>
+                                                {(verifyMsg || updateMsg) && (
+                                                    <p className={`text-[10px] font-black p-3 rounded-xl mt-4 text-center uppercase tracking-widest ${(verifyMsg.startsWith('✓') || updateMsg.startsWith('✓'))
+                                                            ? 'text-emerald-500 bg-emerald-500/10'
+                                                            : 'text-rose-500 bg-rose-500/10'
+                                                        }`}>
+                                                        {verifyMsg || updateMsg}
+                                                    </p>
+                                                )}
+                                            </div>
                                         ) : (
                                             /* Not logged in — show prompt */
-                                            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-center space-y-3">
-                                                <p className="text-sm font-bold text-slate-600">
-                                                    Sign in to confirm or update this price
+                                            <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 text-center space-y-4">
+                                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-loose">
+                                                    Join the community to confirm or update real-time prices
                                                 </p>
-                                                <div className="flex gap-2">
+                                                <div className="flex gap-3">
                                                     <Link href="/login" className="flex-1">
-                                                        <button className="w-full py-2.5 rounded-xl border border-slate-300 text-sm font-bold text-slate-700 hover:bg-white transition-colors">
+                                                        <button className="w-full py-3 rounded-2xl border border-slate-800 text-[10px] font-black text-slate-400 hover:bg-slate-800 hover:text-white transition-all uppercase tracking-widest">
                                                             Log In
                                                         </button>
                                                     </Link>
                                                     <Link href="/register" className="flex-1">
-                                                        <button className="w-full py-2.5 rounded-xl bg-primary text-white text-sm font-bold shadow-glow hover:bg-primary/90 transition-colors">
-                                                            Sign Up
+                                                        <button className="w-full py-3 rounded-2xl bg-primary text-white text-[10px] font-black shadow-glow hover:bg-primary/90 transition-all uppercase tracking-widest">
+                                                            Join
                                                         </button>
                                                     </Link>
                                                 </div>

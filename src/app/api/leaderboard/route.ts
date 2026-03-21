@@ -2,20 +2,37 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import User from '@/models/User';
 
-export async function GET() {
+export async function GET(req: Request) {
+    const { searchParams } = new URL(req.url);
+    const city = searchParams.get('city');
+
     try {
         await connectDB();
 
-        // Fetch top 100 users by points
-        const topUsers = await User.find({ points: { $gt: 0 } })
-            .select('-password -email -role -__v -rewardedUpdatesToday -lastRewardedDate')
+        const query: any = { role: 'user', isBanned: false };
+        if (city) {
+            query.city = { $regex: new RegExp(city, 'i') };
+        }
+
+        const topUsers = await User.find(query)
             .sort({ points: -1 })
-            .limit(100);
+            .limit(50)
+            .select('name points reputationLevel city createdAt')
+            .lean();
 
-        return NextResponse.json({ users: topUsers });
+        // Get top cities (for the filter dropdown)
+        const topCities = await User.aggregate([
+            { $match: { city: { $exists: true, $ne: '' } } },
+            { $group: { _id: '$city', count: { $sum: 1 } } },
+            { $sort: { count: -1 } },
+            { $limit: 10 }
+        ]);
 
+        return NextResponse.json({
+            users: topUsers,
+            cities: topCities.map(c => c._id)
+        });
     } catch (error: any) {
-        console.error('[Leaderboard] Error:', error);
-        return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
+        return NextResponse.json({ error: 'Fetch failed' }, { status: 500 });
     }
 }
