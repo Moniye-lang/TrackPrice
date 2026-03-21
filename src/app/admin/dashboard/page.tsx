@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card } from '@/components/ui-base';
+import { Card, Button } from '@/components/ui-base';
 import { formatPriceRange } from '@/lib/price-utils';
 
 export default function AdminDashboard() {
@@ -35,7 +35,22 @@ export default function AdminDashboard() {
 
     return (
         <div className="space-y-8">
-            <h1 className="text-3xl font-black text-slate-800 tracking-tight">Analytics Overview</h1>
+            <div className="flex justify-between items-center">
+                <h1 className="text-3xl font-black text-slate-800 tracking-tight">Analytics Overview</h1>
+                <Button
+                    onClick={async () => {
+                        if (confirm('Create sample structured products and stores?')) {
+                            const res = await fetch('/api/test/seed', { method: 'POST' });
+                            const data = await res.json();
+                            alert(data.message || data.error);
+                            window.location.reload();
+                        }
+                    }}
+                    className="bg-primary hover:bg-primary/90 text-white shadow-glow px-6 py-2 rounded-xl font-bold text-sm"
+                >
+                    ✨ Seed Sample Data
+                </Button>
+            </div>
 
             {/* Top Level Stats */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
