@@ -26,6 +26,7 @@ interface ProductCardProps {
         reportCount?: number;
         messageCount?: number;
         flagged?: boolean;
+        isFeatured?: boolean;
     };
 }
 

@@ -28,6 +28,7 @@ interface Product {
     confidenceLevel: string;
     reportCount: number;
     lastUpdated: string;
+    isFeatured?: boolean;
     lastUpdatedBy?: string;
     flagged?: boolean;
     suggestions?: Array<{
@@ -375,8 +376,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                                 )}
                                                 {(verifyMsg || updateMsg) && (
                                                     <p className={`text-[10px] font-black p-3 rounded-xl mt-4 text-center uppercase tracking-widest ${(verifyMsg.startsWith('✓') || updateMsg.startsWith('✓'))
-                                                            ? 'text-emerald-500 bg-emerald-500/10'
-                                                            : 'text-rose-500 bg-rose-500/10'
+                                                        ? 'text-emerald-500 bg-emerald-500/10'
+                                                        : 'text-rose-500 bg-rose-500/10'
                                                         }`}>
                                                         {verifyMsg || updateMsg}
                                                     </p>

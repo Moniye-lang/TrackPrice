@@ -13,6 +13,7 @@ interface Product {
     imageUrl: string;
     storeLocation?: string;
     lastUpdated: string;
+    isFeatured?: boolean;
 }
 
 export default function AdminProducts() {
