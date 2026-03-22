@@ -65,7 +65,8 @@ export async function GET(req: Request) {
 
         const products = await Product.find(query)
             .populate('storeId')
-            .sort(sortOption);
+            .sort(sortOption)
+            .lean(); // Faster, plain objects
 
         console.log(`[Products GET] Found ${products.length} products`);
 
@@ -73,7 +74,7 @@ export async function GET(req: Request) {
             return NextResponse.json([]);
         }
 
-        // Aggregate message counts for all fetched products in a single query
+        // Aggregate message counts
         const productIds = products.map((p: any) => p._id);
 
         let countMap: Record<string, number> = {};
@@ -88,17 +89,14 @@ export async function GET(req: Request) {
                 }
             }
         } catch (aggError) {
-            console.error('[Products GET] Aggregation Error (non-fatal):', aggError);
-            // Continue without message counts if it fails
+            console.error('[Products GET] Aggregation Error:', aggError);
         }
 
-        const productsWithCounts = products.map((p: any) => {
-            const doc = p.toObject ? p.toObject() : p;
-            return {
-                ...doc,
-                messageCount: countMap[p._id.toString()] ?? 0,
-            };
-        });
+        const productsWithCounts = products.map((p: any) => ({
+            ...p,
+            _id: p._id.toString(),
+            messageCount: countMap[p._id.toString()] ?? 0,
+        }));
 
         return NextResponse.json(productsWithCounts);
     } catch (error: any) {

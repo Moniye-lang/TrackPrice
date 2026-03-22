@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import connectDB from '@/lib/db';
 import Product from '@/models/Product';
 import PriceUpdate from '@/models/PriceUpdate';
+import User from '@/models/User'; // Explicitly import for population
 import { isValidObjectId } from '@/lib/db-utils';
 import { verifyToken } from '@/lib/auth';
 import { parsePriceRange } from '@/lib/price-utils';
@@ -49,6 +50,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
         return NextResponse.json({
             ...product,
+            _id: product._id.toString(),
             suggestions: suggestions.map((s: any) => ({
                 price: s.price,
                 userName: s.userId?.name || 'Anonymous',
