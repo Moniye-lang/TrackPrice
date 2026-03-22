@@ -202,7 +202,7 @@ export default function Home() {
         </div>
 
         {/* Sidebar */}
-        <div className="space-y-12">
+        <div className="space-y-12 lg:sticky lg:top-28 h-fit">
           {/* Stale Prices / Needs Update */}
           {staleProducts.length > 0 && (
             <div className="space-y-6">

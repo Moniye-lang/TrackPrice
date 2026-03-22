@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import Product from '@/models/Product';
 import Message from '@/models/Message';
+import Store from '@/models/Store'; // Explicitly import for population
 import { parsePriceRange } from '@/lib/price-utils';
 import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
@@ -65,23 +66,39 @@ export async function GET(req: Request) {
         const products = await Product.find(query)
             .populate('storeId')
             .sort(sortOption);
+
         console.log(`[Products GET] Found ${products.length} products`);
+
+        if (products.length === 0) {
+            return NextResponse.json([]);
+        }
 
         // Aggregate message counts for all fetched products in a single query
         const productIds = products.map((p: any) => p._id);
-        const messageCounts = await Message.aggregate([
-            { $match: { productId: { $in: productIds } } },
-            { $group: { _id: '$productId', count: { $sum: 1 } } },
-        ]);
-        const countMap: Record<string, number> = {};
-        for (const item of messageCounts) {
-            countMap[item._id.toString()] = item.count;
+
+        let countMap: Record<string, number> = {};
+        try {
+            const messageCounts = await Message.aggregate([
+                { $match: { productId: { $in: productIds } } },
+                { $group: { _id: '$productId', count: { $sum: 1 } } },
+            ]);
+            for (const item of messageCounts) {
+                if (item._id) {
+                    countMap[item._id.toString()] = item.count;
+                }
+            }
+        } catch (aggError) {
+            console.error('[Products GET] Aggregation Error (non-fatal):', aggError);
+            // Continue without message counts if it fails
         }
 
-        const productsWithCounts = products.map((p: any) => ({
-            ...p.toObject(),
-            messageCount: countMap[p._id.toString()] ?? 0,
-        }));
+        const productsWithCounts = products.map((p: any) => {
+            const doc = p.toObject ? p.toObject() : p;
+            return {
+                ...doc,
+                messageCount: countMap[p._id.toString()] ?? 0,
+            };
+        });
 
         return NextResponse.json(productsWithCounts);
     } catch (error: any) {
