@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
+import './Store'; // Ensure Store is registered for population
 
 export interface IProduct extends Document {
     name: string;

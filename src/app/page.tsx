@@ -23,7 +23,7 @@ export default function Home() {
         fetch('/api/products?featured=true'),
         fetch('/api/products?stale=true'),
         fetch('/api/products?sort=updated'),
-        fetch('/api/admin/analytics'),
+        fetch('/api/leaderboard'),
       ]);
 
       if (featRes.ok) setFeaturedProducts((await featRes.json()).slice(0, 4));
@@ -31,7 +31,7 @@ export default function Home() {
       if (recentRes.ok) setRecentUpdates((await recentRes.json()).slice(0, 5));
       if (leaderRes.ok) {
         const data = await leaderRes.json();
-        setLeaderboard(data.topContributors || []);
+        setLeaderboard(data.users || []); // leaderboard endpoint returns { users, cities }
       }
     } catch (error) {
       console.error('Failed to fetch homepage data');

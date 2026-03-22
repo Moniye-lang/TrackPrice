@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import connectDB from '@/lib/db';
 import Product from '@/models/Product';
 import Message from '@/models/Message';
@@ -29,17 +29,17 @@ async function isAdmin() {
     }
 }
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
     try {
         await connectDB();
-        const { searchParams } = new URL(req.url);
+        const { searchParams } = req.nextUrl;
         const search = searchParams.get('search');
         const category = searchParams.get('category');
         const sort = searchParams.get('sort') || 'newest';
         const featured = searchParams.get('featured') === 'true';
         const stale = searchParams.get('stale') === 'true';
 
-        console.log(`[Products GET] search=${search}, category=${category}, sort=${sort}, featured=${featured}, stale=${stale}`);
+        console.log(`[Products GET] Processing with search=${search}, category=${category}, sort=${sort}, featured=${featured}, stale=${stale}`);
 
         let query: any = {};
         if (search) {
@@ -92,11 +92,29 @@ export async function GET(req: Request) {
             console.error('[Products GET] Aggregation Error:', aggError);
         }
 
-        const productsWithCounts = products.map((p: any) => ({
-            ...p,
-            _id: p._id.toString(),
-            messageCount: countMap[p._id.toString()] ?? 0,
-        }));
+        const productsWithCounts = products.map((p: any) => {
+            // Safely handle storeId whether it's populated or not
+            let serializedStore = null;
+            if (p.storeId) {
+                if (p.storeId.name) {
+                    // It's populated
+                    serializedStore = {
+                        ...p.storeId,
+                        _id: p.storeId._id.toString()
+                    };
+                } else {
+                    // It's just an ID
+                    serializedStore = p.storeId.toString();
+                }
+            }
+
+            return {
+                ...p,
+                _id: p._id.toString(),
+                storeId: serializedStore,
+                messageCount: countMap[p._id.toString()] ?? 0,
+            };
+        });
 
         return NextResponse.json(productsWithCounts);
     } catch (error: any) {
