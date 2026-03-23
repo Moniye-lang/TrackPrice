@@ -130,6 +130,13 @@ export default function AdminLayout({
                         Product Requests
                     </Link>
                     <Link
+                        href="/admin/extraction"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={`block px-4 py-2 rounded-lg font-medium transition-colors ${pathname === '/admin/extraction' ? 'bg-primary/10 text-primary' : 'hover:bg-gray-100 text-gray-700'}`}
+                    >
+                        Extraction Tool
+                    </Link>
+                    <Link
                         href="/admin/settings"
                         onClick={() => setIsMobileMenuOpen(false)}
                         className={`block px-4 py-2 rounded-lg font-medium transition-colors ${pathname === '/admin/settings' ? 'bg-primary/10 text-primary' : 'hover:bg-gray-100 text-gray-700'}`}
