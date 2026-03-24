@@ -23,6 +23,7 @@ export default function AdminProducts() {
     const [showForm, setShowForm] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [submitting, setSubmitting] = useState(false);
+    const [autoImageLoading, setAutoImageLoading] = useState(false);
 
     // Form states
     const [name, setName] = useState('');
@@ -87,6 +88,25 @@ export default function AdminProducts() {
             setError('An unexpected error occurred');
         } finally {
             setSubmitting(false);
+        }
+    };
+
+    const handleAutoImages = async () => {
+        setAutoImageLoading(true);
+        try {
+            const res = await fetch('/api/admin/products/auto-images', { method: 'POST' });
+            const data = await res.json();
+            if (res.ok) {
+                alert(data.message);
+                fetchProducts();
+            } else {
+                alert(data.error || 'Failed to auto-fetch images');
+            }
+        } catch (error) {
+            console.error(error);
+            alert('An error occurred during auto-fetching.');
+        } finally {
+            setAutoImageLoading(false);
         }
     };
 
@@ -160,9 +180,14 @@ export default function AdminProducts() {
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <h1 className="text-3xl font-black text-slate-800 tracking-tight">Manage Products</h1>
-                <Button onClick={() => { setShowForm(true); setEditingProduct(null); resetForm(); }}>
-                    Add New Product
-                </Button>
+                <div className="flex gap-4">
+                    <Button onClick={handleAutoImages} disabled={autoImageLoading} variant="secondary">
+                        {autoImageLoading ? 'Fetching Images...' : 'Auto-Fetch Missing Images'}
+                    </Button>
+                    <Button onClick={() => { setShowForm(true); setEditingProduct(null); resetForm(); }}>
+                        Add New Product
+                    </Button>
+                </div>
             </div>
 
             {showForm && (
