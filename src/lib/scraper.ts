@@ -1,18 +1,34 @@
-import { chromium } from 'playwright';
-
 export interface ExtractedProduct {
     name: string;
     price: number;
 }
 
 export async function scrapeProducts(url: string): Promise<ExtractedProduct[]> {
-    const browser = await chromium.launch({ headless: true });
+    const isLocal = !process.env.VERCEL && process.env.NODE_ENV === 'development';
+
+    let browser;
+    if (isLocal) {
+        const { chromium } = require('playwright');
+        browser = await chromium.launch({ headless: true });
+    } else {
+        const chromium = require('@sparticuz/chromium');
+        const { chromium: coreChromium } = require('playwright-core');
+
+        chromium.setGraphicsMode = false;
+
+        browser = await coreChromium.launch({
+            args: chromium.args,
+            defaultViewport: chromium.defaultViewport,
+            executablePath: await chromium.executablePath(),
+            headless: chromium.headless,
+        });
+    }
 
     try {
         const page = await browser.newPage();
 
         // Block resources that are not needed to speed up rendering
-        await page.route('**/*', (route) => {
+        await page.route('**/*', (route: any) => {
             const request = route.request();
             if (['image', 'stylesheet', 'font', 'media'].includes(request.resourceType())) {
                 route.abort();
