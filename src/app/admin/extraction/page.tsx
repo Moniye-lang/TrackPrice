@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 export default function ExtractionPage() {
     const [url, setUrl] = useState('');
+    const [location, setLocation] = useState('');
     const [loading, setLoading] = useState(false);
     const [results, setResults] = useState<any[]>([]);
     const [error, setError] = useState('');
@@ -57,7 +58,7 @@ export default function ExtractionPage() {
             const res = await fetch('/api/admin/scrape/approve', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ items: results, sourceUrl: url })
+                body: JSON.stringify({ items: results, sourceUrl: url, location })
             });
 
             const data = await res.json();
@@ -83,6 +84,14 @@ export default function ExtractionPage() {
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
                     placeholder="https://example.com/store/..."
+                    className="flex-1 p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-gray-800"
+                    disabled={loading}
+                />
+                <input
+                    type="text"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    placeholder="Store Location (Optional)"
                     className="flex-1 p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-gray-800"
                     disabled={loading}
                 />
@@ -158,8 +167,8 @@ export default function ExtractionPage() {
                                                 value={item.status}
                                                 onChange={e => handleUpdateResult(i, 'status', e.target.value)}
                                                 className={`p-2 border rounded outline-none w-32 font-medium ${item.status === 'approved' ? 'bg-green-50 text-green-700 border-green-200' :
-                                                        item.status === 'rejected' ? 'bg-red-50 text-red-700 border-red-200' :
-                                                            'bg-white text-gray-700'
+                                                    item.status === 'rejected' ? 'bg-red-50 text-red-700 border-red-200' :
+                                                        'bg-white text-gray-700'
                                                     }`}
                                             >
                                                 <option value="pending">Reviewing</option>

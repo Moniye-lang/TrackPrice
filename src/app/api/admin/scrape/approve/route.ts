@@ -4,6 +4,7 @@ import { jwtVerify } from 'jose';
 import connectDB from '@/lib/db';
 import PriceUpdate from '@/models/PriceUpdate';
 import ScrapedProduct from '@/models/ScrapedProduct';
+import Product from '@/models/Product';
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret');
 
@@ -25,7 +26,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const { items, sourceUrl } = await req.json();
+        const { items, sourceUrl, location } = await req.json();
 
         if (!Array.isArray(items) || items.length === 0) {
             return NextResponse.json({ error: 'No items provided for approval.' }, { status: 400 });
@@ -45,16 +46,24 @@ export async function POST(req: Request) {
                     productId: item.matchedProductId,
                     userId: decodedToken.id as string, // Admins act as the submitter
                     price: item.price,
+                    storeLocation: location || undefined,
                     status: 'pending' // Still requires verification per system logic
                 });
                 approvedCount++;
             } else {
-                // Save to ScrapedProduct queue for manual matching later
-                await ScrapedProduct.create({
+                // Create a new Product directly instead of queueing it
+                await Product.create({
                     name: item.name,
                     price: item.price,
-                    sourceUrl: sourceUrl || 'Admin Extraction',
-                    status: 'pending'
+                    category: 'Uncategorized',
+                    imageUrl: '/placeholder-product.jpg',
+                    storeLocation: location || undefined,
+                    reportCount: 0,
+                    confidenceLevel: 'Low',
+                    priceHistory: [{
+                        price: item.price,
+                        verifiedAt: new Date()
+                    }]
                 });
                 queuedCount++;
             }

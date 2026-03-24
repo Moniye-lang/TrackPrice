@@ -45,8 +45,8 @@ export async function scrapeProducts(url: string): Promise<ExtractedProduct[]> {
             const results: { name: string, price: number }[] = [];
 
             const parsePrice = (text: string): number | null => {
-                const cleanText = text.replace(/[^\d]/g, ''); // strip to digits only
-                const val = parseInt(cleanText, 10);
+                const cleanText = text.replace(/[^\d.]/g, ''); // strip to digits and decimal point
+                const val = parseFloat(cleanText);
                 return isNaN(val) || val <= 0 ? null : val;
             };
 
