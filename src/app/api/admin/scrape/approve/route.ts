@@ -56,7 +56,7 @@ export async function POST(req: Request) {
                     name: item.name,
                     price: item.price,
                     category: 'Uncategorized',
-                    imageUrl: '/placeholder-product.jpg',
+                    imageUrl: 'https://placehold.co/400x400?text=' + encodeURIComponent(item.name),
                     storeLocation: location || undefined,
                     reportCount: 0,
                     confidenceLevel: 'Low',

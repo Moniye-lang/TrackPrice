@@ -31,6 +31,7 @@ export async function POST() {
         const productsWithoutImages = await Product.find({
             $or: [
                 { imageUrl: '/placeholder-product.jpg' },
+                { imageUrl: { $regex: '^https://placehold\.co' } },
                 { imageUrl: null },
                 { imageUrl: '' }
             ]
