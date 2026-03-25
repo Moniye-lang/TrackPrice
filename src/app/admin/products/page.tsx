@@ -1,6 +1,21 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { Button, Input, Card } from '@/components/ui-base';
+import { formatPriceRange } from '@/lib/price-utils';
+
+interface Product {
+    _id: string;
+    name: string;
+    price: number;
+    maxPrice?: number;
+    category: string;
+    imageUrl: string;
+    storeLocation?: string;
+    lastUpdated: string;
+    isFeatured?: boolean;
+}
 
 export default function AdminProducts() {
     const searchParams = useSearchParams();
