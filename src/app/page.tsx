@@ -241,7 +241,7 @@ export default function Home() {
                         {p.priceStatus === 'down' ? 'Price Dropped' : 'Just Updated'}
                       </p>
                     </div>
-                    <span className="font-black text-slate-900 text-xs">₦{p.price.toLocaleString()}</span>
+                    <span className="font-black text-slate-900 text-xs">{formatPriceRange(p.price)}</span>
                   </Link>
                 ))}
               </div>

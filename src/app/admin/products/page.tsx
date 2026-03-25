@@ -1,22 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Button, Input, Card } from '@/components/ui-base';
-import { formatPriceRange } from '@/lib/price-utils';
-
-interface Product {
-    _id: string;
-    name: string;
-    price: number;
-    maxPrice?: number;
-    category: string;
-    imageUrl: string;
-    storeLocation?: string;
-    lastUpdated: string;
-    isFeatured?: boolean;
-}
+import { useSearchParams } from 'next/navigation';
 
 export default function AdminProducts() {
+    const searchParams = useSearchParams();
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -31,6 +18,20 @@ export default function AdminProducts() {
     const [category, setCategory] = useState('');
     const [imageUrl, setImageUrl] = useState('');
     const [storeLocation, setStoreLocation] = useState('');
+
+    useEffect(() => {
+        // Pre-fill form from search params
+        const nameParam = searchParams.get('name');
+        const catParam = searchParams.get('category');
+        const brandParam = searchParams.get('brand');
+
+        if (nameParam || catParam || brandParam) {
+            setName(nameParam || '');
+            setCategory(catParam || '');
+            // Brand isn't in the form fields yet but could be added to name or category if needed
+            setShowForm(true);
+        }
+    }, [searchParams]);
 
     const fetchProducts = async () => {
         setLoading(true);

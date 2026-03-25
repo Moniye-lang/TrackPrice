@@ -141,6 +141,14 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         fetchData();
     }, [id]);
 
+    useEffect(() => {
+        if (product) {
+            document.title = `${product.name} - ₦${product.price.toLocaleString()} | TrackPrice`;
+        } else {
+            document.title = 'Product Details | TrackPrice';
+        }
+    }, [product]);
+
     const handleVerifyPrice = async () => {
         if (!product) return;
         setVerifying(true);

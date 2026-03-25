@@ -40,7 +40,7 @@ export default function ProductRequestsAdmin() {
 
     const handleAction = async (id: string, status: 'approved' | 'denied') => {
         try {
-            const res = await fetch(`/api/api/product-requests/${id}`, {
+            const res = await fetch(`/api/product-requests/${id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status })
