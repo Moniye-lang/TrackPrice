@@ -32,6 +32,7 @@ interface Product {
     lastUpdatedBy?: string;
     flagged?: boolean;
     suggestions?: Array<{
+        _id: string;
         price: number;
         userName: string;
         createdAt: string;
