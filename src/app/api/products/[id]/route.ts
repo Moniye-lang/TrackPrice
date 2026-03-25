@@ -48,10 +48,24 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
             .limit(5)
             .lean();
 
+        // Calculate price status from history
+        let priceStatus = 'stable';
+        if (product.priceHistory && product.priceHistory.length >= 2) {
+            const history = [...product.priceHistory].sort((a: any, b: any) => 
+                new Date(b.verifiedAt).getTime() - new Date(a.verifiedAt).getTime()
+            );
+            const current = history[0].price;
+            const previous = history[1].price;
+            if (current < previous) priceStatus = 'down';
+            else if (current > previous) priceStatus = 'up';
+        }
+
         return NextResponse.json({
             ...product,
             _id: product._id.toString(),
+            priceStatus,
             suggestions: suggestions.map((s: any) => ({
+                _id: s._id.toString(),
                 price: s.price,
                 userName: s.userId?.name || 'Anonymous',
                 createdAt: s.createdAt

@@ -31,6 +31,7 @@ interface Product {
     isFeatured?: boolean;
     lastUpdatedBy?: string;
     flagged?: boolean;
+    priceStatus?: 'up' | 'down' | 'stable';
     suggestions?: Array<{
         _id: string;
         price: number;
@@ -328,7 +329,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                     </p>
                                 )}
                                 <div className="flex flex-wrap items-baseline gap-3 mb-3">
-                                    <span className="text-5xl font-black text-slate-900 tracking-tighter">
+                                    <span className={`text-5xl font-black tracking-tighter ${
+                                        product.priceStatus === 'down' ? 'text-rose-600' : 
+                                        product.priceStatus === 'up' ? 'text-emerald-600' : 
+                                        'text-slate-900'
+                                    }`}>
                                         {formatPriceRange(product.price, product.maxPrice)}
                                     </span>
                                     {product.flagged ? (
