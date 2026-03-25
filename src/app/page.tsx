@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ProductCard } from '@/components/ProductCard';
 import { Navbar } from '@/components/Navbar';
 import { Input, Button } from '@/components/ui-base';
+import { formatPriceRange } from '@/lib/price-utils';
 
 export default function Home() {
   const [products, setProducts] = useState<any[]>([]);
