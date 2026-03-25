@@ -70,7 +70,17 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         const storeLocation = body?.storeLocation;
         console.log('[Price Update] Starting:', { productId, price, storeLocation });
 
-        if (price === undefined || price === null || typeof price !== 'number' || price <= 0) {
+        let numericPrice: number;
+        if (typeof price === 'string') {
+            const parsed = parsePriceRange(price);
+            numericPrice = parsed.price;
+        } else if (typeof price === 'number') {
+            numericPrice = price;
+        } else {
+            return NextResponse.json({ error: 'Valid price is required' }, { status: 400 });
+        }
+
+        if (isNaN(numericPrice) || numericPrice <= 0) {
             return NextResponse.json({ error: 'Valid price is required' }, { status: 400 });
         }
 
