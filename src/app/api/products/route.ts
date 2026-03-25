@@ -2,6 +2,7 @@ import { NextResponse, NextRequest } from 'next/server';
 import connectDB from '@/lib/db';
 import Product from '@/models/Product';
 import Message from '@/models/Message';
+import PriceUpdate from '@/models/PriceUpdate';
 import Store from '@/models/Store'; // Explicitly import for population
 import { parsePriceRange } from '@/lib/price-utils';
 import { cookies } from 'next/headers';
@@ -92,6 +93,30 @@ export async function GET(req: NextRequest) {
             console.error('[Products GET] Aggregation Error:', aggError);
         }
 
+        // Fetch most recent pending updates for these products
+        let pendingUpdateMap: Record<string, any> = {};
+        try {
+            const pendingUpdates = await PriceUpdate.find({
+                productId: { $in: productIds },
+                status: 'pending'
+            }).sort({ createdAt: -1 }).lean();
+
+            // We only need the most recent one per product
+            for (const update of pendingUpdates) {
+                const pid = update.productId.toString();
+                if (!pendingUpdateMap[pid]) {
+                    pendingUpdateMap[pid] = {
+                        _id: update._id.toString(),
+                        price: update.price,
+                        maxPrice: update.maxPrice,
+                        confirmationsCount: update.confirmations?.length || 0
+                    };
+                }
+            }
+        } catch (pendingError) {
+            console.error('[Products GET] Pending Update Fetch Error:', pendingError);
+        }
+
         const productsWithCounts = products.map((p: any) => {
             // Safely handle storeId whether it's populated or not
             let serializedStore = null;
@@ -127,7 +152,8 @@ export async function GET(req: NextRequest) {
                 _id: p._id.toString(),
                 storeId: serializedStore,
                 messageCount: countMap[p._id.toString()] ?? 0,
-                priceStatus
+                priceStatus,
+                pendingUpdate: pendingUpdateMap[p._id.toString()] || null
             };
         });
 

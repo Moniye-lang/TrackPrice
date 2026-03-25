@@ -8,6 +8,7 @@ export interface IPriceUpdate extends Document {
     storeId?: mongoose.Types.ObjectId;
     storeLocation?: string;
     status: 'pending' | 'verified' | 'rejected';
+    confirmations: mongoose.Types.ObjectId[];
     createdAt: Date;
     updatedAt: Date;
 }
@@ -21,6 +22,7 @@ const PriceUpdateSchema: Schema = new Schema(
         storeId: { type: Schema.Types.ObjectId, ref: 'Store' },
         storeLocation: { type: String },
         status: { type: String, enum: ['pending', 'verified', 'rejected'], default: 'pending' },
+        confirmations: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     },
     {
         timestamps: true,

@@ -27,6 +27,12 @@ interface ProductCardProps {
         messageCount?: number;
         flagged?: boolean;
         isFeatured?: boolean;
+        pendingUpdate?: {
+            _id: string;
+            price: number;
+            maxPrice?: number;
+            confirmationsCount: number;
+        } | null;
     };
 }
 
@@ -57,6 +63,30 @@ export function ProductCard({ product }: ProductCardProps) {
                         </div>
                     </div>
                 </div>
+                
+                {/* Proposed Price Alert */}
+                {product.pendingUpdate && (
+                    <div className="mx-6 mt-4 p-3 bg-primary/5 border border-primary/20 rounded-2xl flex items-center justify-between group/alert hover:bg-primary/10 transition-all">
+                        <div className="min-w-0">
+                            <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-0.5">Proposed Price</p>
+                            <p className="text-sm font-black text-slate-800 tracking-tighter truncate">
+                                ₦{product.pendingUpdate.price.toLocaleString()}
+                            </p>
+                        </div>
+                        <button 
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                // We'll assume the user is redirected to the detail page to confirm, 
+                                // or we can handle it here with a simple fetch.
+                                window.location.href = `/product/${product._id}?confirm=${product.pendingUpdate?._id}`;
+                            }}
+                            className="bg-primary text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-xl shadow-premium hover:scale-105 active:scale-95 transition-all"
+                        >
+                            Confirm
+                        </button>
+                    </div>
+                )}
 
                 <div className="p-6 flex-1 flex flex-col">
                     <div className="mb-auto">

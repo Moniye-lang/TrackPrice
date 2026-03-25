@@ -149,6 +149,34 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         }
     }, [product]);
 
+    useEffect(() => {
+        const confirmId = new URLSearchParams(window.location.search).get('confirm');
+        if (confirmId && product) {
+            handleConfirmPrice(confirmId);
+            // Clear param
+            window.history.replaceState({}, '', window.location.pathname);
+        }
+    }, [product]);
+
+    const handleConfirmPrice = async (updateId: string) => {
+        try {
+            const res = await fetch(`/api/products/${id}/confirm`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ updateId })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                alert(data.message);
+                fetchData(); // Refresh product data
+            } else {
+                alert(data.error || 'Failed to confirm price');
+            }
+        } catch (error) {
+            console.error('Confirm failed', error);
+        }
+    };
+
     const handleVerifyPrice = async () => {
         if (!product) return;
         setVerifying(true);
@@ -442,13 +470,21 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                             <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest px-2">Community Suggestions</h3>
                             <div className="space-y-3">
                                 {product.suggestions.map((suggestion, idx) => (
-                                    <div key={idx} className="glass bg-white/40 p-4 rounded-2xl border-none shadow-premium flex justify-between items-center group hover:bg-white/60 transition-all">
+                                    <div key={idx} className="glass bg-white/40 p-4 rounded-2xl border-none shadow-premium flex justify-between items-center group/item hover:bg-white/60 transition-all">
                                         <div>
                                             <p className="text-xl font-black text-slate-800 tracking-tighter">{formatPriceRange(suggestion.price)}</p>
                                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Proposed by {suggestion.userName}</p>
                                         </div>
-                                        <div className="text-[10px] font-black text-primary/40 group-hover:text-primary transition-colors">
-                                            {formatRelativeTime(suggestion.createdAt)}
+                                        <div className="flex items-center gap-4">
+                                            <button
+                                                onClick={() => handleConfirmPrice(suggestion._id)}
+                                                className="bg-primary text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-xl shadow-premium opacity-0 group-hover/item:opacity-100 hover:scale-105 transition-all"
+                                            >
+                                                Confirm
+                                            </button>
+                                            <div className="text-[10px] font-black text-primary/40 group-hover/item:text-primary transition-colors">
+                                                {formatRelativeTime(suggestion.createdAt)}
+                                            </div>
                                         </div>
                                     </div>
                                 ))}
