@@ -175,8 +175,15 @@ export default function AdminVerificationQueue() {
                                     {/* Actions */}
                                     <div className="flex flex-row lg:flex-col gap-2 w-full lg:w-32">
                                         <Button
+                                            className="w-full bg-emerald-500 hover:bg-emerald-600 text-white border-none shadow-premium transition-all hover:-translate-y-0.5"
+                                            disabled={actionLoading === update._id}
+                                            onClick={() => handleAction(update._id, 'approve')}
+                                        >
+                                            {actionLoading === update._id ? 'Working...' : 'Approve'}
+                                        </Button>
+                                        <Button
                                             variant="danger"
-                                            className="w-full"
+                                            className="w-full border-2 border-rose-100 hover:bg-rose-50 transition-all"
                                             disabled={actionLoading === update._id}
                                             onClick={() => handleAction(update._id, 'reject')}
                                         >
