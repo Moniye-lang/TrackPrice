@@ -363,20 +363,37 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                             <div className="bg-slate-900 rounded-3xl p-6 shadow-2xl border border-slate-800">
                                                 <h3 className="text-primary text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-center">Is this price still correct?</h3>
                                                 {!showUpdateForm ? (
-                                                    <div className="grid grid-cols-2 gap-4">
-                                                        <Button
-                                                            onClick={handleVerifyPrice}
-                                                            disabled={verifying}
-                                                            className="bg-emerald-500 hover:bg-emerald-600 text-white font-black py-4 rounded-2xl shadow-glow-sm"
-                                                        >
-                                                            {verifying ? '...' : 'YES'}
-                                                        </Button>
-                                                        <Button
-                                                            onClick={() => setShowUpdateForm(true)}
-                                                            className="bg-rose-500 hover:bg-rose-600 text-white font-black py-4 rounded-2xl"
-                                                        >
-                                                            NO
-                                                        </Button>
+                                                    <div className="space-y-4">
+                                                        <div className="grid grid-cols-2 gap-4">
+                                                            <Button
+                                                                onClick={handleVerifyPrice}
+                                                                disabled={verifying}
+                                                                className="bg-emerald-500 hover:bg-emerald-600 text-white font-black py-4 rounded-2xl shadow-glow-sm"
+                                                            >
+                                                                {verifying ? '...' : 'YES'}
+                                                            </Button>
+                                                            <Button
+                                                                onClick={() => setShowUpdateForm(true)}
+                                                                className="bg-slate-800 hover:bg-slate-700 text-slate-400 font-black py-4 rounded-2xl border border-slate-700"
+                                                            >
+                                                                NO
+                                                            </Button>
+                                                        </div>
+
+                                                        {/* Intelligent "Join Consensus" option */}
+                                                        {product.suggestions && product.suggestions.length > 0 && (
+                                                            <div className="pt-4 border-t border-slate-800 animate-in fade-in slide-in-from-bottom-2">
+                                                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest text-center mb-3">
+                                                                    Community suggests <span className="text-primary">{formatPriceRange(product.suggestions[0].price)}</span>
+                                                                </p>
+                                                                <Button
+                                                                    onClick={() => handleConfirmPrice(product.suggestions![0]._id)}
+                                                                    className="w-full bg-primary/20 hover:bg-primary text-primary hover:text-white font-black py-3 rounded-2xl border border-primary/20 transition-all text-xs"
+                                                                >
+                                                                    JOIN CONSENSUS
+                                                                </Button>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 ) : (
                                                     <form onSubmit={handleUpdatePrice} className="space-y-4 animate-in fade-in zoom-in-95 duration-200">
@@ -452,9 +469,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                             <div className="pt-4 border-t border-slate-200/50 flex flex-col gap-1 text-[10px] font-black text-slate-400 uppercase tracking-widest p-6">
                                 <div className="flex items-center justify-between">
                                     <span>Updated {formatRelativeTime(product.lastUpdated)}</span>
-                                    <span className="flex items-center gap-1 text-primary">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                                        ACTIVE
+                                    <span className="flex items-center gap-1 text-slate-400">
+                                        <span className="w-1 h-1 rounded-full bg-slate-300" />
+                                        In Queue
                                     </span>
                                 </div>
                                 {product.lastUpdatedBy && (
@@ -478,7 +495,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                         <div className="flex items-center gap-4">
                                             <button
                                                 onClick={() => handleConfirmPrice(suggestion._id)}
-                                                className="bg-primary text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-xl shadow-premium opacity-0 group-hover/item:opacity-100 hover:scale-105 transition-all"
+                                                className="bg-primary/10 text-primary hover:bg-primary hover:text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-xl shadow-sm hover:shadow-premium hover:scale-105 transition-all border border-primary/20"
                                             >
                                                 Confirm
                                             </button>
