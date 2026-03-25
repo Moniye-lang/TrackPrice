@@ -233,11 +233,12 @@ export default function Home() {
               <div className="space-y-4">
                 {recentUpdates.map((p: any) => (
                   <Link key={p._id} href={`/product/${p._id}`} className="flex items-center gap-4 group">
-                    <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                    <div className={`w-2 h-2 rounded-full ${p.priceStatus === 'down' ? 'bg-rose-500' : 'bg-emerald-500'}`}></div>
                     <div className="flex-1 min-w-0">
                       <h4 className="font-bold text-slate-700 text-sm truncate">{p.name}</h4>
-                      <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest group-hover:translate-x-1 transition-transform">
-                        Just Updated
+                      <p className={`text-[10px] font-black uppercase tracking-widest group-hover:translate-x-1 transition-transform ${p.priceStatus === 'down' ? 'text-rose-600' : 'text-emerald-600'
+                        }`}>
+                        {p.priceStatus === 'down' ? 'Price Dropped' : 'Just Updated'}
                       </p>
                     </div>
                     <span className="font-black text-slate-900 text-xs">₦{p.price.toLocaleString()}</span>

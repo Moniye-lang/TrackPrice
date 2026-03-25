@@ -186,6 +186,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             if (diffPercent > 0.50) {
                 product.flagged = true;
             } else {
+                product.priceHistory.push({ price: newMedianPrice, verifiedAt: new Date() });
                 product.price = newMedianPrice;
                 product.flagged = false;
                 product.lastUpdated = new Date();

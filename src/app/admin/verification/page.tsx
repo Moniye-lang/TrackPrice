@@ -86,7 +86,7 @@ export default function AdminVerificationQueue() {
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-black text-slate-800 tracking-tight">Verification Queue</h1>
+                <h1 className="text-3xl font-black text-slate-800 tracking-tight">Verification Queue (v1.1)</h1>
                 <Button onClick={fetchQueue} variant="secondary">Refresh Queue</Button>
             </div>
 
@@ -175,7 +175,8 @@ export default function AdminVerificationQueue() {
                                     {/* Actions */}
                                     <div className="flex flex-row lg:flex-col gap-2 w-full lg:w-32">
                                         <Button
-                                            className="w-full bg-emerald-500 hover:bg-emerald-600 text-white border-none shadow-premium transition-all hover:-translate-y-0.5"
+                                            variant="primary"
+                                            className="w-full shadow-premium"
                                             disabled={actionLoading === update._id}
                                             onClick={() => handleAction(update._id, 'approve')}
                                         >
@@ -183,7 +184,7 @@ export default function AdminVerificationQueue() {
                                         </Button>
                                         <Button
                                             variant="danger"
-                                            className="w-full border-2 border-rose-100 hover:bg-rose-50 transition-all"
+                                            className="w-full"
                                             disabled={actionLoading === update._id}
                                             onClick={() => handleAction(update._id, 'reject')}
                                         >

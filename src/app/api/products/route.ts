@@ -108,11 +108,26 @@ export async function GET(req: NextRequest) {
                 }
             }
 
+            // Calculate price status based on history
+            let priceStatus = 'stable';
+            if (p.priceHistory && p.priceHistory.length >= 2) {
+                // The last element is the current price (just pushed), 
+                // the second to last is the previous one.
+                const currentPrice = p.price;
+                const previousPrice = p.priceHistory[p.priceHistory.length - 2].price;
+                if (currentPrice < previousPrice) priceStatus = 'down';
+                else if (currentPrice > previousPrice) priceStatus = 'up';
+            } else if (p.priceHistory && p.priceHistory.length === 1 && p.createdAt) {
+                // If only one history entry, we could compare with some initial value if it existed,
+                // but usually stable is fine for the very first entry.
+            }
+
             return {
                 ...p,
                 _id: p._id.toString(),
                 storeId: serializedStore,
                 messageCount: countMap[p._id.toString()] ?? 0,
+                priceStatus
             };
         });
 
