@@ -1,8 +1,9 @@
+import { useState } from 'react';
 import Link from 'next/link';
 import { formatRelativeTime } from '@/lib/utils';
 import { Card } from '@/components/ui-base';
 import { formatPriceRange } from '@/lib/price-utils';
-import { MapPin, Users, MessageCircle, CheckCircle, AlertTriangle, TrendingDown, TrendingUp, Sparkles, Clock, ChevronRight } from 'lucide-react';
+import { MapPin, Users, MessageCircle, CheckCircle, AlertTriangle, TrendingDown, TrendingUp, Sparkles, Clock, ChevronRight, ImageOff } from 'lucide-react';
 
 interface ProductCardProps {
     product: {
@@ -39,15 +40,28 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+    const [imgError, setImgError] = useState(false);
+    const hasImage = product.imageUrl && !imgError && !product.imageUrl.includes('placehold.co');
+
     return (
         <Link href={`/product/${product._id}`} className="block group">
             <Card className="flex flex-col h-full hover:shadow-glow transition-all duration-500 hover:-translate-y-2 cursor-pointer border-slate-100 overflow-hidden">
-                <div className="relative h-64 w-full overflow-hidden">
-                    <img
-                        src={product.imageUrl}
-                        alt={product.name}
-                        className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110"
-                    />
+                <div className="relative h-64 w-full overflow-hidden bg-slate-50">
+                    {hasImage ? (
+                        <img
+                            src={product.imageUrl}
+                            alt={product.name}
+                            onError={() => setImgError(true)}
+                            className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110"
+                        />
+                    ) : (
+                        <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100/50">
+                            <div className="w-16 h-16 rounded-3xl bg-white shadow-premium flex items-center justify-center text-slate-200 group-hover:text-primary/40 group-hover:scale-110 transition-all duration-500">
+                                <ImageOff size={32} strokeWidth={1.5} />
+                            </div>
+                            <p className="mt-4 text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">No Image Available</p>
+                        </div>
+                    )}
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                     {/* Category Badge */}
@@ -66,7 +80,7 @@ export function ProductCard({ product }: ProductCardProps) {
                         </div>
                     </div>
                 </div>
-                
+
                 {/* Proposed Price Alert */}
                 {product.pendingUpdate && (
                     <div className="mx-4 mt-4 p-3 bg-primary/5 border border-primary/20 rounded-2xl flex items-center justify-between group/alert hover:bg-primary/10 transition-all">
@@ -81,7 +95,7 @@ export function ProductCard({ product }: ProductCardProps) {
                                 </p>
                             </div>
                         </div>
-                        <button 
+                        <button
                             onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
@@ -137,11 +151,10 @@ export function ProductCard({ product }: ProductCardProps) {
                         )}
 
                         <div className="flex items-center gap-2 mt-2">
-                            <span className={`text-3xl font-black tracking-tightest group-hover:text-primary transition-colors ${
-                                product.priceStatus === 'down' ? 'text-rose-600' : 
-                                product.priceStatus === 'up' ? 'text-emerald-600' : 
-                                'text-slate-900'
-                            }`}>
+                            <span className={`text-3xl font-black tracking-tightest group-hover:text-primary transition-colors ${product.priceStatus === 'down' ? 'text-rose-600' :
+                                    product.priceStatus === 'up' ? 'text-emerald-600' :
+                                        'text-slate-900'
+                                }`}>
                                 {formatPriceRange(product.price, product.maxPrice)}
                             </span>
                             {product.priceStatus === 'down' && <TrendingDown size={20} className="text-rose-600 animate-bounce-subtle" />}

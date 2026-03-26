@@ -316,8 +316,21 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 {/* Product Info Section */}
                 <div className="lg:col-span-1">
                     <Card className="sticky top-24 p-0 overflow-hidden border-none shadow-premium bg-white/40 glass">
-                        <div className="relative h-72 w-full overflow-hidden">
-                            <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" />
+                        <div className="relative h-72 w-full overflow-hidden bg-slate-50">
+                            {product.imageUrl ? (
+                                <img
+                                    src={product.imageUrl}
+                                    alt={product.name}
+                                    className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+                                />
+                            ) : (
+                                <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100/50">
+                                    <div className="w-16 h-16 rounded-3xl bg-white shadow-premium flex items-center justify-center text-slate-200">
+                                        <ImageOff size={32} strokeWidth={1.5} />
+                                    </div>
+                                    <p className="mt-4 text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">No Image Available</p>
+                                </div>
+                            )}
                             <div className="absolute top-4 right-4 glass px-3 py-1.5 rounded-full text-[10px] font-black tracking-widest text-primary uppercase shadow-sm border border-white/20 flex items-center gap-1.5">
                                 <Sparkles size={10} className="text-accent" />
                                 {product.category}
