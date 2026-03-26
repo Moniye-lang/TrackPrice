@@ -37,10 +37,11 @@ export async function GET(req: NextRequest) {
         const search = searchParams.get('search');
         const category = searchParams.get('category');
         const sort = searchParams.get('sort') || 'newest';
+        const storeId = searchParams.get('storeId');
         const featured = searchParams.get('featured') === 'true';
         const stale = searchParams.get('stale') === 'true';
 
-        console.log(`[Products GET] Processing with search=${search}, category=${category}, sort=${sort}, featured=${featured}, stale=${stale}`);
+        console.log(`[Products GET] Processing with search=${search}, category=${category}, storeId=${storeId}, sort=${sort}, featured=${featured}, stale=${stale}`);
 
         let query: any = {};
         if (search) {
@@ -48,6 +49,9 @@ export async function GET(req: NextRequest) {
         }
         if (category && category !== 'All') {
             query.category = category;
+        }
+        if (storeId && storeId !== 'All') {
+            query.storeId = storeId;
         }
         if (featured) {
             query.isFeatured = true;

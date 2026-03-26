@@ -6,7 +6,7 @@ import { ProductCard } from '@/components/ProductCard';
 import { Navbar } from '@/components/Navbar';
 import { Input, Button } from '@/components/ui-base';
 import { formatPriceRange } from '@/lib/price-utils';
-import { TrendingUp, TrendingDown, Clock, Search, Award, Sparkles, ChevronRight, AlertCircle, Volume2 } from 'lucide-react';
+import { TrendingUp, TrendingDown, Clock, Search, Award, Sparkles, ChevronRight, AlertCircle, Volume2, MapPin } from 'lucide-react';
 
 export default function Home() {
   const [products, setProducts] = useState<any[]>([]);
@@ -18,19 +18,26 @@ export default function Home() {
   const [staleProducts, setStaleProducts] = useState<any[]>([]);
   const [recentUpdates, setRecentUpdates] = useState<any[]>([]);
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
+  const [stores, setStores] = useState<any[]>([]);
+  const [storeId, setStoreId] = useState('All');
+  const [trendingCategory, setTrendingCategory] = useState<any[]>([]);
 
   const fetchHomepageData = async () => {
     try {
-      const [featRes, staleRes, recentRes, leaderRes] = await Promise.all([
+      const [featRes, staleRes, recentRes, leaderRes, storeRes, trendingRes] = await Promise.all([
         fetch('/api/products?featured=true'),
         fetch('/api/products?stale=true'),
         fetch('/api/products?sort=updated'),
         fetch('/api/leaderboard'),
+        fetch('/api/stores'),
+        fetch('/api/products?category=Groceries&search=Rice')
       ]);
 
       if (featRes.ok) setFeaturedProducts((await featRes.json()).slice(0, 4));
       if (staleRes.ok) setStaleProducts((await staleRes.json()).slice(0, 5));
       if (recentRes.ok) setRecentUpdates((await recentRes.json()).slice(0, 5));
+      if (storeRes.ok) setStores(await storeRes.json());
+      if (trendingRes.ok) setTrendingCategory((await trendingRes.json()).slice(0, 4));
       if (leaderRes.ok) {
         const data = await leaderRes.json();
         setLeaderboard(data.users || []);
@@ -52,6 +59,7 @@ export default function Home() {
       const params = new URLSearchParams({
         search,
         category,
+        storeId,
         sort,
       });
       const res = await fetch(`/api/products?${params}`);
@@ -72,7 +80,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchProducts();
-  }, [category, sort]);
+  }, [category, storeId, sort]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,24 +102,41 @@ export default function Home() {
             Live Market Insights
           </div>
           <h1 className="text-4xl md:text-7xl font-black mb-6 tracking-tight text-slate-900 leading-[1] antialiased">
-            Track Prices in <span className="text-primary italic">Real-Time</span>
+            Check prices before you <span className="text-primary italic">buy anything</span> in Ibadan
           </h1>
           <p className="text-slate-500 mb-10 text-lg md:text-xl font-medium max-w-2xl mx-auto px-4">
-            Never miss a deal again. Monitor price drops, set alerts, and discuss with the community anonymously.
+            Real-time market insights from Bodija, Dugbe, and more. Join 5,000+ shoppers tracking the best deals today.
           </p>
 
-          <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2 max-w-2xl mx-auto bg-white/40 p-2 rounded-3xl border border-white/60 shadow-2xl backdrop-blur-xl">
-            <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={20} />
+          <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2 max-w-3xl mx-auto bg-white/40 p-2 rounded-3xl border border-white/60 shadow-2xl backdrop-blur-xl">
+            <div className="relative flex-[2]">
+              <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" size={24} />
               <Input
-                className="border-none bg-transparent focus:ring-0 text-slate-800 text-lg px-12 h-14"
-                placeholder="Search premium products..."
+                className="border-none bg-transparent focus:ring-0 text-slate-800 text-lg px-16 h-16 w-full"
+                placeholder="Search rice, eggs, oil, bread..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
-            <Button type="submit" className="w-full sm:w-auto px-10 py-4 shadow-glow font-black h-14 rounded-2xl">
-              Explore
+            
+            <div className="h-10 w-px bg-slate-200 self-center hidden sm:block" />
+
+            <div className="relative flex-1">
+              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/60" size={20} />
+              <select
+                value={storeId}
+                onChange={(e) => setStoreId(e.target.value)}
+                className="w-full h-16 bg-transparent border-none pl-12 pr-4 text-sm font-black text-slate-700 focus:ring-0 cursor-pointer outline-none appearance-none"
+              >
+                <option value="All">All Markets</option>
+                {stores.map(s => (
+                  <option key={s._id} value={s._id}>{s.name} ({s.area})</option>
+                ))}
+              </select>
+            </div>
+
+            <Button type="submit" className="w-full sm:w-auto px-10 py-4 shadow-glow font-black h-16 rounded-2xl text-base">
+              Check Prices
             </Button>
           </form>
         </div>
@@ -122,6 +147,36 @@ export default function Home() {
           <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent rounded-full blur-[128px]"></div>
         </div>
       </section>
+
+      {/* Trending Spotlight (e.g. Rice) */}
+      {trendingCategory.length > 0 && !search && category === 'All' && (
+        <section className="max-w-7xl mx-auto px-4 py-8">
+           <div className="bg-primary/5 rounded-[40px] p-8 md:p-12 border border-primary/10 relative overflow-hidden group">
+              <div className="absolute -right-20 -top-20 w-80 h-80 bg-primary/10 rounded-full blur-[100px] group-hover:bg-primary/20 transition-all duration-1000" />
+              <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
+                  <div className="max-w-md">
+                    <span className="inline-block px-4 py-1.5 rounded-full bg-primary text-white text-[10px] font-black uppercase tracking-widest mb-6">Trending Today</span>
+                    <h2 className="text-4xl font-black text-slate-900 tracking-tight leading-none mb-4">🔥 Rice Prices Today</h2>
+                    <p className="text-slate-500 font-medium mb-8">Bodija and Dugbe are seeing significant price fluctuations on parboiled rice. Check the latest verified entries.</p>
+                    <Link href="/?category=Groceries&search=Rice">
+                      <Button variant="glass" className="border-primary text-primary hover:bg-primary hover:text-white font-black px-8 py-3 rounded-2xl">
+                        View Price Matrix
+                      </Button>
+                    </Link>
+                  </div>
+                  <div className="flex-1 grid grid-cols-2 gap-4 w-full">
+                     {trendingCategory.slice(0, 2).map(p => (
+                       <div key={p._id} className="bg-white p-4 rounded-3xl shadow-premium border border-white/50">
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{p.storeId?.name || 'Local Market'}</p>
+                          <h4 className="font-bold text-slate-800 truncate mb-2">{p.name}</h4>
+                          <p className="text-xl font-black text-primary tracking-tighter">₦{p.price.toLocaleString()}</p>
+                       </div>
+                     ))}
+                  </div>
+              </div>
+           </div>
+        </section>
+      )}
 
       {/* Featured Section */}
       {featuredProducts.length > 0 && !search && category === 'All' && (
@@ -308,6 +363,15 @@ export default function Home() {
           )}
         </div>
       </main>
+
+      {/* Mobile Floating Action Button */}
+      <div className="sm:hidden fixed bottom-32 right-6 z-[60]">
+        <Link href="/request-product">
+          <button className="w-16 h-16 bg-primary text-white rounded-full shadow-glow flex items-center justify-center hover:scale-110 active:scale-95 transition-all outline-none ring-4 ring-primary/20">
+            <TrendingUp size={32} />
+          </button>
+        </Link>
+      </div>
     </div>
   );
 }

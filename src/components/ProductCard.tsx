@@ -150,46 +150,84 @@ export function ProductCard({ product }: ProductCardProps) {
                             </p>
                         )}
 
-                        <div className="flex items-center gap-2 mt-2">
+                        <div className="flex items-center gap-3 mt-4">
                             <span className={`text-3xl font-black tracking-tightest group-hover:text-primary transition-colors ${product.priceStatus === 'down' ? 'text-rose-600' :
                                     product.priceStatus === 'up' ? 'text-emerald-600' :
                                         'text-slate-900'
                                 }`}>
                                 {formatPriceRange(product.price, product.maxPrice)}
                             </span>
-                            {product.priceStatus === 'down' && <TrendingDown size={20} className="text-rose-600 animate-bounce-subtle" />}
-                            {product.priceStatus === 'up' && <TrendingUp size={20} className="text-emerald-600 animate-bounce-subtle" />}
+                            <div className="flex flex-col">
+                                {product.priceStatus === 'down' && (
+                                    <div className="flex items-center gap-1 text-[10px] font-black text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-100 uppercase tracking-tighter animate-bounce-subtle">
+                                        <TrendingDown size={12} />
+                                        Price Drop
+                                    </div>
+                                )}
+                                {product.priceStatus === 'up' && (
+                                    <div className="flex items-center gap-1 text-[10px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100 uppercase tracking-tighter">
+                                        <TrendingUp size={12} />
+                                        Increased
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
 
-                    <div className="mt-5 flex items-center gap-4 text-[10px] font-bold text-slate-400 flex-wrap uppercase tracking-wider">
-                        <div className="flex items-center gap-1.5 px-2 py-1 bg-slate-50 rounded-lg">
-                            <div className={`w-1.5 h-1.5 rounded-full ${product.confidenceLevel === 'High' ? 'bg-emerald-500' :
-                                product.confidenceLevel === 'Medium' ? 'bg-amber-500' : 'bg-rose-500'
-                                }`} />
-                            {product.confidenceLevel || 'Low'}
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                            <Users size={12} className="text-slate-300" />
-                            {product.reportCount || 0} Reports
+                    {/* Trust Indicators Bar */}
+                    <div className="mt-5 flex items-center justify-between p-3 bg-slate-50/50 rounded-2xl border border-slate-100/50">
+                        <div className="flex items-center gap-4">
+                            <div className="flex flex-col">
+                                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Confidence</span>
+                                <div className="flex items-center gap-1.5">
+                                    <div className={`w-1.5 h-1.5 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.1)] ${
+                                        product.confidenceLevel === 'High' ? 'bg-emerald-500 shadow-emerald-500/50' :
+                                        product.confidenceLevel === 'Medium' ? 'bg-amber-500 shadow-amber-500/50' : 'bg-rose-500 shadow-rose-500/50'
+                                    }`} />
+                                    <span className={`text-[10px] font-black uppercase tracking-tight ${
+                                        product.confidenceLevel === 'High' ? 'text-emerald-700' :
+                                        product.confidenceLevel === 'Medium' ? 'text-amber-700' : 'text-rose-700'
+                                    }`}>
+                                        {product.confidenceLevel || 'Low'}
+                                    </span>
+                                </div>
+                            </div>
+                            <div className="w-px h-6 bg-slate-200" />
+                            <div className="flex flex-col">
+                                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Impact</span>
+                                <div className="flex items-center gap-1.5 text-slate-700">
+                                    <Users size={12} className="text-slate-400" />
+                                    <span className="text-[10px] font-black uppercase tracking-tight">{product.reportCount || 0}</span>
+                                </div>
+                            </div>
                         </div>
                         {(product.messageCount ?? 0) > 0 && (
-                            <div className="flex items-center gap-1.5">
-                                <MessageCircle size={12} className="text-slate-300" />
-                                {product.messageCount}
+                            <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white rounded-xl shadow-premium-sm">
+                                <MessageCircle size={12} className="text-primary" />
+                                <span className="text-[10px] font-black text-slate-700">{product.messageCount}</span>
                             </div>
                         )}
                     </div>
 
-                    <div className="mt-5 pt-4 border-t border-slate-50 flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                        <span className="flex items-center gap-1.5">
+                    {/* Primary CTA Button */}
+                    <div className="mt-5 pt-5 border-t border-slate-50 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
                             <Clock size={12} className="text-slate-300" />
-                            {formatRelativeTime(product.lastUpdated)}
-                        </span>
-                        <span className="flex items-center gap-1 text-primary group-hover:gap-2 transition-all">
-                            View
-                            <ChevronRight size={14} />
-                        </span>
+                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                {formatRelativeTime(product.lastUpdated)}
+                            </span>
+                        </div>
+                        <button 
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                window.location.href = `/product/${product._id}?update=true`;
+                            }}
+                            className="bg-primary hover:bg-primary-dark group/btn px-4 py-2 rounded-xl text-[10px] font-black text-white uppercase tracking-[0.2em] shadow-glow flex items-center gap-2 transition-all active:scale-95"
+                        >
+                            Update Price
+                            <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                        </button>
                     </div>
                 </div>
             </Card>

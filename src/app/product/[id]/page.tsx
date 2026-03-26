@@ -153,10 +153,21 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     }, [product]);
 
     useEffect(() => {
-        const confirmId = new URLSearchParams(window.location.search).get('confirm');
+        const params = new URLSearchParams(window.location.search);
+        const confirmId = params.get('confirm');
+        const shouldUpdate = params.get('update') === 'true';
+
         if (confirmId && product) {
             handleConfirmPrice(confirmId);
-            // Clear param
+            window.history.replaceState({}, '', window.location.pathname);
+        }
+
+        if (shouldUpdate && product) {
+            setShowUpdateForm(true);
+            // Scroll to form after a small delay to ensure it's rendered
+            setTimeout(() => {
+                document.getElementById('price-action-section')?.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
             window.history.replaceState({}, '', window.location.pathname);
         }
     }, [product]);
@@ -410,8 +421,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                 {!authLoading && (
                                     <div className="space-y-4">
                                         {authUser ? (
-                                            <div className="bg-slate-900 rounded-3xl p-6 shadow-2xl border border-slate-800">
-                                                <h3 className="text-primary text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-center">Is this price still correct?</h3>
+                                            <div id="price-action-section" className="bg-slate-900 rounded-3xl p-6 shadow-2xl border border-slate-800 relative overflow-hidden group/section">
+                                                <div className="absolute -top-12 -right-12 w-32 h-32 bg-primary/10 rounded-full blur-3xl group-hover/section:bg-primary/20 transition-all duration-1000" />
+                                                <h3 className="relative z-10 text-primary text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-center">Is this price still correct?</h3>
                                                 {!showUpdateForm ? (
                                                     <div className="space-y-4">
                                                         <div className="grid grid-cols-2 gap-4">
