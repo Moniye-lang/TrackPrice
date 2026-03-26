@@ -1,12 +1,4 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import { Button, Card } from '@/components/ui-base';
-import { Navbar } from '@/components/Navbar';
-import { formatRelativeTime } from '@/lib/utils';
-import Link from 'next/link';
-import { use } from 'react';
-import { formatPriceRange } from '@/lib/price-utils';
+import { MapPin, Users, MessageCircle, Check, X, Send, History, TrendingDown, TrendingUp, Sparkles, Clock, ArrowLeft, ExternalLink, AlertTriangle, ChevronRight, CornerDownRight } from 'lucide-react';
 
 interface Product {
     _id: string;
@@ -311,59 +303,85 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         <div className="min-h-screen bg-mesh selection:bg-primary/20">
             <Navbar />
 
-            <main className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <main className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-3 gap-12 pb-32">
                 {/* Product Info Section */}
                 <div className="lg:col-span-1">
                     <Card className="sticky top-24 p-0 overflow-hidden border-none shadow-premium bg-white/40 glass">
                         <div className="relative h-72 w-full overflow-hidden">
                             <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" />
-                            <div className="absolute top-4 right-4 glass px-3 py-1 rounded-full text-[10px] font-black tracking-widest text-primary uppercase shadow-sm">
+                            <div className="absolute top-4 right-4 glass px-3 py-1.5 rounded-full text-[10px] font-black tracking-widest text-primary uppercase shadow-sm border border-white/20 flex items-center gap-1.5">
+                                <Sparkles size={10} className="text-accent" />
                                 {product.category}
                             </div>
                         </div>
                         <div className="p-6 space-y-5">
                             <div>
-                                <p className="text-xs font-black text-primary uppercase tracking-[0.2em] mb-1">
+                                <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-2 flex items-center gap-2">
+                                    <Sparkles size={12} className="text-accent" />
                                     {product.category} {product.brand && `• ${product.brand}`}
                                 </p>
-                                <h1 className="text-3xl font-black text-slate-800 tracking-tight leading-tight mb-2">{product.name}</h1>
+                                <h1 className="text-4xl font-black text-slate-800 tracking-tight leading-[1.1] mb-3">{product.name}</h1>
                                 {(product.variant || product.size) && (
-                                    <p className="text-xs font-bold text-slate-400 mb-4 uppercase tracking-widest">
-                                        {product.variant} {product.size && `| ${product.size}`}
+                                    <p className="text-xs font-bold text-slate-400 mb-6 uppercase tracking-[0.2em] flex items-center gap-2">
+                                        <div className="w-1 h-1 rounded-full bg-slate-300" />
+                                        {product.variant} {product.size && ` | ${product.size}`}
                                     </p>
                                 )}
-                                <div className="flex flex-wrap items-baseline gap-3 mb-3">
-                                    <span className={`text-5xl font-black tracking-tighter ${
-                                        product.priceStatus === 'down' ? 'text-rose-600' : 
-                                        product.priceStatus === 'up' ? 'text-emerald-600' : 
-                                        'text-slate-900'
-                                    }`}>
-                                        {formatPriceRange(product.price, product.maxPrice)}
-                                    </span>
-                                    {product.flagged ? (
-                                        <span className="text-xs font-bold text-rose-500 bg-rose-50 px-2 py-1 rounded-md border border-rose-200">FLAGGED</span>
-                                    ) : product.confidenceLevel === 'High' ? (
-                                        <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-200">VERIFIED</span>
-                                    ) : (
-                                        <span className="text-xs font-bold text-amber-500 bg-amber-50 px-2 py-1 rounded-md border border-amber-200">ESTIMATE</span>
-                                    )}
+                                <div className="flex flex-wrap items-center gap-4 mb-4">
+                                    <div className="flex items-center gap-3">
+                                        <span className={`text-5xl font-black tracking-tighter ${
+                                            product.priceStatus === 'down' ? 'text-rose-600' : 
+                                            product.priceStatus === 'up' ? 'text-emerald-600' : 
+                                            'text-slate-900'
+                                        }`}>
+                                            {formatPriceRange(product.price, product.maxPrice)}
+                                        </span>
+                                        {product.priceStatus === 'down' && <TrendingDown size={32} className="text-rose-600 animate-bounce-subtle" />}
+                                        {product.priceStatus === 'up' && <TrendingUp size={32} className="text-emerald-600 animate-bounce-subtle" />}
+                                    </div>
+                                    <div className="flex gap-2">
+                                        {product.flagged ? (
+                                            <span className="flex items-center gap-1.5 text-[10px] font-black text-rose-500 bg-rose-50 px-3 py-1.5 rounded-full border border-rose-100 uppercase tracking-widest">
+                                                <AlertTriangle size={12} />
+                                                Flagged
+                                            </span>
+                                        ) : product.confidenceLevel === 'High' ? (
+                                            <span className="flex items-center gap-1.5 text-[10px] font-black text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-100 uppercase tracking-widest">
+                                                <Check size={12} />
+                                                Verified
+                                            </span>
+                                        ) : (
+                                            <span className="flex items-center gap-1.5 text-[10px] font-black text-amber-500 bg-amber-50 px-3 py-1.5 rounded-full border border-amber-100 uppercase tracking-widest">
+                                                <Clock size={12} />
+                                                Estimate
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
 
                                 {(product.storeId || product.storeLocation) && (
-                                    <p className="text-sm font-bold text-[#000000] flex items-center gap-2 mb-5">
-                                        <span className="text-lg">📍</span>
-                                        {product.storeId ? `${product.storeId.name} (${product.storeId.area}, ${product.storeId.city})` : product.storeLocation}
-                                    </p>
+                                    <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-6">
+                                        <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                                            <MapPin size={12} />
+                                            Store Location
+                                        </p>
+                                        <p className="text-sm font-bold text-slate-700">
+                                            {product.storeId ? `${product.storeId.name} (${product.storeId.area}, ${product.storeId.city})` : product.storeLocation}
+                                        </p>
+                                    </div>
                                 )}
 
-                                <div className="flex items-center gap-4 text-sm font-medium text-slate-500 mb-5">
-                                    <div className="flex items-center gap-1.5">
-                                        <span className={`w-2.5 h-2.5 rounded-full ${product.confidenceLevel === 'High' ? 'bg-emerald-500' :
+                                <div className="flex items-center gap-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-8">
+                                    <div className="flex items-center gap-2">
+                                        <div className={`w-2 h-2 rounded-full ${product.confidenceLevel === 'High' ? 'bg-emerald-500' :
                                             product.confidenceLevel === 'Medium' ? 'bg-amber-500' : 'bg-rose-500'
                                             }`} />
-                                        {product.confidenceLevel || 'Low'} Confidence
+                                        {product.confidenceLevel || 'Low'} Consensus
                                     </div>
-                                    <div>👥 {product.reportCount || 0} Reports</div>
+                                    <div className="flex items-center gap-2">
+                                        <Users size={14} />
+                                        {product.reportCount || 0} Reports
+                                    </div>
                                 </div>
 
                                 {/* Price Action Buttons — Auth aware */}
@@ -478,7 +496,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
                             <div className="pt-4 border-t border-slate-200/50 flex flex-col gap-1 text-[10px] font-black text-slate-400 uppercase tracking-widest p-6">
                                 <div className="flex items-center justify-between">
-                                    <span>Updated {formatRelativeTime(product.lastUpdated)}</span>
+                                    <span className="flex items-center gap-1.5">
+                                        <Clock size={12} />
+                                        Updated {formatRelativeTime(product.lastUpdated)}
+                                    </span>
                                     <span className="flex items-center gap-1 text-slate-400">
                                         <span className="w-1 h-1 rounded-full bg-slate-300" />
                                         In Queue
@@ -494,7 +515,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                     {/* Community Suggestions Section */}
                     {product.suggestions && product.suggestions.length > 0 && (
                         <div className="mt-8 space-y-4">
-                            <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest px-2">Community Suggestions</h3>
+                            <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest px-2 flex items-center gap-2">
+                                <Users size={14} />
+                                Community Suggestions
+                            </h3>
                             <div className="space-y-3">
                                 {product.suggestions.map((suggestion, idx) => (
                                     <div key={idx} className="glass bg-white/40 p-4 rounded-2xl border-none shadow-premium flex justify-between items-center group/item hover:bg-white/60 transition-all">
@@ -527,8 +551,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                         <Card className="glass !bg-white/40 border-white/60 p-8 relative overflow-hidden">
                             <div className="relative z-10">
                                 <div className="flex items-center gap-3 mb-6">
-                                    <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-2xl shadow-inner">
-                                        💬
+                                    <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-inner">
+                                        <MessageCircle size={24} />
                                     </div>
                                     <div>
                                         <h2 className="text-2xl font-black text-slate-800 tracking-tight">Product Discussion</h2>
@@ -537,6 +561,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                         </p>
                                     </div>
                                 </div>
+                                {/* ... rest of the form ... */}
 
                                 {replyingTo && (
                                     <div className="mb-6 bg-slate-50/80 border border-slate-200 p-4 rounded-xl relative group animate-in fade-in slide-in-from-top-2">
@@ -595,53 +620,58 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                         </div>
 
                         {messages.length === 0 ? (
-                            <div className="text-center py-24 glass rounded-3xl border-2 border-dashed border-slate-200">
+                            <div className="text-center py-24 glass rounded-3xl border-2 border-dashed border-slate-200 flex flex-col items-center">
+                                <MessageCircle size={48} className="text-slate-200 mb-4" />
                                 <h3 className="text-xl font-black text-slate-400">No discussions yet.</h3>
-                                <p className="text-slate-300 font-bold uppercase text-[10px] tracking-widest mt-2">Be the first to analyze this product</p>
+                                <p className="text-slate-300 font-bold uppercase text-[10px] tracking-widest mt-2 px-6">Be the first to analyze this product price accuracy</p>
                             </div>
                         ) : (
                             <div className="grid gap-6">
                                 {messages.map((msg) => (
-                                    <Card key={msg._id} className="relative group p-8 hover:shadow-glow transition-all duration-500 hover:-translate-y-1">
-                                        <div className="flex gap-6 items-start">
-                                            <div className="w-12 h-12 rounded-2xl bg-slate-50 flex-shrink-0 flex items-center justify-center text-xl font-black text-slate-200 group-hover:bg-primary/5 group-hover:text-primary transition-colors duration-300">
-                                                #
+                                    <Card key={msg._id} className="relative group p-6 sm:p-8 hover:shadow-glow transition-all duration-500 hover:-translate-y-1 bg-white/60">
+                                        <div className="flex gap-4 sm:gap-6 items-start">
+                                            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-slate-50 flex-shrink-0 flex items-center justify-center text-slate-200 group-hover:bg-primary/5 group-hover:text-primary transition-colors duration-300">
+                                                <MessageCircle size={20} />
                                             </div>
-                                            <div className="flex-1 space-y-4">
+                                            <div className="flex-1 space-y-4 min-w-0">
                                                 <div className="flex justify-between items-start mb-2">
-                                                    <div className="space-y-2 flex-1">
+                                                    <div className="space-y-2 flex-1 min-w-0">
                                                         {msg.productId && (
                                                             <div className="flex items-center gap-2 mb-2">
-                                                                <span className="text-[10px] font-bold text-slate-400">
+                                                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider bg-slate-100 px-2 py-0.5 rounded-md flex items-center gap-1.5">
+                                                                    <Check size={10} className="text-emerald-500" />
                                                                     Verified at: {formatPriceRange(msg.productId.price, msg.productId.maxPrice)}
                                                                 </span>
                                                             </div>
                                                         )}
                                                         {msg.replyToContent && (
-                                                            <div className="inline-flex items-center gap-2 bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-lg mb-2">
-                                                                <span className="text-lg opacity-40">➥</span>
-                                                                <p className="text-xs font-bold text-slate-400 italic">"{msg.replyToContent}"</p>
+                                                            <div className="inline-flex items-center gap-2 bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-xl mb-2 max-w-full">
+                                                                <CornerDownRight size={14} className="text-primary/40 flex-shrink-0" />
+                                                                <p className="text-xs font-bold text-slate-400 italic truncate italic">"{msg.replyToContent}"</p>
                                                             </div>
                                                         )}
-                                                        <p className="text-slate-700 text-lg leading-relaxed font-medium whitespace-pre-wrap antialiased">
+                                                        <p className="text-slate-700 text-base sm:text-lg leading-relaxed font-medium whitespace-pre-wrap antialiased break-words">
                                                             {msg.content}
                                                         </p>
                                                     </div>
                                                     {msg.isAdmin && (
-                                                        <span className="flex-shrink-0 bg-primary/10 text-primary text-[9px] font-black px-2 py-1 rounded-md tracking-tighter uppercase border border-primary/20 animate-pulse">
+                                                        <span className="flex-shrink-0 bg-primary/10 text-primary text-[9px] font-black px-2 py-1 rounded-md tracking-tighter uppercase border border-primary/20 animate-pulse ml-2">
                                                             Admin
                                                         </span>
                                                     )}
                                                 </div>
                                                 <div className="pt-4 border-t border-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-widest flex justify-between items-center">
-                                                    <span>{formatRelativeTime(msg.createdAt)}</span>
+                                                    <span className="flex items-center gap-1.5">
+                                                        <Clock size={12} />
+                                                        {formatRelativeTime(msg.createdAt)}
+                                                    </span>
                                                     <button
                                                         onClick={() => {
                                                             setReplyingTo(msg);
                                                             const section = document.querySelector('section');
                                                             if (section) section.scrollIntoView({ behavior: 'smooth' });
                                                         }}
-                                                        className="px-3 py-1.5 rounded-lg hover:bg-primary/5 hover:text-primary transition-all duration-300"
+                                                        className="px-3 py-1.5 rounded-xl hover:bg-primary/5 hover:text-primary transition-all duration-300 font-black"
                                                     >
                                                         REPLY
                                                     </button>

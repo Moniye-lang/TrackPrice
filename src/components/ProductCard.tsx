@@ -1,7 +1,4 @@
-import Link from 'next/link';
-import { formatRelativeTime } from '@/lib/utils';
-import { Card } from '@/components/ui-base';
-import { formatPriceRange } from '@/lib/price-utils';
+import { MapPin, Users, MessageCircle, CheckCircle, AlertTriangle, TrendingDown, TrendingUp, Sparkles, Clock, ChevronRight } from 'lucide-react';
 
 interface ProductCardProps {
     product: {
@@ -33,13 +30,14 @@ interface ProductCardProps {
             maxPrice?: number;
             confirmationsCount: number;
         } | null;
+        priceStatus?: 'up' | 'down' | 'stable';
     };
 }
 
 export function ProductCard({ product }: ProductCardProps) {
     return (
         <Link href={`/product/${product._id}`} className="block group">
-            <Card className="flex flex-col h-full hover:shadow-glow transition-all duration-500 hover:-translate-y-2 cursor-pointer">
+            <Card className="flex flex-col h-full hover:shadow-glow transition-all duration-500 hover:-translate-y-2 cursor-pointer border-slate-100 overflow-hidden">
                 <div className="relative h-64 w-full overflow-hidden">
                     <img
                         src={product.imageUrl}
@@ -49,7 +47,8 @@ export function ProductCard({ product }: ProductCardProps) {
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                     {/* Category Badge */}
-                    <div className="absolute top-4 right-4 glass px-3 py-1 rounded-full text-[10px] font-black tracking-widest text-primary uppercase shadow-lg border border-white/20 backdrop-blur-md">
+                    <div className="absolute top-4 right-4 glass px-3 py-1.5 rounded-full text-[10px] font-black tracking-widest text-primary uppercase shadow-lg border border-white/20 backdrop-blur-md flex items-center gap-1.5">
+                        <Sparkles size={10} className="text-accent" />
                         {product.category}
                     </div>
 
@@ -66,19 +65,22 @@ export function ProductCard({ product }: ProductCardProps) {
                 
                 {/* Proposed Price Alert */}
                 {product.pendingUpdate && (
-                    <div className="mx-6 mt-4 p-3 bg-primary/5 border border-primary/20 rounded-2xl flex items-center justify-between group/alert hover:bg-primary/10 transition-all">
-                        <div className="min-w-0">
-                            <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-0.5">Proposed Price</p>
-                            <p className="text-sm font-black text-slate-800 tracking-tighter truncate">
-                                ₦{product.pendingUpdate.price.toLocaleString()}
-                            </p>
+                    <div className="mx-4 mt-4 p-3 bg-primary/5 border border-primary/20 rounded-2xl flex items-center justify-between group/alert hover:bg-primary/10 transition-all">
+                        <div className="min-w-0 flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+                                <AlertTriangle size={16} />
+                            </div>
+                            <div className="min-w-0">
+                                <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-0.5">Proposed Price</p>
+                                <p className="text-sm font-black text-slate-800 tracking-tighter truncate">
+                                    ₦{product.pendingUpdate.price.toLocaleString()}
+                                </p>
+                            </div>
                         </div>
                         <button 
                             onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
-                                // We'll assume the user is redirected to the detail page to confirm, 
-                                // or we can handle it here with a simple fetch.
                                 window.location.href = `/product/${product._id}?confirm=${product.pendingUpdate?._id}`;
                             }}
                             className="bg-primary text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-xl shadow-premium hover:scale-105 active:scale-95 transition-all"
@@ -88,24 +90,27 @@ export function ProductCard({ product }: ProductCardProps) {
                     </div>
                 )}
 
-                <div className="p-6 flex-1 flex flex-col">
+                <div className="p-5 flex-1 flex flex-col">
                     <div className="mb-auto">
-                        <div className="flex justify-between items-start gap-2 mb-2">
-                            <h3 className="text-xl font-black text-slate-800 line-clamp-1 group-hover:text-primary transition-colors duration-300 antialiased">
+                        <div className="flex justify-between items-start gap-2 mb-3">
+                            <h3 className="text-xl font-black text-slate-800 line-clamp-2 group-hover:text-primary transition-colors duration-300 antialiased leading-[1.1]">
                                 {product.brand && <span className="text-primary/70">{product.brand} </span>}
                                 {product.name}
                             </h3>
                             <div className="flex-shrink-0">
                                 {product.flagged ? (
-                                    <span className="text-[9px] font-black text-rose-500 bg-rose-50 px-2 py-1 rounded-md border border-rose-100 uppercase tracking-tighter">
+                                    <span className="flex items-center gap-1 text-[9px] font-black text-rose-500 bg-rose-50 px-2 py-1 rounded-md border border-rose-100 uppercase tracking-tighter">
+                                        <AlertTriangle size={10} />
                                         Flagged
                                     </span>
                                 ) : product.confidenceLevel === 'High' ? (
-                                    <span className="text-[9px] font-black text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100 uppercase tracking-tighter">
+                                    <span className="flex items-center gap-1 text-[9px] font-black text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100 uppercase tracking-tighter">
+                                        <CheckCircle size={10} />
                                         Verified
                                     </span>
                                 ) : (
-                                    <span className="text-[9px] font-black text-amber-500 bg-amber-50 px-2 py-1 rounded-md border border-amber-100 uppercase tracking-tighter">
+                                    <span className="flex items-center gap-1 text-[9px] font-black text-amber-500 bg-amber-50 px-2 py-1 rounded-md border border-amber-100 uppercase tracking-tighter">
+                                        <Clock size={10} />
                                         Estimate
                                     </span>
                                 )}
@@ -113,47 +118,60 @@ export function ProductCard({ product }: ProductCardProps) {
                         </div>
 
                         {(product.variant || product.size) && (
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
                                 {product.variant} {product.size && `| ${product.size}`}
                             </p>
                         )}
 
                         {(product.storeId || product.storeLocation) && (
-                            <p className="text-[14px] font-bold text-[#000000] flex items-center gap-1 mb-3">
-                                <span className="text-primary/60 text-xs">📍</span>
-                                {product.storeId ? `${product.storeId.name} (${product.storeId.area}, ${product.storeId.city})` : product.storeLocation}
+                            <p className="text-[13px] font-bold text-slate-600 flex items-center gap-2 mb-4">
+                                <MapPin size={14} className="text-primary/60" />
+                                <span className="truncate">
+                                    {product.storeId ? `${product.storeId.name} (${product.storeId.area})` : product.storeLocation}
+                                </span>
                             </p>
                         )}
 
-                        <div className="flex items-baseline gap-1 mt-1">
-                            <span className="text-3xl font-black text-slate-900 tracking-tightest group-hover:text-primary transition-colors">
+                        <div className="flex items-center gap-2 mt-2">
+                            <span className={`text-3xl font-black tracking-tightest group-hover:text-primary transition-colors ${
+                                product.priceStatus === 'down' ? 'text-rose-600' : 
+                                product.priceStatus === 'up' ? 'text-emerald-600' : 
+                                'text-slate-900'
+                            }`}>
                                 {formatPriceRange(product.price, product.maxPrice)}
                             </span>
+                            {product.priceStatus === 'down' && <TrendingDown size={20} className="text-rose-600 animate-bounce-subtle" />}
+                            {product.priceStatus === 'up' && <TrendingUp size={20} className="text-emerald-600 animate-bounce-subtle" />}
                         </div>
                     </div>
 
-                    <div className="mt-4 flex items-center gap-4 text-xs font-medium text-slate-500 flex-wrap">
-                        <div className="flex items-center gap-1">
-                            <span className={`w-2 h-2 rounded-full ${product.confidenceLevel === 'High' ? 'bg-emerald-500' :
+                    <div className="mt-5 flex items-center gap-4 text-[10px] font-bold text-slate-400 flex-wrap uppercase tracking-wider">
+                        <div className="flex items-center gap-1.5 px-2 py-1 bg-slate-50 rounded-lg">
+                            <div className={`w-1.5 h-1.5 rounded-full ${product.confidenceLevel === 'High' ? 'bg-emerald-500' :
                                 product.confidenceLevel === 'Medium' ? 'bg-amber-500' : 'bg-rose-500'
                                 }`} />
-                            {product.confidenceLevel || 'Low'} Confidence
+                            {product.confidenceLevel || 'Low'}
                         </div>
-                        <div className="flex items-center gap-1">
-                            👥 {product.reportCount || 0} Reports
+                        <div className="flex items-center gap-1.5">
+                            <Users size={12} className="text-slate-300" />
+                            {product.reportCount || 0} Reports
                         </div>
                         {(product.messageCount ?? 0) > 0 && (
-                            <div className="flex items-center gap-1">
-                                💬 {product.messageCount} {product.messageCount === 1 ? 'message' : 'messages'}
+                            <div className="flex items-center gap-1.5">
+                                <MessageCircle size={12} className="text-slate-300" />
+                                {product.messageCount}
                             </div>
                         )}
                     </div>
 
-                    <div className="mt-6 pt-5 border-t border-slate-50 flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                        <span>Updated {formatRelativeTime(product.lastUpdated)}</span>
-                        <span className="flex items-center gap-1.5 text-primary group-hover:gap-2.5 transition-all">
-                            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                            View Details
+                    <div className="mt-5 pt-4 border-t border-slate-50 flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                        <span className="flex items-center gap-1.5">
+                            <Clock size={12} className="text-slate-300" />
+                            {formatRelativeTime(product.lastUpdated)}
+                        </span>
+                        <span className="flex items-center gap-1 text-primary group-hover:gap-2 transition-all">
+                            View
+                            <ChevronRight size={14} />
                         </span>
                     </div>
                 </div>

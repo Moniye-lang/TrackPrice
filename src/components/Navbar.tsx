@@ -1,8 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation';
+import { Home, Trophy, User, MessageSquare, CircleUser, LogOut, LayoutDashboard } from 'lucide-react';
 
 interface User {
     id: string;
@@ -78,9 +76,10 @@ export function Navbar() {
 
                             <button
                                 onClick={handleLogout}
-                                className="text-xs font-black text-slate-400 hover:text-rose-500 transition-colors uppercase tracking-widest"
+                                className="text-xs font-black text-slate-400 hover:text-rose-500 transition-colors uppercase tracking-widest flex items-center gap-1.5"
                             >
-                                Logout
+                                <LogOut size={14} />
+                                <span className="hidden sm:inline">Logout</span>
                             </button>
                         </div>
                     ) : (
@@ -99,22 +98,22 @@ export function Navbar() {
             </div>
 
             {/* Mobile Bottom Navigation */}
-            <div className="sm:hidden fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t border-slate-100 px-6 py-3 flex justify-between items-center z-[100] shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
-                <Link href="/" className={`flex flex-col items-center gap-1 ${pathname === '/' ? 'text-primary' : 'text-slate-400'}`}>
-                    <span className="text-xl">🏠</span>
-                    <span className="text-[10px] font-black uppercase tracking-widest">Home</span>
+            <div className="sm:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] bg-slate-900/90 backdrop-blur-2xl border border-white/10 px-8 py-4 flex justify-between items-center z-[100] shadow-2xl rounded-[2.5rem]">
+                <Link href="/" className={`flex flex-col items-center gap-1.5 transition-all duration-300 ${pathname === '/' ? 'text-primary scale-110' : 'text-slate-500 hover:text-slate-300'}`}>
+                    <Home size={22} strokeWidth={pathname === '/' ? 3 : 2} />
+                    <span className="text-[8px] font-black uppercase tracking-[0.2em]">Home</span>
                 </Link>
-                <Link href="/leaderboard" className={`flex flex-col items-center gap-1 ${pathname === '/leaderboard' ? 'text-primary' : 'text-slate-400'}`}>
-                    <span className="text-xl">🏆</span>
-                    <span className="text-[10px] font-black uppercase tracking-widest">Rank</span>
+                <Link href="/leaderboard" className={`flex flex-col items-center gap-1.5 transition-all duration-300 ${pathname === '/leaderboard' ? 'text-primary scale-110' : 'text-slate-500 hover:text-slate-300'}`}>
+                    <Trophy size={22} strokeWidth={pathname === '/leaderboard' ? 3 : 2} />
+                    <span className="text-[8px] font-black uppercase tracking-[0.2em]">Rank</span>
                 </Link>
-                <Link href="/profile" className={`flex flex-col items-center gap-1 ${pathname === '/profile' ? 'text-primary' : 'text-slate-400'}`}>
-                    <span className="text-xl">👤</span>
-                    <span className="text-[10px] font-black uppercase tracking-widest">User</span>
+                <Link href="/forum" className={`flex flex-col items-center gap-1.5 transition-all duration-300 ${pathname === '/forum' ? 'text-primary scale-110' : 'text-slate-500 hover:text-slate-300'}`}>
+                    <MessageSquare size={22} strokeWidth={pathname === '/forum' ? 3 : 2} />
+                    <span className="text-[8px] font-black uppercase tracking-[0.2em]">Talk</span>
                 </Link>
-                <Link href="/forum" className={`flex flex-col items-center gap-1 ${pathname === '/forum' ? 'text-primary' : 'text-slate-400'}`}>
-                    <span className="text-xl">💬</span>
-                    <span className="text-[10px] font-black uppercase tracking-widest">Talk</span>
+                <Link href="/profile" className={`flex flex-col items-center gap-1.5 transition-all duration-300 ${pathname === '/profile' ? 'text-primary scale-110' : 'text-slate-500 hover:text-slate-300'}`}>
+                    <CircleUser size={22} strokeWidth={pathname === '/profile' ? 3 : 2} />
+                    <span className="text-[8px] font-black uppercase tracking-[0.2em]">User</span>
                 </Link>
             </div>
         </header>
