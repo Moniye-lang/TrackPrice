@@ -1,3 +1,11 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { ProductCard } from '@/components/ProductCard';
+import { Navbar } from '@/components/Navbar';
+import { Input, Button } from '@/components/ui-base';
+import { formatPriceRange } from '@/lib/price-utils';
 import { TrendingUp, TrendingDown, Clock, Search, Award, Sparkles, ChevronRight, AlertCircle, Volume2 } from 'lucide-react';
 
 export default function Home() {

@@ -1,3 +1,7 @@
+import Link from 'next/link';
+import { formatRelativeTime } from '@/lib/utils';
+import { Card } from '@/components/ui-base';
+import { formatPriceRange } from '@/lib/price-utils';
 import { MapPin, Users, MessageCircle, CheckCircle, AlertTriangle, TrendingDown, TrendingUp, Sparkles, Clock, ChevronRight } from 'lucide-react';
 
 interface ProductCardProps {

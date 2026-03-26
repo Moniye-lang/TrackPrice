@@ -1,3 +1,12 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { Button, Card } from '@/components/ui-base';
+import { Navbar } from '@/components/Navbar';
+import { formatRelativeTime } from '@/lib/utils';
+import Link from 'next/link';
+import { use } from 'react';
+import { formatPriceRange } from '@/lib/price-utils';
 import { MapPin, Users, MessageCircle, Check, X, Send, History, TrendingDown, TrendingUp, Sparkles, Clock, ArrowLeft, ExternalLink, AlertTriangle, ChevronRight, CornerDownRight } from 'lucide-react';
 
 interface Product {

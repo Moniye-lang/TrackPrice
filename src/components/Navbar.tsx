@@ -1,6 +1,10 @@
 'use client';
 
-import { Home, Trophy, User, MessageSquare, CircleUser, LogOut, LayoutDashboard } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { Home, Trophy, User, MessageSquare, CircleUser, LogOut, LayoutDashboard, Search, Activity, Heart, ShoppingBag, Menu, X } from 'lucide-react';
+import { Button } from './ui-base';
 
 interface User {
     id: string;
