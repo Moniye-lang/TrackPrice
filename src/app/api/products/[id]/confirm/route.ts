@@ -36,7 +36,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     try {
         await connectDB();
-        const { updateId } = await req.json();
+        const body = await req.json();
+        const { updateId } = body;
+        console.log(`[Confirm API] Product: ${productId}, UpdateID: ${updateId}`, body);
 
         if (!updateId) {
             return NextResponse.json({ error: 'Update ID is required' }, { status: 400 });

@@ -161,6 +161,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     }, [product]);
 
     const handleConfirmPrice = async (updateId: string) => {
+        if (!updateId) {
+            console.error('handleConfirmPrice called without updateId');
+            return;
+        }
         try {
             const res = await fetch(`/api/products/${id}/confirm`, {
                 method: 'POST',
