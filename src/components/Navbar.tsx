@@ -44,82 +44,113 @@ export function Navbar() {
     };
 
     return (
-        <header className="glass sticky top-4 z-50 mx-4 mt-4 rounded-2xl shadow-premium">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-                <Link href="/" className="text-2xl font-black text-primary tracking-tighter hover:scale-105 transition-transform flex-shrink-0">
-                    TrackPrice<span className="text-accent">.</span>
-                </Link>
-
-                <nav className="flex items-center gap-3 sm:gap-6">
-                    <Link href="/forum" className="text-slate-600 hover:text-primary font-semibold transition-colors relative group text-sm hidden sm:block">
-                        Forum
-                        <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
+        <div className="z-50">
+            {/* Top Logo Bar (Mobile & Desktop) */}
+            <header className="sm:sticky sm:top-4 z-50 sm:mx-4 sm:mt-4 sm:glass sm:rounded-3xl sm:shadow-premium sm:border sm:border-white/20 transition-all duration-500">
+                <div className="max-w-7xl mx-auto px-6 h-16 sm:h-20 flex items-center justify-between gap-4">
+                    <Link href="/" className="text-2xl font-black text-primary tracking-tighter hover:scale-110 transition-transform flex-shrink-0 group">
+                        TrackPrice<span className="text-accent group-hover:animate-ping inline-block">.</span>
                     </Link>
 
-                    <Link href="/leaderboard" className="text-slate-600 hover:text-primary font-semibold transition-colors relative group text-sm hidden sm:block">
-                        Leaderboard
-                        <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
-                    </Link>
+                    {/* Desktop Navigation Links */}
+                    <nav className="hidden sm:flex items-center gap-8">
+                        <Link href="/forum" className={`text-sm font-black uppercase tracking-widest transition-colors relative group ${pathname === '/forum' ? 'text-primary' : 'text-slate-500 hover:text-primary'}`}>
+                            Forum
+                            <span className={`absolute -bottom-1 left-0 h-0.5 bg-primary transition-all ${pathname === '/forum' ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+                        </Link>
 
-                    {loading ? (
-                        <div className="h-4 w-24 rounded bg-slate-100 animate-pulse" />
-                    ) : user ? (
-                        <div className="flex items-center gap-4">
-                            <Link href="/profile" className="hidden sm:flex items-center gap-2 bg-primary/5 hover:bg-primary/10 border border-primary/20 px-3 py-1.5 rounded-xl transition-all">
-                                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                                <span className="text-sm font-bold text-primary">
-                                    {user.name?.split(' ')[0] ?? 'Profile'}
-                                </span>
-                            </Link>
+                        <Link href="/leaderboard" className={`text-sm font-black uppercase tracking-widest transition-colors relative group ${pathname === '/leaderboard' ? 'text-primary' : 'text-slate-500 hover:text-primary'}`}>
+                            Leaderboard
+                            <span className={`absolute -bottom-1 left-0 h-0.5 bg-primary transition-all ${pathname === '/leaderboard' ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+                        </Link>
 
-                            {user.role === 'admin' && (
-                                <Link href="/admin/dashboard" className="text-xs font-black text-amber-600 hover:text-amber-700 uppercase tracking-widest hidden md:block">
-                                    Admin
+                        {loading ? (
+                            <div className="h-4 w-24 rounded bg-slate-100 animate-pulse" />
+                        ) : user ? (
+                            <div className="flex items-center gap-6 border-l border-slate-100 pl-6 ml-2">
+                                <Link href="/profile" className="flex items-center gap-3 bg-primary/5 hover:bg-primary/10 border border-primary/20 px-4 py-2 rounded-2xl transition-all shadow-premium-sm group/profile">
+                                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                    <span className="text-xs font-black text-primary uppercase tracking-widest">
+                                        {user.name?.split(' ')[0] ?? 'Profile'}
+                                    </span>
+                                    <CircleUser size={18} className="text-primary/40 group-hover/profile:text-primary transition-colors" />
                                 </Link>
-                            )}
 
-                            <button
-                                onClick={handleLogout}
-                                className="text-xs font-black text-slate-400 hover:text-rose-500 transition-colors uppercase tracking-widest flex items-center gap-1.5"
-                            >
-                                <LogOut size={14} />
-                                <span className="hidden sm:inline">Logout</span>
-                            </button>
-                        </div>
-                    ) : (
-                        <div className="flex items-center gap-2 sm:gap-4">
-                            <Link href="/login" className="text-slate-600 hover:text-primary font-semibold transition-colors text-sm">
+                                {user.role === 'admin' && (
+                                    <Link href="/admin/dashboard" className="text-[10px] font-black text-amber-600 hover:text-amber-700 uppercase tracking-[0.3em] border border-amber-200/50 px-3 py-1.5 rounded-xl bg-amber-50">
+                                        Admin
+                                    </Link>
+                                )}
+
+                                <button
+                                    onClick={handleLogout}
+                                    className="text-[10px] font-black text-slate-400 hover:text-rose-500 transition-colors uppercase tracking-[0.3em] flex items-center gap-2 group/logout"
+                                >
+                                    <LogOut size={16} className="group-hover/logout:-translate-x-1 transition-transform" />
+                                    Logout
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-6 border-l border-slate-100 pl-6 ml-2">
+                                <Link href="/login" className="text-xs font-black text-slate-500 hover:text-primary uppercase tracking-widest">
+                                    Log In
+                                </Link>
+                                <Link href="/register">
+                                    <Button className="px-6 py-2.5 rounded-2xl text-[10px] uppercase tracking-[0.2em] font-black shadow-premium">
+                                        Join Community
+                                    </Button>
+                                </Link>
+                            </div>
+                        )}
+                    </nav>
+
+                    {/* Mobile Profile Icon (Top Bar) */}
+                    <div className="sm:hidden flex items-center gap-4">
+                        {user ? (
+                            <Link href="/profile" className="w-10 h-10 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-premium-sm">
+                                <CircleUser size={22} />
+                            </Link>
+                        ) : (
+                            <Link href="/login" className="text-[10px] font-black text-primary hover:text-primary/80 uppercase tracking-widest border border-primary/20 px-4 py-2 rounded-2xl bg-primary/5">
                                 Log In
                             </Link>
-                            <Link href="/register">
-                                <button className="bg-primary text-white px-4 py-2 rounded-xl text-sm font-black hover:bg-primary/90 transition-colors shadow-glow">
-                                    Sign Up
-                                </button>
-                            </Link>
-                        </div>
-                    )}
-                </nav>
-            </div>
+                        )}
+                    </div>
+                </div>
+            </header>
 
-            {/* Mobile Bottom Navigation */}
-            <div className="sm:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] bg-slate-900/90 backdrop-blur-2xl border border-white/10 px-8 py-4 flex justify-between items-center z-[100] shadow-2xl rounded-[2.5rem]">
-                <Link href="/" className={`flex flex-col items-center gap-1.5 transition-all duration-300 ${pathname === '/' ? 'text-primary scale-110' : 'text-slate-500 hover:text-slate-300'}`}>
-                    <Home size={22} strokeWidth={pathname === '/' ? 3 : 2} />
-                    <span className="text-[8px] font-black uppercase tracking-[0.2em]">Home</span>
+            {/* Mobile Bottom Navigation Bar (Floating) */}
+            <nav className="sm:hidden fixed bottom-8 left-1/2 -translate-x-1/2 w-[92%] max-w-sm bg-slate-950/90 backdrop-blur-3xl border border-white/10 px-6 py-4 flex justify-between items-center z-[100] shadow-[0_20px_50px_rgba(0,0,0,0.5)] rounded-[2.5rem] ring-1 ring-white/5">
+                <Link href="/" className={`flex flex-col items-center gap-2 transition-all duration-500 ${pathname === '/' ? 'text-primary scale-110 -translate-y-1' : 'text-slate-500 hover:text-slate-300'}`}>
+                    <div className={`p-2 rounded-2xl transition-all ${pathname === '/' ? 'bg-primary/20 shadow-glow-sm' : 'bg-transparent'}`}>
+                        <Home size={22} strokeWidth={pathname === '/' ? 2.5 : 2} />
+                    </div>
+                    <span className={`text-[8px] font-black uppercase tracking-[0.2em] ${pathname === '/' ? 'opacity-100' : 'opacity-40'}`}>Home</span>
                 </Link>
-                <Link href="/leaderboard" className={`flex flex-col items-center gap-1.5 transition-all duration-300 ${pathname === '/leaderboard' ? 'text-primary scale-110' : 'text-slate-500 hover:text-slate-300'}`}>
-                    <Trophy size={22} strokeWidth={pathname === '/leaderboard' ? 3 : 2} />
-                    <span className="text-[8px] font-black uppercase tracking-[0.2em]">Rank</span>
+
+                <Link href="/leaderboard" className={`flex flex-col items-center gap-2 transition-all duration-500 ${pathname === '/leaderboard' ? 'text-primary scale-110 -translate-y-1' : 'text-slate-500 hover:text-slate-300'}`}>
+                    <div className={`p-2 rounded-2xl transition-all ${pathname === '/leaderboard' ? 'bg-primary/20 shadow-glow-sm' : 'bg-transparent'}`}>
+                        <Trophy size={22} strokeWidth={pathname === '/leaderboard' ? 2.5 : 2} />
+                    </div>
+                    <span className={`text-[8px] font-black uppercase tracking-[0.2em] ${pathname === '/leaderboard' ? 'opacity-100' : 'opacity-40'}`}>Rank</span>
                 </Link>
-                <Link href="/forum" className={`flex flex-col items-center gap-1.5 transition-all duration-300 ${pathname === '/forum' ? 'text-primary scale-110' : 'text-slate-500 hover:text-slate-300'}`}>
-                    <MessageSquare size={22} strokeWidth={pathname === '/forum' ? 3 : 2} />
-                    <span className="text-[8px] font-black uppercase tracking-[0.2em]">Talk</span>
+
+                <div className="w-px h-8 bg-white/5 mx-2 self-center rounded-full" />
+
+                <Link href="/forum" className={`flex flex-col items-center gap-2 transition-all duration-500 ${pathname === '/forum' ? 'text-primary scale-110 -translate-y-1' : 'text-slate-500 hover:text-slate-300'}`}>
+                    <div className={`p-2 rounded-2xl transition-all ${pathname === '/forum' ? 'bg-primary/20 shadow-glow-sm' : 'bg-transparent'}`}>
+                        <MessageSquare size={22} strokeWidth={pathname === '/forum' ? 2.5 : 2} />
+                    </div>
+                    <span className={`text-[8px] font-black uppercase tracking-[0.2em] ${pathname === '/forum' ? 'opacity-100' : 'opacity-40'}`}>Talk</span>
                 </Link>
-                <Link href="/profile" className={`flex flex-col items-center gap-1.5 transition-all duration-300 ${pathname === '/profile' ? 'text-primary scale-110' : 'text-slate-500 hover:text-slate-300'}`}>
-                    <CircleUser size={22} strokeWidth={pathname === '/profile' ? 3 : 2} />
-                    <span className="text-[8px] font-black uppercase tracking-[0.2em]">User</span>
+
+                <Link href="/profile" className={`flex flex-col items-center gap-2 transition-all duration-500 ${pathname === '/profile' ? 'text-primary scale-110 -translate-y-1' : 'text-slate-500 hover:text-slate-300'}`}>
+                    <div className={`p-2 rounded-2xl transition-all ${pathname === '/profile' ? 'bg-primary/20 shadow-glow-sm' : 'bg-transparent'}`}>
+                        <CircleUser size={22} strokeWidth={pathname === '/profile' ? 2.5 : 2} />
+                    </div>
+                    <span className={`text-[8px] font-black uppercase tracking-[0.2em] ${pathname === '/profile' ? 'opacity-100' : 'opacity-40'}`}>User</span>
                 </Link>
-            </div>
-        </header>
+            </nav>
+        </div>
     );
 }
