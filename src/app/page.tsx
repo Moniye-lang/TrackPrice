@@ -104,9 +104,20 @@ export default function Home() {
           <h1 className="text-4xl md:text-7xl font-black mb-6 tracking-tight text-slate-900 leading-[1] antialiased">
             Check prices before you <span className="text-primary italic">buy anything</span> in Ibadan
           </h1>
-          <p className="text-slate-500 mb-10 text-lg md:text-xl font-medium max-w-2xl mx-auto px-4">
-            Real-time market insights from Bodija, Dugbe, and more. Join 5,000+ shoppers tracking the best deals today.
+          <p className="text-slate-500 mb-6 text-lg md:text-xl font-medium max-w-2xl mx-auto px-4">
+            Prices change daily — check before you buy today. Join people tracking live prices in Bodija, Dugbe, and beyond.
           </p>
+
+          <div className="flex justify-center mb-8">
+            <Link href="/request-product" className="group/cta flex items-center gap-3 bg-white/50 border border-slate-200 px-5 py-2.5 rounded-2xl hover:bg-primary/5 hover:border-primary/20 transition-all duration-300">
+              <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover/cta:bg-primary group-hover/cta:text-white transition-all">
+                <TrendingUp size={16} />
+              </div>
+              <span className="text-[11px] font-black text-slate-600 uppercase tracking-widest group-hover/cta:text-primary transition-colors">
+                Seen a different price? <span className="text-primary italic">Update it</span>
+              </span>
+            </Link>
+          </div>
 
           <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2 max-w-3xl mx-auto bg-white/40 p-2 rounded-3xl border border-white/60 shadow-2xl backdrop-blur-xl">
             <div className="relative flex-[2]">
@@ -365,8 +376,11 @@ export default function Home() {
       </main>
 
       {/* Mobile Floating Action Button */}
-      <div className="sm:hidden fixed bottom-32 right-6 z-[60]">
-        <Link href="/request-product">
+      <div className="sm:hidden fixed bottom-32 right-6 z-[60] flex flex-col items-end gap-3">
+        <Link href="/request-product" className="group">
+          <div className="bg-slate-900 border border-slate-800 text-white text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-xl mb-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+            Update Price
+          </div>
           <button className="w-16 h-16 bg-primary text-white rounded-full shadow-glow flex items-center justify-center hover:scale-110 active:scale-95 transition-all outline-none ring-4 ring-primary/20">
             <TrendingUp size={32} />
           </button>

@@ -175,10 +175,10 @@ export function ProductCard({ product }: ProductCardProps) {
                     </div>
 
                     {/* Trust Indicators Bar */}
-                    <div className="mt-5 flex items-center justify-between p-3 bg-slate-50/50 rounded-2xl border border-slate-100/50">
+                    <div className="mt-5 flex items-center justify-between p-3 bg-slate-50 border border-slate-100/80 rounded-2xl group-hover:bg-primary/5 group-hover:border-primary/10 transition-colors duration-500">
                         <div className="flex items-center gap-4">
                             <div className="flex flex-col">
-                                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Confidence</span>
+                                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Status</span>
                                 <div className="flex items-center gap-1.5">
                                     <div className={`w-1.5 h-1.5 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.1)] ${
                                         product.confidenceLevel === 'High' ? 'bg-emerald-500 shadow-emerald-500/50' :
@@ -188,21 +188,23 @@ export function ProductCard({ product }: ProductCardProps) {
                                         product.confidenceLevel === 'High' ? 'text-emerald-700' :
                                         product.confidenceLevel === 'Medium' ? 'text-amber-700' : 'text-rose-700'
                                     }`}>
-                                        {product.confidenceLevel || 'Low'}
+                                        {product.confidenceLevel === 'High' ? 'Verified' : product.confidenceLevel || 'Low'}
                                     </span>
                                 </div>
                             </div>
                             <div className="w-px h-6 bg-slate-200" />
                             <div className="flex flex-col">
-                                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Impact</span>
+                                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Signals</span>
                                 <div className="flex items-center gap-1.5 text-slate-700">
                                     <Users size={12} className="text-slate-400" />
-                                    <span className="text-[10px] font-black uppercase tracking-tight">{product.reportCount || 0}</span>
+                                    <span className="text-[10px] font-black uppercase tracking-tight">
+                                        {product.reportCount || 0} <span className="text-slate-400 font-bold ml-0.5">Confirmations</span>
+                                    </span>
                                 </div>
                             </div>
                         </div>
                         {(product.messageCount ?? 0) > 0 && (
-                            <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white rounded-xl shadow-premium-sm">
+                            <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white rounded-xl shadow-premium-sm border border-slate-50">
                                 <MessageCircle size={12} className="text-primary" />
                                 <span className="text-[10px] font-black text-slate-700">{product.messageCount}</span>
                             </div>
