@@ -103,7 +103,7 @@ export function Navbar() {
                                 </Link>
                                 <Link href="/register">
                                     <Button className="px-6 py-2.5 rounded-2xl text-[10px] uppercase tracking-[0.2em] font-black shadow-premium">
-                                        Join Community
+                                        Start Tracking Prices
                                     </Button>
                                 </Link>
                             </div>
