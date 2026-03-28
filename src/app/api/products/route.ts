@@ -43,32 +43,50 @@ export async function GET(req: NextRequest) {
 
         console.log(`[Products GET] Processing with search=${search}, category=${category}, storeId=${storeId}, sort=${sort}, featured=${featured}, stale=${stale}`);
 
-        let query: any = {};
+        const conditions: any[] = [];
+        
         if (search) {
-            query.name = { $regex: escapeRegex(search), $options: 'i' };
+            conditions.push({ name: { $regex: escapeRegex(search), $options: 'i' } });
         }
         if (category && category !== 'All') {
-            query.category = category;
+            conditions.push({ category });
         }
         if (storeId && storeId !== 'All') {
-            query.storeId = storeId;
+            try {
+                const store = await Store.findById(storeId).lean();
+                if (store) {
+                    conditions.push({
+                        $or: [
+                            { storeId: storeId },
+                            { storeLocation: { $regex: escapeRegex(store.name), $options: 'i' } }
+                        ]
+                    });
+                    console.log(`[Products GET] Expanding query for store: ${store.name}`);
+                } else {
+                    conditions.push({ storeId: storeId });
+                }
+            } catch (err) {
+                console.error('[Products GET] Store Lookup Error:', err);
+                conditions.push({ storeId: storeId });
+            }
         }
         if (featured) {
-            query.isFeatured = true;
+            conditions.push({ isFeatured: true });
         }
         if (stale) {
             // Stale = not updated in 7 days for most, 2 days for Oil and Gas
             const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
             const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
             
-            query = {
-                ...query,
+            conditions.push({
                 $or: [
                     { category: 'Oil and Gas', lastUpdated: { $lt: twoDaysAgo } },
                     { category: { $ne: 'Oil and Gas' }, lastUpdated: { $lt: sevenDaysAgo } }
                 ]
-            };
+            });
         }
+
+        const query = conditions.length > 0 ? { $and: conditions } : {};
 
         let sortOption: any = {};
         if (sort === 'price_asc') sortOption.price = 1;
