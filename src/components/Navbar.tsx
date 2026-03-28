@@ -53,7 +53,7 @@ export function Navbar() {
                     </Link>
 
                     {/* Central CTA (Desktop Only) */}
-                    <Link href="/request-product" className="hidden lg:flex items-center gap-2 bg-primary/5 hover:bg-primary text-primary hover:text-white px-5 py-2 rounded-2xl border border-primary/20 transition-all duration-500 group/btn shadow-glow-sm">
+                    <Link href="/stale-prices" className="hidden lg:flex items-center gap-2 bg-primary/5 hover:bg-primary text-primary hover:text-white px-5 py-2 rounded-2xl border border-primary/20 transition-all duration-500 group/btn shadow-glow-sm">
                         <TrendingUp size={16} className="group-hover/btn:scale-110 transition-transform" />
                         <span className="text-[10px] font-black uppercase tracking-[0.2em]">Update Price</span>
                     </Link>
@@ -142,7 +142,7 @@ export function Navbar() {
                 </Link>
 
                 {/* Growth Engine: Update Price */}
-                <Link href="/request-product" className={`flex flex-col items-center gap-2 transition-all duration-500 -translate-y-4`}>
+                <Link href="/stale-prices" className={`flex flex-col items-center gap-2 transition-all duration-500 -translate-y-4`}>
                     <div className="w-14 h-14 bg-primary rounded-full shadow-glow flex items-center justify-center text-white ring-4 ring-slate-950">
                         <Plus size={28} strokeWidth={3} />
                     </div>

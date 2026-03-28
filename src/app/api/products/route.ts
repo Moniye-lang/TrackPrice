@@ -57,9 +57,17 @@ export async function GET(req: NextRequest) {
             query.isFeatured = true;
         }
         if (stale) {
-            // Stale = not updated in 14 days
-            const twoWeeksAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
-            query.lastUpdated = { $lt: twoWeeksAgo };
+            // Stale = not updated in 7 days for most, 2 days for Oil and Gas
+            const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+            const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
+            
+            query = {
+                ...query,
+                $or: [
+                    { category: 'Oil and Gas', lastUpdated: { $lt: twoDaysAgo } },
+                    { category: { $ne: 'Oil and Gas' }, lastUpdated: { $lt: sevenDaysAgo } }
+                ]
+            };
         }
 
         let sortOption: any = {};

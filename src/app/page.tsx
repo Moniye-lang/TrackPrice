@@ -153,7 +153,7 @@ export default function Home() {
           </div>
 
           <div className="flex justify-center mb-10">
-            <Link href="/request-product" className="group/cta flex items-center gap-4 bg-slate-900 border border-slate-800 px-8 py-4 rounded-3xl hover:bg-primary transition-all duration-500 shadow-2xl hover:shadow-primary/40 hover:-translate-y-1 scale-110">
+            <Link href="/stale-prices" className="group/cta flex items-center gap-4 bg-slate-900 border border-slate-800 px-8 py-4 rounded-3xl hover:bg-primary transition-all duration-500 shadow-2xl hover:shadow-primary/40 hover:-translate-y-1 scale-110">
               <div className="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center text-white shadow-glow group-hover/cta:bg-white group-hover/cta:text-primary transition-all">
                 <TrendingUp size={20} />
               </div>
@@ -364,11 +364,15 @@ export default function Home() {
           {staleProducts.length > 0 && (
             <div className="space-y-6">
               <div className="flex items-center justify-between">
-                <h3 className="text-[10px] font-black text-slate-800 uppercase tracking-[0.2em] flex items-center gap-2">
+                <div className="flex items-center gap-2">
                    <AlertCircle size={14} className="text-rose-500" />
-                   Needs Update
-                </h3>
-                <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
+                   <h3 className="text-[10px] font-black text-slate-800 uppercase tracking-[0.2em]">
+                      Needs Update
+                   </h3>
+                </div>
+                <Link href="/stale-prices" className="text-[9px] font-black text-primary hover:underline uppercase tracking-widest">
+                  View All
+                </Link>
               </div>
               <div className="space-y-4">
                 {staleProducts.map((p: any) => (
@@ -380,7 +384,7 @@ export default function Home() {
                       <h4 className="font-bold text-slate-800 text-sm truncate group-hover:text-primary transition-colors">{p.name}</h4>
                       <div className="flex items-center gap-1.5 text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">
                         <Clock size={10} />
-                        14+ Days Old
+                        Stale Price
                       </div>
                     </div>
                   </Link>
@@ -458,7 +462,7 @@ export default function Home() {
 
       {/* Mobile Floating Action Button */}
       <div className="sm:hidden fixed bottom-32 right-6 z-[60] flex flex-col items-end gap-3">
-        <Link href="/request-product" className="group">
+        <Link href="/stale-prices" className="group">
           <div className="bg-slate-900 border border-slate-800 text-white text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-xl mb-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
             Update Price
           </div>
