@@ -9,24 +9,39 @@ import Link from 'next/link';
 export default function StalePricesPage() {
     const [products, setProducts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [search, setSearch] = useState('');
+    const [category, setCategory] = useState('All');
+
+    const fetchStaleProducts = async () => {
+        setLoading(true);
+        try {
+            const params = new URLSearchParams({
+                stale: 'true',
+                search,
+                category
+            });
+            const res = await fetch(`/api/products?${params}`);
+            if (res.ok) {
+                const data = await res.json();
+                setProducts(data);
+            }
+        } catch (error) {
+            console.error('Failed to fetch stale products');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchStaleProducts = async () => {
-            setLoading(true);
-            try {
-                const res = await fetch('/api/products?stale=true');
-                if (res.ok) {
-                    const data = await res.json();
-                    setProducts(data);
-                }
-            } catch (error) {
-                console.error('Failed to fetch stale products');
-            } finally {
-                setLoading(false);
-            }
-        };
         fetchStaleProducts();
-    }, []);
+    }, [category]);
+
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        fetchStaleProducts();
+    };
+
+    const categories = ['All', 'Electronics', 'Clothing', 'Home', 'Groceries', 'Books', 'Oil and Gas'];
 
     return (
         <div className="min-h-screen bg-mesh selection:bg-primary/20">
@@ -53,6 +68,39 @@ export default function StalePricesPage() {
                                 These products haven't had a price update recently. Help the community by providing the latest prices from your local market.
                             </p>
                         </div>
+                    </div>
+                </div>
+
+                {/* Search & Filter Bar */}
+                <div className="flex flex-col md:flex-row gap-4 mb-8">
+                    <form onSubmit={handleSearch} className="flex-1 flex gap-2 bg-white/40 p-1.5 rounded-2xl border border-white/60 shadow-sm backdrop-blur-xl">
+                        <div className="relative flex-1">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
+                            <input
+                                className="w-full bg-transparent border-none focus:ring-0 text-slate-800 text-sm px-12 h-10 outline-none"
+                                placeholder="Search stale products..."
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                            />
+                        </div>
+                        <button type="submit" className="bg-primary text-white px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest shadow-glow-sm hover:scale-105 transition-all">
+                            Filter
+                        </button>
+                    </form>
+
+                    <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
+                        {categories.map((cat) => (
+                            <button
+                                key={cat}
+                                onClick={() => setCategory(cat)}
+                                className={`px-5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${category === cat
+                                    ? 'bg-primary text-white shadow-glow'
+                                    : 'bg-white text-slate-500 hover:bg-slate-50 border border-slate-100 shadow-sm'
+                                    }`}
+                            >
+                                {cat}
+                            </button>
+                        ))}
                     </div>
                 </div>
 
