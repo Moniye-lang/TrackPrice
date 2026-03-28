@@ -55,8 +55,14 @@ export default function ProfilePage() {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        if (!loading && !user) {
+            window.location.href = '/login';
+        }
+    }, [user, loading]);
+
     if (loading) return <div className="text-center py-20">Loading profile...</div>;
-    if (!user) return <div className="text-center py-20 font-bold text-rose-500">Please log in to view your profile.</div>;
+    if (!user) return null;
 
     const getReputationColor = (level: string) => {
         switch (level) {
