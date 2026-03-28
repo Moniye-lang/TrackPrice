@@ -69,20 +69,20 @@ export default function ProfilePage() {
     return (
         <>
             <Navbar />
-            <div className="max-w-4xl mx-auto py-12 px-4 space-y-12">
+            <div className="max-w-4xl mx-auto pt-6 pb-32 md:py-12 px-4 space-y-8 md:space-y-12">
                 {/* Header Section */}
-                <div className="flex flex-col md:flex-row items-center gap-8 bg-white p-10 rounded-[3rem] shadow-premium border border-slate-50">
+                <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8 bg-white p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-premium border border-slate-50">
                     <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-white text-5xl font-black shadow-glow">
                         {user.name.charAt(0)}
                     </div>
                     <div className="text-center md:text-left flex-1">
                         <div className="flex flex-col md:flex-row items-center gap-3 mb-2">
-                            <h1 className="text-4xl font-black text-slate-900 tracking-tight">{user.name}</h1>
-                            <span className={`px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest border ${getReputationColor(user.reputationLevel)}`}>
+                            <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">{user.name}</h1>
+                            <span className={`px-4 py-1 rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest border ${getReputationColor(user.reputationLevel)}`}>
                                 {user.reputationLevel}
                             </span>
                         </div>
-                        <p className="text-slate-400 font-bold text-sm uppercase tracking-widest">{user.city || 'Nigeria'} | Member since {new Date(user.createdAt).getFullYear()}</p>
+                        <p className="text-slate-400 font-bold text-[10px] md:text-sm uppercase tracking-widest">{user.city || 'Nigeria'} | Member since {new Date(user.createdAt).getFullYear()}</p>
                         <div className="flex gap-4 mt-6 justify-center md:justify-start">
                             <div className="text-center">
                                 <div className="text-3xl font-black text-primary">{user.points}</div>
@@ -100,8 +100,8 @@ export default function ProfilePage() {
                             </div>
                         </div>
                     </div>
-                    <Link href="/settings">
-                        <Button variant="secondary" className="px-6 py-2 text-xs font-black uppercase tracking-widest bg-slate-50 border-none">Edit Profile</Button>
+                    <Link href="/settings" className="w-full md:w-auto">
+                        <Button variant="secondary" className="w-full md:w-auto px-6 py-2 text-xs font-black uppercase tracking-widest bg-slate-50 border-none">Edit Profile</Button>
                     </Link>
                 </div>
 
@@ -113,8 +113,8 @@ export default function ProfilePage() {
                     </h2>
                     <div className="space-y-4">
                         {activity.map(act => (
-                            <Card key={act._id} className="p-6 flex justify-between items-center transition-all hover:scale-[1.01] hover:shadow-xl border-none shadow-premium">
-                                <div className="flex items-center gap-6">
+                            <Card key={act._id} className="p-4 md:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-all hover:scale-[1.01] hover:shadow-xl border-none shadow-premium">
+                                <div className="flex items-center gap-4 md:gap-6">
                                     <div className="hidden sm:flex w-12 h-12 rounded-xl bg-slate-50 items-center justify-center text-2xl">
                                         🛒
                                     </div>

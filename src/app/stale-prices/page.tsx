@@ -47,7 +47,7 @@ export default function StalePricesPage() {
         <div className="min-h-screen bg-mesh selection:bg-primary/20">
             <Navbar />
 
-            <main className="max-w-7xl mx-auto px-4 py-12">
+            <div className="max-w-7xl mx-auto px-4 pt-6 pb-32 md:py-12 space-y-8 md:space-y-12">
                 {/* Header Section */}
                 <div className="mb-12">
                     <Link href="/" className="inline-flex items-center gap-2 text-slate-500 hover:text-primary transition-colors mb-6 group">
@@ -149,7 +149,7 @@ export default function StalePricesPage() {
                         ))}
                     </div>
                 )}
-            </main>
+            </div>
         </div>
     );
 }

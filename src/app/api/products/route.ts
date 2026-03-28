@@ -46,7 +46,16 @@ export async function GET(req: NextRequest) {
         const conditions: any[] = [];
         
         if (search) {
-            conditions.push({ name: { $regex: escapeRegex(search), $options: 'i' } });
+            const terms = search.split(',').map(t => t.trim()).filter(Boolean);
+            if (terms.length > 1) {
+                conditions.push({
+                    $or: terms.map(term => ({
+                        name: { $regex: escapeRegex(term), $options: 'i' }
+                    }))
+                });
+            } else if (terms.length === 1) {
+                conditions.push({ name: { $regex: escapeRegex(terms[0]), $options: 'i' } });
+            }
         }
         if (category && category !== 'All') {
             conditions.push({ category });
