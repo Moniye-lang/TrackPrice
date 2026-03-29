@@ -29,6 +29,24 @@ interface PriceUpdate {
     createdAt: string;
 }
 
+import { 
+    ShieldAlert, 
+    CheckCircle2, 
+    XCircle, 
+    ArrowRight, 
+    TrendingUp, 
+    TrendingDown, 
+    User, 
+    Clock, 
+    History, 
+    ArrowUpRight,
+    AlertCircle,
+    Zap,
+    RefreshCw,
+    ExternalLink,
+    Box
+} from 'lucide-react';
+
 export default function AdminVerificationQueue() {
     const [updates, setUpdates] = useState<PriceUpdate[]>([]);
     const [loading, setLoading] = useState(true);
@@ -40,7 +58,6 @@ export default function AdminVerificationQueue() {
             const res = await fetch('/api/admin/verification');
             const data = await res.json();
 
-            // Map the nested productId and userId to product and user for easier reading
             if (data.pendingUpdates) {
                 const mapped = data.pendingUpdates.map((u: any) => ({
                     ...u,
@@ -70,7 +87,6 @@ export default function AdminVerificationQueue() {
             });
 
             if (res.ok) {
-                // Remove from local state
                 setUpdates(prev => prev.filter(u => u._id !== id));
             } else {
                 const data = await res.json();
@@ -84,112 +100,170 @@ export default function AdminVerificationQueue() {
     };
 
     return (
-        <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-black text-slate-800 tracking-tight">Verification Queue (v1.1)</h1>
-                <Button onClick={fetchQueue} variant="secondary">Refresh Queue</Button>
+        <div className="space-y-12 pb-20">
+            {/* Page Header */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div>
+                     <nav className="flex items-center gap-2 mb-2">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Admin</span>
+                        <span className="text-slate-300">/</span>
+                        <span className="text-[10px] font-black text-primary uppercase tracking-widest">Quality Assurance</span>
+                    </nav>
+                    <h1 className="text-4xl font-black text-slate-900 tracking-tight leading-none">
+                        Verification <span className="text-primary italic">Queue</span>
+                    </h1>
+                </div>
+                <div className="flex items-center gap-3">
+                    <Button 
+                        onClick={fetchQueue} 
+                        variant="secondary"
+                        className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50 shadow-sm flex items-center gap-2 px-6 py-3 rounded-2xl transition-all"
+                    >
+                        <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Sync Queue</span>
+                    </Button>
+                </div>
             </div>
 
-            <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl flex items-start gap-4 shadow-sm text-amber-800">
-                <div className="bg-amber-100 p-2 rounded-lg">
-                    <svg className="w-6 h-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
-                <div>
-                    <h3 className="font-bold text-lg">Manual Interventions Required</h3>
-                    <p className="text-sm font-medium opacity-80 mt-1">
-                        These price updates are stuck in the queue. They either lack enough community votes to reach the verification threshold, or involve flagged products with massive price discrepancies. Manually intervening will override the community consensus.
-                    </p>
+            {/* Alert/Notice Block */}
+            <div className="bg-slate-900 rounded-[2.5rem] p-10 relative overflow-hidden shadow-premium text-white border border-slate-800">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 blur-[120px] rounded-full -mr-32 -mt-32" />
+                <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-8">
+                    <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center text-primary shadow-glow shrink-0 border border-primary/20">
+                        <ShieldAlert size={32} />
+                    </div>
+                    <div>
+                        <h2 className="text-xl font-black tracking-tight mb-2 uppercase">Manual Intervention Required</h2>
+                        <p className="text-slate-400 text-sm font-bold leading-relaxed max-w-2xl opacity-80">
+                            These price updates have triggered system anomalies. They involve flagged products with high variance or lack sufficient community validation. Overriding here bypasses the automatic consensus protocol.
+                        </p>
+                    </div>
                 </div>
             </div>
 
             {loading ? (
-                <div className="text-center py-10 text-slate-500">Loading queue...</div>
+                 <div className="flex flex-col items-center justify-center py-32 gap-4">
+                    <div className="animate-pulse flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-primary animate-bounce" />
+                        <div className="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:-0.15s]" />
+                        <div className="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:-0.3s]" />
+                    </div>
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Querying Verification Registry</p>
+                </div>
             ) : (
-                <div className="space-y-4">
+                <div className="space-y-6">
                     {updates.length === 0 ? (
-                        <div className="text-center py-20 bg-white rounded-xl border border-slate-100 shadow-premium">
-                            <div className="w-16 h-16 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                </svg>
+                        <div className="text-center py-32 bg-white rounded-[2.5rem] shadow-premium border border-slate-100 mt-12">
+                            <div className="w-20 h-20 bg-emerald-50 text-emerald-500 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-emerald-100">
+                                <CheckCircle2 size={40} />
                             </div>
-                            <h3 className="text-xl font-black text-slate-800">Queue is empty!</h3>
-                            <p className="text-slate-500 font-medium">All price updates have been resolved automatically by the community.</p>
+                            <h3 className="text-2xl font-black text-slate-900 tracking-tight">System Fully Synchronized</h3>
+                            <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest mt-2">All pending reports have been successfully processed</p>
                         </div>
                     ) : (
                         updates.map((update) => (
-                            <Card key={update._id} className={`p-6 border-l-4 shadow-premium ${update.product?.flagged ? 'border-l-rose-500' : 'border-l-amber-500'}`}>
-                                <div className="flex flex-col lg:flex-row gap-6 justify-between items-start lg:items-center">
-
-                                    {/* Product Context */}
-                                    <div className="flex items-center gap-4 flex-1">
-                                        {update.product?.imageUrl ? (
-                                            <img src={update.product.imageUrl} alt={update.product.name} className="w-16 h-16 rounded-xl object-cover bg-slate-100" />
-                                        ) : (
-                                            <div className="w-16 h-16 rounded-xl bg-slate-100" />
-                                        )}
-                                        <div>
-                                            <div className="flex items-center gap-2">
-                                                <h3 className="font-bold text-lg text-slate-800">{update.product?.name || 'Unknown Product'}</h3>
-                                                {update.product?.flagged && (
-                                                    <span className="bg-rose-100 text-rose-700 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest">Flagged</span>
-                                                )}
+                            <Card key={update._id} className="p-0 border-none shadow-premium bg-white overflow-hidden rounded-[2.5rem] group hover:scale-[1.01] transition-all duration-500">
+                                <div className="flex flex-col xl:flex-row divide-y xl:divide-y-0 xl:divide-x divide-slate-50">
+                                    
+                                    {/* Left: Product & Submitter */}
+                                    <div className="p-8 xl:w-2/5 space-y-8">
+                                        <div className="flex items-center gap-6">
+                                            <div className="w-20 h-20 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 flex-shrink-0 shadow-sm relative group-hover:scale-105 transition-transform duration-500">
+                                                <img src={update.product?.imageUrl} alt={update.product?.name} className="w-full h-full object-cover" />
                                             </div>
-                                            <p className="text-sm text-slate-500 font-medium mt-1">Current verified price: <span className="font-black text-slate-700">{formatPriceRange(update.product?.price || 0, update.product?.maxPrice)}</span></p>
+                                            <div>
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <h3 className="font-black text-slate-900 text-lg tracking-tight leading-tight">{update.product?.name || 'Deleted Product'}</h3>
+                                                    {update.product?.flagged && (
+                                                        <span className="bg-rose-50 text-rose-500 px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest border border-rose-100">Flagged</span>
+                                                    )}
+                                                </div>
+                                                <div className="flex items-center gap-3">
+                                                    <span className="text-[10px] font-black text-primary uppercase tracking-widest bg-primary/10 px-2.5 py-1 rounded-lg">{update.product?.category}</span>
+                                                    <div className="flex items-center gap-1">
+                                                        <History size={10} className="text-slate-300" />
+                                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Base Value: {formatPriceRange(update.product?.price || 0, update.product?.maxPrice)}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="bg-slate-50/50 rounded-2xl p-6 border border-slate-50">
+                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                                <User size={10} className="text-primary" />
+                                                Reported By
+                                            </p>
+                                            <div className="flex items-center justify-between">
+                                                <div>
+                                                    <p className="font-black text-slate-900 text-sm tracking-tight">{update.user?.name || 'Anonymous Operator'}</p>
+                                                    <p className="text-[10px] font-bold text-slate-400 mt-1">{update.user?.email}</p>
+                                                </div>
+                                                <div className={`px-3 py-1.5 rounded-xl text-[8px] font-black uppercase tracking-widest shadow-sm ${
+                                                    update.user?.reputationLevel === 'Elite Contributor' ? 'bg-amber-100 text-amber-700 border border-amber-200/50' :
+                                                    update.user?.reputationLevel === 'Trusted Contributor' ? 'bg-indigo-100 text-indigo-700 border border-indigo-200/50' :
+                                                    'bg-slate-100 text-slate-600 border border-slate-200/50'
+                                                }`}>
+                                                    {update.user?.reputationLevel}
+                                                </div>
+                                            </div>
+                                            <div className="mt-4 flex items-center gap-2 text-[8px] font-black text-slate-300 uppercase tracking-widest">
+                                                <Clock size={10} />
+                                                Timestamp: {new Date(update.createdAt).toLocaleString()}
+                                            </div>
                                         </div>
                                     </div>
 
-                                    {/* The Update Request */}
-                                    <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 flex-1 text-center relative overflow-hidden">
-                                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-300 to-transparent"></div>
-                                        <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Proposed Price</p>
-                                        <div className="text-3xl font-black text-primary">{formatPriceRange(update.price, update.maxPrice)}</div>
-                                        {update.product && (
-                                            <div className="mt-2 text-xs font-bold text-slate-500">
-                                                {(((update.price - update.product.price) / update.product.price) * 100).toFixed(1)}% change
+                                    {/* Middle: The Delta Analysis */}
+                                    <div className="p-8 xl:w-2/5 flex flex-col justify-center gap-8 bg-slate-50/20">
+                                        <div className="relative">
+                                            <div className="flex items-center justify-between mb-4">
+                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Market Deviation Analysis</p>
+                                                {update.product && (
+                                                    <div className={`flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest ${
+                                                        update.price > update.product.price ? 'text-rose-500' : 'text-emerald-500'
+                                                    }`}>
+                                                        {update.price > update.product.price ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+                                                        {(((update.price - update.product.price) / update.product.price) * 100).toFixed(1)}% Variance
+                                                    </div>
+                                                )}
                                             </div>
-                                        )}
-                                    </div>
-
-                                    {/* Submitter Info */}
-                                    <div className="flex-1 lg:text-right">
-                                        <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Submitted By</p>
-                                        {update.user ? (
-                                            <>
-                                                <p className="font-bold text-slate-800">{update.user.name}</p>
-                                                <div className="flex items-center lg:justify-end gap-2 mt-1">
-                                                    <span className="text-xs font-bold text-slate-500 border border-slate-200 px-2 py-0.5 rounded bg-white">
-                                                        {update.user.reputationLevel}
-                                                    </span>
-                                                    {update.user.isBanned && <span className="text-xs font-bold text-rose-500 bg-rose-50 px-2 py-0.5 rounded">Banned</span>}
+                                            <div className="flex items-center gap-6 justify-center py-6 bg-white rounded-3xl border border-slate-50 shadow-sm relative overflow-hidden">
+                                                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent pointer-events-none" />
+                                                <div className="text-center">
+                                                    <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest mb-1">Old Price</p>
+                                                    <p className="text-lg font-black text-slate-400 line-through decoration-slate-200">{formatPriceRange(update.product?.price || 0)}</p>
                                                 </div>
-                                            </>
-                                        ) : (
-                                            <p className="font-bold text-slate-500 italic">Unknown User</p>
-                                        )}
-                                        <p className="text-xs font-medium text-slate-400 mt-2">{new Date(update.createdAt).toLocaleString()}</p>
+                                                <ArrowRight className="text-primary italic animate-pulse" size={24} />
+                                                <div className="text-center">
+                                                    <p className="text-[8px] font-black text-primary uppercase tracking-widest mb-1">New Proposed</p>
+                                                    <p className="text-4xl font-black text-slate-900 tracking-tighter">{formatPriceRange(update.price, update.maxPrice)}</p>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    {/* Actions */}
-                                    <div className="flex flex-row lg:flex-col gap-2 w-full lg:w-32">
+                                    {/* Right: Decision Controls */}
+                                    <div className="p-8 xl:w-1/5 flex flex-col justify-center gap-3">
                                         <Button
-                                            variant="primary"
-                                            className="w-full shadow-premium"
-                                            disabled={actionLoading === update._id}
                                             onClick={() => handleAction(update._id, 'approve')}
+                                            disabled={actionLoading === update._id}
+                                            className="w-full py-5 rounded-2xl bg-primary text-white font-black uppercase tracking-widest shadow-glow flex items-center justify-center gap-3 transition-all active:scale-95 group/btn"
                                         >
-                                            {actionLoading === update._id ? 'Working...' : 'Approve'}
+                                            <CheckCircle2 size={18} className="group-hover/btn:scale-110 transition-transform" />
+                                            {actionLoading === update._id ? 'Processing...' : 'Authorize'}
                                         </Button>
                                         <Button
-                                            variant="danger"
-                                            className="w-full"
-                                            disabled={actionLoading === update._id}
+                                            variant="secondary"
                                             onClick={() => handleAction(update._id, 'reject')}
+                                            disabled={actionLoading === update._id}
+                                            className="w-full py-5 rounded-2xl bg-white border border-slate-200 text-slate-400 font-black uppercase tracking-widest hover:bg-rose-50 hover:text-rose-500 hover:border-rose-100 transition-all active:scale-95 flex items-center justify-center gap-3 group/btn"
                                         >
-                                            {actionLoading === update._id ? 'Working...' : 'Reject'}
+                                            <XCircle size={18} className="group-hover/btn:scale-110 transition-transform" />
+                                            {actionLoading === update._id ? 'Wait...' : 'Discard'}
                                         </Button>
+                                        <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest text-center mt-2 leading-relaxed px-4">
+                                            Actions are permanent and affect user reputation & database integrity.
+                                        </p>
                                     </div>
 
                                 </div>

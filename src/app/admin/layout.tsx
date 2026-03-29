@@ -4,7 +4,21 @@ import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui-base';
-import { Menu, X } from 'lucide-react';
+import { 
+    LayoutDashboard, 
+    Box, 
+    Users, 
+    ShieldCheck, 
+    MessageSquare, 
+    ClipboardList, 
+    Zap, 
+    Settings, 
+    LogOut,
+    Menu,
+    X,
+    TrendingUp,
+    Store
+} from 'lucide-react';
 
 export default function AdminLayout({
     children,
@@ -13,12 +27,12 @@ export default function AdminLayout({
 }) {
     const [loading, setLoading] = useState(true);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [user, setUser] = useState<any>(null);
     const router = useRouter();
     const pathname = usePathname();
 
     useEffect(() => {
         const checkAuth = async () => {
-            // Skip auth check on login page
             if (pathname === '/admin/login') {
                 setLoading(false);
                 return;
@@ -29,6 +43,8 @@ export default function AdminLayout({
                 if (!res.ok) {
                     router.push('/admin/login');
                 } else {
+                    const data = await res.json();
+                    setUser(data.user);
                     setLoading(false);
                 }
             } catch (error) {
@@ -44,10 +60,25 @@ export default function AdminLayout({
         router.refresh();
     };
 
+    const navItems = [
+        { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
+        { label: 'Products', href: '/admin/products', icon: Box },
+        { label: 'Users', href: '/admin/users', icon: Users },
+        { label: 'Markets/Stores', href: '/admin/stores', icon: Store },
+        { label: 'Verification', href: '/admin/verification', icon: ShieldCheck },
+        { label: 'Forum', href: '/admin/messages', icon: MessageSquare },
+        { label: 'Requests', href: '/admin/product-requests', icon: ClipboardList },
+        { label: 'Extraction', href: '/admin/extraction', icon: Zap },
+        { label: 'Settings', href: '/admin/settings', icon: Settings },
+    ];
+
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <div className="min-h-screen flex items-center justify-center bg-slate-950">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+                    <p className="text-slate-400 font-black uppercase tracking-[0.3em] text-[10px]">Initializing Admin Console</p>
+                </div>
             </div>
         );
     }
@@ -57,111 +88,96 @@ export default function AdminLayout({
     }
 
     return (
-        <div className="min-h-screen bg-gray-100 flex overflow-hidden">
-            {/* Mobile Header with Hamburger */}
-            <div className="md:hidden flex items-center justify-between bg-white p-4 border-b absolute top-0 w-full z-20 shadow-sm">
-                <h2 className="text-xl font-bold text-gray-800">TrackPrice Admin</h2>
+        <div className="min-h-screen bg-slate-50 flex overflow-hidden font-sans">
+            {/* Mobile Header with Glassmorphism */}
+            <div className="md:hidden fixed top-0 w-full z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200/60 p-4 px-6 flex items-center justify-between shadow-sm">
+                <Link href="/admin/dashboard" className="text-xl font-black text-slate-900 tracking-tighter">
+                    Admin<span className="text-primary">.</span>
+                </Link>
                 <button
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                    className="p-2 -mr-2 text-gray-600 hover:text-gray-900 focus:outline-none"
-                    aria-label="Toggle Menu"
+                    className="p-2 rounded-xl bg-slate-50 text-slate-600 hover:text-primary transition-all active:scale-95"
                 >
-                    {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+                    {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
                 </button>
             </div>
 
-            {/* Sidebar */}
+            {/* Sidebar (Deep Slate Theme) */}
             <aside className={`
-                fixed inset-y-0 left-0 z-30 w-64 bg-white shadow-xl flex flex-col transform transition-transform duration-300 ease-in-out 
-                md:relative md:translate-x-0 md:shadow-md
-                ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
+                fixed inset-y-0 left-0 z-50 w-72 bg-slate-950 flex flex-col transform transition-all duration-500 ease-in-out
+                md:relative md:translate-x-0
+                ${isMobileMenuOpen ? 'translate-x-0 outline-none' : '-translate-x-full shadow-none'}
             `}>
-                <div className="p-6 border-b flex items-center justify-between">
-                    <h2 className="text-xl font-bold text-gray-800">TrackPrice Admin</h2>
-                    {/* Close button inside sidebar for mobile */}
-                    <button
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="md:hidden text-gray-500 hover:text-gray-700"
-                    >
-                        <X size={24} />
-                    </button>
+                {/* Sidebar Header */}
+                <div className="p-8 pb-4">
+                    <Link href="/admin/dashboard" className="flex items-center gap-2 group">
+                        <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-glow-sm group-hover:scale-110 transition-transform">
+                            <TrendingUp size={18} className="text-white" />
+                        </div>
+                        <h2 className="text-xl font-black text-white tracking-tight">TrackPrice Admin</h2>
+                    </Link>
                 </div>
-                <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-                    <Link
-                        href="/admin/dashboard"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className={`block px-4 py-2 rounded-lg font-medium transition-colors ${pathname === '/admin/dashboard' ? 'bg-primary/10 text-primary' : 'hover:bg-gray-100 text-gray-700'}`}
-                    >
-                        Dashboard
-                    </Link>
-                    <Link
-                        href="/admin/products"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className={`block px-4 py-2 rounded-lg font-medium transition-colors ${pathname === '/admin/products' ? 'bg-primary/10 text-primary' : 'hover:bg-gray-100 text-gray-700'}`}
-                    >
-                        Products
-                    </Link>
-                    <Link
-                        href="/admin/users"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className={`block px-4 py-2 rounded-lg font-medium transition-colors ${pathname === '/admin/users' ? 'bg-primary/10 text-primary' : 'hover:bg-gray-100 text-gray-700'}`}
-                    >
-                        Users
-                    </Link>
-                    <Link
-                        href="/admin/verification"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className={`block px-4 py-2 rounded-lg font-medium transition-colors ${pathname === '/admin/verification' ? 'bg-primary/10 text-primary' : 'hover:bg-gray-100 text-gray-700'}`}
-                    >
-                        Verification Queue
-                    </Link>
-                    <Link
-                        href="/admin/messages"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className={`block px-4 py-2 rounded-lg font-medium transition-colors ${pathname === '/admin/messages' ? 'bg-primary/10 text-primary' : 'hover:bg-gray-100 text-gray-700'}`}
-                    >
-                        Forum Messages
-                    </Link>
-                    <Link
-                        href="/admin/product-requests"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className={`block px-4 py-2 rounded-lg font-medium transition-colors ${pathname === '/admin/product-requests' ? 'bg-primary/10 text-primary' : 'hover:bg-gray-100 text-gray-700'}`}
-                    >
-                        Product Requests
-                    </Link>
-                    <Link
-                        href="/admin/extraction"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className={`block px-4 py-2 rounded-lg font-medium transition-colors ${pathname === '/admin/extraction' ? 'bg-primary/10 text-primary' : 'hover:bg-gray-100 text-gray-700'}`}
-                    >
-                        Extraction Tool
-                    </Link>
-                    <Link
-                        href="/admin/settings"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className={`block px-4 py-2 rounded-lg font-medium transition-colors ${pathname === '/admin/settings' ? 'bg-primary/10 text-primary' : 'hover:bg-gray-100 text-gray-700'}`}
-                    >
-                        Gamification Settings
-                    </Link>
+
+                {/* Navigation Scroll Area */}
+                <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto no-scrollbar">
+                    {navItems.map((item) => {
+                        const Icon = item.icon;
+                        const isActive = pathname === item.href;
+                        return (
+                            <Link
+                                key={item.href}
+                                href={item.href}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className={`
+                                    flex items-center gap-4 px-4 py-3 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all duration-300 group
+                                    ${isActive 
+                                        ? 'bg-primary text-white shadow-glow-sm' 
+                                        : 'text-slate-500 hover:bg-white/5 hover:text-white'}
+                                `}
+                            >
+                                <Icon size={18} className={`${isActive ? 'text-white' : 'text-slate-600 group-hover:text-primary'} transition-colors`} />
+                                {item.label}
+                            </Link>
+                        );
+                    })}
                 </nav>
-                <div className="p-4 border-t">
-                    <Button variant="danger" onClick={handleLogout} className="w-full">
-                        Logout
-                    </Button>
+
+                {/* User Profile Footer */}
+                <div className="p-4 mx-4 mb-4 mt-auto rounded-3xl bg-white/5 border border-white/10">
+                    <div className="flex items-center gap-3 p-2">
+                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-black">
+                            {user?.name?.[0]?.toUpperCase() || 'A'}
+                        </div>
+                        <div className="flex-1 overflow-hidden">
+                            <p className="text-xs font-black text-white truncate uppercase tracking-widest">{user?.name || 'Admin User'}</p>
+                            <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest truncate">{user?.email || 'admin@trackprice.com'}</p>
+                        </div>
+                    </div>
+                    <button
+                        onClick={handleLogout}
+                        className="mt-4 w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-white/5 hover:bg-rose-500/10 text-slate-400 hover:text-rose-500 transition-all font-black text-[10px] uppercase tracking-widest border border-transparent hover:border-rose-500/20"
+                    >
+                        <LogOut size={16} />
+                        Sign Out Console
+                    </button>
                 </div>
             </aside>
 
-            {/* Overlay for mobile backdrop */}
+            {/* Backdrop for Mobile */}
             {isMobileMenuOpen && (
                 <div
-                    className="fixed inset-0 bg-black/50 z-20 md:hidden backdrop-blur-sm transition-opacity"
+                    className="fixed inset-0 bg-slate-950/60 z-40 md:hidden backdrop-blur-md transition-all duration-500"
                     onClick={() => setIsMobileMenuOpen(false)}
                 />
             )}
 
-            {/* Main Content */}
-            <main className="flex-1 p-4 md:p-8 overflow-y-auto pt-20 md:pt-8 w-full h-screen">
-                {children}
+            {/* Main Content Area */}
+            <main className="flex-1 flex flex-col h-screen overflow-hidden">
+                <div className="flex-1 overflow-y-auto pt-20 md:pt-0 p-4 md:p-10 bg-mesh selection:bg-primary/20">
+                    <div className="max-w-[1600px] mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
+                        {children}
+                    </div>
+                </div>
             </main>
         </div>
     );

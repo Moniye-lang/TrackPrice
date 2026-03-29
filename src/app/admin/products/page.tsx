@@ -17,6 +17,26 @@ interface Product {
     isFeatured?: boolean;
 }
 
+import { 
+    Plus, 
+    Search, 
+    Image as ImageIcon, 
+    Edit2, 
+    Trash2, 
+    Copy, 
+    GitMerge, 
+    Star, 
+    X, 
+    Folder, 
+    MapPin, 
+    Tag,
+    AlertCircle,
+    CheckCircle2,
+    RefreshCw,
+    Activity,
+    Box
+} from 'lucide-react';
+
 export default function AdminProducts() {
     const searchParams = useSearchParams();
     const [products, setProducts] = useState<Product[]>([]);
@@ -26,6 +46,7 @@ export default function AdminProducts() {
     const [error, setError] = useState<string | null>(null);
     const [submitting, setSubmitting] = useState(false);
     const [autoImageLoading, setAutoImageLoading] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
 
     // Form states
     const [name, setName] = useState('');
@@ -35,7 +56,6 @@ export default function AdminProducts() {
     const [storeLocation, setStoreLocation] = useState('');
 
     useEffect(() => {
-        // Pre-fill form from search params
         const nameParam = searchParams.get('name');
         const catParam = searchParams.get('category');
         const brandParam = searchParams.get('brand');
@@ -43,7 +63,6 @@ export default function AdminProducts() {
         if (nameParam || catParam || brandParam) {
             setName(nameParam || '');
             setCategory(catParam || '');
-            // Brand isn't in the form fields yet but could be added to name or category if needed
             setShowForm(true);
         }
     }, [searchParams]);
@@ -67,17 +86,17 @@ export default function AdminProducts() {
         fetchProducts();
     }, []);
 
+    const filteredProducts = products.filter(p => 
+        p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (p.storeLocation || '').toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
         setSubmitting(true);
-        const payload = {
-            name,
-            price,
-            category,
-            imageUrl,
-            storeLocation
-        };
+        const payload = { name, price, category, imageUrl, storeLocation };
 
         try {
             const url = editingProduct ? `/api/products/${editingProduct._id}` : '/api/products';
@@ -193,141 +212,247 @@ export default function AdminProducts() {
     };
 
     return (
-        <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-black text-slate-800 tracking-tight">Manage Products</h1>
-                <div className="flex gap-4">
-                    <Button onClick={handleAutoImages} disabled={autoImageLoading} variant="secondary">
-                        {autoImageLoading ? 'Fetching Images...' : 'Auto-Fetch Missing Images'}
+        <div className="space-y-12">
+            {/* Page Header */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div>
+                     <nav className="flex items-center gap-2 mb-2">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Admin</span>
+                        <span className="text-slate-300">/</span>
+                        <span className="text-[10px] font-black text-primary uppercase tracking-widest">Inventory</span>
+                    </nav>
+                    <h1 className="text-4xl font-black text-slate-900 tracking-tight leading-none">
+                        Managed <span className="text-primary italic">Catalogue</span>
+                    </h1>
+                </div>
+                <div className="flex items-center gap-3">
+                    <Button 
+                        onClick={handleAutoImages} 
+                        disabled={autoImageLoading} 
+                        variant="secondary"
+                        className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50 shadow-sm flex items-center gap-2 px-6 py-3 rounded-2xl transition-all"
+                    >
+                        <RefreshCw size={16} className={autoImageLoading ? 'animate-spin' : ''} />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Auto-Fetch Images</span>
                     </Button>
-                    <Button onClick={() => { setShowForm(true); setEditingProduct(null); resetForm(); }}>
-                        Add New Product
+                    <Button 
+                        onClick={() => { setShowForm(true); setEditingProduct(null); resetForm(); }}
+                        className="bg-primary hover:bg-primary/90 text-white shadow-glow flex items-center gap-2 px-6 py-3 rounded-2xl transition-all active:scale-95"
+                    >
+                        <Plus size={18} />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Add Product</span>
                     </Button>
                 </div>
             </div>
 
+            {/* Filter Section */}
+            <div className="relative group max-w-xl">
+                <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={20} />
+                <input 
+                    type="text" 
+                    placeholder="Search master catalogue by name, category, or market..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full bg-white border border-slate-100 py-5 pl-16 pr-6 rounded-3xl shadow-premium outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/20 transition-all font-bold text-slate-700 text-sm placeholder:text-slate-300"
+                />
+            </div>
+
             {showForm && (
-                <Card className="max-w-2xl mx-auto p-6">
-                    <h2 className="text-xl font-bold mb-6 text-slate-800">
-                        {editingProduct ? 'Edit Product' : 'Add New Product'}
-                    </h2>
-                    {error && (
-                        <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm font-medium">
-                            {error}
+                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-md" onClick={() => setShowForm(false)} />
+                    <Card className="max-w-2xl w-full p-10 relative z-10 animate-in zoom-in-95 duration-300 border-none shadow-premium-lg rounded-[2.5rem] bg-white">
+                        <button 
+                            onClick={() => setShowForm(false)}
+                            className="absolute top-8 right-8 p-3 rounded-2xl bg-slate-50 text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-all"
+                        >
+                            <X size={20} />
+                        </button>
+                        
+                        <div className="mb-10 text-center">
+                            <h2 className="text-3xl font-black text-slate-900 tracking-tight">
+                                {editingProduct ? 'Update Product' : 'Catalogue Addition'}
+                            </h2>
+                            <p className="text-slate-400 font-bold text-xs uppercase tracking-widest mt-2">Enter product parameters below</p>
                         </div>
-                    )}
-                    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="md:col-span-2">
-                            <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">Product Name</label>
-                            <Input value={name} onChange={(e) => setName(e.target.value)} required placeholder="e.g. Rice 50kg" />
-                        </div>
-                        <div>
-                            <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">Price / Range (e.g. 1000 or 1000-2000)</label>
-                            <Input value={price} onChange={(e) => setPrice(e.target.value)} required placeholder="1000 or 1000-2000" />
-                        </div>
-                        <div>
-                            <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">Category</label>
-                            <Input value={category} onChange={(e) => setCategory(e.target.value)} required placeholder="e.g. Groceries" />
-                        </div>
-                        <div className="md:col-span-2">
-                            <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">Image URL</label>
-                            <Input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} required placeholder="https://..." />
-                        </div>
-                        <div className="md:col-span-2">
-                            <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">Store / Market / Location</label>
-                            <Input value={storeLocation} onChange={(e) => setStoreLocation(e.target.value)} placeholder="e.g. Mile 12 Market, Shoprite" />
-                        </div>
-                        <div className="md:col-span-2 flex justify-end gap-3 mt-4">
-                            <Button type="button" variant="secondary" onClick={() => { setShowForm(false); setError(null); }} disabled={submitting}>
-                                Cancel
-                            </Button>
-                            <Button type="submit" disabled={submitting} className="shadow-lg">
-                                {submitting ? 'Saving...' : editingProduct ? 'Update Product' : 'Create Product'}
-                            </Button>
-                        </div>
-                    </form>
-                </Card>
+
+                        {error && (
+                            <div className="mb-8 p-4 bg-rose-50 border border-rose-100 text-rose-600 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-3">
+                                <AlertCircle size={16} />
+                                {error}
+                            </div>
+                        )}
+                        
+                        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="md:col-span-2">
+                                <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 px-1">
+                                    <Tag size={12} className="text-primary" />
+                                    Product Name
+                                </label>
+                                <Input value={name} onChange={(e) => setName(e.target.value)} required placeholder="e.g. Rice 50kg (Local)" className="rounded-2xl py-4" />
+                            </div>
+                            <div>
+                                <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 px-1">
+                                    <Activity size={12} className="text-primary" />
+                                    Price Reference
+                                </label>
+                                <Input value={price} onChange={(e) => setPrice(e.target.value)} required placeholder="1000 or 1000-2000" className="rounded-2xl py-4" />
+                            </div>
+                            <div>
+                                <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 px-1">
+                                    <Folder size={12} className="text-primary" />
+                                    Category
+                                </label>
+                                <Input value={category} onChange={(e) => setCategory(e.target.value)} required placeholder="e.g. Groceries" className="rounded-2xl py-4" />
+                            </div>
+                            <div className="md:col-span-2">
+                                <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 px-1">
+                                    <ImageIcon size={12} className="text-primary" />
+                                    Hero Image URL
+                                </label>
+                                <Input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} required placeholder="https://..." className="rounded-2xl py-4" />
+                            </div>
+                            <div className="md:col-span-2">
+                                <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 px-1">
+                                    <MapPin size={12} className="text-primary" />
+                                    Primary Store / Market
+                                </label>
+                                <Input value={storeLocation} onChange={(e) => setStoreLocation(e.target.value)} placeholder="e.g. Bodija Market, Ibadan" className="rounded-2xl py-4" />
+                            </div>
+                            <div className="md:col-span-2 flex justify-end gap-3 mt-8">
+                                <Button type="submit" disabled={submitting} className="w-full py-5 rounded-2xl bg-primary text-white font-black uppercase tracking-widest shadow-glow">
+                                    {submitting ? 'Processing Catalogue Sync...' : editingProduct ? 'Commit Data Update' : 'Synchronize Product'}
+                                </Button>
+                            </div>
+                        </form>
+                    </Card>
+                </div>
             )}
 
             {loading ? (
-                <div className="text-center py-10 text-slate-500">Loading products...</div>
+                <div className="flex flex-col items-center justify-center py-32 gap-4">
+                    <div className="animate-pulse flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-primary animate-bounce" />
+                        <div className="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:-0.15s]" />
+                        <div className="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:-0.3s]" />
+                    </div>
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Querying Catalogue Database</p>
+                </div>
             ) : (
-                <div className="grid grid-cols-1 gap-4">
-                    <Card className="overflow-x-auto p-0 border-none shadow-premium">
-                        <table className="w-full text-left">
-                            <thead className="bg-slate-50 border-b border-slate-100">
-                                <tr>
-                                    <th className="py-4 px-6 text-xs font-black text-slate-400 uppercase tracking-widest">Name</th>
-                                    <th className="py-4 px-6 text-xs font-black text-slate-400 uppercase tracking-widest">Category</th>
-                                    <th className="py-4 px-6 text-xs font-black text-slate-400 uppercase tracking-widest">Store</th>
-                                    <th className="py-4 px-6 text-xs font-black text-slate-400 uppercase tracking-widest">Price</th>
-                                    <th className="py-4 px-6 text-xs font-black text-slate-400 uppercase tracking-widest">Last Updated</th>
-                                    <th className="py-4 px-6 text-xs font-black text-slate-400 uppercase tracking-widest text-center">Featured</th>
-                                    <th className="py-4 px-6 text-xs font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {products.map((product) => (
-                                    <tr key={product._id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-                                        <td className="py-4 px-6 flex items-center gap-4">
-                                            <div className="w-12 h-12 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0">
-                                                <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
-                                            </div>
-                                            <span className="font-bold text-slate-800">{product.name}</span>
-                                        </td>
-                                        <td className="py-4 px-6 text-slate-600 font-medium">{product.category}</td>
-                                        <td className="py-4 px-6 text-slate-500 text-sm italic">{product.storeLocation || 'N/A'}</td>
-                                        <td className="py-4 px-6 font-black text-slate-900">{formatPriceRange(product.price, product.maxPrice)}</td>
-                                        <td className="py-4 px-6 text-xs font-bold text-slate-400 uppercase tracking-widest">
-                                            {new Date(product.lastUpdated).toLocaleDateString()}
-                                        </td>
-                                        <td className="py-4 px-6 text-center">
-                                            <button
-                                                onClick={async () => {
-                                                    const res = await fetch(`/api/products/${product._id}`, {
-                                                        method: 'PUT',
-                                                        headers: { 'Content-Type': 'application/json' },
-                                                        body: JSON.stringify({ isFeatured: !product.isFeatured }),
-                                                    });
-                                                    if (res.ok) fetchProducts();
-                                                }}
-                                                className={`w-10 h-6 rounded-full transition-colors relative ${product.isFeatured ? 'bg-primary' : 'bg-slate-200'}`}
-                                            >
-                                                <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${product.isFeatured ? 'left-5' : 'left-1'}`} />
-                                            </button>
-                                        </td>
-                                        <td className="py-4 px-6 text-right space-x-2 whitespace-nowrap">
-                                            {mergeSourceId ? (
-                                                mergeSourceId === product._id ? (
-                                                    <button onClick={() => setMergeSourceId(null)} className="text-xs font-black text-rose-500 uppercase mr-3">Cancel Merge</button>
-                                                ) : (
-                                                    <button onClick={() => handleMerge(product._id)} className="text-xs font-black text-emerald-500 uppercase mr-3">Merge Into This</button>
-                                                )
-                                            ) : (
-                                                <button onClick={() => setMergeSourceId(product._id)} className="text-xs font-black text-amber-500 hover:text-amber-700 uppercase tracking-widest mr-3">Merge</button>
-                                            )}
-                                            <button
-                                                onClick={() => handleDuplicate(product._id)}
-                                                className="text-xs font-black text-primary hover:text-primary/70 transition-colors uppercase tracking-widest mr-3"
-                                            >
-                                                Duplicate
-                                            </button>
-                                            <Button variant="secondary" onClick={() => handleEdit(product)} className="px-3 py-1.5 text-xs font-bold">
-                                                Edit
-                                            </Button>
-                                            <Button variant="danger" onClick={() => handleDelete(product._id)} className="px-3 py-1.5 text-xs font-bold">
-                                                Delete
-                                            </Button>
-                                        </td>
-                                    </tr>
-                                ))}
-                                {products.length === 0 && (
+                <div className="grid grid-cols-1 gap-4 pb-20">
+                    <Card className="p-0 border-none shadow-premium bg-white overflow-hidden rounded-[2.5rem]">
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left">
+                                <thead className="bg-slate-50/50 border-b border-slate-50">
                                     <tr>
-                                        <td colSpan={5} className="py-12 text-center text-slate-400 font-medium">No products found. Add one above.</td>
+                                        <th className="py-6 px-8 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Product Blueprint</th>
+                                        <th className="py-6 px-8 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Taxonomy</th>
+                                        <th className="py-6 px-8 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Market Value</th>
+                                        <th className="py-6 px-8 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">Status</th>
+                                        <th className="py-6 px-8 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">Operations</th>
                                     </tr>
-                                )}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {filteredProducts.map((product) => (
+                                        <tr key={product._id} className="border-b border-slate-50 group hover:bg-slate-50/30 transition-all">
+                                            <td className="py-6 px-8">
+                                                <div className="flex items-center gap-6">
+                                                    <div className="w-16 h-16 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 flex-shrink-0 shadow-sm relative group-hover:scale-105 transition-transform duration-500">
+                                                        <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-black text-slate-900 text-sm tracking-tight leading-tight mb-1">{product.name}</p>
+                                                        <div className="flex items-center gap-2">
+                                                            <MapPin size={10} className="text-slate-300" />
+                                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{product.storeLocation || 'Unassigned Depot'}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="py-6 px-8">
+                                                <div className="bg-slate-100 text-slate-600 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest w-fit">
+                                                    {product.category}
+                                                </div>
+                                            </td>
+                                            <td className="py-6 px-8">
+                                                <p className="font-black text-slate-900">{formatPriceRange(product.price, product.maxPrice)}</p>
+                                                <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest mt-1">
+                                                    Updated {new Date(product.lastUpdated).toLocaleDateString()}
+                                                </p>
+                                            </td>
+                                            <td className="py-6 px-8 text-center">
+                                                <div className="flex flex-col items-center gap-2">
+                                                    <button
+                                                        onClick={async () => {
+                                                            const res = await fetch(`/api/products/${product._id}`, {
+                                                                method: 'PUT',
+                                                                headers: { 'Content-Type': 'application/json' },
+                                                                body: JSON.stringify({ isFeatured: !product.isFeatured }),
+                                                            });
+                                                            if (res.ok) fetchProducts();
+                                                        }}
+                                                        className={`w-10 h-6 rounded-full transition-all relative ${product.isFeatured ? 'bg-primary shadow-glow-sm' : 'bg-slate-200'}`}
+                                                    >
+                                                        <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${product.isFeatured ? 'left-5' : 'left-1'}`} />
+                                                    </button>
+                                                    <span className={`text-[7px] font-black uppercase tracking-widest ${product.isFeatured ? 'text-primary' : 'text-slate-300'}`}>
+                                                        {product.isFeatured ? 'Featured' : 'Standard'}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td className="py-6 px-8 text-right space-x-3">
+                                                <div className="flex items-center justify-end gap-2">
+                                                    {mergeSourceId ? (
+                                                        mergeSourceId === product._id ? (
+                                                            <button onClick={() => setMergeSourceId(null)} className="p-2.5 rounded-xl bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white transition-all shadow-sm flex items-center gap-2 px-4 group">
+                                                                <X size={16} />
+                                                                <span className="text-[8px] font-black uppercase tracking-widest">Abort Merge</span>
+                                                            </button>
+                                                        ) : (
+                                                            <button onClick={() => handleMerge(product._id)} className="p-2.5 rounded-xl bg-emerald-50 text-emerald-500 hover:bg-emerald-500 hover:text-white transition-all shadow-sm flex items-center gap-2 px-4 group">
+                                                                <GitMerge size={16} />
+                                                                <span className="text-[8px] font-black uppercase tracking-widest">Commit Merge</span>
+                                                            </button>
+                                                        )
+                                                    ) : (
+                                                        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+                                                            <button onClick={() => setMergeSourceId(product._id)} className="p-2.5 rounded-xl bg-slate-900 text-white hover:bg-primary transition-all shadow-sm" title="Merge Logic">
+                                                                <GitMerge size={14} />
+                                                            </button>
+                                                            <button onClick={() => handleDuplicate(product._id)} className="p-2.5 rounded-xl bg-slate-900 text-white hover:bg-primary transition-all shadow-sm" title="Clone Entry">
+                                                                <Copy size={14} />
+                                                            </button>
+                                                            <button onClick={() => handleEdit(product)} className="p-2.5 rounded-xl bg-slate-900 text-white hover:bg-primary transition-all shadow-sm" title="Edit Parameters">
+                                                                <Edit2 size={14} />
+                                                            </button>
+                                                            <button onClick={() => handleDelete(product._id)} className="p-2.5 rounded-xl bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white transition-all shadow-sm" title="Purge Record">
+                                                                <Trash2 size={14} />
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    {filteredProducts.length === 0 && (
+                                        <tr>
+                                            <td colSpan={5} className="py-24 text-center">
+                                                <div className="flex flex-col items-center gap-3">
+                                                    <Box size={40} className="text-slate-100" />
+                                                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">No matching blueprints found</p>
+                                                    <Button 
+                                                        variant="secondary" 
+                                                        onClick={() => setSearchTerm('')}
+                                                        className="mt-2 text-[8px] font-black uppercase underline decoration-primary decoration-2 underline-offset-4"
+                                                    >
+                                                        Clear Filter Stack
+                                                    </Button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
                     </Card>
                 </div>
             )}

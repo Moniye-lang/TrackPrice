@@ -15,10 +15,31 @@ interface User {
     createdAt: string;
 }
 
+import { 
+    Users, 
+    Search, 
+    Shield, 
+    ShieldAlert, 
+    ShieldCheck, 
+    Award, 
+    TrendingUp, 
+    Mail, 
+    Calendar, 
+    MoreVertical,
+    Ban,
+    Unlock,
+    UserPlus,
+    RefreshCw,
+    Circle,
+    UserCircle2,
+    Box
+} from 'lucide-react';
+
 export default function AdminUsers() {
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
-    const [actionLoading, setActionLoading] = useState<string | null>(null); // store user ID being acted on
+    const [actionLoading, setActionLoading] = useState<string | null>(null);
+    const [searchTerm, setSearchTerm] = useState('');
 
     const fetchUsers = async () => {
         setLoading(true);
@@ -39,6 +60,11 @@ export default function AdminUsers() {
         fetchUsers();
     }, []);
 
+    const filteredUsers = users.filter(u => 
+        u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        u.email.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     const handleUpdateUser = async (id: string, updates: Partial<User>) => {
         setActionLoading(id);
         try {
@@ -49,7 +75,6 @@ export default function AdminUsers() {
             });
 
             if (res.ok) {
-                // Update local state directly instead of refetching everything to save time
                 setUsers(prev => prev.map(u => u._id === id ? { ...u, ...updates } : u));
             } else {
                 alert('Failed to update user');
@@ -62,153 +87,233 @@ export default function AdminUsers() {
     };
 
     return (
-        <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-black text-slate-800 tracking-tight">Manage Users</h1>
-                <Button onClick={fetchUsers} variant="secondary">Refresh Data</Button>
+        <div className="space-y-12 pb-20">
+            {/* Page Header */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div>
+                     <nav className="flex items-center gap-2 mb-2">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Admin</span>
+                        <span className="text-slate-300">/</span>
+                        <span className="text-[10px] font-black text-primary uppercase tracking-widest">Community</span>
+                    </nav>
+                    <h1 className="text-4xl font-black text-slate-900 tracking-tight leading-none">
+                        Member <span className="text-primary italic">Directory</span>
+                    </h1>
+                </div>
+                <div className="flex items-center gap-3">
+                    <Button 
+                        onClick={fetchUsers} 
+                        variant="secondary"
+                        className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50 shadow-sm flex items-center gap-2 px-6 py-3 rounded-2xl transition-all"
+                    >
+                        <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Sync Database</span>
+                    </Button>
+                </div>
+            </div>
+
+            {/* Search & Stats Bar */}
+            <div className="flex flex-col lg:flex-row items-center gap-6">
+                <div className="relative group flex-1 w-full">
+                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={20} />
+                    <input 
+                        type="text" 
+                        placeholder="Search operators by name or verified email..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full bg-white border border-slate-100 py-5 pl-16 pr-6 rounded-3xl shadow-premium outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/20 transition-all font-bold text-slate-700 text-sm placeholder:text-slate-300"
+                    />
+                </div>
+                <div className="flex items-center gap-4 bg-white p-2 rounded-3xl shadow-premium border border-slate-50/50">
+                    <div className="flex items-center gap-3 px-6 py-3 bg-slate-50 rounded-2xl border border-slate-100">
+                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{users.filter(u => !u.isBanned).length} Active</span>
+                    </div>
+                    <div className="flex items-center gap-3 px-6 py-3 bg-rose-50 rounded-2xl border border-rose-100/50">
+                        <div className="w-2 h-2 rounded-full bg-rose-500" />
+                        <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest">{users.filter(u => u.isBanned).length} Restricted</span>
+                    </div>
+                </div>
             </div>
 
             {loading ? (
-                <div className="text-center py-10 text-slate-500">Loading users...</div>
+                 <div className="flex flex-col items-center justify-center py-32 gap-4">
+                    <div className="animate-pulse flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-primary animate-bounce" />
+                        <div className="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:-0.15s]" />
+                        <div className="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:-0.3s]" />
+                    </div>
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Loading Member Registry</p>
+                </div>
             ) : (
-                <Card className="overflow-x-auto p-0 border-none shadow-premium">
-                    <table className="w-full text-left">
-                        <thead className="bg-slate-50 border-b border-slate-100">
-                            <tr>
-                                <th className="py-4 px-6 text-xs font-black text-slate-400 uppercase tracking-widest">User</th>
-                                <th className="py-4 px-6 text-xs font-black text-slate-400 uppercase tracking-widest">Stats</th>
-                                <th className="py-4 px-6 text-xs font-black text-slate-400 uppercase tracking-widest">Status</th>
-                                <th className="py-4 px-6 text-xs font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {users.map((user) => (
-                                <tr key={user._id} className={`border-b border-slate-50 transition-colors ${user.isBanned ? 'bg-rose-50/50' : 'hover:bg-slate-50/50'}`}>
-                                    <td className="py-4 px-6">
-                                        <div className="font-bold text-slate-800">{user.name}</div>
-                                        <div className="text-sm font-medium text-slate-500">{user.email}</div>
-                                        <div className="text-[10px] font-black uppercase tracking-widest mt-1 text-slate-400">
-                                            Role: {user.role} | Joined {new Date(user.createdAt).toLocaleDateString()}
-                                        </div>
-                                    </td>
+                <Card className="p-0 border-none shadow-premium bg-white overflow-hidden rounded-[2.5rem]">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse">
+                            <thead className="bg-slate-50/50 border-b border-slate-50">
+                                <tr>
+                                    <th className="py-6 px-8 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Operator Identity</th>
+                                    <th className="py-6 px-8 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Merit & Activity</th>
+                                    <th className="py-6 px-8 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Authentication</th>
+                                    <th className="py-6 px-8 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">Directives</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filteredUsers.map((user) => (
+                                    <tr key={user._id} className={`border-b border-slate-50 group transition-all ${user.isBanned ? 'bg-rose-50/10' : 'hover:bg-slate-50/30'}`}>
+                                        <td className="py-6 px-8">
+                                            <div className="flex items-center gap-5">
+                                                <div className="relative">
+                                                     <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-black shadow-sm border-2 transition-transform group-hover:scale-105 duration-500 ${
+                                                        user.role === 'admin' 
+                                                        ? 'bg-primary/10 border-primary/20 text-primary' 
+                                                        : 'bg-slate-100 border-slate-200 text-slate-400'
+                                                    }`}>
+                                                        {user.name.charAt(0).toUpperCase()}
+                                                    </div>
+                                                    <div className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-4 border-white flex items-center justify-center ${user.isBanned ? 'bg-rose-500' : 'bg-emerald-500'}`}>
+                                                        {user.isBanned ? <Ban size={8} className="text-white" /> : <ShieldCheck size={8} className="text-white" />}
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <p className="font-black text-slate-900 text-sm tracking-tight leading-tight mb-1">{user.name}</p>
+                                                    <div className="flex items-center gap-2">
+                                                        <Mail size={10} className="text-slate-300" />
+                                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{user.email}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
 
-                                    <td className="py-4 px-6">
-                                        <div className="flex gap-4">
-                                            <div className="text-center">
-                                                <div className="text-lg font-black text-primary">{user.points}</div>
-                                                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Points</div>
-                                            </div>
-                                            <div className="text-center">
-                                                <div className="text-lg font-black text-slate-700">{user.totalSubmissions || 0}</div>
-                                                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Updates</div>
-                                            </div>
-                                        </div>
-                                        <div className="mt-2">
-                                            <span className={`px-2 py-1 rounded text-[10px] font-black uppercase tracking-widest ${user.reputationLevel === 'Elite Contributor' ? 'bg-amber-100 text-amber-700' :
-                                                user.reputationLevel === 'Trusted Contributor' ? 'bg-blue-100 text-blue-700' :
-                                                    'bg-slate-100 text-slate-600'
+                                        <td className="py-6 px-8">
+                                            <div className="flex items-center gap-8">
+                                                <div className="flex flex-col gap-1">
+                                                    <div className="flex items-center gap-1.5">
+                                                        <TrendingUp size={12} className="text-primary" />
+                                                        <span className="text-sm font-black text-slate-900 tracking-tight">{user.points}</span>
+                                                    </div>
+                                                    <span className="text-[8px] font-black text-slate-300 uppercase tracking-widest">Merit Points</span>
+                                                </div>
+                                                <div className="flex flex-col gap-1">
+                                                    <div className="flex items-center gap-1.5">
+                                                        <Box size={12} className="text-slate-400" />
+                                                        <span className="text-sm font-black text-slate-900 tracking-tight">{user.totalSubmissions || 0}</span>
+                                                    </div>
+                                                    <span className="text-[8px] font-black text-slate-300 uppercase tracking-widest">Updates</span>
+                                                </div>
+                                                <div className={`px-3 py-1.5 rounded-xl text-[8px] font-black uppercase tracking-widest shadow-sm ${
+                                                    user.reputationLevel === 'Elite Contributor' ? 'bg-amber-100 text-amber-700 border border-amber-200/50' :
+                                                    user.reputationLevel === 'Trusted Contributor' ? 'bg-indigo-100 text-indigo-700 border border-indigo-200/50' :
+                                                    'bg-slate-100 text-slate-600 border border-slate-200/50'
                                                 }`}>
-                                                {user.reputationLevel}
-                                            </span>
-                                        </div>
-                                    </td>
+                                                    {user.reputationLevel}
+                                                </div>
+                                            </div>
+                                        </td>
 
-                                    <td className="py-4 px-6">
-                                        {user.isBanned ? (
-                                            <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-rose-100 text-rose-700 text-xs font-black uppercase tracking-widest">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-rose-500"></div>
-                                                Banned
-                                            </span>
-                                        ) : (
-                                            <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-emerald-100 text-emerald-700 text-xs font-black uppercase tracking-widest">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
-                                                Active
-                                            </span>
-                                        )}
-                                    </td>
+                                        <td className="py-6 px-8">
+                                            <div className="flex flex-col gap-1">
+                                                <div className="flex items-center gap-2">
+                                                    {user.role === 'admin' ? (
+                                                        <Shield size={14} className="text-primary" />
+                                                    ) : (
+                                                        <UserCircle2 size={14} className="text-slate-400" />
+                                                    )}
+                                                    <span className={`text-[10px] font-black uppercase tracking-widest ${user.role === 'admin' ? 'text-primary' : 'text-slate-600'}`}>
+                                                        {user.role} Authorization
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <Calendar size={10} className="text-slate-300" />
+                                                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                                                        Reg {new Date(user.createdAt).toLocaleDateString()}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </td>
 
-                                    <td className="py-4 px-6 text-right space-y-2">
-                                        <div className="flex justify-end gap-2">
-                                            {/* Penalty / Reward Points */}
-                                            <Button
-                                                variant="secondary"
-                                                className="px-3 py-1 text-[10px] font-bold"
-                                                disabled={actionLoading === user._id || user.role === 'admin'}
-                                                onClick={() => {
-                                                    const newPoints = prompt(`Enter new points for ${user.name}:`, user.points.toString());
-                                                    if (newPoints && !isNaN(Number(newPoints))) {
-                                                        handleUpdateUser(user._id, { points: Number(newPoints) });
-                                                    }
-                                                }}
-                                            >
-                                                Adjust Points
-                                            </Button>
-
-                                            {/* Role Toggle */}
-                                            <Button
-                                                variant="secondary"
-                                                className="px-3 py-1 text-[10px] font-bold"
-                                                disabled={actionLoading === user._id}
-                                                onClick={() => {
-                                                    const newRole = user.role === 'admin' ? 'user' : 'admin';
-                                                    if (confirm(`Are you sure you want to change ${user.name}'s role to ${newRole}?`)) {
-                                                        handleUpdateUser(user._id, { role: newRole });
-                                                    }
-                                                }}
-                                            >
-                                                {user.role === 'admin' ? 'Remove Admin' : 'Make Admin'}
-                                            </Button>
-
-                                            {/* Reputation Adjust */}
-                                            <Button
-                                                variant="secondary"
-                                                className="px-3 py-1 text-[10px] font-bold"
-                                                disabled={actionLoading === user._id}
-                                                onClick={() => {
-                                                    const levels = ['Beginner', 'Trusted Contributor', 'Elite Contributor'];
-                                                    const currentIdx = levels.indexOf(user.reputationLevel);
-                                                    const nextIdx = (currentIdx + 1) % levels.length;
-                                                    handleUpdateUser(user._id, { reputationLevel: levels[nextIdx] });
-                                                }}
-                                            >
-                                                Tier ⇡
-                                            </Button>
-
-                                            {/* Ban / Unban */}
-                                            {user.isBanned ? (
-                                                <Button
-                                                    variant="secondary"
-                                                    className="px-3 py-1 text-[10px] font-bold bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-200"
-                                                    disabled={actionLoading === user._id}
-                                                    onClick={() => handleUpdateUser(user._id, { isBanned: false })}
-                                                >
-                                                    {actionLoading === user._id ? 'Working...' : 'Unban'}
-                                                </Button>
-                                            ) : (
-                                                <Button
-                                                    variant="danger"
-                                                    className="px-3 py-1 text-[10px] font-bold"
-                                                    disabled={actionLoading === user._id || user.role === 'admin'}
+                                        <td className="py-6 px-8 text-right">
+                                            <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+                                                <button 
                                                     onClick={() => {
-                                                        if (confirm(`Are you sure you want to ban ${user.name}? They will lose the ability to submit price updates.`)) {
-                                                            handleUpdateUser(user._id, { isBanned: true });
+                                                        const newPoints = prompt(`Adjust Merit Points for ${user.name}:`, user.points.toString());
+                                                        if (newPoints && !isNaN(Number(newPoints))) {
+                                                            handleUpdateUser(user._id, { points: Number(newPoints) });
                                                         }
                                                     }}
+                                                    className="p-3 rounded-2xl bg-slate-900 text-white hover:bg-primary transition-all shadow-sm"
+                                                    title="Adjust Merit"
                                                 >
-                                                    {actionLoading === user._id ? 'Working...' : 'Ban User'}
+                                                    <Award size={16} />
+                                                </button>
+                                                <button 
+                                                    onClick={() => {
+                                                        const levels = ['Beginner', 'Trusted Contributor', 'Elite Contributor'];
+                                                        const currentIdx = levels.indexOf(user.reputationLevel);
+                                                        const nextIdx = (currentIdx + 1) % levels.length;
+                                                        handleUpdateUser(user._id, { reputationLevel: levels[nextIdx] });
+                                                    }}
+                                                    className="p-3 rounded-2xl bg-slate-900 text-white hover:bg-primary transition-all shadow-sm"
+                                                    title="Promote Member"
+                                                >
+                                                    <TrendingUp size={16} />
+                                                </button>
+                                                <button 
+                                                    onClick={() => {
+                                                        const newRole = user.role === 'admin' ? 'user' : 'admin';
+                                                        if (confirm(`Elevate ${user.name} to System ${newRole.toUpperCase()}?`)) {
+                                                            handleUpdateUser(user._id, { role: newRole });
+                                                        }
+                                                    }}
+                                                    className="p-3 rounded-2xl bg-slate-900 text-white hover:bg-primary transition-all shadow-sm"
+                                                    title="Toggle Permissions"
+                                                >
+                                                    <Shield size={16} />
+                                                </button>
+                                                {user.isBanned ? (
+                                                    <button 
+                                                        onClick={() => handleUpdateUser(user._id, { isBanned: false })}
+                                                        className="p-3 rounded-2xl bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
+                                                        title="Restore Access"
+                                                    >
+                                                        <Unlock size={16} />
+                                                    </button>
+                                                ) : (
+                                                    <button 
+                                                        onClick={() => {
+                                                            if (confirm(`Restrict access for ${user.name}?`)) {
+                                                                handleUpdateUser(user._id, { isBanned: true });
+                                                            }
+                                                        }}
+                                                        className="p-3 rounded-2xl bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition-all shadow-sm"
+                                                        title="Revoke Access"
+                                                    >
+                                                        <Ban size={16} />
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                                {filteredUsers.length === 0 && (
+                                    <tr>
+                                        <td colSpan={4} className="py-24 text-center">
+                                            <div className="flex flex-col items-center gap-3">
+                                                <Users size={40} className="text-slate-100" />
+                                                <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">No matching operators found</p>
+                                                <Button 
+                                                    variant="secondary" 
+                                                    onClick={() => setSearchTerm('')}
+                                                    className="mt-2 text-[8px] font-black uppercase underline decoration-primary decoration-2 underline-offset-4"
+                                                >
+                                                    Reset Registry Filter
                                                 </Button>
-                                            )}
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                            {users.length === 0 && (
-                                <tr>
-                                    <td colSpan={4} className="py-12 text-center text-slate-400 font-medium">No users found.</td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 </Card>
             )}
         </div>

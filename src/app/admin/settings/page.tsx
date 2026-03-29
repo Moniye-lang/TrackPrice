@@ -10,6 +10,22 @@ interface Rules {
     verificationThreshold: number;
 }
 
+import { 
+    ShieldCheck, 
+    Coins, 
+    Target, 
+    Zap, 
+    Lock, 
+    RefreshCw, 
+    CheckCircle2, 
+    XCircle,
+    Save,
+    Settings,
+    LayoutDashboard,
+    AlertCircle,
+    Clock
+} from 'lucide-react';
+
 export default function AdminSettings() {
     const [rules, setRules] = useState<Rules | null>(null);
     const [loading, setLoading] = useState(true);
@@ -53,124 +69,220 @@ export default function AdminSettings() {
             });
 
             if (res.ok) {
-                setMessage({ type: 'success', text: 'Gamification rules updated successfully!' });
+                setMessage({ type: 'success', text: 'Protocol parameters updated successfully.' });
                 window.scrollTo(0, 0);
+                setTimeout(() => setMessage(null), 5000);
             } else {
-                setMessage({ type: 'error', text: 'Failed to update Gamification rules.' });
+                setMessage({ type: 'error', text: 'Failed to synchronize parameters with registry.' });
             }
         } catch (error) {
-            setMessage({ type: 'error', text: 'An unexpected error occurred.' });
+            setMessage({ type: 'error', text: 'Network exception during protocol synchronization.' });
         } finally {
             setSaving(false);
         }
     };
 
     if (loading) {
-        return <div className="text-center py-20 text-slate-500 font-medium">Loading Gamification Rules...</div>;
+        return (
+            <div className="flex flex-col items-center justify-center py-32 gap-4">
+                <div className="animate-pulse flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-primary animate-bounce" />
+                    <div className="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:-0.15s]" />
+                    <div className="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:-0.3s]" />
+                </div>
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Loading Community Protocols</p>
+            </div>
+        );
     }
 
     if (!rules) {
-        return <div className="text-center py-20 text-rose-500 font-bold bg-rose-50 rounded-xl">Failed to load gamification settings. Check server connection.</div>;
+        return (
+            <div className="text-center py-32 bg-rose-50 rounded-[2.5rem] border border-rose-100 mt-12">
+                <div className="w-20 h-20 bg-rose-100 text-rose-500 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-rose-200">
+                    <AlertCircle size={40} />
+                </div>
+                <h3 className="text-2xl font-black text-rose-900 tracking-tight">Access Restricted</h3>
+                <p className="text-rose-400 font-bold text-[10px] uppercase tracking-widest mt-2">Failed to retrieve gamification protocols from registry</p>
+            </div>
+        );
     }
 
     return (
-        <div className="space-y-6 max-w-4xl">
-            <div className="mb-8">
-                <h1 className="text-3xl font-black text-slate-800 tracking-tight">Gamification Settings</h1>
-                <p className="text-slate-500 font-medium mt-2">Adjust the behavioral economy of the TrackPrice community. Changes apply immediately to all users.</p>
+        <div className="space-y-12 pb-20 max-w-5xl">
+            {/* Page Header */}
+            <div className="flex flex-col md:flex-row justify-between items-end gap-6">
+                <div>
+                     <nav className="flex items-center gap-2 mb-2">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Admin</span>
+                        <span className="text-slate-300">/</span>
+                        <span className="text-[10px] font-black text-primary uppercase tracking-widest">System Engine</span>
+                    </nav>
+                    <h1 className="text-4xl font-black text-slate-900 tracking-tight leading-none">
+                        Protocol <span className="text-primary italic">Settings</span>
+                    </h1>
+                </div>
+                <p className="text-slate-400 text-sm font-bold max-w-sm md:text-right leading-relaxed">
+                    Fine-tune the behavioral economy and security thresholds of the TrackPrice community ecosystem.
+                </p>
             </div>
 
             {message && (
-                <div className={`p-4 rounded-xl border font-bold ${message.type === 'success' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200'}`}>
-                    {message.text}
+                <div className={`p-6 rounded-3xl border flex items-center gap-4 animate-in fade-in slide-in-from-top-4 duration-500 ${
+                    message.type === 'success' 
+                    ? 'bg-emerald-50 text-emerald-700 border-emerald-100 shadow-sm' 
+                    : 'bg-rose-50 text-rose-700 border-rose-100 shadow-sm'
+                }`}>
+                    {message.type === 'success' ? <CheckCircle2 className="text-emerald-500" /> : <XCircle className="text-rose-500" />}
+                    <span className="text-xs font-black uppercase tracking-widest">{message.text}</span>
                 </div>
             )}
 
-            <form onSubmit={handleSave} className="space-y-8">
+            <form onSubmit={handleSave} className="space-y-10">
 
-                {/* Points Configuration */}
-                <Card className="p-8 border-none shadow-premium bg-white">
-                    <h2 className="text-xl font-black tracking-tight text-slate-800 mb-6 flex items-center gap-2">
-                        <svg className="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        Reward Economy
-                    </h2>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div>
-                            <label className="block text-sm font-black text-slate-800 tracking-widest uppercase mb-2">Base Points Per Update</label>
-                            <Input
-                                type="number"
-                                min="0"
-                                className="text-lg font-bold shadow-sm"
-                                value={rules.pointsPerUpdate}
-                                onChange={(e) => handleChange('pointsPerUpdate', e.target.value)}
-                                required
-                            />
-                            <p className="text-xs font-medium text-slate-500 mt-2">Points awarded when a submitted price becomes verified.</p>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                    
+                    {/* Economy Section */}
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-3 mb-2 px-2">
+                            <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center border border-amber-100 shadow-sm">
+                                <Coins size={20} />
+                            </div>
+                            <div>
+                                <h2 className="text-lg font-black text-slate-900 tracking-tight">Reward Economy</h2>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Incentive distribution parameters</p>
+                            </div>
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-black text-slate-800 tracking-widest uppercase mb-2">Bonus: Price Request</label>
-                            <Input
-                                type="number"
-                                min="0"
-                                className="text-lg font-bold shadow-sm border-amber-200 focus:border-amber-500 focus:ring-amber-500"
-                                value={rules.bonusPointsRequest}
-                                onChange={(e) => handleChange('bonusPointsRequest', e.target.value)}
-                                required
-                            />
-                            <p className="text-xs font-medium text-slate-500 mt-2">Extra points awarded for fulfilling community "Price Requests".</p>
-                        </div>
+                        <Card className="p-8 border-none shadow-premium bg-white rounded-[2.5rem] space-y-8">
+                            <div className="space-y-4">
+                                <label className="flex items-center justify-between">
+                                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Base Points / Update</span>
+                                    <span className="text-[10px] font-bold text-primary bg-primary/5 px-2 py-0.5 rounded-lg">Standard Reward</span>
+                                </label>
+                                <div className="relative group">
+                                    <Input
+                                        type="number"
+                                        min="0"
+                                        className="h-16 pl-6 pr-12 text-2xl font-black bg-slate-50 border-transparent focus:bg-white focus:border-primary transition-all rounded-2xl shadow-inner group-hover:bg-white"
+                                        value={rules.pointsPerUpdate}
+                                        onChange={(e) => handleChange('pointsPerUpdate', e.target.value)}
+                                        required
+                                    />
+                                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors">
+                                        <Zap size={20} />
+                                    </div>
+                                </div>
+                                <p className="text-[10px] font-bold text-slate-400 leading-relaxed px-2">
+                                    Foundation points awarded to contributors when their price data passes the verification threshold.
+                                </p>
+                            </div>
+
+                            <div className="space-y-4">
+                                <label className="flex items-center justify-between">
+                                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Request Fulfillment Bonus</span>
+                                    <span className="text-[10px] font-bold text-amber-500 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-100">Premium Yield</span>
+                                </label>
+                                <div className="relative group">
+                                    <Input
+                                        type="number"
+                                        min="0"
+                                        className="h-16 pl-6 pr-12 text-2xl font-black bg-slate-50 border-transparent focus:bg-white focus:border-amber-400 transition-all rounded-2xl shadow-inner group-hover:bg-white"
+                                        value={rules.bonusPointsRequest}
+                                        onChange={(e) => handleChange('bonusPointsRequest', e.target.value)}
+                                        required
+                                    />
+                                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-amber-500 transition-colors">
+                                        <Target size={20} />
+                                    </div>
+                                </div>
+                                <p className="text-[10px] font-bold text-slate-400 leading-relaxed px-2">
+                                    Additional multiplier applied when a user fulfills a community "Price Request" for a specific product.
+                                </p>
+                            </div>
+                        </Card>
                     </div>
-                </Card>
 
-                {/* Abuse limits Configuration */}
-                <Card className="p-8 border-none shadow-premium bg-white relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
-                    <h2 className="text-xl font-black tracking-tight text-slate-800 mb-6 flex items-center gap-2">
-                        <svg className="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
-                        Security & Limits
-                    </h2>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div>
-                            <label className="block text-sm font-black text-slate-800 tracking-widest uppercase mb-2">Daily Update Limit</label>
-                            <Input
-                                type="number"
-                                min="1"
-                                className="text-lg font-bold shadow-sm"
-                                value={rules.dailyUpdateLimit}
-                                onChange={(e) => handleChange('dailyUpdateLimit', e.target.value)}
-                                required
-                            />
-                            <p className="text-xs font-medium text-slate-500 mt-2">Maximum number of rewarded price updates a single user can make per day. Prevents spam farming.</p>
+                    {/* Security Section */}
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-3 mb-2 px-2">
+                            <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-500 flex items-center justify-center border border-indigo-100 shadow-sm">
+                                <ShieldCheck size={20} />
+                            </div>
+                            <div>
+                                <h2 className="text-lg font-black text-slate-900 tracking-tight">Security & Governance</h2>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Anti-Abuse & Verification Logic</p>
+                            </div>
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-black text-slate-800 tracking-widest uppercase mb-2">Verification Threshold</label>
-                            <Input
-                                type="number"
-                                min="1"
-                                className="text-lg font-bold shadow-sm"
-                                value={rules.verificationThreshold}
-                                onChange={(e) => handleChange('verificationThreshold', e.target.value)}
-                                required
-                            />
-                            <p className="text-xs font-medium text-slate-500 mt-2">
-                                Reputation weight required to verify a price. (Beginner=1, Trusted=3, Elite=10).
-                                <br /><i>Example: 5 means five beginners, or one beginner+one trusted+one something else.</i>
-                            </p>
-                        </div>
+                        <Card className="p-8 border-none shadow-premium bg-white rounded-[2.5rem] space-y-8 relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50/50 rounded-full -mr-16 -mt-16 blur-3xl pointer-events-none" />
+                            
+                            <div className="space-y-4 relative z-10">
+                                <label className="flex items-center justify-between">
+                                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Daily Global Limit</span>
+                                    <span className="text-[10px] font-bold text-indigo-500 bg-indigo-50 px-2 py-0.5 rounded-lg border border-indigo-100">Rate Limiter</span>
+                                </label>
+                                <div className="relative group">
+                                    <Input
+                                        type="number"
+                                        min="1"
+                                        className="h-16 pl-6 pr-12 text-2xl font-black bg-slate-50 border-transparent focus:bg-white focus:border-indigo-400 transition-all rounded-2xl shadow-inner group-hover:bg-white"
+                                        value={rules.dailyUpdateLimit}
+                                        onChange={(e) => handleChange('dailyUpdateLimit', e.target.value)}
+                                        required
+                                    />
+                                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-500 transition-colors">
+                                        <Clock size={20} />
+                                    </div>
+                                </div>
+                                <p className="text-[10px] font-bold text-slate-400 leading-relaxed px-2">
+                                    Hard cap onRewarded updates per user within a 24h cycle to prevent automated farming and syndicate manipulation.
+                                </p>
+                            </div>
+
+                            <div className="space-y-4 relative z-10">
+                                <label className="flex items-center justify-between">
+                                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Verification Threshold</span>
+                                    <span className="text-[10px] font-bold text-indigo-500 bg-indigo-50 px-2 py-0.5 rounded-lg border border-indigo-100">Consensus Req.</span>
+                                </label>
+                                <div className="relative group">
+                                    <Input
+                                        type="number"
+                                        min="1"
+                                        className="h-16 pl-6 pr-12 text-2xl font-black bg-slate-50 border-transparent focus:bg-white focus:border-indigo-400 transition-all rounded-2xl shadow-inner group-hover:bg-white"
+                                        value={rules.verificationThreshold}
+                                        onChange={(e) => handleChange('verificationThreshold', e.target.value)}
+                                        required
+                                    />
+                                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-500 transition-colors">
+                                        <Lock size={20} />
+                                    </div>
+                                </div>
+                                <p className="text-[10px] font-bold text-slate-400 leading-relaxed px-2">
+                                    Total reputation weight required for auto-verification. (Beginner=1, Trusted=3, Elite=10). Higher values ensure total accuracy.
+                                </p>
+                            </div>
+                        </Card>
                     </div>
-                </Card>
+                </div>
 
-                <div className="flex justify-end pt-4">
-                    <Button type="submit" className="px-8 py-3 text-lg font-black tracking-widest uppercase" disabled={saving}>
-                        {saving ? 'Applying...' : 'Save & Apply Rules'}
+                <div className="flex items-center justify-center pt-8">
+                    <Button 
+                        type="submit" 
+                        disabled={saving}
+                        className="h-20 px-12 rounded-[2rem] bg-slate-900 text-white font-black uppercase tracking-[0.2em] shadow-glow flex items-center gap-4 hover:scale-105 active:scale-95 transition-all w-full md:w-auto"
+                    >
+                        {saving ? (
+                            <>
+                                <RefreshCw className="animate-spin text-primary" size={24} />
+                                <span>Synchronizing...</span>
+                            </>
+                        ) : (
+                            <>
+                                <Save className="text-primary" size={24} />
+                                <span>Save & Deploy Protocols</span>
+                            </>
+                        )}
                     </Button>
                 </div>
             </form>
