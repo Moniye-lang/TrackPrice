@@ -56,7 +56,7 @@ export async function POST(req: Request) {
                     name: item.name,
                     price: item.price,
                     category: 'Uncategorized',
-                    imageUrl: '', // Accuracy issues: images will be added manually or stay blank
+                    imageUrl: item.imageUrl || `https://placehold.co/600x400?text=${encodeURIComponent(item.name)}`,
                     storeLocation: location || undefined,
                     reportCount: 0,
                     confidenceLevel: 'Low',

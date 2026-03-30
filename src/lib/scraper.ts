@@ -1,6 +1,7 @@
 export interface ExtractedProduct {
     name: string;
     price: number;
+    imageUrl: string;
 }
 
 // -------------------------------------------------------
@@ -30,10 +31,14 @@ async function fetchAndExtract(url: string): Promise<ExtractedProduct[]> {
         return isNaN(val) || val <= 0 ? null : val;
     };
 
-    const add = (name: string, price: number) => {
+    const add = (name: string, price: number, imageUrl?: string) => {
         const key = name.toLowerCase().trim();
         if (name && name.length > 2 && !seen.has(key) && price > 0) {
-            results.push({ name: name.replace(/\s+/g, ' ').trim(), price });
+            results.push({ 
+                name: name.replace(/\s+/g, ' ').trim(), 
+                price,
+                imageUrl: imageUrl || `https://placehold.co/600x400?text=${encodeURIComponent(name)}`
+            });
             seen.add(key);
         }
     };
@@ -55,7 +60,8 @@ async function fetchAndExtract(url: string): Promise<ExtractedProduct[]> {
                     for (const p of products) {
                         const name = p?.name || p?.title;
                         const price = p?.price?.current || p?.prices?.finalPrice || p?.price;
-                        if (name && price) add(name, typeof price === 'number' ? price : parsePrice(String(price)) || 0);
+                        const imageUrl = p?.image;
+                        if (name && price) add(name, typeof price === 'number' ? price : parsePrice(String(price)) || 0, imageUrl);
                     }
                 } catch { /* JSON parse failed, continue */ }
             }
@@ -65,10 +71,22 @@ async function fetchAndExtract(url: string): Promise<ExtractedProduct[]> {
         // Fallback: regex-based extraction of name/price from raw Jumia SSR HTML
         if (results.length === 0) {
             // Jumia SSR HTML has data-name and data-price attributes
-            const productMatches = html.matchAll(/data-name="([^"]+)"[^>]*data-price="([^"]+)"/g);
+            const productMatches = html.matchAll(/data-name="([^"]+)"[^>]*data-price="([^"]+)"[^>]*data-src="([^"]+)"/g);
             for (const m of productMatches) {
                 const price = parsePrice(m[2]);
-                if (price) add(m[1], price);
+                if (price) add(m[1], price, m[3]);
+            }
+
+            // If still no images, try matching products with images separately
+            if (results.length === 0) {
+                const imgMatches = [...html.matchAll(/class="img"[^>]*src="([^"]+)"/g)];
+                const nameMatches = [...html.matchAll(/class="name"[^>]*>([^<]{5,100})</g)];
+                const priceMatches = [...html.matchAll(/class="prc"[^>]*>([^<]{2,30})</g)];
+                const count = Math.min(nameMatches.length, priceMatches.length, imgMatches.length);
+                for (let i = 0; i < count; i++) {
+                    const price = parsePrice(priceMatches[i][1]);
+                    if (price) add(nameMatches[i][1].trim(), price, imgMatches[i][1]);
+                }
             }
 
             // Also try class-based SSR pattern
@@ -150,7 +168,7 @@ export async function scrapeProducts(url: string): Promise<ExtractedProduct[]> {
         }
 
         const products = await page.evaluate((pageUrl: string) => {
-            const results: { name: string, price: number }[] = [];
+            const results: { name: string, price: number, imageUrl: string }[] = [];
             const processedNames = new Set<string>();
 
             const parsePrice = (text: string): number | null => {
@@ -159,10 +177,14 @@ export async function scrapeProducts(url: string): Promise<ExtractedProduct[]> {
                 return isNaN(val) || val <= 0 ? null : val;
             };
 
-            const addProduct = (name: string, price: number) => {
+            const addProduct = (name: string, price: number, imageUrl?: string) => {
                 const key = name.toLowerCase().trim();
                 if (name && name.length > 2 && !processedNames.has(key) && price > 0) {
-                    results.push({ name: name.replace(/\s+/g, ' ').trim(), price });
+                    results.push({ 
+                        name: name.replace(/\s+/g, ' ').trim(), 
+                        price,
+                        imageUrl: imageUrl || `https://placehold.co/600x400?text=${encodeURIComponent(name)}`
+                    });
                     processedNames.add(key);
                 }
             };
@@ -172,9 +194,13 @@ export async function scrapeProducts(url: string): Promise<ExtractedProduct[]> {
                 document.querySelectorAll('article.prd, div.prd, [class*="sku-"], [class*="productItem"]').forEach(card => {
                     const nameEl = card.querySelector('div.name, h3.name, a.core, [class*="name"], [class*="title"]') as HTMLElement | null;
                     const priceEl = card.querySelector('div.prc, span.prc, [class*="price"]') as HTMLElement | null;
+                    const imgEl = card.querySelector('img.img, img[data-src], [class*="image"] img') as HTMLImageElement | null;
                     if (nameEl && priceEl) {
                         const price = parsePrice(priceEl.innerText);
-                        if (price) addProduct(nameEl.innerText.trim(), price);
+                        // Check multiple sources for lazy-loaded images (Jumia uses data-src or src)
+                        let imageUrl = imgEl?.getAttribute('data-src') || imgEl?.src || '';
+                        if (imageUrl.startsWith('data:image')) imageUrl = imgEl?.getAttribute('data-src') || '';
+                        if (price) addProduct(nameEl.innerText.trim(), price, imageUrl);
                     }
                 });
                 if (results.length > 0) return results;

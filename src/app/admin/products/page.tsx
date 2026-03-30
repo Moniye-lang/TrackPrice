@@ -214,30 +214,30 @@ export default function AdminProducts() {
     return (
         <div className="space-y-12">
             {/* Page Header */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
                 <div>
                      <nav className="flex items-center gap-2 mb-2">
                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Admin</span>
                         <span className="text-slate-300">/</span>
                         <span className="text-[10px] font-black text-primary uppercase tracking-widest">Inventory</span>
                     </nav>
-                    <h1 className="text-4xl font-black text-slate-900 tracking-tight leading-none">
+                    <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-none">
                         Managed <span className="text-primary italic">Catalogue</span>
                     </h1>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
                     <Button 
                         onClick={handleAutoImages} 
                         disabled={autoImageLoading} 
                         variant="secondary"
-                        className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50 shadow-sm flex items-center gap-2 px-6 py-3 rounded-2xl transition-all"
+                        className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50 shadow-sm flex items-center justify-center gap-2 px-6 py-3 rounded-2xl transition-all"
                     >
                         <RefreshCw size={16} className={autoImageLoading ? 'animate-spin' : ''} />
                         <span className="text-[10px] font-black uppercase tracking-widest">Auto-Fetch Images</span>
                     </Button>
                     <Button 
                         onClick={() => { setShowForm(true); setEditingProduct(null); resetForm(); }}
-                        className="bg-primary hover:bg-primary/90 text-white shadow-glow flex items-center gap-2 px-6 py-3 rounded-2xl transition-all active:scale-95"
+                        className="bg-primary hover:bg-primary/90 text-white shadow-glow flex items-center justify-center gap-2 px-6 py-3 rounded-2xl transition-all active:scale-95"
                     >
                         <Plus size={18} />
                         <span className="text-[10px] font-black uppercase tracking-widest">Add Product</span>
@@ -246,24 +246,24 @@ export default function AdminProducts() {
             </div>
 
             {/* Filter Section */}
-            <div className="relative group max-w-xl">
+            <div className="relative group w-full lg:max-w-xl">
                 <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={20} />
                 <input 
                     type="text" 
-                    placeholder="Search master catalogue by name, category, or market..."
+                    placeholder="Search catalogue..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full bg-white border border-slate-100 py-5 pl-16 pr-6 rounded-3xl shadow-premium outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/20 transition-all font-bold text-slate-700 text-sm placeholder:text-slate-300"
+                    className="w-full bg-white border border-slate-100 py-4 md:py-5 pl-16 pr-6 rounded-[1.5rem] md:rounded-3xl shadow-premium outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/20 transition-all font-bold text-slate-700 text-sm placeholder:text-slate-300"
                 />
             </div>
 
             {showForm && (
                 <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-md" onClick={() => setShowForm(false)} />
-                    <Card className="max-w-2xl w-full p-10 relative z-10 animate-in zoom-in-95 duration-300 border-none shadow-premium-lg rounded-[2.5rem] bg-white">
+                    <Card className="max-w-2xl w-full p-6 md:p-10 relative z-10 animate-in zoom-in-95 duration-300 border-none shadow-premium-lg rounded-3xl md:rounded-[2.5rem] bg-white max-h-[90vh] overflow-y-auto custom-scrollbar">
                         <button 
                             onClick={() => setShowForm(false)}
-                            className="absolute top-8 right-8 p-3 rounded-2xl bg-slate-50 text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-all"
+                            className="absolute top-4 right-4 md:top-8 md:right-8 p-3 rounded-2xl bg-slate-50 text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-all"
                         >
                             <X size={20} />
                         </button>
@@ -319,8 +319,8 @@ export default function AdminProducts() {
                                 <Input value={storeLocation} onChange={(e) => setStoreLocation(e.target.value)} placeholder="e.g. Bodija Market, Ibadan" className="rounded-2xl py-4" />
                             </div>
                             <div className="md:col-span-2 flex justify-end gap-3 mt-8">
-                                <Button type="submit" disabled={submitting} className="w-full py-5 rounded-2xl bg-primary text-white font-black uppercase tracking-widest shadow-glow">
-                                    {submitting ? 'Processing Catalogue Sync...' : editingProduct ? 'Commit Data Update' : 'Synchronize Product'}
+                                <Button type="submit" disabled={submitting} className="w-full py-4 md:py-5 rounded-2xl bg-primary text-white font-black uppercase tracking-widest shadow-glow">
+                                    {submitting ? 'Processing...' : editingProduct ? 'Commit Update' : 'Add to Catalogue'}
                                 </Button>
                             </div>
                         </form>
@@ -338,8 +338,78 @@ export default function AdminProducts() {
                     <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Querying Catalogue Database</p>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 gap-4 pb-20">
-                    <Card className="p-0 border-none shadow-premium bg-white overflow-hidden rounded-[2.5rem]">
+                <div className="space-y-6 pb-20">
+                    {/* Mobile View: Cards */}
+                    <div className="grid grid-cols-1 gap-4 md:hidden">
+                        {filteredProducts.map((product) => (
+                            <Card key={product._id} className="p-5 border-none shadow-premium bg-white rounded-3xl group relative">
+                                <div className="flex gap-4">
+                                    <div className="w-20 h-20 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 flex-shrink-0 shadow-sm">
+                                        <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex justify-between items-start">
+                                            <p className="font-black text-slate-900 text-sm tracking-tight leading-tight line-clamp-2">{product.name}</p>
+                                            <button
+                                                onClick={async () => {
+                                                    const res = await fetch(`/api/products/${product._id}`, {
+                                                        method: 'PUT',
+                                                        headers: { 'Content-Type': 'application/json' },
+                                                        body: JSON.stringify({ isFeatured: !product.isFeatured }),
+                                                    });
+                                                    if (res.ok) fetchProducts();
+                                                }}
+                                                className={`flex-shrink-0 transition-all ${product.isFeatured ? 'text-primary' : 'text-slate-200'}`}
+                                            >
+                                                <Star size={18} fill={product.isFeatured ? 'currentColor' : 'none'} />
+                                            </button>
+                                        </div>
+                                        <div className="flex items-center gap-1.5 mt-1.5">
+                                            <MapPin size={10} className="text-slate-300" />
+                                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest truncate">{product.storeLocation || 'Unassigned Depot'}</p>
+                                        </div>
+                                        <div className="flex items-center justify-between mt-3">
+                                            <p className="font-black text-slate-900 text-sm">{formatPriceRange(product.price, product.maxPrice)}</p>
+                                            <div className="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest">
+                                                {product.category}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="mt-5 pt-4 border-t border-slate-50 flex items-center justify-between gap-2">
+                                    {mergeSourceId ? (
+                                        mergeSourceId === product._id ? (
+                                            <button onClick={() => setMergeSourceId(null)} className="flex-1 py-3 rounded-xl bg-rose-50 text-rose-500 font-black text-[9px] uppercase tracking-widest flex items-center justify-center gap-2">
+                                                <X size={14} /> Abort Merge
+                                            </button>
+                                        ) : (
+                                            <button onClick={() => handleMerge(product._id)} className="flex-1 py-3 rounded-xl bg-emerald-50 text-emerald-500 font-black text-[9px] uppercase tracking-widest flex items-center justify-center gap-2">
+                                                <GitMerge size={14} /> Commit Merge
+                                            </button>
+                                        )
+                                    ) : (
+                                        <div className="grid grid-cols-4 gap-2 w-full">
+                                            <button onClick={() => setMergeSourceId(product._id)} className="p-3 rounded-xl bg-slate-50 text-slate-600 flex justify-center hover:bg-primary hover:text-white transition-all">
+                                                <GitMerge size={16} />
+                                            </button>
+                                            <button onClick={() => handleDuplicate(product._id)} className="p-3 rounded-xl bg-slate-50 text-slate-600 flex justify-center hover:bg-primary hover:text-white transition-all">
+                                                <Copy size={16} />
+                                            </button>
+                                            <button onClick={() => handleEdit(product)} className="p-3 rounded-xl bg-slate-50 text-slate-600 flex justify-center hover:bg-primary hover:text-white transition-all">
+                                                <Edit2 size={16} />
+                                            </button>
+                                            <button onClick={() => handleDelete(product._id)} className="p-3 rounded-xl bg-rose-50 text-rose-500 flex justify-center hover:bg-rose-500 hover:text-white transition-all">
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            </Card>
+                        ))}
+                    </div>
+
+                    {/* Desktop View: Table */}
+                    <Card className="hidden md:block p-0 border-none shadow-premium bg-white overflow-hidden rounded-[2.5rem]">
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
                                 <thead className="bg-slate-50/50 border-b border-slate-50">

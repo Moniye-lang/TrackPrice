@@ -222,6 +222,7 @@ export default function ExtractionPage() {
                             <table className="w-full text-left border-collapse">
                                 <thead>
                                     <tr className="bg-slate-50/50">
+                                        <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] w-20">Img</th>
                                         <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Product Name (Mutable)</th>
                                         <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Price (₦)</th>
                                         <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Match Logic</th>
@@ -231,6 +232,18 @@ export default function ExtractionPage() {
                                 <tbody className="divide-y divide-slate-50">
                                     {results.map((item, i) => (
                                         <tr key={i} className={`group hover:bg-slate-50/80 transition-all duration-300 ${item.status === 'rejected' ? 'opacity-40 grayscale' : ''}`}>
+                                            <td className="px-8 py-6">
+                                                <div className="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden border border-slate-200">
+                                                    <img 
+                                                        src={item.imageUrl} 
+                                                        alt={item.name} 
+                                                        className="w-full h-full object-cover"
+                                                        onError={(e) => {
+                                                            (e.target as HTMLImageElement).src = `https://placehold.co/600x400?text=${encodeURIComponent(item.name)}`;
+                                                        }}
+                                                    />
+                                                </div>
+                                            </td>
                                             <td className="px-8 py-6">
                                                 <input
                                                     value={item.name}
