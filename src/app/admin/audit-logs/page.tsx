@@ -15,8 +15,11 @@ import {
     AlertCircle,
     ChevronLeft,
     ChevronRight,
-    RefreshCw
+    RefreshCw,
+    Check,
+    Zap
 } from 'lucide-react';
+import Link from 'next/link';
 import { formatRelativeTime } from '@/lib/utils';
 import { format } from 'date-fns';
 
