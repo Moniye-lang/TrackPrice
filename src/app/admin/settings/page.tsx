@@ -23,7 +23,9 @@ import {
     Settings,
     LayoutDashboard,
     AlertCircle,
-    Clock
+    Clock,
+    Database,
+    History
 } from 'lucide-react';
 
 export default function AdminSettings() {
@@ -31,6 +33,8 @@ export default function AdminSettings() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+    const [archiving, setArchiving] = useState(false);
+    const [archiveMessage, setArchiveMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
     const fetchRules = async () => {
         setLoading(true);
@@ -79,6 +83,32 @@ export default function AdminSettings() {
             setMessage({ type: 'error', text: 'Network exception during protocol synchronization.' });
         } finally {
             setSaving(false);
+        }
+    };
+
+    const handleArchive = async () => {
+        if (!confirm('Are you sure you want to archive legacy protocols? This action will permanently remove historical records older than 30 days.')) return;
+        
+        setArchiving(true);
+        setArchiveMessage(null);
+
+        try {
+            const res = await fetch('/api/admin/archive', { method: 'POST' });
+            const data = await res.json();
+
+            if (res.ok) {
+                setArchiveMessage({ 
+                    type: 'success', 
+                    text: `Registry cleanup complete. Archived ${data.count} legacy protocols.` 
+                });
+                setTimeout(() => setArchiveMessage(null), 10000);
+            } else {
+                setArchiveMessage({ type: 'error', text: data.error || 'Registry archival failed.' });
+            }
+        } catch (error) {
+            setArchiveMessage({ type: 'error', text: 'Network exception during archival protocol.' });
+        } finally {
+            setArchiving(false);
         }
     };
 
@@ -264,6 +294,64 @@ export default function AdminSettings() {
                             </div>
                         </Card>
                     </div>
+                </div>
+
+                {/* System Maintenance Section */}
+                <div className="space-y-6">
+                    <div className="flex items-center gap-3 mb-2 px-2">
+                        <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center border border-slate-200 shadow-sm transition-colors hover:bg-slate-200">
+                            <Settings size={20} />
+                        </div>
+                        <div>
+                            <h2 className="text-lg font-black text-slate-900 tracking-tight">System Maintenance</h2>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Registry Health & Data Archival</p>
+                        </div>
+                    </div>
+
+                    <Card className="p-8 border-none shadow-premium bg-white rounded-[2.5rem] relative overflow-hidden group">
+                        <div className="absolute -right-8 -bottom-8 text-slate-50 group-hover:text-slate-100 transition-colors pointer-events-none">
+                            <Database size={160} />
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center relative z-10">
+                            <div className="md:col-span-8 space-y-3">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-slate-400 animate-pulse" />
+                                    <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest">Archive Legacy Protocols</h3>
+                                </div>
+                                <p className="text-[10px] font-bold text-slate-400 leading-relaxed max-w-xl">
+                                    Trigger a recursive archival protocol to prune the primary registry of verified or rejected price updates older than 30 days. This operation optimizes query performance and maintains data integrity standards.
+                                </p>
+                                
+                                {archiveMessage && (
+                                    <div className={`mt-4 p-4 rounded-2xl border flex items-center gap-3 animate-in fade-in slide-in-from-left-4 duration-500 ${
+                                        archiveMessage.type === 'success' 
+                                        ? 'bg-emerald-50 text-emerald-700 border-emerald-100' 
+                                        : 'bg-rose-50 text-rose-700 border-rose-100'
+                                    }`}>
+                                        {archiveMessage.type === 'success' ? <CheckCircle2 size={14} /> : <XCircle size={14} />}
+                                        <span className="text-[10px] font-black uppercase tracking-widest">{archiveMessage.text}</span>
+                                    </div>
+                                )}
+                            </div>
+                            
+                            <div className="md:col-span-4">
+                                <Button 
+                                    type="button"
+                                    onClick={handleArchive}
+                                    disabled={archiving}
+                                    className="w-full h-16 rounded-2xl bg-white border-2 border-slate-200 text-slate-900 font-black uppercase tracking-widest hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50"
+                                >
+                                    {archiving ? (
+                                        <RefreshCw className="animate-spin text-primary" size={18} />
+                                    ) : (
+                                        <History size={18} className="text-slate-400 group-hover:text-primary transition-colors" />
+                                    )}
+                                    {archiving ? 'Processing' : 'Archive Registry'}
+                                </Button>
+                            </div>
+                        </div>
+                    </Card>
                 </div>
 
                 <div className="flex items-center justify-center pt-8">
