@@ -3,7 +3,8 @@ import { cookies } from 'next/headers';
 import connectDB from '@/lib/db';
 import Product from '@/models/Product';
 import PriceUpdate from '@/models/PriceUpdate';
-import User from '@/models/User'; // Explicitly import for population
+import User from '@/models/User';
+import AuditLog from '@/models/AuditLog';
 import { isValidObjectId } from '@/lib/db-utils';
 import { verifyToken } from '@/lib/auth';
 import { parsePriceRange } from '@/lib/price-utils';
@@ -67,7 +68,9 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
             suggestions: suggestions.map((s: any) => ({
                 _id: s._id.toString(),
                 price: s.price,
+                maxPrice: s.maxPrice,
                 userName: s.userId?.name || 'Anonymous',
+                vouchCount: s.anonymousConfirmations?.length || 0,
                 createdAt: s.createdAt
             }))
         });
@@ -118,6 +121,16 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         }
 
         const product = await Product.findByIdAndUpdate(id, updateData, { new: true });
+
+        // Audit Log
+        const token = (await cookies()).get('token')?.value;
+        const payload: any = verifyToken(token!);
+        await AuditLog.create({
+            adminId: payload.id,
+            action: 'UPDATE_PRODUCT',
+            details: { productId: id, changes: body }
+        });
+
         return NextResponse.json(product);
     } catch (error: any) {
         return NextResponse.json({ error: error.errors?.[0]?.message || 'Failed to update product' }, { status: 400 });
@@ -133,6 +146,16 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
         const { id } = await params;
         await connectDB();
         await Product.findByIdAndDelete(id);
+
+        // Audit Log
+        const token = (await cookies()).get('token')?.value;
+        const payload: any = verifyToken(token!);
+        await AuditLog.create({
+            adminId: payload.id,
+            action: 'DELETE_PRODUCT',
+            details: { productId: id }
+        });
+
         return NextResponse.json({ message: 'Product deleted' });
     } catch (error) {
         return NextResponse.json({ error: 'Failed to delete product' }, { status: 400 });

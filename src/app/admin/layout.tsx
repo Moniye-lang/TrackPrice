@@ -17,7 +17,8 @@ import {
     Menu,
     X,
     TrendingUp,
-    Store
+    Store,
+    History
 } from 'lucide-react';
 
 export default function AdminLayout({
@@ -62,6 +63,7 @@ export default function AdminLayout({
 
     const navItems = [
         { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
+        { label: 'Audit Logs', href: '/admin/audit-logs', icon: History },
         { label: 'Products', href: '/admin/products', icon: Box },
         { label: 'Users', href: '/admin/users', icon: Users },
         { label: 'Markets/Stores', href: '/admin/stores', icon: Store },

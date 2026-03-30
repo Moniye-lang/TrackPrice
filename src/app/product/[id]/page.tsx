@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Button, Card } from '@/components/ui-base';
 import { Navbar } from '@/components/Navbar';
+import { PriceProposalWidget } from '@/components/PriceProposalWidget';
 import { formatRelativeTime } from '@/lib/utils';
 import Link from 'next/link';
 import { use } from 'react';
@@ -36,7 +37,9 @@ interface Product {
     suggestions?: Array<{
         _id: string;
         price: number;
+        maxPrice?: number;
         userName: string;
+        vouchCount: number;
         createdAt: string;
     }>;
 }
@@ -325,7 +328,14 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
             <main className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-3 gap-12 pb-32">
                 {/* Product Info Section */}
-                <div className="lg:col-span-1">
+                <div className="lg:col-span-1 space-y-8">
+                    {/* Price Proposal Widget (Top Right of Detail) */}
+                    <PriceProposalWidget 
+                        productId={id} 
+                        proposals={product.suggestions || []} 
+                        onVouchSuccess={fetchData} 
+                    />
+
                     <Card className="sticky top-24 p-0 overflow-hidden border-none shadow-premium bg-white/40 glass">
                         <div className="relative h-72 w-full overflow-hidden bg-slate-50">
                             {product.imageUrl ? (
