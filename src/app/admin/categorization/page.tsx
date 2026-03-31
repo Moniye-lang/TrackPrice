@@ -43,7 +43,7 @@ export default function CategorizationPage() {
     const [filter, setFilter] = useState<'All' | 'Uncategorized' | 'Online' | 'Physical'>('Uncategorized');
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
-    const productCategories = ['Groceries', 'Electronics', 'Clothing', 'Home', 'Books', 'Oil and Gas', 'Other'];
+    const productCategories = ['Groceries', 'Beverages', 'Electronics', 'Clothing', 'Home', 'Health & Beauty', 'Books', 'Oil and Gas', 'Building Materials', 'Other'];
 
     const fetchProducts = async () => {
         setLoading(true);

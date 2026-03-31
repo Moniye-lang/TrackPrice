@@ -95,7 +95,7 @@ export default function Home() {
     fetchHomepageData();
   }, []);
 
-  const categories = ['All', 'Electronics', 'Clothing', 'Home', 'Groceries', 'Books'];
+  const categories = ['All', 'Groceries', 'Beverages', 'Electronics', 'Clothing', 'Home', 'Health & Beauty', 'Books', 'Oil and Gas', 'Building Materials'];
 
   const fetchProducts = async () => {
     setLoading(true);
