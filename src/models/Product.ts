@@ -34,7 +34,7 @@ const ProductSchema: Schema = new Schema(
         price: { type: Number, required: true },
         maxPrice: { type: Number },
         category: { type: String, required: true },
-        marketCategory: { type: String, enum: ['Online', 'Physical'], default: null },
+        marketCategory: { type: String, enum: ['Online', 'Physical'] },
         storeId: { type: Schema.Types.ObjectId, ref: 'Store' },
         storeLocation: { type: String },
         imageUrl: { type: String, required: true },
