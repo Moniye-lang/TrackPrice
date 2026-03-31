@@ -7,6 +7,7 @@ export const ProductSchema = z.object({
     size: z.string().optional(),
     price: z.union([z.number(), z.string()]),
     category: z.string().min(1, "Category is required"),
+    marketCategory: z.enum(['Online', 'Physical']).optional().nullable(),
     imageUrl: z.string().min(1, "Image URL is required"),
     storeId: z.string().optional(),
     storeLocation: z.string().optional(),

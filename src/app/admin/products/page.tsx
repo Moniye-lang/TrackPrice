@@ -11,6 +11,7 @@ interface Product {
     price: number;
     maxPrice?: number;
     category: string;
+    marketCategory?: 'Online' | 'Physical';
     imageUrl: string;
     storeLocation?: string;
     lastUpdated: string;
@@ -34,7 +35,8 @@ import {
     CheckCircle2,
     RefreshCw,
     Activity,
-    Box
+    Box,
+    Globe
 } from 'lucide-react';
 
 export default function AdminProducts() {
@@ -52,6 +54,7 @@ export default function AdminProducts() {
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
     const [category, setCategory] = useState('');
+    const [marketCategory, setMarketCategory] = useState<'Online' | 'Physical' | ''>('');
     const [imageUrl, setImageUrl] = useState('');
     const [storeLocation, setStoreLocation] = useState('');
 
@@ -96,7 +99,7 @@ export default function AdminProducts() {
         e.preventDefault();
         setError(null);
         setSubmitting(true);
-        const payload = { name, price, category, imageUrl, storeLocation };
+        const payload = { name, price, category, marketCategory: marketCategory || undefined, imageUrl, storeLocation };
 
         try {
             const url = editingProduct ? `/api/products/${editingProduct._id}` : '/api/products';
@@ -150,6 +153,7 @@ export default function AdminProducts() {
         setName(product.name);
         setPrice(product.price.toString());
         setCategory(product.category);
+        setMarketCategory(product.marketCategory || '');
         setImageUrl(product.imageUrl);
         setStoreLocation(product.storeLocation || '');
         setShowForm(true);
@@ -207,6 +211,7 @@ export default function AdminProducts() {
         setName('');
         setPrice('');
         setCategory('');
+        setMarketCategory('');
         setImageUrl('');
         setStoreLocation('');
     };
@@ -303,6 +308,21 @@ export default function AdminProducts() {
                                     Category
                                 </label>
                                 <Input value={category} onChange={(e) => setCategory(e.target.value)} required placeholder="e.g. Groceries" className="rounded-2xl py-4" />
+                            </div>
+                            <div>
+                                <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 px-1">
+                                    <Globe size={12} className="text-primary" />
+                                    Market Category
+                                </label>
+                                <select 
+                                    value={marketCategory} 
+                                    onChange={(e) => setMarketCategory(e.target.value as any)}
+                                    className="w-full h-14 px-4 bg-white/50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-300 font-bold"
+                                >
+                                    <option value="">Select Category</option>
+                                    <option value="Physical">Physical Market</option>
+                                    <option value="Online">Online Store</option>
+                                </select>
                             </div>
                             <div className="md:col-span-2">
                                 <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 px-1">

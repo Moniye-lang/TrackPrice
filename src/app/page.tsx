@@ -6,13 +6,14 @@ import { ProductCard } from '@/components/ProductCard';
 import { Navbar } from '@/components/Navbar';
 import { Input, Button } from '@/components/ui-base';
 import { formatPriceRange } from '@/lib/price-utils';
-import { TrendingUp, TrendingDown, Clock, Search, Award, Sparkles, ChevronRight, AlertCircle, Volume2, MapPin, BarChart3, CheckCircle2, Plus, Zap } from 'lucide-react';
+import { TrendingUp, TrendingDown, Clock, Search, Award, Sparkles, ChevronRight, AlertCircle, Volume2, MapPin, BarChart3, CheckCircle2, Plus, Zap, Globe } from 'lucide-react';
 import { formatRelativeTime } from '@/lib/utils';
 
 export default function Home() {
   const [products, setProducts] = useState<any[]>([]);
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('All');
+  const [marketCategory, setMarketCategory] = useState<'All' | 'Online' | 'Physical'>('Physical');
   const [sort, setSort] = useState('newest');
   const [loading, setLoading] = useState(true);
   const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
@@ -81,6 +82,7 @@ export default function Home() {
       const params = new URLSearchParams({
         search,
         category,
+        marketCategory,
         storeId,
         sort,
       });
@@ -102,7 +104,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchProducts();
-  }, [category, storeId, sort]);
+  }, [category, storeId, sort, marketCategory]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -295,8 +297,35 @@ export default function Home() {
       <main className="max-w-7xl mx-auto px-4 py-16 grid grid-cols-1 lg:grid-cols-4 gap-12 pb-32">
         <div className="lg:col-span-3">
           <div className="flex flex-col lg:flex-row justify-between items-stretch lg:items-end mb-12 gap-6 lg:gap-8 overflow-hidden">
-            <div className="space-y-4 flex-1 min-w-0">
-              <h2 className="text-3xl font-black text-slate-900 tracking-tight">Trending Deals</h2>
+            <div className="space-y-8 flex-1 min-w-0">
+              <div className="flex flex-col gap-6">
+                <h2 className="text-3xl font-black text-slate-900 tracking-tight">Market Intelligence</h2>
+                
+                {/* Market Category Tabs */}
+                <div className="flex items-center p-1.5 bg-white/50 backdrop-blur-md rounded-[2rem] border border-slate-100 shadow-premium w-fit min-w-[300px]">
+                  <button
+                    onClick={() => setMarketCategory('Physical')}
+                    className={`flex items-center gap-3 px-8 py-3.5 rounded-[1.5rem] text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-500 ${marketCategory === 'Physical'
+                      ? 'bg-slate-900 text-white shadow-glow translate-y-[-2px]'
+                      : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'
+                      }`}
+                  >
+                    <MapPin size={16} className={marketCategory === 'Physical' ? 'text-primary' : ''} />
+                    Physical Markets
+                  </button>
+                  <button
+                    onClick={() => setMarketCategory('Online')}
+                    className={`flex items-center gap-3 px-8 py-3.5 rounded-[1.5rem] text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-500 ${marketCategory === 'Online'
+                      ? 'bg-slate-900 text-white shadow-glow translate-y-[-2px]'
+                      : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'
+                      }`}
+                  >
+                    <Globe size={16} className={marketCategory === 'Online' ? 'text-primary' : ''} />
+                    Online Stores
+                  </button>
+                </div>
+              </div>
+
               <div className="flex items-center gap-2 overflow-x-auto pb-4 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
                 {categories.map((cat) => (
                   <button

@@ -9,6 +9,7 @@ export interface IProduct extends Document {
     price: number;
     maxPrice?: number;
     category: string;
+    marketCategory?: 'Online' | 'Physical';
     isFeatured?: boolean;
     storeId?: mongoose.Types.ObjectId;
     storeLocation?: string; // Kept for transition/migration
@@ -33,6 +34,7 @@ const ProductSchema: Schema = new Schema(
         price: { type: Number, required: true },
         maxPrice: { type: Number },
         category: { type: String, required: true },
+        marketCategory: { type: String, enum: ['Online', 'Physical'], default: null },
         storeId: { type: Schema.Types.ObjectId, ref: 'Store' },
         storeLocation: { type: String },
         imageUrl: { type: String, required: true },

@@ -38,10 +38,11 @@ export async function GET(req: NextRequest) {
         const category = searchParams.get('category');
         const sort = searchParams.get('sort') || 'newest';
         const storeId = searchParams.get('storeId');
+        const marketCategory = searchParams.get('marketCategory');
         const featured = searchParams.get('featured') === 'true';
         const stale = searchParams.get('stale') === 'true';
 
-        console.log(`[Products GET] Processing with search=${search}, category=${category}, storeId=${storeId}, sort=${sort}, featured=${featured}, stale=${stale}`);
+        console.log(`[Products GET] Processing with search=${search}, category=${category}, marketCategory=${marketCategory}, storeId=${storeId}, sort=${sort}, featured=${featured}, stale=${stale}`);
 
         const conditions: any[] = [];
         
@@ -59,6 +60,9 @@ export async function GET(req: NextRequest) {
         }
         if (category && category !== 'All') {
             conditions.push({ category });
+        }
+        if (marketCategory && marketCategory !== 'All') {
+            conditions.push({ marketCategory });
         }
         if (storeId && storeId !== 'All') {
             try {
