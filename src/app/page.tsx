@@ -41,11 +41,32 @@ export default function Home() {
         fetch('/api/products?category=Groceries&search=Rice')
       ]);
 
-      if (featRes.ok) setFeaturedProducts((await featRes.json()).slice(0, 4));
-      if (staleRes.ok) setStaleProducts((await staleRes.json()).slice(0, 5));
-      if (recentRes.ok) setRecentUpdates((await recentRes.json()).slice(0, 5));
-      if (storeRes.ok) setStores(await storeRes.json());
-      if (trendingRes.ok) setTrendingCategory((await trendingRes.json()).slice(0, 4));
+      if (featRes.ok) {
+        const data = await featRes.json();
+        if (Array.isArray(data)) setFeaturedProducts(data.slice(0, 4));
+      }
+      if (staleRes.ok) {
+        const data = await staleRes.json();
+        if (Array.isArray(data)) setStaleProducts(data.slice(0, 5));
+      }
+      if (recentRes.ok) {
+        const data = await recentRes.json();
+        if (Array.isArray(data)) setRecentUpdates(data.slice(0, 5));
+      }
+      
+      let storesData: any[] = [];
+      if (storeRes.ok) {
+        const data = await storeRes.json();
+        if (Array.isArray(data)) {
+          storesData = data;
+          setStores(storesData);
+        }
+      }
+      
+      if (trendingRes.ok) {
+        const data = await trendingRes.json();
+        if (Array.isArray(data)) setTrendingCategory(data.slice(0, 4));
+      }
       if (leaderRes.ok) {
         const data = await leaderRes.json();
         setLeaderboard(data.users || []);
@@ -55,7 +76,7 @@ export default function Home() {
       // In a real app, these would come from specialized aggregation APIs
       setStats({
           updatesToday: 24 + Math.floor(Math.random() * 10),
-          marketsTracked: storeRes.ok ? (await storeRes.clone().json()).length : 12,
+          marketsTracked: storeRes.ok ? storesData.length : 12,
           lastUpdateMins: 2
       });
 
@@ -63,7 +84,7 @@ export default function Home() {
       const hookRes = await fetch('/api/products?search=Petrol,Rice,Eggs,Bread');
       if (hookRes.ok) {
         const hookData = await hookRes.json();
-        setDailyHookProducts(hookData.slice(0, 4));
+        if (Array.isArray(hookData)) setDailyHookProducts(hookData.slice(0, 4));
       }
     } catch (error) {
       console.error('Failed to fetch homepage data');
