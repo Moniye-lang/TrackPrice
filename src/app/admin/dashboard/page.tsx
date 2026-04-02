@@ -120,9 +120,9 @@ export default function AdminDashboard() {
 
             {/* Top Level Stats */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <StatCard title="Global Users" value={stats.stats.totalUsers} icon={Users} color="blue" trend="+12% this week" />
-                <StatCard title="Active Products" value={stats.stats.totalProducts} icon={Box} color="primary" trend="+5 new" />
-                <StatCard title="Price Updates" value={stats.stats.totalUpdates} icon={Activity} color="emerald" trend="+142 today" />
+                <StatCard title="Global Users" value={stats.stats.totalUsers} icon={Users} color="blue" trend={`+${stats.stats.newUsersThisWeek} this week`} />
+                <StatCard title="Active Products" value={stats.stats.totalProducts} icon={Box} color="primary" trend={`+${stats.stats.newProductsToday} today`} />
+                <StatCard title="Price Updates" value={stats.stats.totalUpdates} icon={Activity} color="emerald" trend={`+${stats.stats.updatesToday} today`} />
                 <StatCard title="Queue Status" value={stats.stats.pendingUpdates} icon={ShieldCheck} color="amber" />
             </div>
 

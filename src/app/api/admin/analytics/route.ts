@@ -102,9 +102,19 @@ export async function GET() {
         }));
 
         // 6. Overall System Stats
+        const now = new Date();
+        const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+        const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
         const totalUsers = await User.countDocuments();
+        const newUsersThisWeek = await User.countDocuments({ createdAt: { $gte: sevenDaysAgo } });
+        
         const totalProducts = await Product.countDocuments();
+        const newProductsToday = await Product.countDocuments({ createdAt: { $gte: twentyFourHoursAgo } });
+        
         const totalUpdates = await PriceUpdate.countDocuments();
+        const updatesToday = await PriceUpdate.countDocuments({ createdAt: { $gte: twentyFourHoursAgo } });
+        
         const pendingUpdates = await PriceUpdate.countDocuments({ status: 'pending' });
 
         return NextResponse.json({
@@ -115,8 +125,11 @@ export async function GET() {
             confidenceDistribution: formattedConfidenceDist,
             stats: {
                 totalUsers,
+                newUsersThisWeek,
                 totalProducts,
+                newProductsToday,
                 totalUpdates,
+                updatesToday,
                 pendingUpdates
             }
         });
