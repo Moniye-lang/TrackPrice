@@ -51,7 +51,15 @@ export default function Home() {
       }
       if (recentRes.ok) {
         const data = await recentRes.json();
-        if (Array.isArray(data)) setRecentUpdates(data.slice(0, 5));
+        if (Array.isArray(data)) {
+            setRecentUpdates(data.slice(0, 5));
+            if (data.length > 0) {
+                const latest = new Date(data[0].lastUpdated);
+                const now = new Date();
+                const diff = Math.floor((now.getTime() - latest.getTime()) / (1000 * 60));
+                setStats(prev => ({ ...prev, lastUpdateMins: Math.max(0, diff) }));
+            }
+        }
       }
       
       let storesData: any[] = [];
@@ -72,13 +80,12 @@ export default function Home() {
         setLeaderboard(data.users || []);
       }
 
-      // Mock or Calculate Proof Stats for Launch
-      // In a real app, these would come from specialized aggregation APIs
-      setStats({
-          updatesToday: 24 + Math.floor(Math.random() * 10),
-          marketsTracked: storeRes.ok ? storesData.length : 12,
-          lastUpdateMins: 2
-      });
+      let lastMins = 0;
+      if (recentRes.ok) {
+        // Data already fetched and set in setRecentUpdates block
+        // Assuming we update it there or here
+      }
+
 
       // Daily Hook Products (Critical Items)
       const hookRes = await fetch('/api/products?search=Petrol,Rice,Eggs,Bread');
@@ -155,18 +162,7 @@ export default function Home() {
 
           {/* Proof Bar */}
           <div className="flex flex-wrap justify-center items-center gap-4 md:gap-8 mb-10 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-            <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 rounded-2xl border border-emerald-100/50 shadow-sm transition-all hover:scale-105">
-                <CheckCircle2 size={16} className="text-emerald-500" />
-                <span className="text-xs font-black text-emerald-800 uppercase tracking-tighter">
-                    {stats.updatesToday} Prices Updated Today
-                </span>
-            </div>
-            <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-2xl border border-blue-100/50 shadow-sm transition-all hover:scale-105">
-                <MapPin size={16} className="text-blue-500" />
-                <span className="text-xs font-black text-blue-800 uppercase tracking-tighter">
-                    {stats.marketsTracked} Markets Tracked
-                </span>
-            </div>
+            {/* Only accurate Last Update remains */}
             <div className="flex items-center gap-2 px-4 py-2 bg-amber-50 rounded-2xl border border-amber-100/50 shadow-sm transition-all hover:scale-105">
                 <Clock size={16} className="text-amber-500" />
                 <span className="text-xs font-black text-amber-800 uppercase tracking-tighter">
