@@ -241,21 +241,24 @@ export default function Home() {
                   </div>
                   
                   <div className="flex-1 w-full grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {dailyHookProducts.length > 0 ? dailyHookProducts.map(p => (
-                          <div key={p._id} className="relative group/item">
-                              <Link href={`/product/${p._id}`} className="block bg-white/60 hover:bg-white p-4 rounded-3xl border border-slate-100 transition-all hover:shadow-premium hover:-translate-y-1">
+                      {[
+                        { id: '1', name: 'Rice Medium (paint size)', price: 10000, status: 'up' },
+                        { id: '2', name: 'Golden sella basmati rice (5kg)', price: 23000, status: 'up' },
+                        { id: '3', name: 'Golden sella basmati rice (2kg)', price: 13000, status: 'up' },
+                        { id: '4', name: 'Aeroplane basmati rice 5kg', price: 21000, status: 'up' }
+                      ].map(p => (
+                          <div key={p.id} className="relative group/item">
+                              <Link href="/?category=Groceries&search=Rice" className="block bg-white/60 hover:bg-white p-4 rounded-3xl border border-slate-100 transition-all hover:shadow-premium hover:-translate-y-1">
                                   <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 truncate">{p.name}</p>
                                   <p className="text-lg font-black text-slate-900 tracking-tighter">₦{p.price.toLocaleString()}</p>
                                   <div className="mt-2 flex items-center justify-between">
-                                      <span className={`text-[8px] font-black px-1.5 py-0.5 rounded-md uppercase ${p.priceStatus === 'down' ? 'bg-rose-50 text-rose-500' : 'bg-emerald-50 text-emerald-500'}`}>
-                                          {p.priceStatus === 'down' ? 'Drop' : 'Live'}
+                                      <span className="text-[8px] font-black px-1.5 py-0.5 rounded-md uppercase bg-emerald-50 text-emerald-500">
+                                          Live
                                       </span>
                                       <span className="text-[8px] font-bold text-slate-300 italic group-hover/item:text-primary transition-colors">Details →</span>
                                   </div>
                               </Link>
                           </div>
-                      )) : [1,2,3,4].map(i => (
-                          <div key={i} className="h-24 bg-slate-50/50 rounded-3xl animate-pulse" />
                       ))}
                   </div>
               </div>
@@ -264,7 +267,7 @@ export default function Home() {
       </section>
 
       {/* Trending Spotlight (e.g. Rice) */}
-      {trendingCategory.length > 0 && !search && category === 'All' && (
+      {!search && category === 'All' && (
         <section className="max-w-7xl mx-auto px-4 py-8">
            <div className="bg-primary/5 rounded-[40px] p-8 md:p-12 border border-primary/10 relative overflow-hidden group">
               <div className="absolute -right-20 -top-20 w-80 h-80 bg-primary/10 rounded-full blur-[100px] group-hover:bg-primary/20 transition-all duration-1000" />
@@ -280,9 +283,12 @@ export default function Home() {
                     </Link>
                   </div>
                   <div className="flex-1 grid grid-cols-2 gap-4 w-full">
-                     {trendingCategory.slice(0, 2).map(p => (
-                       <div key={p._id} className="bg-white p-4 rounded-3xl shadow-premium border border-white/50">
-                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{p.storeId?.name || 'Local Market'}</p>
+                     {[
+                       { id: '1', market: 'Local Market', name: 'Rice Medium (paint size)', price: 10000 },
+                       { id: '2', market: 'Local Market', name: 'Golden sella basmati rice (5kg)', price: 23000 }
+                     ].map(p => (
+                       <div key={p.id} className="bg-white p-4 rounded-3xl shadow-premium border border-white/50">
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{p.market}</p>
                           <h4 className="font-bold text-slate-800 truncate mb-2">{p.name}</h4>
                           <p className="text-xl font-black text-primary tracking-tighter">₦{p.price.toLocaleString()}</p>
                        </div>
