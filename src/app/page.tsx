@@ -22,23 +22,20 @@ export default function Home() {
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
   const [stores, setStores] = useState<any[]>([]);
   const [storeId, setStoreId] = useState('All');
-  const [trendingCategory, setTrendingCategory] = useState<any[]>([]);
   const [stats, setStats] = useState({
     updatesToday: 0,
     marketsTracked: 0,
     lastUpdateMins: 0
   });
-  const [dailyHookProducts, setDailyHookProducts] = useState<any[]>([]);
 
   const fetchHomepageData = async () => {
     try {
-      const [featRes, staleRes, recentRes, leaderRes, storeRes, trendingRes] = await Promise.all([
+      const [featRes, staleRes, recentRes, leaderRes, statsRes] = await Promise.all([
         fetch('/api/products?featured=true'),
         fetch('/api/products?stale=true'),
         fetch('/api/products?sort=updated'),
         fetch('/api/leaderboard'),
-        fetch('/api/stores'),
-        fetch('/api/products?category=Groceries&search=Rice')
+        fetch('/api/stats')
       ]);
 
       if (featRes.ok) {
@@ -51,47 +48,15 @@ export default function Home() {
       }
       if (recentRes.ok) {
         const data = await recentRes.json();
-        if (Array.isArray(data)) {
-            setRecentUpdates(data.slice(0, 5));
-            if (data.length > 0) {
-                const latest = new Date(data[0].lastUpdated);
-                const now = new Date();
-                const diff = Math.floor((now.getTime() - latest.getTime()) / (1000 * 60));
-                setStats(prev => ({ ...prev, lastUpdateMins: Math.max(0, diff) }));
-            }
-        }
-      }
-      
-      let storesData: any[] = [];
-      if (storeRes.ok) {
-        const data = await storeRes.json();
-        if (Array.isArray(data)) {
-          storesData = data;
-          setStores(storesData);
-        }
-      }
-      
-      if (trendingRes.ok) {
-        const data = await trendingRes.json();
-        if (Array.isArray(data)) setTrendingCategory(data.slice(0, 4));
+        if (Array.isArray(data)) setRecentUpdates(data.slice(0, 5));
       }
       if (leaderRes.ok) {
         const data = await leaderRes.json();
         setLeaderboard(data.users || []);
       }
-
-      let lastMins = 0;
-      if (recentRes.ok) {
-        // Data already fetched and set in setRecentUpdates block
-        // Assuming we update it there or here
-      }
-
-
-      // Daily Hook Products (Critical Items)
-      const hookRes = await fetch('/api/products?search=Petrol,Rice,Eggs,Bread');
-      if (hookRes.ok) {
-        const hookData = await hookRes.json();
-        if (Array.isArray(hookData)) setDailyHookProducts(hookData.slice(0, 4));
+      if (statsRes.ok) {
+        const data = await statsRes.json();
+        setStats(data);
       }
     } catch (error) {
       console.error('Failed to fetch homepage data');
@@ -162,7 +127,18 @@ export default function Home() {
 
           {/* Proof Bar */}
           <div className="flex flex-wrap justify-center items-center gap-4 md:gap-8 mb-10 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-            {/* Only accurate Last Update remains */}
+            <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 rounded-2xl border border-emerald-100/50 shadow-sm transition-all hover:scale-105">
+                <CheckCircle2 size={16} className="text-emerald-500" />
+                <span className="text-xs font-black text-emerald-800 uppercase tracking-tighter">
+                    {stats.updatesToday} Prices Updated Today
+                </span>
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-2xl border border-blue-100/50 shadow-sm transition-all hover:scale-105">
+                <MapPin size={16} className="text-blue-500" />
+                <span className="text-xs font-black text-blue-800 uppercase tracking-tighter">
+                    {stats.marketsTracked} Markets Tracked
+                </span>
+            </div>
             <div className="flex items-center gap-2 px-4 py-2 bg-amber-50 rounded-2xl border border-amber-100/50 shadow-sm transition-all hover:scale-105">
                 <Clock size={16} className="text-amber-500" />
                 <span className="text-xs font-black text-amber-800 uppercase tracking-tighter">
@@ -223,77 +199,8 @@ export default function Home() {
           <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent rounded-full blur-[128px]"></div>
         </div>
 
-        {/* Today in Ibadan Hook Section */}
-        <div className="max-w-6xl mx-auto mt-16 px-4">
-          <div className="glass bg-white/40 p-8 rounded-[40px] border border-white/60 shadow-premium relative overflow-hidden group/hook">
-              <div className="absolute top-0 left-0 w-2 h-full bg-primary" />
-              <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
-                  <div className="flex-shrink-0 text-center md:text-left">
-                      <div className="inline-flex items-center gap-2 text-primary font-black text-xs uppercase tracking-widest mb-2 bg-primary/10 px-3 py-1 rounded-full">
-                          <Zap size={14} className="fill-primary" />
-                          Market Snapshot
-                      </div>
-                      <h3 className="text-3xl font-black text-slate-800 tracking-tightest leading-none">🔥 Today in <br className="hidden md:block"/> Ibadan</h3>
-                  </div>
-                  
-                  <div className="flex-1 w-full grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {[
-                        { id: '1', name: 'Rice Medium (paint size)', price: 10000, status: 'up' },
-                        { id: '2', name: 'Golden sella basmati rice (5kg)', price: 23000, status: 'up' },
-                        { id: '3', name: 'Golden sella basmati rice (2kg)', price: 13000, status: 'up' },
-                        { id: '4', name: 'Aeroplane basmati rice 5kg', price: 21000, status: 'up' }
-                      ].map(p => (
-                          <div key={p.id} className="relative group/item">
-                              <Link href="/?category=Groceries&search=Rice" className="block bg-white/60 hover:bg-white p-4 rounded-3xl border border-slate-100 transition-all hover:shadow-premium hover:-translate-y-1">
-                                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 truncate">{p.name}</p>
-                                  <p className="text-lg font-black text-slate-900 tracking-tighter">₦{p.price.toLocaleString()}</p>
-                                  <div className="mt-2 flex items-center justify-between">
-                                      <span className="text-[8px] font-black px-1.5 py-0.5 rounded-md uppercase bg-emerald-50 text-emerald-500">
-                                          Live
-                                      </span>
-                                      <span className="text-[8px] font-bold text-slate-300 italic group-hover/item:text-primary transition-colors">Details →</span>
-                                  </div>
-                              </Link>
-                          </div>
-                      ))}
-                  </div>
-              </div>
-          </div>
-        </div>
+        {/* Market Snapshot and Trending Spotlight removed */}
       </section>
-
-      {/* Trending Spotlight (e.g. Rice) */}
-      {!search && category === 'All' && (
-        <section className="max-w-7xl mx-auto px-4 py-8">
-           <div className="bg-primary/5 rounded-[40px] p-8 md:p-12 border border-primary/10 relative overflow-hidden group">
-              <div className="absolute -right-20 -top-20 w-80 h-80 bg-primary/10 rounded-full blur-[100px] group-hover:bg-primary/20 transition-all duration-1000" />
-              <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
-                  <div className="max-w-md">
-                    <span className="inline-block px-4 py-1.5 rounded-full bg-primary text-white text-[10px] font-black uppercase tracking-widest mb-6">Trending Today</span>
-                    <h2 className="text-4xl font-black text-slate-900 tracking-tight leading-none mb-4">🔥 Rice Prices Today</h2>
-                    <p className="text-slate-500 font-medium mb-8">Bodija and Dugbe are seeing significant price fluctuations on parboiled rice. Check the latest verified entries.</p>
-                    <Link href="/?category=Groceries&search=Rice">
-                      <Button variant="glass" className="border-primary text-primary hover:bg-primary hover:text-white font-black px-8 py-3 rounded-2xl">
-                        View Price Matrix
-                      </Button>
-                    </Link>
-                  </div>
-                  <div className="flex-1 grid grid-cols-2 gap-4 w-full">
-                     {[
-                       { id: '1', market: 'Local Market', name: 'Rice Medium (paint size)', price: 10000 },
-                       { id: '2', market: 'Local Market', name: 'Golden sella basmati rice (5kg)', price: 23000 }
-                     ].map(p => (
-                       <div key={p.id} className="bg-white p-4 rounded-3xl shadow-premium border border-white/50">
-                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{p.market}</p>
-                          <h4 className="font-bold text-slate-800 truncate mb-2">{p.name}</h4>
-                          <p className="text-xl font-black text-primary tracking-tighter">₦{p.price.toLocaleString()}</p>
-                       </div>
-                     ))}
-                  </div>
-              </div>
-           </div>
-        </section>
-      )}
 
       {/* Featured Section */}
       {featuredProducts.length > 0 && !search && category === 'All' && (
