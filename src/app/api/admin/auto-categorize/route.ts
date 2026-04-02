@@ -25,8 +25,8 @@ export async function POST() {
             
             // Check Store Reference first if exists
             if (p.storeId) {
-                const store = stores.find(s => s._id.toString() === p.storeId.toString());
-                if (store && store.type === 'Online') {
+                const store = stores.find(s => s._id.toString() === p.storeId?.toString());
+                if (store && (store.type as string) === 'Online') {
                     isOnline = true;
                 } else if (store && strictOnline.some(k => store.name.toLowerCase().includes(k))) {
                     isOnline = true;
