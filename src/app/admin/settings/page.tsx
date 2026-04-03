@@ -152,7 +152,7 @@ export default function AdminSettings() {
                     </h1>
                 </div>
                 <p className="text-slate-400 text-sm font-bold max-w-sm md:text-right leading-relaxed">
-                    Fine-tune the behavioral economy and security thresholds of the TrackPrice community ecosystem.
+                    Fine-tune the behavioral economy and security thresholds of the TrackPricely community ecosystem.
                 </p>
             </div>
 

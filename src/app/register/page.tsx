@@ -44,7 +44,7 @@ export default function RegisterPage() {
         <div className="min-h-screen flex items-center justify-center bg-mesh px-4">
             <Card className="w-full max-w-md p-8 backdrop-blur-xl bg-white/70 border border-white/50 shadow-2xl">
                 <div className="text-center mb-8">
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Join TrackPrice</h1>
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Join TrackPricely</h1>
                     <p className="text-slate-500 font-medium mt-2">Become a contributor and earn rewards.</p>
                 </div>
 

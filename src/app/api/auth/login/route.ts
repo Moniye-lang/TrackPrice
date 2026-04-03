@@ -11,7 +11,7 @@ export async function POST(req: Request) {
         console.log(`[Login] Attempt for ${email}`);
 
         // Special check for initial setup
-        const adminEmail = process.env.ADMIN_EMAIL || 'admin@trackprice.com';
+        const adminEmail = process.env.ADMIN_EMAIL || 'admin@trackpricely.com';
         const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
 
         let user = await User.findOne({ email });

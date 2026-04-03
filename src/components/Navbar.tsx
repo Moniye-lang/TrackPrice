@@ -49,7 +49,7 @@ export function Navbar() {
             <header className="sm:sticky sm:top-4 z-50 sm:mx-4 sm:mt-4 sm:glass sm:rounded-3xl sm:shadow-premium sm:border sm:border-white/20 transition-all duration-500">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 sm:h-20 flex items-center justify-between gap-4">
                     <Link href="/" className="text-xl sm:text-2xl font-black text-primary tracking-tighter hover:scale-110 transition-transform flex-shrink-0 group">
-                        TrackPrice<span className="text-accent group-hover:animate-ping inline-block">.</span>
+                        TrackPricely<span className="text-accent group-hover:animate-ping inline-block">.</span>
                     </Link>
 
                     {/* Central CTA (Desktop Only) */}

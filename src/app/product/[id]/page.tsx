@@ -149,9 +149,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
     useEffect(() => {
         if (product) {
-            document.title = `${product.name} - ₦${product.price.toLocaleString()} | TrackPrice`;
+            document.title = `${product.name} - ₦${product.price.toLocaleString()} | TrackPricely`;
         } else {
-            document.title = 'Product Details | TrackPrice';
+            document.title = 'Product Details | TrackPricely';
         }
     }, [product]);
 

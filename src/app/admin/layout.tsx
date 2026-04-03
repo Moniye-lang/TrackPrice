@@ -117,7 +117,7 @@ export default function AdminLayout({
                         <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-glow-sm group-hover:scale-110 transition-transform">
                             <TrendingUp size={18} className="text-white" />
                         </div>
-                        <h2 className="text-xl font-black text-white tracking-tight">TrackPrice Admin</h2>
+                        <h2 className="text-xl font-black text-white tracking-tight">TrackPricely Admin</h2>
                     </Link>
                 </div>
 
@@ -153,7 +153,7 @@ export default function AdminLayout({
                         </div>
                         <div className="flex-1 overflow-hidden">
                             <p className="text-xs font-black text-white truncate uppercase tracking-widest">{user?.name || 'Admin User'}</p>
-                            <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest truncate">{user?.email || 'admin@trackprice.com'}</p>
+                            <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest truncate">{user?.email || 'admin@trackpricely.com'}</p>
                         </div>
                     </div>
                     <button
