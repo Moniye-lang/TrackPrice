@@ -79,7 +79,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         });
 
     } catch (error: any) {
-        console.error('[Vouch API] Error:', error);
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+        console.error('[Vouch API] CRASHED:', error);
+        return NextResponse.json({ 
+            error: 'Internal Server Error',
+            details: error.message
+        }, { status: 500 });
     }
 }

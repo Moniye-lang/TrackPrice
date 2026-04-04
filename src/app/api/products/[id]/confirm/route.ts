@@ -35,10 +35,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     }
 
     try {
+        console.log(`[Confirm API] Starting... Product: ${productId}`);
         await connectDB();
         const body = await req.json();
         const { updateId } = body;
-        console.log(`[Confirm API] Product: ${productId}, UpdateID: ${updateId}`, body);
+        console.log(`[Confirm API] UpdateID: ${updateId}, UserID: ${userPayload.userId}`);
 
         if (!updateId) {
             return NextResponse.json({ error: 'Update ID is required' }, { status: 400 });
@@ -46,27 +47,36 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
         const product = await Product.findById(productId);
         if (!product) {
+            console.error(`[Confirm API] Product NOT FOUND: ${productId}`);
             return NextResponse.json({ error: 'Product not found' }, { status: 404 });
         }
 
         const update = await PriceUpdate.findById(updateId);
         if (!update || update.status !== 'pending') {
+            console.error(`[Confirm API] Update NOT FOUND or NOT PENDING: ${updateId}`);
             return NextResponse.json({ error: 'Pending update not found' }, { status: 404 });
         }
 
         // Check if user already confirmed or is the original submitter
-        if (update.userId.toString() === userPayload.userId) {
+        const currentUserIdStr = userPayload.userId.toString();
+        const submitterIdStr = update.userId?.toString();
+
+        if (submitterIdStr === currentUserIdStr) {
             return NextResponse.json({ error: 'You cannot confirm your own price report' }, { status: 400 });
         }
 
-        if (update.confirmations.some(cid => cid.toString() === userPayload.userId)) {
+        update.confirmations = update.confirmations || [];
+        if (update.confirmations.some(cid => cid?.toString() === currentUserIdStr)) {
             return NextResponse.json({ error: 'You have already confirmed this price' }, { status: 400 });
         }
 
         // Add confirmation
-        update.confirmations = update.confirmations || [];
-        update.confirmations.push(userPayload.userId as any);
+        const mongoose = require('mongoose');
+        console.log(`[Confirm API] Adding confirmation for user: ${currentUserIdStr}`);
+        update.confirmations.push(new mongoose.Types.ObjectId(currentUserIdStr));
         await update.save();
+
+        process.stdout.write('[Confirm API] Confirmation saved. Calculating weights...\n');
 
         // Calculate total weight to see if we can verify now
         const submitter = await User.findById(update.userId);
@@ -79,17 +89,31 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             totalWeight += weight;
         }
 
-        const rule = await GamificationRule.findOne({ category: product.category }) || 
-                     await GamificationRule.findOne({ category: 'Default' });
+        console.log(`[Confirm API] Total Weight: ${totalWeight}`);
+
+        // Safe Rule Lookup
+        let threshold = 5;
+        try {
+            const rule = await GamificationRule.findOne(); // Just get the global rule for now
+            if (rule) threshold = rule.verificationThreshold || 5;
+        } catch (ruleErr) {
+            console.warn('[Confirm API] GamificationRule lookup failed, using default threshold 5');
+        }
         
-        const threshold = rule?.verificationThreshold || 5;
+        console.log(`[Confirm API] Threshold: ${threshold}`);
 
         let verified = false;
         if (totalWeight >= threshold) {
             console.log(`[Confirm API] Threshold reached (${totalWeight}/${threshold}). Verifying price...`);
             
             // Record history and update product
-            product.priceHistory.push({ price: update.price, maxPrice: update.maxPrice, verifiedAt: new Date() });
+            product.priceHistory = product.priceHistory || [];
+            product.priceHistory.push({ 
+                price: update.price, 
+                maxPrice: update.maxPrice, 
+                verifiedAt: new Date() 
+            });
+            
             product.price = update.price;
             if (update.maxPrice) product.maxPrice = update.maxPrice;
             product.flagged = false;
@@ -97,14 +121,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             product.lastUpdatedBy = 'Community Consensus';
             product.confidenceLevel = (totalWeight >= 15 ? 'High' : totalWeight >= 5 ? 'Medium' : 'Low') as any;
             
+            console.log(`[Confirm API] Saving product: ${product.name}`);
             await product.save();
             
             update.status = 'verified';
+            console.log(`[Confirm API] Finalizing update status`);
             await update.save();
             verified = true;
-
-            // Optional: Award points to the original submitter and confirmers
-            // (Skipping for brevity in MVP but highly recommended)
         }
 
         return NextResponse.json({
@@ -115,7 +138,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         });
 
     } catch (error: any) {
-        console.error('[Confirm API] Error:', error);
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+        console.error('[Confirm API] CRASHED:', error);
+        return NextResponse.json({ 
+            error: 'Internal Server Error',
+            details: error.message
+        }, { status: 500 });
     }
 }
