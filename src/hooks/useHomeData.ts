@@ -89,7 +89,7 @@ export function useProduct(id: string) {
     queryFn: async () => {
       const [prodRes, msgRes] = await Promise.all([
         fetch(`/api/products/${id}`),
-        fetch(`/api/messages/${id}`)
+        fetch(`/api/messages?productId=${id}`)
       ]);
 
       if (!prodRes.ok) throw new Error('Product not found');
@@ -99,7 +99,7 @@ export function useProduct(id: string) {
       
       return {
         product: productData as Product,
-        messages: (messagesData.messages || []) as any[]
+        messages: (messagesData || []) as any[]
       };
     },
     staleTime: 60 * 1000, // 1 minute
