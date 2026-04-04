@@ -7,9 +7,9 @@ const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
-    // Redirect old /admin path
+    // Redirect old /admin path to new management-gate
     if (pathname.startsWith('/admin')) {
-        return NextResponse.redirect(new URL('/', request.url));
+        return NextResponse.redirect(new URL('/management-gate/dashboard', request.url));
     }
 
     if (pathname.startsWith('/management-gate') || pathname.startsWith('/api/admin')) {

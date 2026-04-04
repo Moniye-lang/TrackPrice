@@ -26,7 +26,7 @@ export default function LoginPage() {
             const data = await res.json();
 
             if (res.ok) {
-                router.push('/admin/dashboard');
+                router.push('/management-gate/dashboard');
                 router.refresh();
             } else {
                 setError(data.error || 'Login failed');
