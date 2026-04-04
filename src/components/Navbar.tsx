@@ -31,11 +31,11 @@ export function Navbar() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 sm:h-20 flex items-center justify-between gap-4">
                     <Link href="/" aria-label="TrackPricely Home" className="hover:scale-105 transition-transform flex-shrink-0 group flex items-center">
                         <Image 
-                            src="/logo.svg" 
+                            src="/trplogo.PNG" 
                             alt="TrackPricely Logo" 
-                            width={160} 
-                            height={48} 
-                            className="h-8 sm:h-12 w-auto"
+                            width={200} 
+                            height={60} 
+                            className="h-10 sm:h-14 w-auto object-contain"
                             priority
                         />
                     </Link>

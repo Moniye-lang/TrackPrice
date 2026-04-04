@@ -116,11 +116,11 @@ export default function AdminLayout({
                 <div className="p-6 pb-2">
                     <Link href="/management-gate/dashboard" className="flex items-center gap-3 group px-2">
                         <Image 
-                            src="/logo.svg" 
+                            src="/trplogo.PNG" 
                             alt="TrackPricely Admin" 
                             width={160} 
-                            height={40} 
-                            className="h-10 w-auto filter brightness-0 invert" 
+                            height={48} 
+                            className="h-10 w-auto object-contain" 
                         />
                     </Link>
                 </div>
