@@ -1,0 +1,108 @@
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
+
+export interface Product {
+  _id: string;
+  name: string;
+  category: string;
+  price: number;
+  imageUrl: string;
+  storeId?: {
+    _id: string;
+    name: string;
+    area: string;
+    city: string;
+  };
+  storeLocation?: string;
+  lastUpdated: string;
+  updatedAt: string;
+  [key: string]: any;
+}
+
+export interface Store {
+  _id: string;
+  name: string;
+  area?: string;
+  [key: string]: any;
+}
+
+export function useHomeData() {
+  return useQuery({
+    queryKey: ['home-data'],
+    queryFn: async () => {
+      const [featRes, staleRes, recentRes, leaderRes, statsRes, storesRes] = await Promise.all([
+        fetch('/api/products?featured=true'),
+        fetch('/api/products?stale=true'),
+        fetch('/api/products?sort=updated'),
+        fetch('/api/leaderboard'),
+        fetch('/api/stats'),
+        fetch('/api/stores')
+      ]);
+
+      const [featured, stale, recent, leaderboard, stats, stores] = await Promise.all([
+        featRes.json(),
+        staleRes.json(),
+        recentRes.json(),
+        leaderRes.json(),
+        statsRes.json(),
+        storesRes.json()
+      ]);
+
+      return {
+        featuredProducts: (Array.isArray(featured) ? featured.slice(0, 4) : []) as Product[],
+        staleProducts: (Array.isArray(stale) ? stale.slice(0, 5) : []) as Product[],
+        recentUpdates: (Array.isArray(recent) ? recent.slice(0, 5) : []) as Product[],
+        leaderboard: (leaderboard.users || []) as any[],
+        stats: stats || { updatesToday: 0, marketsTracked: 0, lastUpdateMins: 0 },
+        stores: (Array.isArray(stores) ? stores : []) as Store[]
+      };
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+}
+
+interface ProductParams {
+  search?: string;
+  category?: string;
+  marketCategory?: string;
+  storeId?: string;
+  sort?: string;
+}
+
+export function useProducts(params: ProductParams) {
+  return useQuery({
+    queryKey: ['products', params],
+    queryFn: async () => {
+      const queryParams = new URLSearchParams(params as any);
+      const res = await fetch(`/api/products?${queryParams}`);
+      if (!res.ok) throw new Error('Failed to fetch products');
+      return res.json() as Promise<Product[]>;
+    },
+    staleTime: 60 * 1000, // 1 minute
+  });
+}
+
+export function useProduct(id: string) {
+  return useQuery({
+    queryKey: ['product', id],
+    queryFn: async () => {
+      const [prodRes, msgRes] = await Promise.all([
+        fetch(`/api/products/${id}`),
+        fetch(`/api/messages/${id}`)
+      ]);
+
+      if (!prodRes.ok) throw new Error('Product not found');
+      
+      const productData = await prodRes.json();
+      const messagesData = await msgRes.json();
+      
+      return {
+        product: productData as Product,
+        messages: (messagesData.messages || []) as any[]
+      };
+    },
+    staleTime: 60 * 1000, // 1 minute
+    enabled: !!id,
+  });
+}

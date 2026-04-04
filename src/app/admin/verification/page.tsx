@@ -48,55 +48,19 @@ import {
     Box
 } from 'lucide-react';
 
+import { useAdminQueue, useAdminAction } from '@/hooks/useAdmin';
+
 export default function AdminVerificationQueue() {
-    const [updates, setUpdates] = useState<PriceUpdate[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [actionLoading, setActionLoading] = useState<string | null>(null);
-
-    const fetchQueue = async () => {
-        setLoading(true);
-        try {
-            const res = await fetch('/api/admin/verification');
-            const data = await res.json();
-
-            if (data.pendingUpdates) {
-                const mapped = data.pendingUpdates.map((u: any) => ({
-                    ...u,
-                    product: u.productId,
-                    user: u.userId
-                }));
-                setUpdates(mapped);
-            }
-        } catch (error) {
-            console.error('Failed to fetch verification queue');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchQueue();
-    }, []);
+    const { data: updates = [], isLoading: loading, refetch } = useAdminQueue();
+    const actionMutation = useAdminAction();
 
     const handleAction = async (id: string, action: 'approve' | 'reject') => {
         if (!confirm(`Are you sure you want to FORCE ${action.toUpperCase()} this price update?`)) return;
-
-        setActionLoading(id);
+        
         try {
-            const res = await fetch(`/api/admin/verification/${id}/${action}`, {
-                method: 'POST',
-            });
-
-            if (res.ok) {
-                setUpdates(prev => prev.filter(u => u._id !== id));
-            } else {
-                const data = await res.json();
-                alert(data.error || `Failed to ${action} update`);
-            }
-        } catch (error) {
-            console.error(`Failed to ${action} update`, error);
-        } finally {
-            setActionLoading(null);
+            await actionMutation.mutateAsync({ id, action });
+        } catch (error: any) {
+            alert(error.message || `Failed to ${action} update`);
         }
     };
 
@@ -116,7 +80,7 @@ export default function AdminVerificationQueue() {
                 </div>
                 <div className="flex items-center gap-3">
                     <Button 
-                        onClick={fetchQueue} 
+                        onClick={() => refetch()} 
                         variant="secondary"
                         className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50 shadow-sm flex items-center gap-2 px-6 py-3 rounded-2xl transition-all"
                     >
@@ -162,7 +126,7 @@ export default function AdminVerificationQueue() {
                             <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest mt-2">All pending reports have been successfully processed</p>
                         </div>
                     ) : (
-                        updates.map((update) => (
+                        updates.map((update: PriceUpdate) => (
                             <Card key={update._id} className="p-0 border-none shadow-premium bg-white overflow-hidden rounded-[2.5rem] group hover:scale-[1.01] transition-all duration-500">
                                 <div className="flex flex-col xl:flex-row divide-y xl:divide-y-0 xl:divide-x divide-slate-50">
                                     
@@ -247,20 +211,20 @@ export default function AdminVerificationQueue() {
                                     <div className="p-8 xl:w-1/5 flex flex-col justify-center gap-3">
                                         <Button
                                             onClick={() => handleAction(update._id, 'approve')}
-                                            disabled={actionLoading === update._id}
+                                            disabled={actionMutation.isPending && actionMutation.variables?.id === update._id}
                                             className="w-full py-5 rounded-2xl bg-primary text-white font-black uppercase tracking-widest shadow-glow flex items-center justify-center gap-3 transition-all active:scale-95 group/btn"
                                         >
                                             <CheckCircle2 size={18} className="group-hover/btn:scale-110 transition-transform" />
-                                            {actionLoading === update._id ? 'Processing...' : 'Authorize'}
+                                            {actionMutation.isPending && actionMutation.variables?.id === update._id ? 'Processing...' : 'Authorize'}
                                         </Button>
                                         <Button
                                             variant="secondary"
                                             onClick={() => handleAction(update._id, 'reject')}
-                                            disabled={actionLoading === update._id}
+                                            disabled={actionMutation.isPending && actionMutation.variables?.id === update._id}
                                             className="w-full py-5 rounded-2xl bg-white border border-slate-200 text-slate-400 font-black uppercase tracking-widest hover:bg-rose-50 hover:text-rose-500 hover:border-rose-100 transition-all active:scale-95 flex items-center justify-center gap-3 group/btn"
                                         >
                                             <XCircle size={18} className="group-hover/btn:scale-110 transition-transform" />
-                                            {actionLoading === update._id ? 'Wait...' : 'Discard'}
+                                            {actionMutation.isPending && actionMutation.variables?.id === update._id ? 'Wait...' : 'Discard'}
                                         </Button>
                                         <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest text-center mt-2 leading-relaxed px-4">
                                             Actions are permanent and affect user reputation & database integrity.

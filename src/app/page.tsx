@@ -9,100 +9,35 @@ import { Input, Button } from '@/components/ui-base';
 import { formatPriceRange } from '@/lib/price-utils';
 import { TrendingUp, TrendingDown, Clock, Search, Award, Sparkles, ChevronRight, AlertCircle, Volume2, MapPin, BarChart3, CheckCircle2, Plus, Zap, Globe } from 'lucide-react';
 import { formatRelativeTime } from '@/lib/utils';
+import { useHomeData, useProducts } from '@/hooks/useHomeData';
 
 export default function Home() {
-  const [products, setProducts] = useState<any[]>([]);
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('All');
   const [marketCategory, setMarketCategory] = useState<'All' | 'Online' | 'Physical'>('Physical');
   const [sort, setSort] = useState('newest');
-  const [loading, setLoading] = useState(true);
-  const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
-  const [staleProducts, setStaleProducts] = useState<any[]>([]);
-  const [recentUpdates, setRecentUpdates] = useState<any[]>([]);
-  const [leaderboard, setLeaderboard] = useState<any[]>([]);
-  const [stores, setStores] = useState<any[]>([]);
   const [storeId, setStoreId] = useState('All');
-  const [stats, setStats] = useState({
-    updatesToday: 0,
-    marketsTracked: 0,
-    lastUpdateMins: 0
+
+  const { data: homeData, isLoading: homeLoading } = useHomeData();
+  const { data: products, isLoading: productsLoading } = useProducts({ 
+    search, 
+    category, 
+    marketCategory, 
+    storeId, 
+    sort 
   });
 
-  const fetchHomepageData = async () => {
-    try {
-      const [featRes, staleRes, recentRes, leaderRes, statsRes] = await Promise.all([
-        fetch('/api/products?featured=true'),
-        fetch('/api/products?stale=true'),
-        fetch('/api/products?sort=updated'),
-        fetch('/api/leaderboard'),
-        fetch('/api/stats')
-      ]);
-
-      if (featRes.ok) {
-        const data = await featRes.json();
-        if (Array.isArray(data)) setFeaturedProducts(data.slice(0, 4));
-      }
-      if (staleRes.ok) {
-        const data = await staleRes.json();
-        if (Array.isArray(data)) setStaleProducts(data.slice(0, 5));
-      }
-      if (recentRes.ok) {
-        const data = await recentRes.json();
-        if (Array.isArray(data)) setRecentUpdates(data.slice(0, 5));
-      }
-      if (leaderRes.ok) {
-        const data = await leaderRes.json();
-        setLeaderboard(data.users || []);
-      }
-      if (statsRes.ok) {
-        const data = await statsRes.json();
-        setStats(data);
-      }
-    } catch (error) {
-      console.error('Failed to fetch homepage data');
-    }
-  };
-
-  useEffect(() => {
-    fetchHomepageData();
-  }, []);
+  const featuredProducts = homeData?.featuredProducts || [];
+  const staleProducts = homeData?.staleProducts || [];
+  const recentUpdates = homeData?.recentUpdates || [];
+  const leaderboard = homeData?.leaderboard || [];
+  const stats = homeData?.stats || { updatesToday: 0, marketsTracked: 0, lastUpdateMins: 0 };
+  const stores = homeData?.stores || [];
 
   const categories = ['All', 'Groceries', 'Beverages', 'Electronics', 'Clothing', 'Home', 'Health & Beauty', 'Books', 'Oil and Gas', 'Building Materials'];
 
-  const fetchProducts = async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({
-        search,
-        category,
-        marketCategory,
-        storeId,
-        sort,
-      });
-      const res = await fetch(`/api/products?${params}`);
-      const data = await res.json();
-      if (Array.isArray(data)) {
-        setProducts(data);
-      } else {
-        setProducts([]);
-        console.error('API Error:', data.error || 'Unknown error');
-      }
-    } catch (error) {
-      setProducts([]);
-      console.error('Failed to fetch products');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchProducts();
-  }, [category, storeId, sort, marketCategory]);
-
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    fetchProducts();
   };
 
   const jsonLd = {
@@ -312,7 +247,7 @@ export default function Home() {
             </div>
           </div>
 
-          {loading ? (
+          {productsLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {[1, 2, 3, 4, 5, 6].map((i) => (
                 <div key={i} className="h-[400px] glass rounded-3xl relative overflow-hidden bg-white/20">
@@ -320,7 +255,7 @@ export default function Home() {
                 </div>
               ))}
             </div>
-          ) : products.length === 0 ? (
+          ) : !products || products.length === 0 ? (
             <div className="text-center py-20 bg-slate-50/50 rounded-3xl border-2 border-dashed border-slate-200 flex flex-col items-center">
               <div className="bg-white w-24 h-24 rounded-full flex items-center justify-center mb-6 shadow-premium">
                 <Search size={40} className="text-slate-200" />
@@ -335,7 +270,7 @@ export default function Home() {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {products.map((product) => (
+              {products?.map((product) => (
                 <ProductCard key={product._id} product={product} />
               ))}
             </div>

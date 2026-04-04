@@ -5,42 +5,22 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Home, Trophy, User, MessageSquare, CircleUser, LogOut, LayoutDashboard, Search, Activity, Heart, ShoppingBag, Menu, X, TrendingUp, Plus } from 'lucide-react';
 import { Button } from './ui-base';
-
-interface User {
-    id: string;
-    name: string;
-    email: string;
-    role: string;
-}
+import { useAuth } from '@/hooks/useAuth';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export function Navbar() {
-    const [user, setUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState(true);
+    const { user, isLoading } = useAuth();
+    const logoutStore = useAuthStore((state) => state.logout);
     const router = useRouter();
     const pathname = usePathname();
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const res = await fetch('/api/auth/me');
-                if (res.ok) {
-                    const data = await res.json();
-                    setUser(data.user);
-                }
-            } catch {
-                // Not logged in, ignore
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchUser();
-    }, []);
-
     const handleLogout = async () => {
-        await fetch('/api/auth/logout', { method: 'POST' });
-        setUser(null);
-        router.refresh();
-        router.push('/');
+        const res = await fetch('/api/auth/logout', { method: 'POST' });
+        if (res.ok) {
+            logoutStore();
+            router.refresh();
+            router.push('/');
+        }
     };
 
     return (
@@ -70,7 +50,7 @@ export function Navbar() {
                             <span className="text-[9px] font-black uppercase tracking-[0.1em]">Update Price</span>
                         </Link>
 
-                        {loading ? (
+                        {isLoading ? (
                             <div className="h-4 w-24 rounded bg-slate-100 animate-pulse" />
                         ) : user ? (
                             <div className="flex items-center gap-6 border-l border-slate-100 pl-6 ml-2">

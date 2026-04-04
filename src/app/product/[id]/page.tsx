@@ -10,6 +10,8 @@ import Link from 'next/link';
 import { use } from 'react';
 import { formatPriceRange } from '@/lib/price-utils';
 import { MapPin, Users, MessageCircle, Check, X, Send, History, TrendingDown, TrendingUp, Sparkles, Clock, ArrowLeft, ExternalLink, AlertTriangle, ChevronRight, CornerDownRight, ImageOff } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { useProduct } from '@/hooks/useHomeData';
 
 interface Product {
     _id: string;
@@ -69,17 +71,16 @@ interface AuthUser {
 
 export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
-    const [product, setProduct] = useState<Product | null>(null);
-    const [messages, setMessages] = useState<Message[]>([]);
+    const { user: authUser, isLoading: authLoading } = useAuth();
+    const { data, isLoading: loading, error: fetchError, refetch } = useProduct(id);
+    
+    const product = data?.product || null;
+    const messages = data?.messages || [];
+    
     const [content, setContent] = useState('');
-    const [loading, setLoading] = useState(true);
     const [posting, setPosting] = useState(false);
     const [error, setError] = useState('');
     const [replyingTo, setReplyingTo] = useState<Message | null>(null);
-
-    // Auth state
-    const [authUser, setAuthUser] = useState<AuthUser | null>(null);
-    const [authLoading, setAuthLoading] = useState(true);
 
     // Verify existing price
     const [verifying, setVerifying] = useState(false);
@@ -94,59 +95,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
     // Feedback
     const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchAuth = async () => {
-            try {
-                const res = await fetch('/api/auth/me');
-                if (res.ok) {
-                    const data = await res.json();
-                    setAuthUser(data.user);
-                }
-            } catch {
-                // not logged in
-            } finally {
-                setAuthLoading(false);
-            }
-        };
-        fetchAuth();
-    }, []);
-
-    const fetchData = async () => {
-        try {
-            const [productRes, messagesRes] = await Promise.all([
-                fetch(`/api/products/${id}`),
-                fetch(`/api/messages?productId=${id}`),
-            ]);
-
-            if (productRes.ok) {
-                const productData = await productRes.json();
-                if (productData.error) {
-                    setError(productData.error);
-                } else {
-                    setProduct(productData);
-                }
-            } else {
-                setError('Failed to fetch product');
-            }
-
-            if (messagesRes.ok) {
-                const messagesData = await messagesRes.json();
-                if (Array.isArray(messagesData)) {
-                    setMessages(messagesData);
-                }
-            }
-        } catch (error) {
-            console.error('Failed to fetch data');
-            setError('An error occurred');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchData();
-    }, [id]);
 
     useEffect(() => {
         if (product) {
@@ -190,7 +138,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             const data = await res.json();
             if (res.ok) {
                 alert(data.message);
-                fetchData(); // Refresh product data
+                refetch(); // Refresh product data
             } else {
                 alert(data.error || 'Failed to confirm price');
             }
@@ -217,7 +165,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 setVerifyMsg('✓ Thank you! Price confirmed.');
                 setFeedbackMessage(`Awesome! Your confirmation helps maintain accuracy for ${Math.floor(Math.random() * 50) + 10} shoppers! 🚀`);
                 setTimeout(() => setFeedbackMessage(null), 6000);
-                fetchData();
+                refetch();
             } else {
                 setVerifyMsg(data.error || 'Failed to verify price.');
             }
@@ -253,7 +201,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 setNewPrice('');
                 setSuggestionLocation('');
                 setShowUpdateForm(false);
-                fetchData();
+                refetch();
             } else {
                 setUpdateMsg(data.error || 'Failed to submit update.');
             }
@@ -287,7 +235,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             if (res.ok) {
                 setContent('');
                 setReplyingTo(null);
-                fetchData();
+                refetch();
             } else {
                 setError(data.error || 'Failed to post message');
             }
@@ -358,7 +306,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                     <PriceProposalWidget 
                         productId={id} 
                         proposals={product.suggestions || []} 
-                        onVouchSuccess={fetchData} 
+                        onVouchSuccess={refetch} 
                     />
 
                     <Card className="sticky top-24 p-0 overflow-hidden border-none shadow-premium bg-white/40 glass">
@@ -591,7 +539,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                 Community Suggestions
                             </h3>
                             <div className="space-y-3">
-                                {product.suggestions.map((suggestion, idx) => (
+                                {product.suggestions.map((suggestion: { _id: string, price: number, userName: string, createdAt: string }, idx: number) => (
                                     <div key={idx} className="glass bg-white/40 p-4 rounded-2xl border-none shadow-premium flex justify-between items-center group/item hover:bg-white/60 transition-all">
                                         <div>
                                             <p className="text-xl font-black text-slate-800 tracking-tighter">{formatPriceRange(suggestion.price)}</p>

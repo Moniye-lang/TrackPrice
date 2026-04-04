@@ -39,11 +39,11 @@ import {
     Box,
     Globe
 } from 'lucide-react';
+import { useAdminProducts } from '@/hooks/useAdmin';
 
 export default function AdminProducts() {
     const searchParams = useSearchParams();
-    const [products, setProducts] = useState<Product[]>([]);
-    const [loading, setLoading] = useState(true);
+    const { data: productsData = [], isLoading: loading, refetch } = useAdminProducts();
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
     const [showForm, setShowForm] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -71,26 +71,7 @@ export default function AdminProducts() {
         }
     }, [searchParams]);
 
-    const fetchProducts = async () => {
-        setLoading(true);
-        try {
-            const res = await fetch('/api/products');
-            const data = await res.json();
-            if (Array.isArray(data)) {
-                setProducts(data);
-            }
-        } catch (error) {
-            console.error('Failed to fetch products');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchProducts();
-    }, []);
-
-    const filteredProducts = products.filter(p => 
+    const filteredProducts = (productsData as Product[]).filter(p => 
         p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         p.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (p.storeLocation || '').toLowerCase().includes(searchTerm.toLowerCase())
@@ -118,7 +99,7 @@ export default function AdminProducts() {
                 setShowForm(false);
                 setEditingProduct(null);
                 resetForm();
-                fetchProducts();
+                refetch();
             } else {
                 setError(data.error || data.details || 'Failed to save product');
             }
@@ -137,7 +118,7 @@ export default function AdminProducts() {
             const data = await res.json();
             if (res.ok) {
                 alert(data.message);
-                fetchProducts();
+                refetch();
             } else {
                 alert(data.error || 'Failed to auto-fetch images');
             }
@@ -165,7 +146,7 @@ export default function AdminProducts() {
         try {
             const res = await fetch(`/api/admin/products/${id}/duplicate`, { method: 'POST' });
             if (res.ok) {
-                fetchProducts();
+                refetch();
             } else {
                 const data = await res.json();
                 alert(data.error || 'Failed to duplicate product');
@@ -188,7 +169,7 @@ export default function AdminProducts() {
             });
             if (res.ok) {
                 setMergeSourceId(null);
-                fetchProducts();
+                refetch();
             } else {
                 const data = await res.json();
                 alert(data.error || 'Merge failed');
@@ -202,7 +183,7 @@ export default function AdminProducts() {
         if (!confirm('Are you sure you want to delete this product?')) return;
         try {
             const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
-            if (res.ok) fetchProducts();
+            if (res.ok) refetch();
         } catch (error) {
             console.error('Failed to delete product');
         }
@@ -379,7 +360,7 @@ export default function AdminProducts() {
                                                         headers: { 'Content-Type': 'application/json' },
                                                         body: JSON.stringify({ isFeatured: !product.isFeatured }),
                                                     });
-                                                    if (res.ok) fetchProducts();
+                                                    if (res.ok) refetch();
                                                 }}
                                                 className={`flex-shrink-0 transition-all ${product.isFeatured ? 'text-primary' : 'text-slate-200'}`}
                                             >
@@ -480,7 +461,7 @@ export default function AdminProducts() {
                                                                 headers: { 'Content-Type': 'application/json' },
                                                                 body: JSON.stringify({ isFeatured: !product.isFeatured }),
                                                             });
-                                                            if (res.ok) fetchProducts();
+                                                            if (res.ok) refetch();
                                                         }}
                                                         className={`w-10 h-6 rounded-full transition-all relative ${product.isFeatured ? 'bg-primary shadow-glow-sm' : 'bg-slate-200'}`}
                                                     >
