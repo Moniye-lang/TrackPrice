@@ -52,12 +52,6 @@ export function Navbar() {
                         TrackPricely<span className="text-accent group-hover:animate-ping inline-block">.</span>
                     </Link>
 
-                    {/* Central CTA (Desktop Only) */}
-                    <Link href="/stale-prices" className="hidden lg:flex items-center gap-2 bg-primary/5 hover:bg-primary text-primary hover:text-white px-5 py-2 rounded-2xl border border-primary/20 transition-all duration-500 group/btn shadow-glow-sm">
-                        <TrendingUp size={16} className="group-hover/btn:scale-110 transition-transform" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">Update Price</span>
-                    </Link>
-
                     {/* Desktop Navigation Links */}
                     <nav className="hidden sm:flex items-center gap-8">
                         <Link href="/forum" className={`text-sm font-black uppercase tracking-widest transition-colors relative group ${pathname === '/forum' ? 'text-primary' : 'text-slate-600 hover:text-primary'}`}>
@@ -68,6 +62,12 @@ export function Navbar() {
                         <Link href="/leaderboard" className={`text-sm font-black uppercase tracking-widest transition-colors relative group ${pathname === '/leaderboard' ? 'text-primary' : 'text-slate-600 hover:text-primary'}`}>
                             Leaderboard
                             <span className={`absolute -bottom-1 left-0 h-0.5 bg-primary transition-all ${pathname === '/leaderboard' ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+                        </Link>
+
+                        {/* Stale Price CTA (Now part of the right nav group) */}
+                        <Link href="/stale-prices" className="flex items-center gap-2 bg-primary/5 hover:bg-primary text-primary hover:text-white px-4 py-2 rounded-xl border border-primary/20 transition-all duration-500 group/btn shadow-glow-sm">
+                            <TrendingUp size={14} className="group-hover/btn:scale-110 transition-transform" />
+                            <span className="text-[9px] font-black uppercase tracking-[0.1em]">Update Price</span>
                         </Link>
 
                         {loading ? (
