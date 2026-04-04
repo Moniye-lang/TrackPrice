@@ -6,19 +6,10 @@ import PriceUpdate from '@/models/PriceUpdate';
 import User from '@/models/User';
 import AuditLog from '@/models/AuditLog';
 import { isValidObjectId } from '@/lib/db-utils';
-import { verifyToken } from '@/lib/auth';
+import { isServerAdmin, getServerUser } from '@/lib/server-auth';
 import { parsePriceRange } from '@/lib/price-utils';
 
-async function isAdmin() {
-    const token = (await cookies()).get('token')?.value;
-    if (!token) return false;
-    try {
-        const payload: any = verifyToken(token);
-        return payload?.role === 'admin';
-    } catch (error) {
-        return false;
-    }
-}
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret');
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
     let productId = 'unknown';
@@ -63,10 +54,10 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
         return NextResponse.json({
             ...product,
-            _id: product._id.toString(),
+            _id: product._id?.toString() || productId,
             priceStatus,
-            suggestions: suggestions.map((s: any) => ({
-                _id: s._id.toString(),
+            suggestions: (suggestions || []).map((s: any) => ({
+                _id: s._id?.toString() || 'unknown',
                 price: s.price,
                 maxPrice: s.maxPrice,
                 userName: s.userId?.name || 'Anonymous',
@@ -92,7 +83,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 import { ProductSchema } from '@/lib/validation';
 
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
-    if (!(await isAdmin())) {
+    if (!(await isServerAdmin())) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -109,7 +100,6 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 
         const updateData: any = { ...body };
 
-        // Update lastUpdated only if price changes
         if (body.price !== undefined) {
             const parsed = parsePriceRange(body.price);
             updateData.price = parsed.price;
@@ -123,13 +113,14 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         const product = await Product.findByIdAndUpdate(id, updateData, { new: true });
 
         // Audit Log
-        const token = (await cookies()).get('token')?.value;
-        const payload: any = verifyToken(token!);
-        await AuditLog.create({
-            adminId: payload.id,
-            action: 'UPDATE_PRODUCT',
-            details: { productId: id, changes: body }
-        });
+        const user = await getServerUser();
+        if (user) {
+            await AuditLog.create({
+                adminId: user.id,
+                action: 'UPDATE_PRODUCT',
+                details: { productId: id, changes: body }
+            });
+        }
 
         return NextResponse.json(product);
     } catch (error: any) {
@@ -138,7 +129,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 }
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
-    if (!(await isAdmin())) {
+    if (!(await isServerAdmin())) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -148,13 +139,14 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
         await Product.findByIdAndDelete(id);
 
         // Audit Log
-        const token = (await cookies()).get('token')?.value;
-        const payload: any = verifyToken(token!);
-        await AuditLog.create({
-            adminId: payload.id,
-            action: 'DELETE_PRODUCT',
-            details: { productId: id }
-        });
+        const user = await getServerUser();
+        if (user) {
+            await AuditLog.create({
+                adminId: user.id,
+                action: 'DELETE_PRODUCT',
+                details: { productId: id }
+            });
+        }
 
         return NextResponse.json({ message: 'Product deleted' });
     } catch (error) {

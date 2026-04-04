@@ -4,7 +4,7 @@ import Message from '@/models/Message';
 import { cleanText } from '@/lib/profanity';
 import crypto from 'crypto';
 import { cookies } from 'next/headers';
-import { verifyToken } from '@/lib/auth';
+import { isServerAdmin } from '@/lib/server-auth';
 
 // Basic in-memory rate limiting
 const rateLimit = new Map<string, number>();
@@ -60,8 +60,7 @@ export async function POST(req: Request) {
 
         // Check if user is an admin
         const cookieStore = await cookies();
-        const token = cookieStore.get('admin_token')?.value;
-        const isAdmin = token ? !!verifyToken(token) : false;
+        const isAdmin = await isServerAdmin();
 
         let replyToContent = undefined;
         if (parentId) {

@@ -4,28 +4,7 @@ import Product from '@/models/Product';
 import PriceUpdate from '@/models/PriceUpdate';
 import User from '@/models/User';
 import GamificationRule from '@/models/GamificationRule';
-import { cookies } from 'next/headers';
-import { jwtVerify } from 'jose';
-
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret');
-
-interface UserPayload {
-    id: string;
-    email: string;
-    role: string;
-    name: string;
-}
-
-async function getUser(): Promise<UserPayload | null> {
-    const token = (await cookies()).get('user_token')?.value || (await cookies()).get('admin_token')?.value;
-    if (!token) return null;
-    try {
-        const { payload } = await jwtVerify(token, JWT_SECRET);
-        return payload as unknown as UserPayload;
-    } catch (error) {
-        return null;
-    }
-}
+import { getServerUser } from '@/lib/server-auth';
 
 const REPUTATION_WEIGHTS = {
     'Beginner': 1,
@@ -35,7 +14,7 @@ const REPUTATION_WEIGHTS = {
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
     const { id: productId } = await params;
-    const userPayload = await getUser();
+    const userPayload = await getServerUser();
 
     if (!userPayload) {
         return NextResponse.json({ error: 'Authentication required to confirm prices' }, { status: 401 });

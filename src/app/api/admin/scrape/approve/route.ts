@@ -1,30 +1,17 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { jwtVerify } from 'jose';
+import { isServerAdmin, getServerUser } from '@/lib/server-auth';
 import connectDB from '@/lib/db';
 import PriceUpdate from '@/models/PriceUpdate';
 import ScrapedProduct from '@/models/ScrapedProduct';
 import Product from '@/models/Product';
 
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret');
-
-async function getAdminFromToken() {
-    const token = (await cookies()).get('token')?.value;
-    if (!token) return null;
-    try {
-        const { payload } = await jwtVerify(token, JWT_SECRET);
-        return payload;
-    } catch {
-        return null;
-    }
-}
-
 export async function POST(req: Request) {
     try {
-        const decodedToken = await getAdminFromToken();
-        if (!decodedToken || decodedToken.role !== 'admin') {
+        if (!(await isServerAdmin())) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
+        
+        const user = await getServerUser();
 
         const { items, sourceUrl, location } = await req.json();
 
@@ -44,7 +31,7 @@ export async function POST(req: Request) {
                 // Create a pending PriceUpdate
                 await PriceUpdate.create({
                     productId: item.matchedProductId,
-                    userId: decodedToken.id as string, // Admins act as the submitter
+                    userId: user?.id as string, // Admins act as the submitter
                     price: item.price,
                     storeLocation: location || undefined,
                     status: 'pending' // Still requires verification per system logic

@@ -1,26 +1,11 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { jwtVerify } from 'jose';
 import { scrapeProducts } from '@/lib/scraper';
 import { matchScrapedProducts } from '@/lib/matcher';
-
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret');
-
-async function getAdminFromToken() {
-    const token = (await cookies()).get('token')?.value;
-    if (!token) return null;
-    try {
-        const { payload } = await jwtVerify(token, JWT_SECRET);
-        return payload;
-    } catch {
-        return null;
-    }
-}
+import { isServerAdmin } from '@/lib/server-auth';
 
 export async function POST(req: Request) {
     try {
-        const decodedToken = await getAdminFromToken();
-        if (!decodedToken || decodedToken.role !== 'admin') {
+        if (!(await isServerAdmin())) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 

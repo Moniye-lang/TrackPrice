@@ -5,39 +5,8 @@ import Message from '@/models/Message';
 import PriceUpdate from '@/models/PriceUpdate';
 import Store from '@/models/Store'; // Explicitly import for population
 import { parsePriceRange } from '@/lib/price-utils';
-import { cookies } from 'next/headers';
-import { jwtVerify } from 'jose';
+import { isServerAdmin } from '@/lib/server-auth';
 import { escapeRegex } from '@/lib/utils';
-
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret');
-
-interface UserPayload {
-    id: string;
-    email: string;
-    role: string;
-    name: string;
-}
-
-async function isAdmin() {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('admin_token')?.value || cookieStore.get('user_token')?.value;
-    if (!token) {
-        console.log('[isAdmin] No token found in cookies');
-        return false;
-    }
-    try {
-        const { payload } = await jwtVerify(token, JWT_SECRET);
-        const user = payload as unknown as UserPayload;
-        if (user.role !== 'admin') {
-            console.log(`[isAdmin] Role mismatch: ${user.role}`);
-            return false;
-        }
-        return true;
-    } catch (error: any) {
-        console.log(`[isAdmin] JWT Verification failed: ${error.message}`);
-        return false;
-    }
-}
 
 export async function GET(req: NextRequest) {
     try {
@@ -233,7 +202,7 @@ export async function GET(req: NextRequest) {
 import { ProductSchema } from '@/lib/validation';
 
 export async function POST(req: Request) {
-    if (!(await isAdmin())) {
+    if (!(await isServerAdmin())) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
