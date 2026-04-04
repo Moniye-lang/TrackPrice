@@ -128,8 +128,10 @@ export default function Home() {
             <div className="h-10 w-px bg-slate-200 self-center hidden sm:block" />
 
             <div className="relative flex-1">
-              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/60" size={20} />
+              <label htmlFor="market-selector" className="sr-only">Select Market</label>
+              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/60" size={20} aria-hidden="true" />
               <select
+                id="market-selector"
                 value={storeId}
                 onChange={(e) => setStoreId(e.target.value)}
                 className="w-full h-16 bg-transparent border-none pl-12 pr-4 text-sm font-black text-slate-700 focus:ring-0 cursor-pointer outline-none appearance-none"
@@ -158,7 +160,7 @@ export default function Home() {
 
       {/* Featured Section */}
       {featuredProducts.length > 0 && !search && category === 'All' && (
-        <section className="max-w-7xl mx-auto px-4 py-12">
+        <section className="max-w-7xl mx-auto px-4 py-12 min-h-[500px]">
           <div className="flex justify-between items-end mb-8">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center text-accent">
@@ -184,7 +186,7 @@ export default function Home() {
       )}
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-16 grid grid-cols-1 lg:grid-cols-4 gap-12 pb-32">
+      <main className="max-w-7xl mx-auto px-4 py-16 grid grid-cols-1 lg:grid-cols-4 gap-12 pb-32 min-h-[1000px]">
         <div className="lg:col-span-3">
           <div className="flex flex-col lg:flex-row justify-between items-stretch lg:items-end mb-12 gap-6 lg:gap-8 overflow-hidden">
             <div className="space-y-8 flex-1 min-w-0">

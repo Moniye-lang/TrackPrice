@@ -59,7 +59,7 @@ export function Navbar() {
                                     <span className="text-xs font-black text-primary uppercase tracking-widest">
                                         {user.name?.split(' ')[0] ?? 'Profile'}
                                     </span>
-                                    <CircleUser size={18} className="text-primary/40 group-hover/profile:text-primary transition-colors" />
+                                    <CircleUser size={18} className="text-primary/60 group-hover/profile:text-primary transition-colors" aria-hidden="true" />
                                 </Link>
 
                                 {user.role === 'admin' && (
@@ -112,14 +112,14 @@ export function Navbar() {
                     <div className={`p-1.5 rounded-xl transition-all ${pathname === '/' ? 'bg-primary/20 shadow-glow-sm' : 'bg-transparent'}`}>
                         <Home size={20} strokeWidth={pathname === '/' ? 2.5 : 2} />
                     </div>
-                    <span className={`text-[7px] font-black uppercase tracking-[0.2em] ${pathname === '/' ? 'opacity-100' : 'opacity-40'}`}>Home</span>
+                    <span className={`text-[7px] font-black uppercase tracking-[0.2em] ${pathname === '/' ? 'opacity-100' : 'opacity-70 text-slate-300'}`}>Home</span>
                 </Link>
 
                 <Link href="/leaderboard" aria-label="Leaderboard" className={`flex flex-col items-center gap-1.5 transition-all duration-500 ${pathname === '/leaderboard' ? 'text-primary scale-110 -translate-y-0.5' : 'text-slate-500 hover:text-slate-300'}`}>
                     <div className={`p-1.5 rounded-xl transition-all ${pathname === '/leaderboard' ? 'bg-primary/20 shadow-glow-sm' : 'bg-transparent'}`}>
                         <Trophy size={20} strokeWidth={pathname === '/leaderboard' ? 2.5 : 2} />
                     </div>
-                    <span className={`text-[7px] font-black uppercase tracking-[0.2em] ${pathname === '/leaderboard' ? 'opacity-100' : 'opacity-40'}`}>Rank</span>
+                    <span className={`text-[7px] font-black uppercase tracking-[0.2em] ${pathname === '/leaderboard' ? 'opacity-100' : 'opacity-70 text-slate-300'}`}>Rank</span>
                 </Link>
 
                 {/* Growth Engine: Update Price */}
@@ -134,14 +134,14 @@ export function Navbar() {
                     <div className={`p-1.5 rounded-xl transition-all ${pathname === '/forum' ? 'bg-primary/20 shadow-glow-sm' : 'bg-transparent'}`}>
                         <MessageSquare size={20} strokeWidth={pathname === '/forum' ? 2.5 : 2} />
                     </div>
-                    <span className={`text-[7px] font-black uppercase tracking-[0.2em] ${pathname === '/forum' ? 'opacity-100' : 'opacity-40'}`}>Talk</span>
+                    <span className={`text-[7px] font-black uppercase tracking-[0.2em] ${pathname === '/forum' ? 'opacity-100' : 'opacity-70 text-slate-300'}`}>Talk</span>
                 </Link>
 
                 <Link href="/profile" aria-label="Profile" className={`flex flex-col items-center gap-1.5 transition-all duration-500 ${pathname === '/profile' ? 'text-primary scale-110 -translate-y-0.5' : 'text-slate-500 hover:text-slate-300'}`}>
                     <div className={`p-1.5 rounded-xl transition-all ${pathname === '/profile' ? 'bg-primary/20 shadow-glow-sm' : 'bg-transparent'}`}>
                         <CircleUser size={20} strokeWidth={pathname === '/profile' ? 2.5 : 2} />
                     </div>
-                    <span className={`text-[7px] font-black uppercase tracking-[0.2em] ${pathname === '/profile' ? 'opacity-100' : 'opacity-40'}`}>User</span>
+                    <span className={`text-[7px] font-black uppercase tracking-[0.2em] ${pathname === '/profile' ? 'opacity-100' : 'opacity-70 text-slate-300'}`}>User</span>
                 </Link>
             </nav>
         </div>

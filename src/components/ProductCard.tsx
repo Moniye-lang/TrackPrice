@@ -63,9 +63,9 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                     ) : (
                         <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100/50">
                             <div className="w-16 h-16 rounded-3xl bg-white shadow-premium flex items-center justify-center text-slate-200 group-hover:text-primary/40 group-hover:scale-110 transition-all duration-500">
-                                <ImageOff size={32} strokeWidth={1.5} />
+                                <ImageOff size={32} strokeWidth={1.5} aria-hidden="true" />
                             </div>
-                            <p className="mt-4 text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">No Image Available</p>
+                            <p className="mt-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">No Image Available</p>
                         </div>
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -123,18 +123,18 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                             </h3>
                             <div className="flex-shrink-0">
                                 {product.flagged ? (
-                                    <span className="flex items-center gap-1 text-[9px] font-black text-rose-500 bg-rose-50 px-2 py-1 rounded-md border border-rose-100 uppercase tracking-tighter">
-                                        <AlertTriangle size={10} />
+                                    <span className="flex items-center gap-1 text-[9px] font-black text-rose-600 bg-rose-50 px-2 py-1 rounded-md border border-rose-100 uppercase tracking-tighter">
+                                        <AlertTriangle size={10} aria-hidden="true" />
                                         Flagged
                                     </span>
                                 ) : product.confidenceLevel === 'High' ? (
                                     <span className="flex items-center gap-1 text-[9px] font-black text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100 uppercase tracking-tighter">
-                                        <CheckCircle size={10} />
+                                        <CheckCircle size={10} aria-hidden="true" />
                                         Verified
                                     </span>
                                 ) : (
-                                    <span className="flex items-center gap-1 text-[9px] font-black text-amber-500 bg-amber-50 px-2 py-1 rounded-md border border-amber-100 uppercase tracking-tighter">
-                                        <Clock size={10} />
+                                    <span className="flex items-center gap-1 text-[9px] font-black text-amber-600 bg-amber-50 px-2 py-1 rounded-md border border-amber-100 uppercase tracking-tighter">
+                                        <Clock size={10} aria-hidden="true" />
                                         Estimate
                                     </span>
                                 )}
@@ -149,7 +149,7 @@ export function ProductCard({ product, priority }: ProductCardProps) {
 
                         {(product.storeId || product.storeLocation) && (
                             <p className="text-[13px] font-bold text-slate-600 flex items-center gap-2 mb-4">
-                                <MapPin size={14} className="text-primary/60" />
+                                <MapPin size={14} className="text-primary/60" aria-hidden="true" />
                                 <span className="truncate">
                                     {product.storeId ? `${product.storeId.name} (${product.storeId.area})` : product.storeLocation}
                                 </span>
@@ -165,14 +165,14 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                             </span>
                             <div className="flex flex-col">
                                 {product.priceStatus === 'down' && (
-                                    <div className="flex items-center gap-1 text-[10px] font-black text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-100 uppercase tracking-tighter animate-bounce-subtle">
-                                        <TrendingDown size={12} />
+                                    <div className="flex items-center gap-1 text-[10px] font-black text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200 uppercase tracking-tighter animate-bounce-subtle">
+                                        <TrendingDown size={12} aria-hidden="true" />
                                         Price Drop
                                     </div>
                                 )}
                                 {product.priceStatus === 'up' && (
-                                    <div className="flex items-center gap-1 text-[10px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100 uppercase tracking-tighter">
-                                        <TrendingUp size={12} />
+                                    <div className="flex items-center gap-1 text-[10px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 uppercase tracking-tighter">
+                                        <TrendingUp size={12} aria-hidden="true" />
                                         Increased
                                     </div>
                                 )}
@@ -188,8 +188,8 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                                 <div className="flex items-center gap-1.5">
                                     <div className={`w-1.5 h-1.5 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.1)] ${
                                         product.confidenceLevel === 'High' ? 'bg-emerald-500 shadow-emerald-500/50' :
-                                        product.confidenceLevel === 'Medium' ? 'bg-amber-500 shadow-amber-500/50' : 'bg-rose-500 shadow-rose-500/50'
-                                    }`} />
+                                        product.confidenceLevel === 'Medium' ? 'bg-amber-500 shadow-amber-500/50' : 'bg-rose-600 shadow-rose-600/50'
+                                    }`} aria-hidden="true" />
                                     <span className={`text-[10px] font-black uppercase tracking-tight ${
                                         product.confidenceLevel === 'High' ? 'text-emerald-700' :
                                         product.confidenceLevel === 'Medium' ? 'text-amber-700' : 'text-rose-700'
@@ -210,8 +210,8 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                             </div>
                         </div>
                         {(product.messageCount ?? 0) > 0 && (
-                            <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white rounded-xl shadow-premium-sm border border-slate-50">
-                                <MessageCircle size={12} className="text-primary" />
+                            <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white rounded-xl shadow-premium-sm border border-slate-50" aria-label={`${product.messageCount} messages`}>
+                                <MessageCircle size={12} className="text-primary" aria-hidden="true" />
                                 <span className="text-[10px] font-black text-slate-700">{product.messageCount}</span>
                             </div>
                         )}
@@ -231,10 +231,11 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                                 e.stopPropagation();
                                 window.location.href = `/product/${product._id}?update=true`;
                             }}
+                            aria-label={`Update price for ${product.name}`}
                             className="relative z-20 bg-primary hover:bg-primary-dark group/btn px-4 py-2 rounded-xl text-[10px] font-black text-white uppercase tracking-[0.2em] shadow-glow flex items-center gap-2 transition-all active:scale-95 pointer-events-auto"
                         >
                             Update Price
-                            <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                            <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" aria-hidden="true" />
                         </button>
                     </div>
                 </div>
