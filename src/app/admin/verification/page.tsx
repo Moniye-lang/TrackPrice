@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Button, Card } from '@/components/ui-base';
 import { formatPriceRange } from '@/lib/price-utils';
 
@@ -169,7 +170,7 @@ export default function AdminVerificationQueue() {
                                     <div className="p-8 xl:w-2/5 space-y-8">
                                         <div className="flex items-center gap-6">
                                             <div className="w-20 h-20 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 flex-shrink-0 shadow-sm relative group-hover:scale-105 transition-transform duration-500">
-                                                <img src={update.product?.imageUrl} alt={update.product?.name} className="w-full h-full object-cover" />
+                                                <Image src={update.product?.imageUrl} alt={update.product?.name || 'Product Image'} fill sizes="80px" className="object-cover" />
                                             </div>
                                             <div>
                                                 <div className="flex items-center gap-2 mb-1">
@@ -189,8 +190,8 @@ export default function AdminVerificationQueue() {
                                         </div>
 
                                         <div className="bg-slate-50/50 rounded-2xl p-6 border border-slate-50">
-                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                                <User size={10} className="text-primary" />
+                                            <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                                <User size={10} className="text-primary" aria-hidden="true" />
                                                 Reported By
                                             </p>
                                             <div className="flex items-center justify-between">

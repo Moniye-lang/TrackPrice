@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Button, Card } from '@/components/ui-base';
 import { Navbar } from '@/components/Navbar';
 import { PriceProposalWidget } from '@/components/PriceProposalWidget';
@@ -322,8 +323,32 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         );
     }
 
+    const jsonLd = product ? {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": product.name,
+        "image": product.imageUrl,
+        "description": `Check the latest price for ${product.name} in Ibadan.`,
+        "brand": {
+            "@type": "Brand",
+            "name": product.brand || "Generic"
+        },
+        "offers": {
+            "@type": "Offer",
+            "price": product.price,
+            "priceCurrency": "NGN",
+            "availability": "https://schema.org/InStock"
+        }
+    } : null;
+
     return (
         <div className="min-h-screen bg-mesh selection:bg-primary/20">
+            {jsonLd && (
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+                />
+            )}
             <Navbar />
 
             <main className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-3 gap-12 pb-32">
@@ -339,10 +364,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                     <Card className="sticky top-24 p-0 overflow-hidden border-none shadow-premium bg-white/40 glass">
                         <div className="relative h-72 w-full overflow-hidden bg-slate-50">
                             {product.imageUrl ? (
-                                <img
+                                <Image
                                     src={product.imageUrl}
                                     alt={product.name}
-                                    className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+                                    fill
+                                    priority
+                                    className="object-cover transition-transform duration-700 hover:scale-110"
                                 />
                             ) : (
                                 <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100/50">
@@ -365,7 +392,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                 </p>
                                 <h1 className="text-4xl font-black text-slate-800 tracking-tight leading-[1.1] mb-3">{product.name}</h1>
                                 {(product.variant || product.size) && (
-                                    <p className="text-xs font-bold text-slate-400 mb-6 uppercase tracking-[0.2em] flex items-center gap-2">
+                                    <p className="text-xs font-bold text-slate-500 mb-6 uppercase tracking-[0.2em] flex items-center gap-2">
                                         <div className="w-1 h-1 rounded-full bg-slate-300" />
                                         {product.variant} {product.size && ` | ${product.size}`}
                                     </p>
@@ -404,8 +431,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
                                 {(product.storeId || product.storeLocation) && (
                                     <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-6">
-                                        <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
-                                            <MapPin size={12} />
+                                        <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-2 flex items-center gap-2">
+                                            <MapPin size={12} aria-hidden="true" />
                                             Store Location
                                         </p>
                                         <p className="text-sm font-bold text-slate-700">
@@ -414,7 +441,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                     </div>
                                 )}
 
-                                <div className="flex items-center gap-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-8">
+                                <div className="flex items-center gap-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-8">
                                     <div className="flex items-center gap-2">
                                         <div className={`w-2 h-2 rounded-full ${product.confidenceLevel === 'High' ? 'bg-emerald-500' :
                                             product.confidenceLevel === 'Medium' ? 'bg-amber-500' : 'bg-rose-500'
@@ -422,7 +449,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                         {product.confidenceLevel || 'Low'} Consensus
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <Users size={14} />
+                                        <Users size={14} aria-hidden="true" />
                                         {product.reportCount || 0} Reports
                                     </div>
                                 </div>

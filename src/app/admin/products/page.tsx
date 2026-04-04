@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { Button, Input, Card } from '@/components/ui-base';
 import { formatPriceRange } from '@/lib/price-utils';
@@ -259,6 +260,7 @@ export default function AdminProducts() {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full bg-white border border-slate-100 py-4 md:py-5 pl-16 pr-6 rounded-[1.5rem] md:rounded-3xl shadow-premium outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/20 transition-all font-bold text-slate-700 text-sm placeholder:text-slate-300"
+                    aria-label="Search catalogue"
                 />
             </div>
 
@@ -364,8 +366,8 @@ export default function AdminProducts() {
                         {filteredProducts.map((product) => (
                             <Card key={product._id} className="p-5 border-none shadow-premium bg-white rounded-3xl group relative">
                                 <div className="flex gap-4">
-                                    <div className="w-20 h-20 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 flex-shrink-0 shadow-sm">
-                                        <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
+                                    <div className="w-20 h-20 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 flex-shrink-0 shadow-sm relative">
+                                        <Image src={product.imageUrl} alt={product.name} fill sizes="80px" className="object-cover" />
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className="flex justify-between items-start">
@@ -447,7 +449,7 @@ export default function AdminProducts() {
                                             <td className="py-6 px-8">
                                                 <div className="flex items-center gap-6">
                                                     <div className="w-16 h-16 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 flex-shrink-0 shadow-sm relative group-hover:scale-105 transition-transform duration-500">
-                                                        <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
+                                                        <Image src={product.imageUrl} alt={product.name} fill sizes="64px" className="object-cover" />
                                                     </div>
                                                     <div>
                                                         <p className="font-black text-slate-900 text-sm tracking-tight leading-tight mb-1">{product.name}</p>
@@ -484,7 +486,7 @@ export default function AdminProducts() {
                                                     >
                                                         <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${product.isFeatured ? 'left-5' : 'left-1'}`} />
                                                     </button>
-                                                    <span className={`text-[7px] font-black uppercase tracking-widest ${product.isFeatured ? 'text-primary' : 'text-slate-300'}`}>
+                                                    <span className={`text-[7px] font-black uppercase tracking-widest ${product.isFeatured ? 'text-primary' : 'text-slate-400'}`}>
                                                         {product.isFeatured ? 'Featured' : 'Standard'}
                                                     </span>
                                                 </div>

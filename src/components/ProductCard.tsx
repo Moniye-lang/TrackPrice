@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
+import { useState } from 'react';
 import { formatRelativeTime } from '@/lib/utils';
 import { Card } from '@/components/ui-base';
 import { formatPriceRange } from '@/lib/price-utils';
@@ -37,22 +38,27 @@ interface ProductCardProps {
         } | null;
         priceStatus?: 'up' | 'down' | 'stable';
     };
+    priority?: boolean;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, priority }: ProductCardProps) {
     const [imgError, setImgError] = useState(false);
     const hasImage = product.imageUrl && !imgError && !product.imageUrl.includes('placehold.co');
 
     return (
-        <Link href={`/product/${product._id}`} className="block group">
-            <Card className="flex flex-col h-full hover:shadow-glow transition-all duration-500 hover:-translate-y-2 cursor-pointer border-slate-100 overflow-hidden">
-                <div className="relative h-64 w-full overflow-hidden bg-slate-50">
+        <div className="block group h-full">
+            <Card className="flex flex-col h-full hover:shadow-glow transition-all duration-500 hover:-translate-y-2 border-slate-100 overflow-hidden relative">
+                <Link href={`/product/${product._id}`} className="absolute inset-0 z-0" aria-label={`View details for ${product.name}`} />
+                <div className="relative h-64 w-full overflow-hidden bg-slate-50 z-10 pointer-events-none">
                     {hasImage ? (
-                        <img
+                        <Image
                             src={product.imageUrl}
                             alt={product.name}
+                            fill
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                             onError={() => setImgError(true)}
-                            className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110"
+                            className="object-cover transition-transform duration-700 group-hover:scale-110"
+                            priority={priority}
                         />
                     ) : (
                         <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100/50">
@@ -101,14 +107,14 @@ export function ProductCard({ product }: ProductCardProps) {
                                 e.stopPropagation();
                                 window.location.href = `/product/${product._id}?confirm=${product.pendingUpdate?._id}`;
                             }}
-                            className="bg-primary text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-xl shadow-premium hover:scale-105 active:scale-95 transition-all"
+                            className="relative z-20 bg-primary text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-xl shadow-premium hover:scale-105 active:scale-95 transition-all pointer-events-auto"
                         >
                             Confirm
                         </button>
                     </div>
                 )}
 
-                <div className="p-5 flex-1 flex flex-col">
+                <div className="p-5 flex-1 flex flex-col z-10 pointer-events-none">
                     <div className="mb-auto">
                         <div className="flex justify-between items-start gap-2 mb-3">
                             <h3 className="text-xl font-black text-slate-800 line-clamp-2 group-hover:text-primary transition-colors duration-300 antialiased leading-[1.1]">
@@ -136,7 +142,7 @@ export function ProductCard({ product }: ProductCardProps) {
                         </div>
 
                         {(product.variant || product.size) && (
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
+                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">
                                 {product.variant} {product.size && `| ${product.size}`}
                             </p>
                         )}
@@ -178,7 +184,7 @@ export function ProductCard({ product }: ProductCardProps) {
                     <div className="mt-5 flex items-center justify-between p-3 bg-slate-50 border border-slate-100/80 rounded-2xl group-hover:bg-primary/5 group-hover:border-primary/10 transition-colors duration-500">
                         <div className="flex items-center gap-4">
                             <div className="flex flex-col">
-                                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Status</span>
+                                <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Status</span>
                                 <div className="flex items-center gap-1.5">
                                     <div className={`w-1.5 h-1.5 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.1)] ${
                                         product.confidenceLevel === 'High' ? 'bg-emerald-500 shadow-emerald-500/50' :
@@ -194,11 +200,11 @@ export function ProductCard({ product }: ProductCardProps) {
                             </div>
                             <div className="w-px h-6 bg-slate-200" />
                             <div className="flex flex-col">
-                                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Signals</span>
+                                <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Signals</span>
                                 <div className="flex items-center gap-1.5 text-slate-700">
-                                    <Users size={12} className="text-slate-400" />
+                                    <Users size={12} className="text-slate-500" aria-hidden="true" />
                                     <span className="text-[10px] font-black uppercase tracking-tight">
-                                        {product.reportCount || 0} <span className="text-slate-400 font-bold ml-0.5">Confirmations</span>
+                                        {product.reportCount || 0} <span className="text-slate-500 font-bold ml-0.5">Confirmations</span>
                                     </span>
                                 </div>
                             </div>
@@ -214,8 +220,8 @@ export function ProductCard({ product }: ProductCardProps) {
                     {/* Primary CTA Button */}
                     <div className="mt-5 pt-5 border-t border-slate-50 flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <Clock size={12} className="text-slate-300" />
-                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            <Clock size={12} className="text-slate-400" aria-hidden="true" />
+                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
                                 {formatRelativeTime(product.lastUpdated)}
                             </span>
                         </div>
@@ -225,7 +231,7 @@ export function ProductCard({ product }: ProductCardProps) {
                                 e.stopPropagation();
                                 window.location.href = `/product/${product._id}?update=true`;
                             }}
-                            className="bg-primary hover:bg-primary-dark group/btn px-4 py-2 rounded-xl text-[10px] font-black text-white uppercase tracking-[0.2em] shadow-glow flex items-center gap-2 transition-all active:scale-95"
+                            className="relative z-20 bg-primary hover:bg-primary-dark group/btn px-4 py-2 rounded-xl text-[10px] font-black text-white uppercase tracking-[0.2em] shadow-glow flex items-center gap-2 transition-all active:scale-95 pointer-events-auto"
                         >
                             Update Price
                             <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
@@ -233,6 +239,6 @@ export function ProductCard({ product }: ProductCardProps) {
                     </div>
                 </div>
             </Card>
-        </Link>
+        </div>
     );
 }

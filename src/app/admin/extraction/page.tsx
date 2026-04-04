@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 
 import { 
     Zap, 
@@ -136,8 +137,8 @@ export default function ExtractionPage() {
                                 className="h-16 pl-6 pr-12 text-sm font-bold bg-slate-50 border-transparent focus:bg-white focus:border-primary transition-all rounded-2xl shadow-inner group-hover:bg-white"
                                 disabled={loading}
                             />
-                            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300">
-                                <Search size={20} />
+                            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none">
+                                <Search size={20} aria-hidden="true" />
                             </div>
                         </div>
                     </div>
@@ -233,13 +234,17 @@ export default function ExtractionPage() {
                                     {results.map((item, i) => (
                                         <tr key={i} className={`group hover:bg-slate-50/80 transition-all duration-300 ${item.status === 'rejected' ? 'opacity-40 grayscale' : ''}`}>
                                             <td className="px-8 py-6">
-                                                <div className="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden border border-slate-200">
-                                                    <img 
+                                                <div className="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden border border-slate-200 relative">
+                                                    <Image 
                                                         src={item.imageUrl} 
                                                         alt={item.name} 
-                                                        className="w-full h-full object-cover"
-                                                        onError={(e) => {
-                                                            (e.target as HTMLImageElement).src = `https://placehold.co/600x400?text=${encodeURIComponent(item.name)}`;
+                                                        fill
+                                                        sizes="48px"
+                                                        className="object-cover"
+                                                        onError={() => {
+                                                            const newResults = [...results];
+                                                            newResults[i].imageUrl = `https://placehold.co/600x400?text=${encodeURIComponent(item.name)}`;
+                                                            setResults(newResults);
                                                         }}
                                                     />
                                                 </div>

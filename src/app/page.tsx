@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ProductCard } from '@/components/ProductCard';
 import { Navbar } from '@/components/Navbar';
 import { Input, Button } from '@/components/ui-base';
@@ -104,8 +105,25 @@ export default function Home() {
     fetchProducts();
   };
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Track Pricely",
+    "url": "https://trackpricely.com",
+    "description": "Live price tracking for markets in Ibadan. Check prices before you buy anything.",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://trackpricely.com/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  };
+
   return (
     <div className="min-h-screen bg-mesh selection:bg-primary/20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Navbar />
 
       {/* Hero Section */}
@@ -168,6 +186,7 @@ export default function Home() {
                 placeholder="Search rice, eggs, oil, bread..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
+                aria-label="Search for products"
               />
             </div>
             
@@ -181,7 +200,7 @@ export default function Home() {
                 className="w-full h-16 bg-transparent border-none pl-12 pr-4 text-sm font-black text-slate-700 focus:ring-0 cursor-pointer outline-none appearance-none"
               >
                 <option value="All">All Markets</option>
-                {stores.map(s => (
+                {stores.map((s: any) => (
                   <option key={s._id} value={s._id}>{s.name} ({s.area})</option>
                 ))}
               </select>
@@ -218,7 +237,13 @@ export default function Home() {
             <div className="h-px bg-slate-100 flex-1 mx-8 mb-2 hidden md:block"></div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {featuredProducts.map(p => <ProductCard key={p._id} product={p} />)}
+            {featuredProducts.map((p: any, index: number) => (
+              <ProductCard 
+                key={p._id} 
+                product={p} 
+                priority={index < 4} 
+              />
+            ))}
           </div>
         </section>
       )}
@@ -336,8 +361,14 @@ export default function Home() {
               <div className="space-y-4">
                 {staleProducts.map((p: any) => (
                   <Link key={p._id} href={`/product/${p._id}`} className="flex items-center gap-4 group">
-                    <div className="w-12 h-12 rounded-2xl overflow-hidden bg-slate-100 flex-shrink-0 border border-slate-100">
-                      <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    <div className="w-12 h-12 rounded-2xl overflow-hidden bg-slate-100 flex-shrink-0 border border-slate-100 relative">
+                      <Image 
+                        src={p.imageUrl} 
+                        alt={p.name} 
+                        fill
+                        sizes="48px"
+                        className="object-cover group-hover:scale-110 transition-transform duration-500" 
+                      />
                     </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="font-bold text-slate-800 text-sm truncate group-hover:text-primary transition-colors">{p.name}</h4>

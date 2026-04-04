@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Button, Input, Card } from '@/components/ui-base';
 import { 
     Zap, 
@@ -171,6 +172,7 @@ export default function CategorizationPage() {
                         className="h-16 pl-16 pr-6 rounded-2xl bg-white border-transparent focus:border-primary shadow-premium transition-all font-bold text-sm"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
+                        aria-label="Search for products"
                     />
                 </div>
                 
@@ -252,13 +254,13 @@ export default function CategorizationPage() {
 
                             <div className="flex gap-6 items-start mb-8">
                                 <div className="w-20 h-20 rounded-3xl overflow-hidden bg-slate-50 border border-slate-100 flex-shrink-0 shadow-sm relative group-hover:scale-105 transition-transform duration-500">
-                                    <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover" />
+                                    <Image src={p.imageUrl} alt={p.name} fill sizes="80px" className="object-cover" />
                                 </div>
                                 <div className="flex-1 min-w-0 pr-12">
                                     <h4 className="font-black text-slate-900 text-lg tracking-tight mb-1 truncate leading-tight">{p.name}</h4>
                                     <div className="flex items-center gap-2">
-                                        <MapPin size={10} className="text-slate-300" />
-                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">{p.storeLocation || 'Local Vendor'}</p>
+                                        <MapPin size={10} className="text-slate-300" aria-hidden="true" />
+                                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest truncate">{p.storeLocation || 'Local Vendor'}</p>
                                     </div>
                                     <p className="text-xl font-black text-primary tracking-tighter mt-2">₦{p.price.toLocaleString()}</p>
                                 </div>
