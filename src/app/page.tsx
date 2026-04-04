@@ -43,7 +43,7 @@ export default function Home() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "Track Pricely",
+    "name": "TrackPricely",
     "url": "https://trackpricely.com",
     "description": "Live price tracking for markets in Ibadan. Check prices before you buy anything.",
     "potentialAction": {

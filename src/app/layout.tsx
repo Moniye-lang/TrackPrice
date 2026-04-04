@@ -20,6 +20,11 @@ export const metadata: Metadata = {
   description: "Check and compare live market prices across Ibadan. Join the community tracking daily price changes in Bodija, Dugbe, and more.",
   viewport: "width=device-width, initial-scale=1",
   robots: "index, follow",
+  icons: {
+    icon: '/icon.svg',
+    apple: '/icon.svg',
+    shortcut: '/icon.svg',
+  },
 };
 
 export default function RootLayout({

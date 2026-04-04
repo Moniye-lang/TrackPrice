@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui-base';
 import { 
     LayoutDashboard, 
@@ -112,12 +113,15 @@ export default function AdminLayout({
                 ${isMobileMenuOpen ? 'translate-x-0 outline-none' : '-translate-x-full shadow-none'}
             `}>
                 {/* Sidebar Header */}
-                <div className="p-8 pb-4">
-                    <Link href="/admin/dashboard" className="flex items-center gap-2 group">
-                        <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-glow-sm group-hover:scale-110 transition-transform">
-                            <TrendingUp size={18} className="text-white" />
-                        </div>
-                        <h2 className="text-xl font-black text-white tracking-tight">TrackPricely Admin</h2>
+                <div className="p-6 pb-2">
+                    <Link href="/admin/dashboard" className="flex items-center gap-3 group px-2">
+                        <Image 
+                            src="/logo.svg" 
+                            alt="TrackPricely Admin" 
+                            width={160} 
+                            height={40} 
+                            className="h-10 w-auto filter brightness-0 invert" 
+                        />
                     </Link>
                 </div>
 

@@ -7,6 +7,7 @@ import { Home, Trophy, User, MessageSquare, CircleUser, LogOut, LayoutDashboard,
 import { Button } from './ui-base';
 import { useAuth } from '@/hooks/useAuth';
 import { useAuthStore } from '@/store/useAuthStore';
+import Image from 'next/image';
 
 export function Navbar() {
     const { user, isLoading } = useAuth();
@@ -28,8 +29,15 @@ export function Navbar() {
             {/* Top Logo Bar (Mobile & Desktop) */}
             <header className="sticky top-0 z-50 w-full glass border-b border-primary/10 transition-all duration-500">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 sm:h-20 flex items-center justify-between gap-4">
-                    <Link href="/" aria-label="TrackPricely Home" className="text-xl sm:text-2xl font-black text-primary tracking-tighter hover:scale-110 transition-transform flex-shrink-0 group">
-                        TrackPricely<span className="text-accent group-hover:animate-ping inline-block">.</span>
+                    <Link href="/" aria-label="TrackPricely Home" className="hover:scale-105 transition-transform flex-shrink-0 group flex items-center">
+                        <Image 
+                            src="/logo.svg" 
+                            alt="TrackPricely Logo" 
+                            width={160} 
+                            height={48} 
+                            className="h-8 sm:h-12 w-auto"
+                            priority
+                        />
                     </Link>
 
                     {/* Desktop Navigation Links */}
