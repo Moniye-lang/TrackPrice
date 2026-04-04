@@ -5,7 +5,11 @@ import connectDB from '@/lib/db';
 import User from '@/models/User';
 
 export async function GET() {
-    const token = (await cookies()).get('token')?.value;
+    const cookieStore = await cookies();
+    const adminToken = cookieStore.get('admin_token')?.value;
+    const userToken = cookieStore.get('user_token')?.value;
+
+    const token = adminToken || userToken;
 
     if (!token) {
         return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });

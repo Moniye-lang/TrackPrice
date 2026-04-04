@@ -71,7 +71,7 @@ export function Navbar() {
                                 </Link>
 
                                 {user.role === 'admin' && (
-                                    <Link href="/admin/dashboard" className="text-[10px] font-black text-amber-600 hover:text-amber-700 uppercase tracking-[0.3em] border border-amber-200/50 px-3 py-1.5 rounded-xl bg-amber-50">
+                                    <Link href="/management-gate/dashboard" className="text-[10px] font-black text-amber-600 hover:text-amber-700 uppercase tracking-[0.3em] border border-amber-200/50 px-3 py-1.5 rounded-xl bg-amber-50">
                                         Admin
                                     </Link>
                                 )}

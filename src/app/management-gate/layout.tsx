@@ -35,7 +35,7 @@ export default function AdminLayout({
 
     useEffect(() => {
         const checkAuth = async () => {
-            if (pathname === '/admin/login') {
+            if (pathname === '/management-gate/login') {
                 setLoading(false);
                 return;
             }
@@ -43,14 +43,14 @@ export default function AdminLayout({
             try {
                 const res = await fetch('/api/auth/me');
                 if (!res.ok) {
-                    router.push('/admin/login');
+                    router.push('/management-gate/login');
                 } else {
                     const data = await res.json();
                     setUser(data.user);
                     setLoading(false);
                 }
             } catch (error) {
-                router.push('/admin/login');
+                router.push('/management-gate/login');
             }
         };
         checkAuth();
@@ -58,22 +58,22 @@ export default function AdminLayout({
 
     const handleLogout = async () => {
         await fetch('/api/auth/logout', { method: 'POST' });
-        router.push('/admin/login');
+        router.push('/management-gate/login');
         router.refresh();
     };
 
     const navItems = [
-        { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
-        { label: 'Audit Logs', href: '/admin/audit-logs', icon: History },
-        { label: 'Categorization', href: '/admin/categorization', icon: Zap },
-        { label: 'Products', href: '/admin/products', icon: Box },
-        { label: 'Users', href: '/admin/users', icon: Users },
-        { label: 'Markets/Stores', href: '/admin/stores', icon: Store },
-        { label: 'Verification', href: '/admin/verification', icon: ShieldCheck },
-        { label: 'Forum', href: '/admin/messages', icon: MessageSquare },
-        { label: 'Requests', href: '/admin/product-requests', icon: ClipboardList },
-        { label: 'Extraction', href: '/admin/extraction', icon: Zap },
-        { label: 'Settings', href: '/admin/settings', icon: Settings },
+        { label: 'Dashboard', href: '/management-gate/dashboard', icon: LayoutDashboard },
+        { label: 'Audit Logs', href: '/management-gate/audit-logs', icon: History },
+        { label: 'Categorization', href: '/management-gate/categorization', icon: Zap },
+        { label: 'Products', href: '/management-gate/products', icon: Box },
+        { label: 'Users', href: '/management-gate/users', icon: Users },
+        { label: 'Markets/Stores', href: '/management-gate/stores', icon: Store },
+        { label: 'Verification', href: '/management-gate/verification', icon: ShieldCheck },
+        { label: 'Forum', href: '/management-gate/messages', icon: MessageSquare },
+        { label: 'Requests', href: '/management-gate/product-requests', icon: ClipboardList },
+        { label: 'Extraction', href: '/management-gate/extraction', icon: Zap },
+        { label: 'Settings', href: '/management-gate/settings', icon: Settings },
     ];
 
     if (loading) {
@@ -87,7 +87,7 @@ export default function AdminLayout({
         );
     }
 
-    if (pathname === '/admin/login') {
+    if (pathname === '/management-gate/login') {
         return <>{children}</>;
     }
 
@@ -95,7 +95,7 @@ export default function AdminLayout({
         <div className="min-h-screen bg-slate-50 flex overflow-hidden font-sans">
             {/* Mobile Header with Glassmorphism */}
             <div className="md:hidden fixed top-0 w-full z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200/60 p-4 px-6 flex items-center justify-between shadow-sm">
-                <Link href="/admin/dashboard" className="text-xl font-black text-slate-900 tracking-tighter">
+                <Link href="/management-gate/dashboard" className="text-xl font-black text-slate-900 tracking-tighter">
                     Admin<span className="text-primary">.</span>
                 </Link>
                 <button
@@ -114,7 +114,7 @@ export default function AdminLayout({
             `}>
                 {/* Sidebar Header */}
                 <div className="p-6 pb-2">
-                    <Link href="/admin/dashboard" className="flex items-center gap-3 group px-2">
+                    <Link href="/management-gate/dashboard" className="flex items-center gap-3 group px-2">
                         <Image 
                             src="/logo.svg" 
                             alt="TrackPricely Admin" 

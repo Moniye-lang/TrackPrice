@@ -54,9 +54,14 @@ export async function POST(req: Request) {
             role: user.role
         });
 
-        const response = NextResponse.json({ message: 'Login successful' });
+        const response = NextResponse.json({ 
+            message: 'Login successful', 
+            user: { id: user._id, name: user.name, role: user.role } 
+        });
 
-        response.cookies.set('token', token, {
+        const cookieName = user.role === 'admin' ? 'admin_token' : 'user_token';
+
+        response.cookies.set(cookieName, token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax',
@@ -64,7 +69,7 @@ export async function POST(req: Request) {
             path: '/',
         });
 
-        console.log('[Login] Successful for:', email);
+        console.log(`[Login] Successful for: ${email} as ${user.role}. Cookie: ${cookieName}`);
         return response;
     } catch (error) {
         console.error('[Login] error:', error);

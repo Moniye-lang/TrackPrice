@@ -7,32 +7,48 @@ const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
+    // Redirect old /admin path
     if (pathname.startsWith('/admin')) {
-        // Exclude /admin/login from protection
-        if (pathname === '/admin/login') {
+        return NextResponse.redirect(new URL('/', request.url));
+    }
+
+    if (pathname.startsWith('/management-gate') || pathname.startsWith('/api/admin')) {
+        const isApi = pathname.startsWith('/api/admin');
+        const loginPath = isApi ? null : '/management-gate/login';
+
+        // Exclude frontend login from protection
+        if (!isApi && pathname === loginPath) {
             return NextResponse.next();
         }
 
-        const token = request.cookies.get('token')?.value;
+        const token = request.cookies.get('admin_token')?.value;
 
         if (!token) {
-            return NextResponse.redirect(new URL('/admin/login', request.url));
+            if (isApi) {
+                return NextResponse.json({ error: 'Unauthorized API access' }, { status: 401 });
+            }
+            return NextResponse.redirect(new URL(loginPath!, request.url));
         }
 
         try {
-            // Standardize on using the same secret logic as lib/auth
             const secret = process.env.JWT_SECRET || 'fallback_secret';
             const encodedSecret = new TextEncoder().encode(secret);
             const { payload } = await jwtVerify(token, encodedSecret);
 
             if (payload.role !== 'admin') {
                 console.warn('[Middleware] Unauthorized admin access attempt:', payload.email);
+                if (isApi) {
+                    return NextResponse.json({ error: 'Permission denied' }, { status: 403 });
+                }
                 return NextResponse.redirect(new URL('/', request.url));
             }
             return NextResponse.next();
         } catch (error) {
             console.error('Middleware JWT Error:', error);
-            return NextResponse.redirect(new URL('/admin/login', request.url));
+            if (isApi) {
+                return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+            }
+            return NextResponse.redirect(new URL(loginPath!, request.url));
         }
     }
 
@@ -40,5 +56,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/admin/:path*'],
+    matcher: ['/management-gate/:path*', '/admin/:path*', '/api/admin/:path*'],
 };
