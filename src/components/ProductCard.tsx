@@ -43,7 +43,10 @@ interface ProductCardProps {
 
 export function ProductCard({ product, priority }: ProductCardProps) {
     const [imgError, setImgError] = useState(false);
-    const hasImage = product.imageUrl && !imgError && !product.imageUrl.includes('placehold.co');
+    const hasImage = product.imageUrl && 
+                     product.imageUrl.length > 5 && 
+                     !imgError && 
+                     !product.imageUrl.includes('placehold.co');
 
     return (
         <div className="block group h-full">

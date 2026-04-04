@@ -35,6 +35,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         }
 
         // Check if this IP has already vouched
+        update.anonymousConfirmations = update.anonymousConfirmations || [];
         if (update.anonymousConfirmations.includes(ipHash)) {
             return NextResponse.json({ error: 'You have already vouched for this price' }, { status: 400 });
         }

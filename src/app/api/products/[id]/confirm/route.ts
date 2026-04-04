@@ -64,6 +64,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         }
 
         // Add confirmation
+        update.confirmations = update.confirmations || [];
         update.confirmations.push(userPayload.userId as any);
         await update.save();
 
@@ -73,7 +74,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
         let totalWeight = submitter ? (REPUTATION_WEIGHTS[submitter.reputationLevel as keyof typeof REPUTATION_WEIGHTS] || 1) : 1;
         for (const confirmer of confirmers) {
-            totalWeight += REPUTATION_WEIGHTS[confirmer.reputationLevel as keyof typeof REPUTATION_WEIGHTS] || 1;
+            const weight = REPUTATION_WEIGHTS[confirmer.reputationLevel as keyof typeof REPUTATION_WEIGHTS] || 1;
+            console.log(`[Confirm API] Confirmer: ${confirmer.name}, Weight: ${weight}`);
+            totalWeight += weight;
         }
 
         const rule = await GamificationRule.findOne({ category: product.category }) || 

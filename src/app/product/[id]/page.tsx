@@ -311,7 +311,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
                     <Card className="sticky top-24 p-0 overflow-hidden border-none shadow-premium bg-white/40 glass">
                         <div className="relative h-72 w-full overflow-hidden bg-slate-50">
-                            {product.imageUrl ? (
+                            {product.imageUrl && product.imageUrl.length > 5 ? (
                                 <Image
                                     src={product.imageUrl}
                                     alt={product.name}
