@@ -65,13 +65,13 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                             <div className="w-16 h-16 rounded-3xl bg-white shadow-premium flex items-center justify-center text-slate-200 group-hover:text-primary/40 group-hover:scale-110 transition-all duration-500">
                                 <ImageOff size={32} strokeWidth={1.5} aria-hidden="true" />
                             </div>
-                            <p className="mt-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">No Image Available</p>
+                            <p className="mt-4 text-xs font-black text-slate-400 uppercase tracking-[0.2em]">No Image Available</p>
                         </div>
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                     {/* Category Badge */}
-                    <div className="absolute top-4 right-4 glass px-3 py-1.5 rounded-full text-[10px] font-black tracking-widest text-primary uppercase shadow-lg border border-white/20 backdrop-blur-md flex items-center gap-1.5">
+                    <div className="absolute top-4 right-4 glass px-3 py-1.5 rounded-full text-xs font-black tracking-widest text-primary uppercase shadow-lg border border-white/20 backdrop-blur-md flex items-center gap-1.5">
                         <Sparkles size={10} className="text-accent" />
                         {product.category}
                     </div>
@@ -79,7 +79,7 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                     {/* Premium Price Badge on Image (Visible on Hover) */}
                     <div className="absolute bottom-4 left-4 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-100">
                         <div className="glass px-4 py-2 rounded-2xl shadow-2xl border border-white/30 backdrop-blur-xl">
-                            <p className="text-[10px] font-black text-primary/80 uppercase tracking-tighter mb-0.5">Live Price</p>
+                            <p className="text-xs font-black text-primary/80 uppercase tracking-tighter mb-0.5">Live Price</p>
                             <p className="text-xl font-black text-white tracking-tighter leading-none">
                                 {formatPriceRange(product.price, product.maxPrice)}
                             </p>
@@ -95,8 +95,8 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                                 <AlertTriangle size={16} />
                             </div>
                             <div className="min-w-0">
-                                <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-0.5">Proposed Price</p>
-                                <p className="text-sm font-black text-slate-800 tracking-tighter truncate">
+                                <p className="text-xs font-black text-primary uppercase tracking-widest mb-0.5">Proposed Price</p>
+                                <p className="text-sm font-black text-slate-800 tracking-tighter custom-truncate">
                                     ₦{product.pendingUpdate.price.toLocaleString()}
                                 </p>
                             </div>
@@ -123,17 +123,17 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                             </h3>
                             <div className="flex-shrink-0">
                                 {product.flagged ? (
-                                    <span className="flex items-center gap-1 text-[9px] font-black text-rose-600 bg-rose-50 px-2 py-1 rounded-md border border-rose-100 uppercase tracking-tighter">
+                                    <span className="flex items-center gap-1 text-[11px] font-black text-rose-600 bg-rose-50 px-2 py-1 rounded-md border border-rose-100 uppercase tracking-tighter">
                                         <AlertTriangle size={10} aria-hidden="true" />
                                         Flagged
                                     </span>
                                 ) : product.confidenceLevel === 'High' ? (
-                                    <span className="flex items-center gap-1 text-[9px] font-black text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100 uppercase tracking-tighter">
+                                    <span className="flex items-center gap-1 text-[11px] font-black text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100 uppercase tracking-tighter">
                                         <CheckCircle size={10} aria-hidden="true" />
                                         Verified
                                     </span>
                                 ) : (
-                                    <span className="flex items-center gap-1 text-[9px] font-black text-amber-600 bg-amber-50 px-2 py-1 rounded-md border border-amber-100 uppercase tracking-tighter">
+                                    <span className="flex items-center gap-1 text-[11px] font-black text-amber-600 bg-amber-50 px-2 py-1 rounded-md border border-amber-100 uppercase tracking-tighter">
                                         <Clock size={10} aria-hidden="true" />
                                         Estimate
                                     </span>
@@ -142,13 +142,13 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                         </div>
 
                         {(product.variant || product.size) && (
-                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">
+                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
                                 {product.variant} {product.size && `| ${product.size}`}
                             </p>
                         )}
 
                         {(product.storeId || product.storeLocation) && (
-                            <p className="text-[13px] font-bold text-slate-600 flex items-center gap-2 mb-4">
+                            <p className="text-sm font-bold text-slate-600 flex items-center gap-2 mb-4">
                                 <MapPin size={14} className="text-primary/60" aria-hidden="true" />
                                 <span className="truncate">
                                     {product.storeId ? `${product.storeId.name} (${product.storeId.area})` : product.storeLocation}
@@ -184,13 +184,13 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                     <div className="mt-5 flex items-center justify-between p-3 bg-slate-50 border border-slate-100/80 rounded-2xl group-hover:bg-primary/5 group-hover:border-primary/10 transition-colors duration-500">
                         <div className="flex items-center gap-4">
                             <div className="flex flex-col">
-                                <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Status</span>
+                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Status</span>
                                 <div className="flex items-center gap-1.5">
                                     <div className={`w-1.5 h-1.5 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.1)] ${
                                         product.confidenceLevel === 'High' ? 'bg-emerald-500 shadow-emerald-500/50' :
                                         product.confidenceLevel === 'Medium' ? 'bg-amber-500 shadow-amber-500/50' : 'bg-rose-600 shadow-rose-600/50'
                                     }`} aria-hidden="true" />
-                                    <span className={`text-[10px] font-black uppercase tracking-tight ${
+                                    <span className={`text-[11px] font-black uppercase tracking-tight ${
                                         product.confidenceLevel === 'High' ? 'text-emerald-700' :
                                         product.confidenceLevel === 'Medium' ? 'text-amber-700' : 'text-rose-700'
                                     }`}>
@@ -200,10 +200,10 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                             </div>
                             <div className="w-px h-6 bg-slate-200" />
                             <div className="flex flex-col">
-                                <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Signals</span>
+                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Signals</span>
                                 <div className="flex items-center gap-1.5 text-slate-700">
                                     <Users size={12} className="text-slate-500" aria-hidden="true" />
-                                    <span className="text-[10px] font-black uppercase tracking-tight">
+                                    <span className="text-[11px] font-black uppercase tracking-tight">
                                         {product.reportCount || 0} <span className="text-slate-500 font-bold ml-0.5">Confirmations</span>
                                     </span>
                                 </div>
@@ -212,7 +212,7 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                         {(product.messageCount ?? 0) > 0 && (
                             <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white rounded-xl shadow-premium-sm border border-slate-50" aria-label={`${product.messageCount} messages`}>
                                 <MessageCircle size={12} className="text-primary" aria-hidden="true" />
-                                <span className="text-[10px] font-black text-slate-700">{product.messageCount}</span>
+                                <span className="text-xs font-black text-slate-700">{product.messageCount}</span>
                             </div>
                         )}
                     </div>
@@ -221,7 +221,7 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                     <div className="mt-5 pt-5 border-t border-slate-50 flex items-center justify-between">
                         <div className="flex items-center gap-2">
                             <Clock size={12} className="text-slate-400" aria-hidden="true" />
-                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                            <span className="text-xs font-black text-slate-500 uppercase tracking-widest">
                                 {formatRelativeTime(product.lastUpdated)}
                             </span>
                         </div>
@@ -232,7 +232,7 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                                 window.location.href = `/product/${product._id}?update=true`;
                             }}
                             aria-label={`Update price for ${product.name}`}
-                            className="relative z-20 bg-primary hover:bg-primary-dark group/btn px-4 py-2 rounded-xl text-[10px] font-black text-white uppercase tracking-[0.2em] shadow-glow flex items-center gap-2 transition-all active:scale-95 pointer-events-auto"
+                            className="relative z-20 bg-primary hover:bg-primary-dark group/btn px-4 py-2 rounded-xl text-xs font-black text-white uppercase tracking-[0.2em] shadow-glow flex items-center gap-2 transition-all active:scale-95 pointer-events-auto"
                         >
                             Update Price
                             <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" aria-hidden="true" />

@@ -64,7 +64,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative py-12 md:py-24 px-4 overflow-hidden">
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black mb-6 animate-fade-in uppercase tracking-[0.2em]">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-xs font-black mb-6 animate-fade-in uppercase tracking-[0.2em]">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
@@ -82,19 +82,19 @@ export default function Home() {
           <div className="flex flex-wrap justify-center items-center gap-4 md:gap-8 mb-10 animate-in fade-in slide-in-from-bottom-4 duration-1000">
             <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 rounded-2xl border border-emerald-100/50 shadow-sm transition-all hover:scale-105">
                 <CheckCircle2 size={16} className="text-emerald-500" />
-                <span className="text-xs font-black text-emerald-800 uppercase tracking-tighter">
+                <span className="text-sm font-black text-emerald-800 uppercase tracking-tighter">
                     {stats.updatesToday} Prices Updated Today
                 </span>
             </div>
             <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-2xl border border-blue-100/50 shadow-sm transition-all hover:scale-105">
                 <MapPin size={16} className="text-blue-500" />
-                <span className="text-xs font-black text-blue-800 uppercase tracking-tighter">
+                <span className="text-sm font-black text-blue-800 uppercase tracking-tighter">
                     {stats.marketsTracked} Markets Tracked
                 </span>
             </div>
             <div className="flex items-center gap-2 px-4 py-2 bg-amber-50 rounded-2xl border border-amber-100/50 shadow-sm transition-all hover:scale-105">
                 <Clock size={16} className="text-amber-500" />
-                <span className="text-xs font-black text-amber-800 uppercase tracking-tighter">
+                <span className="text-sm font-black text-amber-800 uppercase tracking-tighter">
                     Last Update: {stats.lastUpdateMins}m ago
                 </span>
             </div>
@@ -106,7 +106,7 @@ export default function Home() {
                 <TrendingUp size={20} />
               </div>
               <div className="text-left">
-                  <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em] group-hover/cta:text-white transition-colors">Seen a different price?</p>
+                  <p className="text-xs font-black text-primary uppercase tracking-[0.3em] group-hover/cta:text-white transition-colors">Seen a different price?</p>
                   <p className="text-sm font-black text-white uppercase tracking-widest leading-none mt-1">UPDATE IT NOW</p>
               </div>
               <ChevronRight size={20} className="text-slate-600 group-hover/cta:text-white group-hover/cta:translate-x-1 transition-all" />
@@ -168,7 +168,7 @@ export default function Home() {
               </div>
               <div>
                 <h2 className="text-2xl font-black text-slate-800 tracking-tight">Verified Hot Deals</h2>
-                <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mt-1">Direct from community Consensus</p>
+                <p className="text-slate-400 text-xs font-black uppercase tracking-[0.2em] mt-1">Direct from community Consensus</p>
               </div>
             </div>
             <div className="h-px bg-slate-100 flex-1 mx-8 mb-2 hidden md:block"></div>
@@ -207,7 +207,7 @@ export default function Home() {
                   </button>
                   <button
                     onClick={() => setMarketCategory('Online')}
-                    className={`flex items-center gap-3 px-8 py-3.5 rounded-[1.5rem] text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-500 ${marketCategory === 'Online'
+                    className={`flex items-center gap-3 px-8 py-3.5 rounded-[1.5rem] text-xs font-black uppercase tracking-[0.2em] transition-all duration-500 ${marketCategory === 'Online'
                       ? 'bg-slate-900 text-white shadow-glow translate-y-[-2px]'
                       : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'
                       }`}
@@ -287,11 +287,11 @@ export default function Home() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                    <AlertCircle size={14} className="text-rose-500" />
-                   <h3 className="text-[10px] font-black text-slate-800 uppercase tracking-[0.2em]">
+                   <h3 className="text-xs font-black text-slate-800 uppercase tracking-[0.2em]">
                       Needs Update
                    </h3>
                 </div>
-                <Link href="/stale-prices" className="text-[9px] font-black text-primary hover:underline uppercase tracking-widest">
+                <Link href="/stale-prices" className="text-xs font-black text-primary hover:underline uppercase tracking-widest">
                   View All
                 </Link>
               </div>
@@ -309,7 +309,7 @@ export default function Home() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="font-bold text-slate-800 text-sm truncate group-hover:text-primary transition-colors">{p.name}</h4>
-                      <div className="flex items-center gap-1.5 text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">
+                      <div className="flex items-center gap-1.5 text-xs font-black text-slate-400 uppercase tracking-widest mt-0.5">
                         <Clock size={10} />
                         Stale Price
                       </div>
@@ -323,7 +323,7 @@ export default function Home() {
           {/* Recently Updated */}
           {recentUpdates.length > 0 && (
             <div className="space-y-6">
-              <h3 className="text-[10px] font-black text-slate-800 uppercase tracking-[0.2em] flex items-center gap-2">
+              <h3 className="text-xs font-black text-slate-800 uppercase tracking-[0.2em] flex items-center gap-2">
                 <Volume2 size={14} className="text-primary" />
                 Live Price Feed
               </h3>
@@ -334,12 +334,12 @@ export default function Home() {
                     <div className="flex-1 min-w-0">
                       <h4 className="font-bold text-slate-700 text-sm truncate group-hover:text-primary transition-colors">{p.name}</h4>
                       <div className="flex items-center gap-2 mt-1">
-                        <p className={`text-[9px] font-black uppercase tracking-widest flex items-center gap-1 ${p.priceStatus === 'down' ? 'text-rose-600' : 'text-emerald-600'}`}>
+                        <p className={`text-xs font-black uppercase tracking-widest flex items-center gap-1 ${p.priceStatus === 'down' ? 'text-rose-600' : 'text-emerald-600'}`}>
                           {p.priceStatus === 'down' ? <TrendingDown size={10} /> : <TrendingUp size={10} />}
                           {p.priceStatus === 'down' ? 'Price Drop' : 'Updated'}
                         </p>
                         <span className="w-1 h-1 rounded-full bg-slate-200" />
-                        <span className="font-black text-slate-900 text-[10px]">{formatPriceRange(p.price)}</span>
+                        <span className="font-black text-slate-900 text-xs">{formatPriceRange(p.price)}</span>
                       </div>
                     </div>
                     <ChevronRight size={14} className="text-slate-200 group-hover:text-primary transition-colors self-center" />
@@ -353,7 +353,7 @@ export default function Home() {
           {leaderboard.length > 0 && (
             <div className="p-6 bg-slate-900 rounded-[32px] shadow-premium border border-slate-800 relative overflow-hidden group/card">
               <div className="absolute -top-12 -right-12 w-32 h-32 bg-primary/10 rounded-full blur-3xl group-hover/card:bg-primary/20 transition-colors" />
-              <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-8 flex items-center gap-2">
+              <h3 className="text-xs font-black text-primary uppercase tracking-[0.3em] mb-8 flex items-center gap-2">
                 <Award size={14} />
                 Top Market Analysts
               </h3>
@@ -368,18 +368,18 @@ export default function Home() {
                         {i + 1}
                       </div>
                       <div>
-                        <p className="text-xs font-black text-white antialiased">{user.name}</p>
-                        <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mt-0.5">{user.reputationLevel}</p>
+                        <p className="text-sm font-black text-white antialiased">{user.name}</p>
+                        <p className="text-xs font-black text-slate-500 uppercase tracking-[0.2em] mt-0.5">{user.reputationLevel}</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-[10px] font-black text-primary">{user.points}</p>
-                      <p className="text-[8px] font-bold text-slate-600 uppercase">PTS</p>
+                      <p className="text-xs font-black text-primary">{user.points}</p>
+                      <p className="text-[10px] font-bold text-slate-600 uppercase">PTS</p>
                     </div>
                   </div>
                 ))}
               </div>
-              <Link href="/leaderboard" className="block text-center mt-8 pt-6 border-t border-slate-800 text-[10px] font-black text-slate-400 hover:text-white transition-colors uppercase tracking-[0.2em]">
+              <Link href="/leaderboard" className="block text-center mt-8 pt-6 border-t border-slate-800 text-xs font-black text-slate-400 hover:text-white transition-colors uppercase tracking-[0.2em]">
                 View Full Rankings
               </Link>
             </div>
@@ -390,7 +390,7 @@ export default function Home() {
       {/* Mobile Floating Action Button */}
       <div className="sm:hidden fixed bottom-32 right-6 z-[60] flex flex-col items-end gap-3">
         <Link href="/stale-prices" className="group">
-          <div className="bg-slate-900 border border-slate-800 text-white text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-xl mb-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+          <div className="bg-slate-900 border border-slate-800 text-white text-xs font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-xl mb-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
             Update Price
           </div>
           <button className="w-16 h-16 bg-primary text-white rounded-full shadow-glow flex items-center justify-center hover:scale-110 active:scale-95 transition-all outline-none ring-4 ring-primary/20">
