@@ -11,16 +11,25 @@ import { escapeRegex } from '@/lib/utils';
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret');
 
+interface UserPayload {
+    id: string;
+    email: string;
+    role: string;
+    name: string;
+}
+
 async function isAdmin() {
-    const token = (await cookies()).get('token')?.value;
+    const cookieStore = await cookies();
+    const token = cookieStore.get('admin_token')?.value || cookieStore.get('user_token')?.value;
     if (!token) {
         console.log('[isAdmin] No token found in cookies');
         return false;
     }
     try {
         const { payload } = await jwtVerify(token, JWT_SECRET);
-        if (payload.role !== 'admin') {
-            console.log(`[isAdmin] Role mismatch: ${payload.role}`);
+        const user = payload as unknown as UserPayload;
+        if (user.role !== 'admin') {
+            console.log(`[isAdmin] Role mismatch: ${user.role}`);
             return false;
         }
         return true;

@@ -9,12 +9,19 @@ import { jwtVerify } from 'jose';
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret');
 
-async function getUser() {
-    const token = (await cookies()).get('token')?.value;
+interface UserPayload {
+    id: string;
+    email: string;
+    role: string;
+    name: string;
+}
+
+async function getUser(): Promise<UserPayload | null> {
+    const token = (await cookies()).get('user_token')?.value || (await cookies()).get('admin_token')?.value;
     if (!token) return null;
     try {
         const { payload } = await jwtVerify(token, JWT_SECRET);
-        return payload;
+        return payload as unknown as UserPayload;
     } catch (error) {
         return null;
     }
@@ -39,7 +46,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         await connectDB();
         const body = await req.json();
         const { updateId } = body;
-        console.log(`[Confirm API] UpdateID: ${updateId}, UserID: ${userPayload.userId}`);
+        console.log(`[Confirm API] UpdateID: ${updateId}, UserID: ${userPayload.id}`);
 
         if (!updateId) {
             return NextResponse.json({ error: 'Update ID is required' }, { status: 400 });
@@ -58,7 +65,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         }
 
         // Check if user already confirmed or is the original submitter
-        const currentUserIdStr = userPayload.userId.toString();
+        const currentUserIdStr = userPayload.id.toString();
         const submitterIdStr = update.userId?.toString();
 
         if (submitterIdStr === currentUserIdStr) {
