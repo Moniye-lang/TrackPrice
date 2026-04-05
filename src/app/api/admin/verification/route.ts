@@ -3,42 +3,20 @@ import connectDB from '@/lib/db';
 import User from '@/models/User';
 import Product from '@/models/Product';
 import PriceUpdate from '@/models/PriceUpdate';
-import { cookies } from 'next/headers';
-import { verifyToken } from '@/lib/auth';
-
-async function getAdminFromToken() {
-    const token = (await cookies()).get('token')?.value;
-    if (!token) return null;
-    try {
-        return verifyToken(token);
-    } catch {
-        return null;
-    }
-}
+import { isServerAdmin, getServerUser } from '@/lib/server-auth';
 
 // GET all flagged products and pending updates for admin queue
 export async function GET() {
     try {
-        const decodedToken = await getAdminFromToken();
-        const userId = (decodedToken as any)?.id;
-
-        console.log('[Admin Auth Check]', {
-            hasToken: !!decodedToken,
-            userId,
-            expectedRole: 'admin'
-        });
-
-        if (!decodedToken || typeof userId !== 'string') {
+        if (!(await isServerAdmin())) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
+        const user = await getServerUser();
+        const userId = user?.id;
+
         await connectDB();
         const adminUser = await User.findById(userId);
-
-        console.log('[Admin Auth DB Result]', {
-            userFound: !!adminUser,
-            dbRole: adminUser?.role
-        });
 
         if (!adminUser || adminUser.role !== 'admin') {
             return NextResponse.json({ error: 'Forbidden. Admin access required.' }, { status: 403 });

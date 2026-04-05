@@ -4,21 +4,10 @@ import connectDB from '@/lib/db';
 import Product from '@/models/Product';
 import PriceUpdate from '@/models/PriceUpdate';
 import Message from '@/models/Message';
-import { verifyToken } from '@/lib/auth';
-
-async function isAdmin() {
-    const token = (await cookies()).get('token')?.value;
-    if (!token) return false;
-    try {
-        const payload: any = verifyToken(token);
-        return payload?.role === 'admin';
-    } catch (error) {
-        return false;
-    }
-}
+import { isServerAdmin } from '@/lib/server-auth';
 
 export async function POST(req: Request) {
-    if (!(await isAdmin())) {
+    if (!(await isServerAdmin())) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

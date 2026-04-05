@@ -2,29 +2,18 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import User from '@/models/User';
 import AuditLog from '@/models/AuditLog';
-import { verifyToken } from '@/lib/auth';
-import { cookies } from 'next/headers';
-
-async function getAdminFromToken() {
-    const token = (await cookies()).get('token')?.value;
-    if (!token) return null;
-    try {
-        return verifyToken(token);
-    } catch {
-        return null;
-    }
-}
+import { isServerAdmin, getServerUser } from '@/lib/server-auth';
 
 // PUT to update a specific user (Admin ONLY)
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
-        const decodedToken = await getAdminFromToken();
-        if (!decodedToken || typeof (decodedToken as any).id !== 'string') {
+        if (!(await isServerAdmin())) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
         await connectDB();
-        const adminUser = await User.findById((decodedToken as any).id);
+        const user = await getServerUser();
+        const adminUser = await User.findById(user?.id);
 
         if (!adminUser || adminUser.role !== 'admin') {
             return NextResponse.json({ error: 'Forbidden. Admin access required.' }, { status: 403 });

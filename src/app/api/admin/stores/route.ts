@@ -1,18 +1,13 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import Store from '@/models/Store';
-import { cookies } from 'next/headers';
-import { verifyToken } from '@/lib/auth';
-
-async function isAdmin() {
-    const token = (await cookies()).get('admin_token')?.value;
-    if (!token) return false;
-    const decoded = verifyToken(token);
-    return !!decoded && (decoded as any).role === 'admin';
-}
+import { isServerAdmin } from '@/lib/server-auth';
 
 export async function GET() {
     try {
+        if (!(await isServerAdmin())) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
         await connectDB();
         const stores = await Store.find().sort({ name: 1 });
         return NextResponse.json(stores);
@@ -22,7 +17,7 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-    if (!(await isAdmin())) {
+    if (!(await isServerAdmin())) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -46,7 +41,7 @@ export async function POST(req: Request) {
 }
 
 export async function PUT(req: Request) {
-    if (!(await isAdmin())) {
+    if (!(await isServerAdmin())) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -65,7 +60,7 @@ export async function PUT(req: Request) {
 }
 
 export async function DELETE(req: Request) {
-    if (!(await isAdmin())) {
+    if (!(await isServerAdmin())) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

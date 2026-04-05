@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import Product from '@/models/Product';
-import { cookies } from 'next/headers';
-import { verifyToken } from '@/lib/auth';
+import { isServerAdmin, getServerUser } from '@/lib/server-auth';
 import User from '@/models/User';
 
 export async function POST(
@@ -11,14 +10,15 @@ export async function POST(
 ) {
     try {
         const { id } = await params;
-        const token = (await cookies()).get('token')?.value;
-        if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-        const decoded = verifyToken(token);
-        if (!decoded) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        
+        if (!(await isServerAdmin())) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
 
         await connectDB();
-        const adminUser = await User.findById((decoded as any).id);
+        const user = await getServerUser();
+        const adminUser = await User.findById(user?.id);
+        
         if (!adminUser || adminUser.role !== 'admin') {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
         }
