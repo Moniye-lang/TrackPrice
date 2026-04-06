@@ -28,13 +28,13 @@ export async function GET() {
             .limit(5)
             .select('name reportCount price');
 
-        // 2. High Dispute Products (Lots of reports but low confidence OR flagged)
+        // 2. High Dispute Products (Lots of reports OR flagged)
         const disputeProducts = await Product.find({
             $or: [
                 { flagged: true },
-                { reportCount: { $gt: 5 }, confidenceLevel: 'Low' }
+                { reportCount: { $gt: 5 } }
             ]
-        }).limit(5).select('name price flagged confidenceLevel reportCount');
+        }).limit(5).select('name price flagged reportCount');
 
         // 3. Top Contributors
         const topContributors = await User.find({ role: 'user' })
@@ -42,22 +42,6 @@ export async function GET() {
             .limit(5)
             .select('name email points reputationLevel');
 
-        // 4. Confidence Level Distributions (for Pie Chart)
-        const confidenceDist = await Product.aggregate([
-            {
-                $group: {
-                    _id: '$confidenceLevel',
-                    count: { $sum: 1 }
-                }
-            }
-        ]);
-
-        const formattedConfidenceDist = {
-            High: 0, Medium: 0, Low: 0
-        };
-        confidenceDist.forEach(level => {
-            if (level._id) formattedConfidenceDist[level._id as 'High' | 'Medium' | 'Low'] = level.count;
-        });
 
         // 5. Price Conflicts (>50% difference from current price)
         const pendingUpdatesWithProducts = await PriceUpdate.find({ status: 'pending' })
@@ -101,7 +85,6 @@ export async function GET() {
             disputeProducts,
             priceConflicts,
             topContributors,
-            confidenceDistribution: formattedConfidenceDist,
             stats: {
                 totalUsers,
                 newUsersThisWeek,

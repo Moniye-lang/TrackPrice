@@ -62,7 +62,6 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             if (update.maxPrice) product.maxPrice = update.maxPrice;
             product.lastUpdated = new Date();
             product.lastUpdatedBy = 'Community Vouch';
-            product.confidenceLevel = 'Medium';
             
             await product.save();
             

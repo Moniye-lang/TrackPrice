@@ -15,7 +15,6 @@ export interface IProduct extends Document {
     storeLocation?: string; // Kept for transition/migration
     imageUrl: string;
     reportCount: number;
-    confidenceLevel: 'Low' | 'Medium' | 'High';
     flagged: boolean;
     updateRequested: boolean;
     priceHistory: Array<{ price: number, maxPrice?: number, verifiedAt: Date }>;
@@ -39,7 +38,6 @@ const ProductSchema: Schema = new Schema(
         storeLocation: { type: String },
         imageUrl: { type: String, required: true },
         reportCount: { type: Number, default: 0 },
-        confidenceLevel: { type: String, enum: ['Low', 'Medium', 'High'], default: 'Low' },
         flagged: { type: Boolean, default: false },
         isFeatured: { type: Boolean, default: false },
         updateRequested: { type: Boolean, default: false },

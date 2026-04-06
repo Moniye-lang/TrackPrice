@@ -30,7 +30,6 @@ interface Product {
     };
     storeLocation?: string;
     imageUrl: string;
-    confidenceLevel: string;
     reportCount: number;
     lastUpdated: string;
     isFeatured?: boolean;
@@ -358,20 +357,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                         {product.priceStatus === 'up' && <TrendingUp size={32} className="text-emerald-600 animate-bounce-subtle" />}
                                     </div>
                                     <div className="flex gap-2">
-                                        {product.flagged ? (
+                                        {product.flagged && (
                                             <span className="flex items-center gap-1.5 text-[10px] font-black text-rose-500 bg-rose-50 px-3 py-1.5 rounded-full border border-rose-100 uppercase tracking-widest">
                                                 <AlertTriangle size={12} />
                                                 Flagged
-                                            </span>
-                                        ) : product.confidenceLevel === 'High' ? (
-                                            <span className="flex items-center gap-1.5 text-[10px] font-black text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-100 uppercase tracking-widest">
-                                                <Check size={12} />
-                                                Verified
-                                            </span>
-                                        ) : (
-                                            <span className="flex items-center gap-1.5 text-[10px] font-black text-amber-500 bg-amber-50 px-3 py-1.5 rounded-full border border-amber-100 uppercase tracking-widest">
-                                                <Clock size={12} />
-                                                Estimate
                                             </span>
                                         )}
                                     </div>
@@ -390,12 +379,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                 )}
 
                                 <div className="flex items-center gap-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-8">
-                                    <div className="flex items-center gap-2">
-                                        <div className={`w-2 h-2 rounded-full ${product.confidenceLevel === 'High' ? 'bg-emerald-500' :
-                                            product.confidenceLevel === 'Medium' ? 'bg-amber-500' : 'bg-rose-500'
-                                            }`} />
-                                        {product.confidenceLevel || 'Low'} Consensus
-                                    </div>
                                     <div className="flex items-center gap-2">
                                         <Users size={14} aria-hidden="true" />
                                         {product.reportCount || 0} Reports

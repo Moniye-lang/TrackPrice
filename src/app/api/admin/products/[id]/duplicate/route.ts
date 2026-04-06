@@ -35,7 +35,6 @@ export async function POST(
             ...productData,
             name: `${productData.name} (Copy)`,
             reportCount: 0,
-            confidenceLevel: 'Low',
             flagged: false,
             updateRequested: false,
             priceHistory: [{

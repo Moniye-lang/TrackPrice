@@ -105,7 +105,6 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             product.flagged = false;
             product.lastUpdated = new Date();
             product.lastUpdatedBy = 'Community Consensus';
-            product.confidenceLevel = (totalWeight >= 15 ? 'High' : totalWeight >= 5 ? 'Medium' : 'Low') as any;
             
             console.log(`[Confirm API] Saving product: ${product.name}`);
             await product.save();

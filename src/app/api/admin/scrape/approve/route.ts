@@ -46,7 +46,6 @@ export async function POST(req: Request) {
                     imageUrl: item.imageUrl || `https://placehold.co/600x400?text=${encodeURIComponent(item.name)}`,
                     storeLocation: location || undefined,
                     reportCount: 0,
-                    confidenceLevel: 'Low',
                     priceHistory: [{
                         price: item.price,
                         verifiedAt: new Date()

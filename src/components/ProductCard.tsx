@@ -25,7 +25,6 @@ interface ProductCardProps {
         };
         storeLocation?: string;
         lastUpdated: string;
-        confidenceLevel?: 'Low' | 'Medium' | 'High';
         reportCount?: number;
         messageCount?: number;
         flagged?: boolean;
@@ -125,20 +124,10 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                                 {product.name}
                             </h3>
                             <div className="flex-shrink-0">
-                                {product.flagged ? (
+                                {product.flagged && (
                                     <span className="flex items-center gap-1 text-[11px] font-black text-rose-600 bg-rose-50 px-2 py-1 rounded-md border border-rose-100 uppercase tracking-tighter">
                                         <AlertTriangle size={10} aria-hidden="true" />
                                         Flagged
-                                    </span>
-                                ) : product.confidenceLevel === 'High' ? (
-                                    <span className="flex items-center gap-1 text-[11px] font-black text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100 uppercase tracking-tighter">
-                                        <CheckCircle size={10} aria-hidden="true" />
-                                        Verified
-                                    </span>
-                                ) : (
-                                    <span className="flex items-center gap-1 text-[11px] font-black text-amber-600 bg-amber-50 px-2 py-1 rounded-md border border-amber-100 uppercase tracking-tighter">
-                                        <Clock size={10} aria-hidden="true" />
-                                        Estimate
                                     </span>
                                 )}
                             </div>
@@ -186,22 +175,6 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                     {/* Trust Indicators Bar */}
                     <div className="mt-5 flex items-center justify-between p-3 bg-slate-50 border border-slate-100/80 rounded-2xl group-hover:bg-primary/5 group-hover:border-primary/10 transition-colors duration-500">
                         <div className="flex items-center gap-4">
-                            <div className="flex flex-col">
-                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Status</span>
-                                <div className="flex items-center gap-1.5">
-                                    <div className={`w-1.5 h-1.5 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.1)] ${
-                                        product.confidenceLevel === 'High' ? 'bg-emerald-500 shadow-emerald-500/50' :
-                                        product.confidenceLevel === 'Medium' ? 'bg-amber-500 shadow-amber-500/50' : 'bg-rose-600 shadow-rose-600/50'
-                                    }`} aria-hidden="true" />
-                                    <span className={`text-[11px] font-black uppercase tracking-tight ${
-                                        product.confidenceLevel === 'High' ? 'text-emerald-700' :
-                                        product.confidenceLevel === 'Medium' ? 'text-amber-700' : 'text-rose-700'
-                                    }`}>
-                                        {product.confidenceLevel === 'High' ? 'Verified' : product.confidenceLevel || 'Low'}
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="w-px h-6 bg-slate-200" />
                             <div className="flex flex-col">
                                 <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Signals</span>
                                 <div className="flex items-center gap-1.5 text-slate-700">

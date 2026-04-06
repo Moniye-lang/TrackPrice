@@ -46,7 +46,6 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         product.flagged = false;
         product.updateRequested = false;
         product.lastUpdated = new Date();
-        product.confidenceLevel = 'High'; // Manually approved by admin is High
         await product.save();
 
         update.status = 'verified';

@@ -126,44 +126,7 @@ export default function AdminDashboard() {
                 <StatCard title="Queue Status" value={stats.stats.pendingUpdates} icon={ShieldCheck} color="amber" />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Confidence Distribution */}
-                <Card className="p-8 lg:col-span-2 bg-white border-none shadow-premium relative overflow-hidden">
-                    <div className="flex items-center justify-between mb-10">
-                        <div className="flex items-center gap-3">
-                            <div className="p-3 rounded-xl bg-primary/10 text-primary">
-                                <BarChart3 size={20} />
-                            </div>
-                            <h2 className="text-xl font-black text-slate-900 uppercase tracking-tight">Data Quality</h2>
-                        </div>
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Confidence Index</span>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center bg-slate-50/50 p-6 rounded-3xl border border-slate-100/50">
-                        <div className="space-y-2">
-                             <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">High</p>
-                             <div className="text-3xl font-black text-slate-800">{stats.confidenceDistribution.High || 0}</div>
-                             <div className="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
-                                <div className="bg-emerald-500 h-full rounded-full transition-all duration-1000" style={{ width: `${((stats.confidenceDistribution.High || 0) / stats.stats.totalProducts) * 100}%` }}></div>
-                             </div>
-                        </div>
-                        <div className="space-y-2">
-                             <p className="text-[10px] font-black text-amber-500 uppercase tracking-widest">Medium</p>
-                             <div className="text-3xl font-black text-slate-800">{stats.confidenceDistribution.Medium || 0}</div>
-                             <div className="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
-                                <div className="bg-amber-500 h-full rounded-full transition-all duration-1000" style={{ width: `${((stats.confidenceDistribution.Medium || 0) / stats.stats.totalProducts) * 100}%` }}></div>
-                             </div>
-                        </div>
-                        <div className="space-y-2">
-                             <p className="text-[10px] font-black text-rose-500 uppercase tracking-widest">Low</p>
-                             <div className="text-3xl font-black text-slate-800">{stats.confidenceDistribution.Low || 0}</div>
-                             <div className="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
-                                <div className="bg-rose-500 h-full rounded-full transition-all duration-1000" style={{ width: `${((stats.confidenceDistribution.Low || 0) / stats.stats.totalProducts) * 100}%` }}></div>
-                             </div>
-                        </div>
-                    </div>
-                </Card>
-
+            <div className="grid grid-cols-1 gap-8">
                 {/* Top Contributors */}
                 <Card className="p-8 bg-white border-none shadow-premium overflow-hidden flex flex-col">
                     <h2 className="text-xl font-black text-slate-900 uppercase tracking-tight mb-8">Elite Scouts</h2>

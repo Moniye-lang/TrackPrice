@@ -50,7 +50,6 @@ export async function POST() {
                 category: 'Groceries',
                 storeId: createdStores[0]._id,
                 imageUrl: 'https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?auto=format&fit=crop&q=80&w=800',
-                confidenceLevel: 'High',
                 reportCount: 25
             },
             {
@@ -62,7 +61,6 @@ export async function POST() {
                 category: 'Groceries',
                 storeId: createdStores[2]._id,
                 imageUrl: 'https://images.unsplash.com/photo-1581441300259-4b87edddce73?auto=format&fit=crop&q=80&w=800',
-                confidenceLevel: 'Medium',
                 reportCount: 8
             },
             {
@@ -75,7 +73,6 @@ export async function POST() {
                 category: 'Groceries',
                 storeId: createdStores[1]._id,
                 imageUrl: 'https://images.unsplash.com/photo-1550586671-f71ee15db01f?auto=format&fit=crop&q=80&w=800',
-                confidenceLevel: 'High',
                 reportCount: 42
             }
         ];
