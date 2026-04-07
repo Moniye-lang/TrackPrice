@@ -9,7 +9,7 @@ import { formatRelativeTime } from '@/lib/utils';
 import Link from 'next/link';
 import { use } from 'react';
 import { formatPriceRange } from '@/lib/price-utils';
-import { MapPin, Users, MessageCircle, Check, X, Send, History, TrendingDown, TrendingUp, Sparkles, Clock, ArrowLeft, ExternalLink, AlertTriangle, ChevronRight, CornerDownRight, ImageOff } from 'lucide-react';
+import { MapPin, Users, MessageCircle, Check, X, Send, History, TrendingDown, TrendingUp, Sparkles, Clock, ArrowLeft, ExternalLink, AlertTriangle, ChevronRight, CornerDownRight } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useProduct } from '@/hooks/useHomeData';
 
@@ -76,6 +76,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     const product = data?.product || null;
     const messages = data?.messages || [];
     
+    const [imgError, setImgError] = useState(false);
     const [content, setContent] = useState('');
     const [posting, setPosting] = useState(false);
     const [error, setError] = useState('');
@@ -310,20 +311,21 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
                     <Card className="sticky top-24 p-0 overflow-hidden border-none shadow-premium bg-white/40 glass">
                         <div className="relative h-72 w-full overflow-hidden bg-slate-50">
-                            {product.imageUrl && product.imageUrl.length > 5 ? (
+                            {product.imageUrl && product.imageUrl.length > 5 && !imgError && !product.imageUrl.includes('placehold.co') ? (
                                 <Image
                                     src={product.imageUrl}
                                     alt={product.name}
                                     fill
                                     priority
+                                    onError={() => setImgError(true)}
                                     className="object-cover transition-transform duration-700 hover:scale-110"
                                 />
                             ) : (
                                 <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100/50">
-                                    <div className="w-16 h-16 rounded-3xl bg-white shadow-premium flex items-center justify-center text-slate-200">
-                                        <ImageOff size={32} strokeWidth={1.5} />
+                                    <div className="w-20 h-20 rounded-full bg-white shadow-premium flex items-center justify-center">
+                                        <span className="text-4xl" aria-hidden="true">📦</span>
                                     </div>
-                                    <p className="mt-4 text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">No Image Available</p>
+                                    <p className="mt-3 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{product.category}</p>
                                 </div>
                             )}
                             <div className="absolute top-4 right-4 glass px-3 py-1.5 rounded-full text-[10px] font-black tracking-widest text-primary uppercase shadow-sm border border-white/20 flex items-center gap-1.5">
@@ -367,13 +369,13 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                 </div>
 
                                 {(product.storeId || product.storeLocation) && (
-                                    <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-6">
-                                        <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-2 flex items-center gap-2">
+                                    <div className="bg-primary/5 p-4 rounded-2xl border border-primary/10 mb-6">
+                                        <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-2 flex items-center gap-2">
                                             <MapPin size={12} aria-hidden="true" />
                                             Store Location
                                         </p>
-                                        <p className="text-sm font-bold text-slate-700">
-                                            {product.storeId ? `${product.storeId.name} (${product.storeId.area}, ${product.storeId.city})` : product.storeLocation}
+                                        <p className="text-sm font-black text-slate-800">
+                                            {product.storeId ? `${product.storeId.name} • ${product.storeId.area}, ${product.storeId.city}` : product.storeLocation}
                                         </p>
                                     </div>
                                 )}
@@ -381,7 +383,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                 <div className="flex items-center gap-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-8">
                                     <div className="flex items-center gap-2">
                                         <Users size={14} aria-hidden="true" />
-                                        {product.reportCount || 0} Reports
+                                        {(product.reportCount || 0) > 0
+                                            ? <><span className="text-slate-800">{product.reportCount}</span> Confirmations</>
+                                            : <span className="text-primary/60">Be the first to confirm</span>
+                                        }
                                     </div>
                                 </div>
 

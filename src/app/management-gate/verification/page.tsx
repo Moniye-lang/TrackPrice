@@ -50,6 +50,16 @@ import {
 
 import { useAdminQueue, useAdminAction } from '@/hooks/useAdmin';
 
+function SafeProductImg({ imageUrl, name }: { imageUrl?: string; name?: string }) {
+    const [err, setErr] = useState(false);
+    const valid = imageUrl && imageUrl.length > 5 && !err && !imageUrl.includes('placehold.co');
+    return valid ? (
+        <Image src={imageUrl!} alt={name || 'Product'} fill sizes="80px" className="object-cover" onError={() => setErr(true)} />
+    ) : (
+        <span className="text-3xl" aria-hidden="true">📦</span>
+    );
+}
+
 export default function AdminVerificationQueue() {
     const { data: updates = [], isLoading: loading, refetch } = useAdminQueue();
     const actionMutation = useAdminAction();
@@ -133,8 +143,8 @@ export default function AdminVerificationQueue() {
                                     {/* Left: Product & Submitter */}
                                     <div className="p-8 xl:w-2/5 space-y-8">
                                         <div className="flex items-center gap-6">
-                                            <div className="w-20 h-20 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 flex-shrink-0 shadow-sm relative group-hover:scale-105 transition-transform duration-500">
-                                                <Image src={update.product?.imageUrl} alt={update.product?.name || 'Product Image'} fill sizes="80px" className="object-cover" />
+                                            <div className="w-20 h-20 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 flex-shrink-0 shadow-sm relative flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+                                                <SafeProductImg imageUrl={update.product?.imageUrl} name={update.product?.name} />
                                             </div>
                                             <div>
                                                 <div className="flex items-center gap-2 mb-1">

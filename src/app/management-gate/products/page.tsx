@@ -41,6 +41,16 @@ import {
 } from 'lucide-react';
 import { useAdminProducts } from '@/hooks/useAdmin';
 
+function SafeProductImg({ imageUrl, name, sizes }: { imageUrl: string; name: string; sizes: string }) {
+    const [err, setErr] = useState(false);
+    const valid = imageUrl && imageUrl.length > 5 && !err && !imageUrl.includes('placehold.co');
+    return valid ? (
+        <Image src={imageUrl} alt={name} fill sizes={sizes} className="object-cover" onError={() => setErr(true)} />
+    ) : (
+        <span className="text-2xl" aria-hidden="true">📦</span>
+    );
+}
+
 export default function AdminProducts() {
     const searchParams = useSearchParams();
     const { data: productsData = [], isLoading: loading, refetch } = useAdminProducts();
@@ -347,8 +357,8 @@ export default function AdminProducts() {
                         {filteredProducts.map((product) => (
                             <Card key={product._id} className="p-5 border-none shadow-premium bg-white rounded-3xl group relative">
                                 <div className="flex gap-4">
-                                    <div className="w-20 h-20 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 flex-shrink-0 shadow-sm relative">
-                                        <Image src={product.imageUrl} alt={product.name} fill sizes="80px" className="object-cover" />
+                                    <div className="w-20 h-20 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 flex-shrink-0 shadow-sm relative flex items-center justify-center">
+                                        <SafeProductImg imageUrl={product.imageUrl} name={product.name} sizes="80px" />
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className="flex justify-between items-start">
@@ -429,8 +439,8 @@ export default function AdminProducts() {
                                         <tr key={product._id} className="border-b border-slate-50 group hover:bg-slate-50/30 transition-all">
                                             <td className="py-6 px-8">
                                                 <div className="flex items-center gap-6">
-                                                    <div className="w-16 h-16 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 flex-shrink-0 shadow-sm relative group-hover:scale-105 transition-transform duration-500">
-                                                        <Image src={product.imageUrl} alt={product.name} fill sizes="64px" className="object-cover" />
+                                                    <div className="w-16 h-16 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 flex-shrink-0 shadow-sm relative flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+                                                        <SafeProductImg imageUrl={product.imageUrl} name={product.name} sizes="64px" />
                                                     </div>
                                                     <div>
                                                         <p className="font-black text-slate-900 text-sm tracking-tight leading-tight mb-1">{product.name}</p>

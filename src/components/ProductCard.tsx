@@ -64,16 +64,34 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                         />
                     ) : (
                         <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100/50">
-                            <div className="w-16 h-16 rounded-3xl bg-white shadow-premium flex items-center justify-center text-slate-200 group-hover:text-primary/40 group-hover:scale-110 transition-all duration-500">
-                                <ImageOff size={32} strokeWidth={1.5} aria-hidden="true" />
+                            <div className="w-20 h-20 rounded-full bg-white shadow-premium flex items-center justify-center text-slate-300 group-hover:text-primary/40 group-hover:scale-110 transition-all duration-500">
+                                <span className="text-4xl" aria-hidden="true">📦</span>
                             </div>
-                            <p className="mt-4 text-xs font-black text-slate-400 uppercase tracking-[0.2em]">No Image Available</p>
                         </div>
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
+                    {/* Price Trend & Important Tags (Top Left) */}
+                    <div className="absolute top-4 left-4 flex flex-col gap-2 z-20">
+                        {product.priceStatus === 'up' && (
+                            <div className="glass px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest text-[#991b1b] bg-rose-50/90 shadow-sm border border-rose-200 backdrop-blur-md flex items-center gap-1">
+                                <TrendingUp size={10} strokeWidth={3} /> ↑ UP
+                            </div>
+                        )}
+                        {product.priceStatus === 'down' && (
+                            <div className="glass px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest text-[#065f46] bg-emerald-50/90 shadow-sm border border-emerald-200 backdrop-blur-md flex items-center gap-1">
+                                <TrendingDown size={10} strokeWidth={3} /> ↓ DROP
+                            </div>
+                        )}
+                        {priority && (
+                            <div className="glass px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest text-amber-700 bg-amber-50/90 shadow-sm border border-amber-200 backdrop-blur-md flex items-center gap-1">
+                                <Sparkles size={10} /> POPULAR
+                            </div>
+                        )}
+                    </div>
+
                     {/* Category Badge */}
-                    <div className="absolute top-4 right-4 glass px-3 py-1.5 rounded-full text-xs font-black tracking-widest text-primary uppercase shadow-lg border border-white/20 backdrop-blur-md flex items-center gap-1.5">
+                    <div className="absolute top-4 right-4 glass px-3 py-1.5 rounded-full text-xs font-black tracking-widest text-primary uppercase shadow-lg border border-white/20 backdrop-blur-md flex items-center gap-1.5 z-20">
                         <Sparkles size={10} className="text-accent" />
                         {product.category}
                     </div>
@@ -140,12 +158,12 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                         )}
 
                         {(product.storeId || product.storeLocation) && (
-                            <p className="text-sm font-bold text-slate-600 flex items-center gap-2 mb-4">
-                                <MapPin size={14} className="text-primary/60" aria-hidden="true" />
-                                <span className="truncate">
-                                    {product.storeId ? `${product.storeId.name} (${product.storeId.area})` : product.storeLocation}
-                                </span>
-                            </p>
+                            <div className="inline-flex self-start items-center gap-1.5 mb-4 bg-slate-100/50 px-2 py-1 rounded border border-slate-200">
+                                <MapPin size={12} className="text-primary" aria-hidden="true" />
+                                <p className="text-[11px] font-black text-slate-800 uppercase tracking-wide truncate max-w-[200px]">
+                                    {product.storeId ? `${product.storeId.name} • ${product.storeId.area}` : product.storeLocation}
+                                </p>
+                            </div>
                         )}
 
                         <div className="flex items-center gap-3 mt-4">
@@ -177,12 +195,21 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                         <div className="flex items-center gap-4">
                             <div className="flex flex-col">
                                 <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Signals</span>
-                                <div className="flex items-center gap-1.5 text-slate-700">
-                                    <Users size={12} className="text-slate-500" aria-hidden="true" />
-                                    <span className="text-[11px] font-black uppercase tracking-tight">
-                                        {product.reportCount || 0} <span className="text-slate-500 font-bold ml-0.5">Confirmations</span>
-                                    </span>
-                                </div>
+                                {(product.reportCount || 0) > 0 ? (
+                                    <div className="flex items-center gap-1.5 text-slate-700">
+                                        <Users size={12} className="text-slate-500" aria-hidden="true" />
+                                        <span className="text-[11px] font-black uppercase tracking-tight">
+                                            {product.reportCount} <span className="text-slate-500 font-bold ml-0.5">Confirmations</span>
+                                        </span>
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center gap-1.5 text-slate-500">
+                                        <Sparkles size={12} className="text-accent" aria-hidden="true" />
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                            Be the first to confirm
+                                        </span>
+                                    </div>
+                                )}
                             </div>
                         </div>
                         {(product.messageCount ?? 0) > 0 && (

@@ -8,6 +8,17 @@ import { Navbar } from '@/components/Navbar';
 import { Input, Button } from '@/components/ui-base';
 import { formatPriceRange } from '@/lib/price-utils';
 import { TrendingUp, TrendingDown, Clock, Search, Award, Sparkles, ChevronRight, AlertCircle, Volume2, MapPin, BarChart3, CheckCircle2, Plus, Zap, Globe } from 'lucide-react';
+
+// Safe image component that falls back to icon on error or placeholder URLs
+function SafeProductThumb({ imageUrl, name }: { imageUrl: string; name: string }) {
+  const [imgError, setImgError] = useState(false);
+  const isValid = imageUrl && imageUrl.length > 5 && !imgError && !imageUrl.includes('placehold.co');
+  return isValid ? (
+    <Image src={imageUrl} alt={name} fill sizes="48px" className="object-cover group-hover:scale-110 transition-transform duration-500" onError={() => setImgError(true)} />
+  ) : (
+    <span className="text-2xl" aria-hidden="true">📦</span>
+  );
+}
 import { formatRelativeTime } from '@/lib/utils';
 import { useHomeData, useProducts } from '@/hooks/useHomeData';
 
@@ -298,14 +309,8 @@ export default function Home() {
               <div className="space-y-4">
                 {staleProducts.map((p: any) => (
                   <Link key={p._id} href={`/product/${p._id}`} className="flex items-center gap-4 group">
-                    <div className="w-12 h-12 rounded-2xl overflow-hidden bg-slate-100 flex-shrink-0 border border-slate-100 relative">
-                      <Image 
-                        src={p.imageUrl} 
-                        alt={p.name} 
-                        fill
-                        sizes="48px"
-                        className="object-cover group-hover:scale-110 transition-transform duration-500" 
-                      />
+                    <div className="w-12 h-12 rounded-2xl overflow-hidden bg-slate-50 flex-shrink-0 border border-slate-100 relative flex items-center justify-center">
+                      <SafeProductThumb imageUrl={p.imageUrl} name={p.name} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="font-bold text-slate-800 text-sm truncate group-hover:text-primary transition-colors">{p.name}</h4>
