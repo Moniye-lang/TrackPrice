@@ -54,10 +54,7 @@ export function Navbar() {
 
                         {/* Actions */}
                         <div className="flex items-center gap-3">
-                            <Link href="/add-product" className="flex items-center gap-2 bg-slate-900 hover:bg-black text-white px-5 py-2.5 rounded-xl transition-all duration-500 group/btn2 shadow-premium-sm border border-slate-800">
-                                <Plus size={16} className="group-hover/btn2:rotate-90 transition-transform" />
-                                <span className="text-xs font-black uppercase tracking-[0.1em]">Add Product</span>
-                            </Link>
+                         
 
                             <Link href="/stale-prices" className="flex items-center gap-2 bg-primary/5 hover:bg-primary text-primary hover:text-white px-5 py-2.5 rounded-xl border border-primary/20 transition-all duration-500 group/btn shadow-glow-sm">
                                 <TrendingUp size={16} className="group-hover/btn:scale-110 transition-transform" />
