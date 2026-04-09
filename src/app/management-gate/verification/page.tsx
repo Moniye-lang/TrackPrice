@@ -52,7 +52,7 @@ import { useAdminQueue, useAdminAction } from '@/hooks/useAdmin';
 
 function SafeProductImg({ imageUrl, name }: { imageUrl?: string; name?: string }) {
     const [err, setErr] = useState(false);
-    const valid = imageUrl && imageUrl.length > 5 && !err && !imageUrl.includes('placehold.co');
+    const valid = imageUrl && imageUrl.length > 5 && !err;
     return valid ? (
         <Image src={imageUrl!} alt={name || 'Product'} fill sizes="80px" className="object-cover" onError={() => setErr(true)} />
     ) : (

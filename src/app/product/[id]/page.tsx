@@ -89,7 +89,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     // Update price (propose a new price)
     const [showUpdateForm, setShowUpdateForm] = useState(false);
     const [newPrice, setNewPrice] = useState('');
-    const [suggestionLocation, setSuggestionLocation] = useState('');
     const [updatingPrice, setUpdatingPrice] = useState(false);
     const [updateMsg, setUpdateMsg] = useState('');
 
@@ -188,8 +187,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    price: newPrice,
-                    storeLocation: suggestionLocation
+                    price: newPrice
                 }),
             });
             const data = await res.json();
@@ -199,7 +197,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 setFeedbackMessage(`Legendary! Your update will help countless people find the best prices. ✨`);
                 setTimeout(() => setFeedbackMessage(null), 6000);
                 setNewPrice('');
-                setSuggestionLocation('');
                 setShowUpdateForm(false);
                 refetch();
             } else {
@@ -311,7 +308,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
                     <Card className="sticky top-24 p-0 overflow-hidden border-none shadow-premium bg-white/40 glass">
                         <div className="relative h-72 w-full overflow-hidden bg-slate-50">
-                            {product.imageUrl && product.imageUrl.length > 5 && !imgError && !product.imageUrl.includes('placehold.co') ? (
+                            {product.imageUrl && product.imageUrl.length > 5 && !imgError ? (
                                 <Image
                                     src={product.imageUrl}
                                     alt={product.name}
@@ -423,12 +420,24 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                                                 </p>
                                                                 <Button
                                                                     onClick={() => handleConfirmPrice(product.suggestions![0]._id)}
-                                                                    className="w-full bg-primary/20 hover:bg-primary text-primary hover:text-white font-black py-3 rounded-2xl border border-primary/20 transition-all text-xs"
+                                                                    className="w-full bg-primary/20 hover:bg-primary text-primary hover:text-white font-black py-3 rounded-2xl border border-primary/20 transition-all text-xs mb-3"
                                                                 >
                                                                     JOIN CONSENSUS
                                                                 </Button>
                                                             </div>
                                                         )}
+                                                        
+                                                        {/* Confirm Prices page link */}
+                                                        <Button
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                window.location.href = `/product/${product._id}/price-change`;
+                                                            }}
+                                                            className="w-full bg-slate-800 hover:bg-slate-700 text-white font-black py-4 rounded-2xl border border-slate-700 flex items-center justify-center gap-2"
+                                                        >
+                                                            <Users size={16} />
+                                                            CONFIRM PRICES
+                                                        </Button>
                                                     </div>
                                                 ) : (
                                                     <form onSubmit={handleUpdatePrice} className="space-y-4 animate-in fade-in zoom-in-95 duration-200">
@@ -444,15 +453,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                                                 autoFocus
                                                             />
                                                         </div>
-                                                        <input
-                                                            type="text"
-                                                            placeholder="Store Location (e.g. Aisle 4)"
-                                                            value={suggestionLocation}
-                                                            onChange={(e) => setSuggestionLocation(e.target.value)}
-                                                            className="w-full px-4 py-3 rounded-xl bg-slate-800 border-none text-slate-300 font-bold text-xs placeholder:text-slate-600 outline-none"
-                                                            required
-                                                        />
-                                                        <div className="flex gap-2">
+                                                        <div className="flex gap-2 mt-4">
                                                             <Button type="button" variant="secondary" className="flex-1 text-[10px] py-3 font-black bg-slate-800 text-slate-400 hover:text-white border-none" onClick={() => setShowUpdateForm(false)}>
                                                                 CANCEL
                                                             </Button>

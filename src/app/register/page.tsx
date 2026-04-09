@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Input, Card } from '@/components/ui-base';
 import Link from 'next/link';
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 
 export default function RegisterPage() {
     const [name, setName] = useState('');
@@ -40,12 +41,56 @@ export default function RegisterPage() {
         }
     };
 
+    const handleGoogleSuccess = async (credentialResponse: any) => {
+        setLoading(true);
+        setError('');
+        try {
+            const res = await fetch('/api/auth/google', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ credential: credentialResponse.credential }),
+            });
+            const data = await res.json();
+            if (res.ok) {
+                router.push('/register/onboarding');
+                router.refresh();
+            } else {
+                setError(data.error || 'Google login failed');
+            }
+        } catch (err) {
+            setError('An error occurred during Google sign-in.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
-        <div className="min-h-screen flex items-center justify-center bg-mesh px-4">
+        <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''}>
+        <div className="min-h-screen flex items-center justify-center bg-mesh px-4 py-12">
             <Card className="w-full max-w-md p-8 backdrop-blur-xl bg-white/70 border border-white/50 shadow-2xl">
-                <div className="text-center mb-8">
+                <div className="text-center mb-6">
                     <h1 className="text-3xl font-black text-slate-900 tracking-tight">Join TrackPricely</h1>
-                    <p className="text-slate-500 font-medium mt-2">Become a contributor and earn rewards.</p>
+                    <p className="text-slate-500 font-medium mt-2">Create an account to start contributing real-time price updates.</p>
+                </div>
+
+                <div className="flex justify-center mb-6">
+                    <GoogleLogin
+                        onSuccess={handleGoogleSuccess}
+                        onError={() => setError('Google Sign up was unsuccessful')}
+                        useOneTap
+                        text="signup_with"
+                        theme="filled_black"
+                        shape="pill"
+                    />
+                </div>
+
+                <div className="relative mb-6">
+                    <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-slate-200"></div>
+                    </div>
+                    <div className="relative flex justify-center text-sm">
+                        <span className="px-2 bg-white text-slate-500">Or continue with</span>
+                    </div>
                 </div>
 
                 <form onSubmit={handleRegister} className="space-y-5">
@@ -102,5 +147,6 @@ export default function RegisterPage() {
                 </div>
             </Card>
         </div>
+        </GoogleOAuthProvider>
     );
 }

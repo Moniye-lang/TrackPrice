@@ -9,10 +9,9 @@ import { Input, Button } from '@/components/ui-base';
 import { formatPriceRange } from '@/lib/price-utils';
 import { TrendingUp, TrendingDown, Clock, Search, Award, Sparkles, ChevronRight, AlertCircle, Volume2, MapPin, BarChart3, CheckCircle2, Plus, Zap, Globe } from 'lucide-react';
 
-// Safe image component that falls back to icon on error or placeholder URLs
 function SafeProductThumb({ imageUrl, name }: { imageUrl: string; name: string }) {
   const [imgError, setImgError] = useState(false);
-  const isValid = imageUrl && imageUrl.length > 5 && !imgError && !imageUrl.includes('placehold.co');
+  const isValid = imageUrl && imageUrl.length > 5 && !imgError;
   return isValid ? (
     <Image src={imageUrl} alt={name} fill sizes="48px" className="object-cover group-hover:scale-110 transition-transform duration-500" onError={() => setImgError(true)} />
   ) : (

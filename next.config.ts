@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
+    unoptimized: true,
     remotePatterns: [
       { protocol: 'https', hostname: 'res.cloudinary.com' },
       { protocol: 'https', hostname: 'images.unsplash.com' },
@@ -11,8 +12,26 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'www.jumia.com.ng' },
       { protocol: 'https', hostname: 'ng.jumia.is' },
       { protocol: 'https', hostname: 'konga.com' },
-      { protocol: 'https', hostname: 'static.konga.com' }
+      { protocol: 'https', hostname: 'static.konga.com' },
+      // Open Food Facts CDN
+      { protocol: 'https', hostname: 'images.openfoodfacts.org' },
+      { protocol: 'https', hostname: 'static.openfoodfacts.org' },
+      { protocol: 'https', hostname: 'world.openfoodfacts.org' },
+      // Wikipedia / Wikimedia
+      { protocol: 'https', hostname: 'upload.wikimedia.org' },
+      { protocol: 'https', hostname: '*.wikipedia.org' },
+      // Supermart.ng / Nigerian stores
+      { protocol: 'https', hostname: 'supermart.ng' },
+      { protocol: 'https', hostname: 'cdn.supermart.ng' },
+      // General wildcard for other product image sources
+      { protocol: 'https', hostname: '**.com' },
+      { protocol: 'https', hostname: '**.ng' },
+      { protocol: 'https', hostname: '**.net' },
+      { protocol: 'https', hostname: '**.org' },
     ],
+  },
+  experimental: {
+    optimizePackageImports: ['lucide-react'],
   },
 };
 

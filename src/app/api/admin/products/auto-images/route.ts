@@ -32,7 +32,7 @@ export async function POST() {
         const results: { name: string; status: string; imageUrl?: string }[] = [];
 
         for (const product of productsWithoutImages) {
-            const newImageUrl = await findProductImage(product.name);
+            const newImageUrl = await findProductImage(product.name, product.category);
             if (newImageUrl) {
                 product.imageUrl = newImageUrl;
                 await product.save();

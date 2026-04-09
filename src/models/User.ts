@@ -13,6 +13,9 @@ export interface IUser extends Document {
     currentStreak: number;
     lastStreakUpdate: Date | null;
     isBanned: boolean;
+    googleId?: string;
+    resetOtp?: string;
+    resetOtpExpiry?: Date;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -35,6 +38,9 @@ const UserSchema: Schema = new Schema(
         currentStreak: { type: Number, default: 0 },
         lastStreakUpdate: { type: Date, default: null },
         isBanned: { type: Boolean, default: false },
+        googleId: { type: String, unique: true, sparse: true },
+        resetOtp: { type: String },
+        resetOtpExpiry: { type: Date },
     },
     {
         timestamps: true,

@@ -44,8 +44,7 @@ export function ProductCard({ product, priority }: ProductCardProps) {
     const [imgError, setImgError] = useState(false);
     const hasImage = product.imageUrl && 
                      product.imageUrl.length > 5 && 
-                     !imgError && 
-                     !product.imageUrl.includes('placehold.co');
+                     !imgError;
 
     return (
         <div className="block group h-full">
