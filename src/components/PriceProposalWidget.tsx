@@ -104,20 +104,7 @@ export function PriceProposalWidget({ productId, proposals, onVouchSuccess }: Pr
                             </span>
                         </div>
 
-                        <Button
-                            onClick={() => handleVouch(latestProposal._id)}
-                            disabled={vouching === latestProposal._id}
-                            className="w-full bg-slate-900 hover:bg-black text-white font-black py-3 rounded-xl shadow-glow-sm transition-all group/btn flex items-center justify-center gap-2"
-                        >
-                            {vouching === latestProposal._id ? (
-                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                            ) : (
-                                <>
-                                    <span>VOUCH FOR THIS</span>
-                                    <Check size={14} className="group-hover/btn:scale-125 transition-transform" />
-                                </>
-                            )}
-                        </Button>
+                      
 
                         {message && (
                             <p className="text-[9px] font-black text-center uppercase tracking-widest animate-in fade-in transition-all text-primary">
