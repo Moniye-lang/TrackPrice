@@ -60,6 +60,7 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                             onError={() => setImgError(true)}
                             className="object-cover transition-transform duration-700 group-hover:scale-110"
                             priority={priority}
+                            loading={priority ? undefined : "lazy"}
                         />
                     ) : (
                         <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100/50">
@@ -73,31 +74,31 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                     {/* Price Trend & Important Tags (Top Left) */}
                     <div className="absolute top-4 left-4 flex flex-col gap-2 z-20">
                         {product.priceStatus === 'up' && (
-                            <div className="glass px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest text-[#991b1b] bg-rose-50/90 shadow-sm border border-rose-200 backdrop-blur-md flex items-center gap-1">
+                            <div className="px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest text-[#991b1b] bg-rose-50/95 shadow-sm border border-rose-200 flex items-center gap-1">
                                 <TrendingUp size={10} strokeWidth={3} /> ↑ UP
                             </div>
                         )}
                         {product.priceStatus === 'down' && (
-                            <div className="glass px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest text-[#065f46] bg-emerald-50/90 shadow-sm border border-emerald-200 backdrop-blur-md flex items-center gap-1">
+                            <div className="px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest text-[#065f46] bg-emerald-50/95 shadow-sm border border-emerald-200 flex items-center gap-1">
                                 <TrendingDown size={10} strokeWidth={3} /> ↓ DROP
                             </div>
                         )}
                         {priority && (
-                            <div className="glass px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest text-amber-700 bg-amber-50/90 shadow-sm border border-amber-200 backdrop-blur-md flex items-center gap-1">
+                            <div className="px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest text-amber-700 bg-amber-50/95 shadow-sm border border-amber-200 flex items-center gap-1">
                                 <Sparkles size={10} /> POPULAR
                             </div>
                         )}
                     </div>
 
                     {/* Category Badge */}
-                    <div className="absolute top-4 right-4 glass px-3 py-1.5 rounded-full text-xs font-black tracking-widest text-primary uppercase shadow-lg border border-white/20 backdrop-blur-md flex items-center gap-1.5 z-20">
+                    <div className="absolute top-4 right-4 bg-white/95 px-3 py-1.5 rounded-full text-xs font-black tracking-widest text-primary uppercase shadow-lg border border-primary/10 flex items-center gap-1.5 z-20">
                         <Sparkles size={10} className="text-accent" />
                         {product.category}
                     </div>
 
                     {/* Premium Price Badge on Image (Visible on Hover) */}
                     <div className="absolute bottom-4 left-4 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-100">
-                        <div className="glass px-4 py-2 rounded-2xl shadow-2xl border border-white/30 backdrop-blur-xl">
+                        <div className="bg-slate-900/95 px-4 py-2 rounded-2xl shadow-2xl border border-white/10">
                             <p className="text-xs font-black text-primary/80 uppercase tracking-tighter mb-0.5">Live Price</p>
                             <p className="text-xl font-black text-white tracking-tighter leading-none">
                                 {formatPriceRange(product.price, product.maxPrice)}

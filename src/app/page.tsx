@@ -111,7 +111,7 @@ export default function Home() {
           </div>
 
           <div className="flex justify-center mb-10">
-            <Link href="/stale-prices" className="group/cta flex items-center gap-4 bg-slate-900 border border-slate-800 px-8 py-4 rounded-3xl hover:bg-primary transition-all duration-500 shadow-2xl hover:shadow-primary/40 hover:-translate-y-1 scale-110">
+            <Link href="/stale-prices" className="group/cta flex items-center gap-4 bg-slate-900 border border-slate-800 px-8 py-4 rounded-3xl hover:bg-primary transition-all duration-500 shadow-2xl hover:shadow-primary/40 hover:-translate-y-1 scale-100">
               <div className="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center text-white shadow-glow group-hover/cta:bg-white group-hover/cta:text-primary transition-all">
                 <TrendingUp size={20} />
               </div>
@@ -123,7 +123,7 @@ export default function Home() {
             </Link>
           </div>
 
-          <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2 max-w-3xl mx-auto bg-white/40 p-2 rounded-3xl border border-white/60 shadow-2xl backdrop-blur-xl">
+          <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2 max-w-3xl mx-auto bg-white/95 p-2 rounded-3xl border border-white/60 shadow-2xl">
             <div className="relative flex-[2]">
               <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" size={24} />
               <Input
@@ -160,9 +160,9 @@ export default function Home() {
         </div>
 
         {/* Background elements */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full -z-0 opacity-20 pointer-events-none">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary rounded-full blur-[128px]"></div>
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent rounded-full blur-[128px]"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full -z-0 opacity-10 pointer-events-none">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary rounded-full"></div>
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent rounded-full"></div>
         </div>
 
         {/* Market Snapshot and Trending Spotlight removed */}
@@ -204,7 +204,7 @@ export default function Home() {
                 <h2 className="text-3xl font-black text-slate-900 tracking-tight">Market Intelligence</h2>
                 
                 {/* Market Category Tabs */}
-                <div className="flex items-center p-1.5 bg-white/50 backdrop-blur-md rounded-[2rem] border border-slate-100 shadow-premium w-fit min-w-[300px]">
+                <div className="flex items-center p-1.5 bg-white/95 rounded-[2rem] border border-slate-100 shadow-premium w-fit min-w-[300px]">
                   <button
                     onClick={() => setMarketCategory('Physical')}
                     className={`flex items-center gap-3 px-8 py-3.5 rounded-[1.5rem] text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-500 ${marketCategory === 'Physical'
@@ -356,7 +356,7 @@ export default function Home() {
           {/* Leaderboard Snippet */}
           {leaderboard.length > 0 && (
             <div className="p-6 bg-slate-900 rounded-[32px] shadow-premium border border-slate-800 relative overflow-hidden group/card">
-              <div className="absolute -top-12 -right-12 w-32 h-32 bg-primary/10 rounded-full blur-3xl group-hover/card:bg-primary/20 transition-colors" />
+              <div className="absolute -top-12 -right-12 w-32 h-32 bg-primary/20 rounded-full group-hover/card:bg-primary/30 transition-colors" />
               <h3 className="text-xs font-black text-primary uppercase tracking-[0.3em] mb-8 flex items-center gap-2">
                 <Award size={14} />
                 Top Market Analysts
@@ -397,9 +397,7 @@ export default function Home() {
           <div className="bg-slate-900 border border-slate-800 text-white text-xs font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-xl mb-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
             Update Price
           </div>
-          <button className="w-16 h-16 bg-primary text-white rounded-full shadow-glow flex items-center justify-center hover:scale-110 active:scale-95 transition-all outline-none ring-4 ring-primary/20">
-            <TrendingUp size={32} />
-          </button>
+          
         </Link>
       </div>
     </div>

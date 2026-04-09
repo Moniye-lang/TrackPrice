@@ -115,7 +115,7 @@ export function Navbar() {
             </header>
 
             {/* Mobile Bottom Navigation Bar (Floating) */}
-            <nav className="sm:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm bg-slate-950/90 backdrop-blur-3xl border border-white/10 px-4 py-3 flex justify-between items-center z-[100] shadow-[0_20px_50px_rgba(0,0,0,0.5)] rounded-[2.5rem] ring-1 ring-white/5">
+            <nav className="sm:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm bg-slate-950 border border-slate-800 px-4 py-3 flex justify-between items-center z-[100] shadow-[0_20px_50px_rgba(0,0,0,0.8)] rounded-[2.5rem] ring-1 ring-white/5">
                 <Link href="/" aria-label="Home" className={`flex flex-col items-center gap-1.5 transition-all duration-500 ${pathname === '/' ? 'text-primary scale-110 -translate-y-0.5' : 'text-slate-500 hover:text-slate-300'}`}>
                     <div className={`p-1.5 rounded-xl transition-all ${pathname === '/' ? 'bg-primary/20 shadow-glow-sm' : 'bg-transparent'}`}>
                         <Home size={22} strokeWidth={pathname === '/' ? 2.5 : 2} />
