@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { dbConnect } from '@/lib/db';
+import connectDB from '@/lib/db';
 import User from '@/models/User';
 import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
@@ -8,7 +8,7 @@ const client = new OAuth2Client(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || proc
 
 export async function POST(req: NextRequest) {
     try {
-        await dbConnect();
+        await connectDB();
         const { credential } = await req.json();
 
         if (!credential) {

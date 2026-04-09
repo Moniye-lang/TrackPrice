@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { dbConnect } from '@/lib/db';
+import connectDB from '@/lib/db';
 import Product from '@/models/Product';
-import { getServerSession } from '@/lib/server-auth';
+import { getServerUser } from '@/lib/server-auth';
 
 export async function POST(req: NextRequest) {
     try {
-        await dbConnect();
-        const user = await getServerSession(req);
+        await connectDB();
+        const user = await getServerUser();
         if (!user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
@@ -43,8 +43,8 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
     try {
-        await dbConnect();
-        const admin = await getServerSession(req);
+        await connectDB();
+        const admin = await getServerUser();
         if (!admin || admin.role !== 'admin') {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }

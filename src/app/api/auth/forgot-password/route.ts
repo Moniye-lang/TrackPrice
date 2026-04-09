@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { dbConnect } from '@/lib/db';
+import connectDB from '@/lib/db';
 import User from '@/models/User';
 import nodemailer from 'nodemailer';
 
 export async function POST(req: NextRequest) {
     try {
-        await dbConnect();
+        await connectDB();
         const { email } = await req.json();
 
         if (!email) {
