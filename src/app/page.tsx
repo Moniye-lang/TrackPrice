@@ -273,10 +273,11 @@ export default function Home() {
                 <Search size={40} className="text-slate-200" />
               </div>
               <h3 className="text-2xl font-black text-slate-700 mb-2">No products found</h3>
-              <p className="text-slate-400 font-medium mb-8 max-w-sm">We couldn't find any products matching your search criteria. Try a different term!</p>
-              <Link href="/request-product">
-                <Button className="px-10 py-4 font-black text-xs tracking-[0.2em] uppercase shadow-glow rounded-2xl">
-                  Request Product
+              <p className="text-slate-400 font-medium mb-8 max-w-sm">We couldn't find any products matching your search criteria. Try a different term or add it yourself!</p>
+              <Link href="/add-product">
+                <Button className="px-10 py-4 font-black text-xs tracking-[0.2em] uppercase shadow-glow rounded-2xl flex items-center gap-2">
+                  <Plus size={16} />
+                  Add Missing Product
                 </Button>
               </Link>
             </div>

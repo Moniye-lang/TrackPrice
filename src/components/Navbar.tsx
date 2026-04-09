@@ -52,11 +52,18 @@ export function Navbar() {
                             <span className={`absolute -bottom-1 left-0 h-0.5 bg-primary transition-all ${pathname === '/leaderboard' ? 'w-full' : 'w-0 group-hover:w-full'}`} />
                         </Link>
 
-                        {/* Stale Price CTA (Now part of the right nav group) */}
-                        <Link href="/stale-prices" className="flex items-center gap-2 bg-primary/5 hover:bg-primary text-primary hover:text-white px-5 py-2.5 rounded-xl border border-primary/20 transition-all duration-500 group/btn shadow-glow-sm">
-                            <TrendingUp size={16} className="group-hover/btn:scale-110 transition-transform" />
-                            <span className="text-xs font-black uppercase tracking-[0.1em]">Update Price</span>
-                        </Link>
+                        {/* Actions */}
+                        <div className="flex items-center gap-3">
+                            <Link href="/add-product" className="flex items-center gap-2 bg-slate-900 hover:bg-black text-white px-5 py-2.5 rounded-xl transition-all duration-500 group/btn2 shadow-premium-sm border border-slate-800">
+                                <Plus size={16} className="group-hover/btn2:rotate-90 transition-transform" />
+                                <span className="text-xs font-black uppercase tracking-[0.1em]">Add Product</span>
+                            </Link>
+
+                            <Link href="/stale-prices" className="flex items-center gap-2 bg-primary/5 hover:bg-primary text-primary hover:text-white px-5 py-2.5 rounded-xl border border-primary/20 transition-all duration-500 group/btn shadow-glow-sm">
+                                <TrendingUp size={16} className="group-hover/btn:scale-110 transition-transform" />
+                                <span className="text-xs font-black uppercase tracking-[0.1em]">Update Price</span>
+                            </Link>
+                        </div>
 
                         {isLoading ? (
                             <div className="h-4 w-24 rounded bg-slate-100 animate-pulse" />
