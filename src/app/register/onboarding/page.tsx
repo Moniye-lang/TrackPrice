@@ -43,13 +43,15 @@ export default function OnboardingPage() {
                             delay: "500ms"
                         }
                     ].map((step, idx) => (
-                        <Card key={idx} className={`bg-slate-800/50 border-slate-700 backdrop-blur-xl p-8 hover:bg-slate-800 transition-colors animate-in fade-in zoom-in-95 duration-500`} style={{ animationDelay: step.delay }}>
-                            <div className="w-16 h-16 rounded-2xl bg-slate-900 flex items-center justify-center mb-6 shadow-inner border border-slate-800">
-                                {step.icon}
-                            </div>
-                            <h3 className="text-xl font-black text-white mb-2">{step.title}</h3>
-                            <p className="text-sm font-bold text-slate-400 leading-relaxed">{step.desc}</p>
-                        </Card>
+                        <div key={idx} style={{ animationDelay: step.delay }} className="animate-in fade-in zoom-in-95 duration-500 fill-mode-both">
+                            <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-xl p-8 hover:bg-slate-800 transition-colors h-full">
+                                <div className="w-16 h-16 rounded-2xl bg-slate-900 flex items-center justify-center mb-6 shadow-inner border border-slate-800">
+                                    {step.icon}
+                                </div>
+                                <h3 className="text-xl font-black text-white mb-2">{step.title}</h3>
+                                <p className="text-sm font-bold text-slate-400 leading-relaxed">{step.desc}</p>
+                            </Card>
+                        </div>
                     ))}
                 </div>
 
