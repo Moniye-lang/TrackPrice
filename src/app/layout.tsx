@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
@@ -15,10 +15,14 @@ const outfit = Outfit({
   display: 'swap',
 });
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+};
+
 export const metadata: Metadata = {
   title: "TrackPricely | Live Market Price Tracking in Oyo & Lagos",
   description: "Check and compare live market prices across Oyo & Lagos. Join the community tracking daily price changes in Bodija, Dugbe, and more.",
-  viewport: "width=device-width, initial-scale=1",
   robots: "index, follow",
 };
 

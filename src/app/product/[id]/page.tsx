@@ -9,7 +9,7 @@ import { formatRelativeTime } from '@/lib/utils';
 import Link from 'next/link';
 import { use } from 'react';
 import { formatPriceRange } from '@/lib/price-utils';
-import { MapPin, Users, MessageCircle, Check, X, Send, History, TrendingDown, TrendingUp, Sparkles, Clock, ArrowLeft, ExternalLink, AlertTriangle, ChevronRight, CornerDownRight } from 'lucide-react';
+import { MapPin, Users, MessageCircle, Check, X, Send, History, TrendingDown, TrendingUp, Sparkles, Clock, ArrowLeft, ExternalLink, AlertTriangle, ChevronRight, CornerDownRight, Pencil, Trash2 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useProduct } from '@/hooks/useHomeData';
 
@@ -49,6 +49,7 @@ interface Product {
 interface Message {
     _id: string;
     content: string;
+    userId?: string;
     isAdmin?: boolean;
     productId?: {
         _id: string;
@@ -81,6 +82,43 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     const [posting, setPosting] = useState(false);
     const [error, setError] = useState('');
     const [replyingTo, setReplyingTo] = useState<Message | null>(null);
+
+    // Edit / delete state
+    const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+    const [editContent, setEditContent] = useState('');
+    const [editSaving, setEditSaving] = useState(false);
+    const [deletingMessageId, setDeletingMessageId] = useState<string | null>(null);
+
+    const handleDeleteMessage = async (msgId: string) => {
+        setDeletingMessageId(msgId);
+        try {
+            const res = await fetch(`/api/messages/${msgId}`, { method: 'DELETE' });
+            if (res.ok) {
+                refetch();
+            }
+        } finally {
+            setDeletingMessageId(null);
+        }
+    };
+
+    const handleEditMessage = async (msgId: string) => {
+        if (!editContent.trim()) return;
+        setEditSaving(true);
+        try {
+            const res = await fetch(`/api/messages/${msgId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: editContent }),
+            });
+            if (res.ok) {
+                setEditingMessageId(null);
+                setEditContent('');
+                refetch();
+            }
+        } finally {
+            setEditSaving(false);
+        }
+    };
 
     // Verify existing price
     const [verifying, setVerifying] = useState(false);
@@ -614,59 +652,118 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                             </div>
                         ) : (
                             <div className="grid gap-6">
-                                {messages.map((msg) => (
-                                    <Card key={msg._id} className="relative group p-6 sm:p-8 hover:shadow-glow transition-all duration-500 hover:-translate-y-1 bg-white/60">
-                                        <div className="flex gap-4 sm:gap-6 items-start">
-                                            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-slate-50 flex-shrink-0 flex items-center justify-center text-slate-200 group-hover:bg-primary/5 group-hover:text-primary transition-colors duration-300">
-                                                <MessageCircle size={20} />
-                                            </div>
-                                            <div className="flex-1 space-y-4 min-w-0">
-                                                <div className="flex justify-between items-start mb-2">
-                                                    <div className="space-y-2 flex-1 min-w-0">
-                                                        {msg.productId && (
-                                                            <div className="flex items-center gap-2 mb-2">
-                                                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider bg-slate-100 px-2 py-0.5 rounded-md flex items-center gap-1.5">
-                                                                    <Check size={10} className="text-emerald-500" />
-                                                                    Verified at: {formatPriceRange(msg.productId.price, msg.productId.maxPrice)}
+                                {messages.map((msg) => {
+                                    const canModify = authUser && (authUser.id === msg.userId || authUser.role === 'admin');
+                                    const isEditing = editingMessageId === msg._id;
+
+                                    return (
+                                        <Card key={msg._id} className="relative group p-6 sm:p-8 hover:shadow-glow transition-all duration-500 hover:-translate-y-1 bg-white/60">
+                                            <div className="flex gap-4 sm:gap-6 items-start">
+                                                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-slate-50 flex-shrink-0 flex items-center justify-center text-slate-200 group-hover:bg-primary/5 group-hover:text-primary transition-colors duration-300">
+                                                    <MessageCircle size={20} />
+                                                </div>
+                                                <div className="flex-1 space-y-4 min-w-0">
+                                                    <div className="flex justify-between items-start mb-2">
+                                                        <div className="space-y-2 flex-1 min-w-0">
+                                                            {msg.productId && (
+                                                                <div className="flex items-center gap-2 mb-2">
+                                                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider bg-slate-100 px-2 py-0.5 rounded-md flex items-center gap-1.5">
+                                                                        <Check size={10} className="text-emerald-500" />
+                                                                        Verified at: {formatPriceRange(msg.productId.price, msg.productId.maxPrice)}
+                                                                    </span>
+                                                                </div>
+                                                            )}
+                                                            {msg.replyToContent && (
+                                                                <div className="inline-flex items-center gap-2 bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-xl mb-2 max-w-full">
+                                                                    <CornerDownRight size={14} className="text-primary/40 flex-shrink-0" />
+                                                                    <p className="text-xs font-bold text-slate-400 italic truncate italic">"{msg.replyToContent}"</p>
+                                                                </div>
+                                                            )}
+
+                                                            {isEditing ? (
+                                                                <div className="space-y-3">
+                                                                    <textarea
+                                                                        className="w-full p-4 bg-white border border-primary/30 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all resize-none text-slate-700 text-base shadow-inner min-h-[100px]"
+                                                                        value={editContent}
+                                                                        onChange={(e) => setEditContent(e.target.value)}
+                                                                        maxLength={300}
+                                                                        autoFocus
+                                                                    />
+                                                                    <div className="flex items-center justify-between">
+                                                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{editContent.length}/300</span>
+                                                                        <div className="flex items-center gap-2">
+                                                                            <button
+                                                                                onClick={() => { setEditingMessageId(null); setEditContent(''); }}
+                                                                                className="px-4 py-1.5 text-xs font-black text-slate-500 hover:text-slate-800 uppercase tracking-widest border border-slate-200 rounded-xl hover:bg-slate-50 transition-all"
+                                                                            >
+                                                                                Cancel
+                                                                            </button>
+                                                                            <button
+                                                                                onClick={() => handleEditMessage(msg._id)}
+                                                                                disabled={editSaving || !editContent.trim()}
+                                                                                className="px-4 py-1.5 text-xs font-black text-white bg-primary rounded-xl uppercase tracking-widest hover:scale-105 transition-all shadow-glow disabled:opacity-50 disabled:hover:scale-100"
+                                                                            >
+                                                                                {editSaving ? 'Saving...' : 'Save'}
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            ) : (
+                                                                <p className="text-slate-700 text-base sm:text-lg leading-relaxed font-medium whitespace-pre-wrap antialiased break-words">
+                                                                    {msg.content}
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                        <div className="flex items-center gap-2 ml-2 flex-shrink-0">
+                                                            {msg.isAdmin && (
+                                                                <span className="bg-primary/10 text-primary text-[9px] font-black px-2 py-1 rounded-md tracking-tighter uppercase border border-primary/20 animate-pulse">
+                                                                    Admin
                                                                 </span>
-                                                            </div>
-                                                        )}
-                                                        {msg.replyToContent && (
-                                                            <div className="inline-flex items-center gap-2 bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-xl mb-2 max-w-full">
-                                                                <CornerDownRight size={14} className="text-primary/40 flex-shrink-0" />
-                                                                <p className="text-xs font-bold text-slate-400 italic truncate italic">"{msg.replyToContent}"</p>
-                                                            </div>
-                                                        )}
-                                                        <p className="text-slate-700 text-base sm:text-lg leading-relaxed font-medium whitespace-pre-wrap antialiased break-words">
-                                                            {msg.content}
-                                                        </p>
+                                                            )}
+                                                            {canModify && !isEditing && (
+                                                                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                                    <button
+                                                                        onClick={() => { setEditingMessageId(msg._id); setEditContent(msg.content); }}
+                                                                        title="Edit message"
+                                                                        className="p-1.5 rounded-lg hover:bg-primary/10 hover:text-primary text-slate-400 transition-all"
+                                                                    >
+                                                                        <Pencil size={13} />
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={() => handleDeleteMessage(msg._id)}
+                                                                        disabled={deletingMessageId === msg._id}
+                                                                        title="Delete message"
+                                                                        className="p-1.5 rounded-lg hover:bg-rose-50 hover:text-rose-500 text-slate-400 transition-all disabled:opacity-50"
+                                                                    >
+                                                                        <Trash2 size={13} />
+                                                                    </button>
+                                                                </div>
+                                                            )}
+                                                        </div>
                                                     </div>
-                                                    {msg.isAdmin && (
-                                                        <span className="flex-shrink-0 bg-primary/10 text-primary text-[9px] font-black px-2 py-1 rounded-md tracking-tighter uppercase border border-primary/20 animate-pulse ml-2">
-                                                            Admin
+                                                    <div className="pt-4 border-t border-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-widest flex justify-between items-center">
+                                                        <span className="flex items-center gap-1.5">
+                                                            <Clock size={12} />
+                                                            {formatRelativeTime(msg.createdAt)}
                                                         </span>
-                                                    )}
-                                                </div>
-                                                <div className="pt-4 border-t border-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-widest flex justify-between items-center">
-                                                    <span className="flex items-center gap-1.5">
-                                                        <Clock size={12} />
-                                                        {formatRelativeTime(msg.createdAt)}
-                                                    </span>
-                                                    <button
-                                                        onClick={() => {
-                                                            setReplyingTo(msg);
-                                                            const section = document.querySelector('section');
-                                                            if (section) section.scrollIntoView({ behavior: 'smooth' });
-                                                        }}
-                                                        className="px-3 py-1.5 rounded-xl hover:bg-primary/5 hover:text-primary transition-all duration-300 font-black"
-                                                    >
-                                                        REPLY
-                                                    </button>
+                                                        {!isEditing && (
+                                                            <button
+                                                                onClick={() => {
+                                                                    setReplyingTo(msg);
+                                                                    const section = document.querySelector('section');
+                                                                    if (section) section.scrollIntoView({ behavior: 'smooth' });
+                                                                }}
+                                                                className="px-3 py-1.5 rounded-xl hover:bg-primary/5 hover:text-primary transition-all duration-300 font-black"
+                                                            >
+                                                                REPLY
+                                                            </button>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </Card>
-                                ))}
+                                        </Card>
+                                    );
+                                })}
                             </div>
                         )}
                     </section>

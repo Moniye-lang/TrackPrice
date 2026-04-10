@@ -2,6 +2,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IMessage extends Document {
     content: string;
+    userId?: mongoose.Types.ObjectId;
     productId?: string;
     ipHash?: string;
     isAdmin: boolean;
@@ -13,6 +14,7 @@ export interface IMessage extends Document {
 const MessageSchema: Schema = new Schema(
     {
         content: { type: String, required: true, maxlength: 300 },
+        userId: { type: Schema.Types.ObjectId, ref: 'User', required: false },
         productId: { type: Schema.Types.ObjectId, ref: 'Product', required: false },
         ipHash: { type: String, required: false },
         isAdmin: { type: Boolean, default: false },

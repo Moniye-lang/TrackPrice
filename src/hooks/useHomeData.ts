@@ -32,9 +32,9 @@ export function useHomeData() {
     queryKey: ['home-data'],
     queryFn: async () => {
       const [featRes, staleRes, recentRes, leaderRes, statsRes, storesRes] = await Promise.all([
-        fetch('/api/products?featured=true'),
-        fetch('/api/products?stale=true'),
-        fetch('/api/products?sort=updated'),
+        fetch('/api/products?featured=true&limit=4'),
+        fetch('/api/products?stale=true&limit=5'),
+        fetch('/api/products?sort=updated&limit=5'),
         fetch('/api/leaderboard'),
         fetch('/api/stats'),
         fetch('/api/stores')
@@ -50,9 +50,9 @@ export function useHomeData() {
       ]);
 
       return {
-        featuredProducts: (Array.isArray(featured) ? featured.slice(0, 4) : []) as Product[],
-        staleProducts: (Array.isArray(stale) ? stale.slice(0, 5) : []) as Product[],
-        recentUpdates: (Array.isArray(recent) ? recent.slice(0, 5) : []) as Product[],
+        featuredProducts: (Array.isArray(featured) ? featured : featured?.products ?? []).slice(0, 4) as Product[],
+        staleProducts: (Array.isArray(stale) ? stale : stale?.products ?? []).slice(0, 5) as Product[],
+        recentUpdates: (Array.isArray(recent) ? recent : recent?.products ?? []).slice(0, 5) as Product[],
         leaderboard: (leaderboard.users || []) as any[],
         stats: stats || { updatesToday: 0, marketsTracked: 0, lastUpdateMins: 0 },
         stores: (Array.isArray(stores) ? stores : []) as Store[]
