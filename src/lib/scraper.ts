@@ -37,7 +37,7 @@ async function fetchAndExtract(url: string): Promise<ExtractedProduct[]> {
             results.push({ 
                 name: name.replace(/\s+/g, ' ').trim(), 
                 price,
-                imageUrl: imageUrl || `https://placehold.co/600x400?text=${encodeURIComponent(name)}`
+                imageUrl: imageUrl || `https://placehold.co/600x400/png?text=${encodeURIComponent(name)}`
             });
             seen.add(key);
         }
@@ -183,7 +183,7 @@ export async function scrapeProducts(url: string): Promise<ExtractedProduct[]> {
                     results.push({ 
                         name: name.replace(/\s+/g, ' ').trim(), 
                         price,
-                        imageUrl: imageUrl || `https://placehold.co/600x400?text=${encodeURIComponent(name)}`
+                        imageUrl: imageUrl || `https://placehold.co/600x400/png?text=${encodeURIComponent(name)}`
                     });
                     processedNames.add(key);
                 }

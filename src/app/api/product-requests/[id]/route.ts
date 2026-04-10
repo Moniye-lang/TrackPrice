@@ -2,17 +2,10 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import connectDB from '@/lib/db';
 import ProductRequest from '@/models/ProductRequest';
-import { verifyToken } from '@/lib/auth';
+import { isServerAdmin } from '@/lib/server-auth';
 
 async function isAdmin() {
-    const token = (await cookies()).get('token')?.value;
-    if (!token) return false;
-    try {
-        const payload: any = verifyToken(token);
-        return payload?.role === 'admin';
-    } catch (error) {
-        return false;
-    }
+    return await isServerAdmin();
 }
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {

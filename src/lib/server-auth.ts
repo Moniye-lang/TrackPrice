@@ -16,7 +16,7 @@ export interface UserPayload {
 export async function getServerUser(): Promise<UserPayload | null> {
     try {
         const cookieStore = await cookies();
-        const token = cookieStore.get('admin_token')?.value || cookieStore.get('user_token')?.value;
+        const token = cookieStore.get('admin_token')?.value || cookieStore.get('user_token')?.value || cookieStore.get('token')?.value;
         
         if (!token) return null;
 
@@ -30,6 +30,7 @@ export async function getServerUser(): Promise<UserPayload | null> {
             name: payload.name as string
         };
     } catch (error) {
+        console.error('[getServerUser] Error:', error);
         return null;
     }
 }

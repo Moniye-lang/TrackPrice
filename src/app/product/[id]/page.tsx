@@ -390,108 +390,87 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                 {/* Price Action Buttons — Auth aware */}
                                 {!authLoading && (
                                     <div className="space-y-4">
-                                        {authUser ? (
-                                            <div id="price-action-section" className="bg-slate-900 rounded-3xl p-6 shadow-2xl border border-slate-800 relative overflow-hidden group/section">
-                                                <div className="absolute -top-12 -right-12 w-32 h-32 bg-primary/10 rounded-full blur-3xl group-hover/section:bg-primary/20 transition-all duration-1000" />
-                                                <h3 className="relative z-10 text-primary text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-center">Is this price still correct?</h3>
-                                                {!showUpdateForm ? (
-                                                    <div className="space-y-4">
-                                                        <div className="grid grid-cols-2 gap-4">
-                                                            <Button
-                                                                onClick={handleVerifyPrice}
-                                                                disabled={verifying}
-                                                                className="bg-emerald-500 hover:bg-emerald-600 text-white font-black py-4 rounded-2xl shadow-glow-sm"
-                                                            >
-                                                                {verifying ? '...' : 'YES'}
-                                                            </Button>
-                                                            <Button
-                                                                onClick={() => setShowUpdateForm(true)}
-                                                                className="bg-slate-800 hover:bg-slate-700 text-slate-400 font-black py-4 rounded-2xl border border-slate-700"
-                                                            >
-                                                                NO
-                                                            </Button>
-                                                        </div>
-
-                                                        {/* Intelligent "Join Consensus" option */}
-                                                        {product.suggestions && product.suggestions.length > 0 && (
-                                                            <div className="pt-4 border-t border-slate-800 animate-in fade-in slide-in-from-bottom-2">
-                                                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest text-center mb-3">
-                                                                    Community suggests <span className="text-primary">{formatPriceRange(product.suggestions[0].price)}</span>
-                                                                </p>
-                                                                <Button
-                                                                    onClick={() => handleConfirmPrice(product.suggestions![0]._id)}
-                                                                    className="w-full bg-primary/20 hover:bg-primary text-primary hover:text-white font-black py-3 rounded-2xl border border-primary/20 transition-all text-xs mb-3"
-                                                                >
-                                                                    JOIN CONSENSUS
-                                                                </Button>
-                                                            </div>
-                                                        )}
-                                                        
-                                                        {/* Confirm Prices page link */}
+                                        <div id="price-action-section" className="bg-slate-900 rounded-3xl p-6 shadow-2xl border border-slate-800 relative overflow-hidden group/section">
+                                            <div className="absolute -top-12 -right-12 w-32 h-32 bg-primary/10 rounded-full blur-3xl group-hover/section:bg-primary/20 transition-all duration-1000" />
+                                            <h3 className="relative z-10 text-primary text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-center">Is this price still correct?</h3>
+                                            {!showUpdateForm ? (
+                                                <div className="space-y-4">
+                                                    <div className="grid grid-cols-2 gap-4">
                                                         <Button
-                                                            onClick={(e) => {
-                                                                e.preventDefault();
-                                                                window.location.href = `/product/${product._id}/price-change`;
-                                                            }}
-                                                            className="w-full bg-slate-800 hover:bg-slate-700 text-white font-black py-4 rounded-2xl border border-slate-700 flex items-center justify-center gap-2"
+                                                            onClick={handleVerifyPrice}
+                                                            disabled={verifying}
+                                                            className="bg-emerald-500 hover:bg-emerald-600 text-white font-black py-4 rounded-2xl shadow-glow-sm"
                                                         >
-                                                            <Users size={16} />
-                                                            CONFIRM PRICES
+                                                            {verifying ? '...' : 'YES'}
+                                                        </Button>
+                                                        <Button
+                                                            onClick={() => setShowUpdateForm(true)}
+                                                            className="bg-slate-800 hover:bg-slate-700 text-slate-400 font-black py-4 rounded-2xl border border-slate-700"
+                                                        >
+                                                            NO
                                                         </Button>
                                                     </div>
-                                                ) : (
-                                                    <form onSubmit={handleUpdatePrice} className="space-y-4 animate-in fade-in zoom-in-95 duration-200">
-                                                        <div className="relative">
-                                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-primary font-black">₦</span>
-                                                            <input
-                                                                type="text"
-                                                                placeholder="Enter new price"
-                                                                value={newPrice}
-                                                                onChange={(e) => setNewPrice(e.target.value)}
-                                                                className="w-full pl-10 pr-4 py-4 rounded-2xl bg-slate-800 border-none text-white font-black text-xl placeholder:text-slate-600 focus:ring-2 focus:ring-primary outline-none transition"
-                                                                required
-                                                                autoFocus
-                                                            />
-                                                        </div>
-                                                        <div className="flex gap-2 mt-4">
-                                                            <Button type="button" variant="secondary" className="flex-1 text-[10px] py-3 font-black bg-slate-800 text-slate-400 hover:text-white border-none" onClick={() => setShowUpdateForm(false)}>
-                                                                CANCEL
-                                                            </Button>
-                                                            <Button type="submit" className="flex-1 text-[10px] py-3 font-black shadow-glow uppercase" disabled={updatingPrice}>
-                                                                {updatingPrice ? '...' : 'SUBMIT NOW'}
+
+                                                    {/* Intelligent "Join Consensus" option */}
+                                                    {product.suggestions && product.suggestions.length > 0 && (
+                                                        <div className="pt-4 border-t border-slate-800 animate-in fade-in slide-in-from-bottom-2">
+                                                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest text-center mb-3">
+                                                                Community suggests <span className="text-primary">{formatPriceRange(product.suggestions[0].price)}</span>
+                                                            </p>
+                                                            <Button
+                                                                onClick={() => handleConfirmPrice(product.suggestions![0]._id)}
+                                                                className="w-full bg-primary/20 hover:bg-primary text-primary hover:text-white font-black py-3 rounded-2xl border border-primary/20 transition-all text-xs mb-3"
+                                                            >
+                                                                JOIN CONSENSUS
                                                             </Button>
                                                         </div>
-                                                    </form>
-                                                )}
-                                                {(verifyMsg || updateMsg) && (
-                                                    <p className={`text-[10px] font-black p-3 rounded-xl mt-4 text-center uppercase tracking-widest ${(verifyMsg.startsWith('✓') || updateMsg.startsWith('✓'))
-                                                        ? 'text-emerald-500 bg-emerald-500/10'
-                                                        : 'text-rose-500 bg-rose-500/10'
-                                                        }`}>
-                                                        {verifyMsg || updateMsg}
-                                                    </p>
-                                                )}
-                                            </div>
-                                        ) : (
-                                            /* Not logged in — show prompt */
-                                            <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 text-center space-y-4">
-                                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-loose">
-                                                    Join the community to confirm or update real-time prices
-                                                </p>
-                                                <div className="flex gap-3">
-                                                    <Link href="/login" className="flex-1">
-                                                        <button className="w-full py-3 rounded-2xl border border-slate-800 text-[10px] font-black text-slate-400 hover:bg-slate-800 hover:text-white transition-all uppercase tracking-widest">
-                                                            Log In
-                                                        </button>
-                                                    </Link>
-                                                    <Link href="/register" className="flex-1">
-                                                        <button className="w-full py-3 rounded-2xl bg-primary text-white text-[10px] font-black shadow-glow hover:bg-primary/90 transition-all uppercase tracking-widest">
-                                                            Join
-                                                        </button>
-                                                    </Link>
+                                                    )}
+                                                    
+                                                    {/* Confirm Prices page link */}
+                                                    <Button
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            window.location.href = `/product/${product._id}/price-change`;
+                                                        }}
+                                                        className="w-full bg-slate-800 hover:bg-slate-700 text-white font-black py-4 rounded-2xl border border-slate-700 flex items-center justify-center gap-2"
+                                                    >
+                                                        <Users size={16} />
+                                                        CONFIRM PRICES
+                                                    </Button>
                                                 </div>
-                                            </div>
-                                        )}
+                                            ) : (
+                                                <form onSubmit={handleUpdatePrice} className="space-y-4 animate-in fade-in zoom-in-95 duration-200">
+                                                    <div className="relative">
+                                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-primary font-black">₦</span>
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Enter new price"
+                                                            value={newPrice}
+                                                            onChange={(e) => setNewPrice(e.target.value)}
+                                                            className="w-full pl-10 pr-4 py-4 rounded-2xl bg-slate-800 border-none text-white font-black text-xl placeholder:text-slate-600 focus:ring-2 focus:ring-primary outline-none transition"
+                                                            required
+                                                            autoFocus
+                                                        />
+                                                    </div>
+                                                    <div className="flex gap-2 mt-4">
+                                                        <Button type="button" variant="secondary" className="flex-1 text-[10px] py-3 font-black bg-slate-800 text-slate-400 hover:text-white border-none" onClick={() => setShowUpdateForm(false)}>
+                                                            CANCEL
+                                                        </Button>
+                                                        <Button type="submit" className="flex-1 text-[10px] py-3 font-black shadow-glow uppercase" disabled={updatingPrice}>
+                                                            {updatingPrice ? '...' : 'SUBMIT NOW'}
+                                                        </Button>
+                                                    </div>
+                                                </form>
+                                            )}
+                                            {(verifyMsg || updateMsg) && (
+                                                <p className={`text-[10px] font-black p-3 rounded-xl mt-4 text-center uppercase tracking-widest ${(verifyMsg.startsWith('✓') || updateMsg.startsWith('✓'))
+                                                    ? 'text-emerald-500 bg-emerald-500/10'
+                                                    : 'text-rose-500 bg-rose-500/10'
+                                                    }`}>
+                                                    {verifyMsg || updateMsg}
+                                                </p>
+                                            )}
+                                        </div>
                                     </div>
                                 )}
 

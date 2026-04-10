@@ -4,19 +4,13 @@ import Product from '@/models/Product';
 import Store from '@/models/Store';
 import User from '@/models/User';
 import { cookies } from 'next/headers';
-import { verifyToken } from '@/lib/auth';
+import { getServerUser } from '@/lib/server-auth';
 
 export async function POST() {
     try {
-        const token = (await cookies()).get('token')?.value;
-        if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-        const decoded = verifyToken(token);
-        if (!decoded) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-        const user = await User.findById((decoded as any).id);
+        const user = await getServerUser();
         if (!user || user.role !== 'admin') {
-            return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
         await connectDB();

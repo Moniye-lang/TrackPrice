@@ -17,7 +17,7 @@ export interface IPriceUpdate extends Document {
 const PriceUpdateSchema: Schema = new Schema(
     {
         productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
-        userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+        userId: { type: Schema.Types.ObjectId, ref: 'User' },
         price: { type: Number, required: true },
         maxPrice: { type: Number },
         storeId: { type: Schema.Types.ObjectId, ref: 'Store' },

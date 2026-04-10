@@ -2,21 +2,18 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import connectDB from '@/lib/db';
 import User from '@/models/User';
-import { verifyToken } from '@/lib/auth';
+import { getServerUser } from '@/lib/server-auth';
 
 export async function PUT(req: Request) {
-    const token = (await cookies()).get('token')?.value;
-    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-    const payload: any = verifyToken(token);
-    if (!payload || !payload.id) return NextResponse.json({ error: 'Auth failed' }, { status: 401 });
+    const userPayload = await getServerUser();
+    if (!userPayload || !userPayload.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     try {
         await connectDB();
         const body = await req.json();
         const { name, city } = body;
 
-        const user = await User.findById(payload.id);
+        const user = await User.findById(userPayload.id);
         if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
         if (name) user.name = name;

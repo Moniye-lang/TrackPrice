@@ -2,17 +2,10 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import connectDB from '@/lib/db';
 import AuditLog from '@/models/AuditLog';
-import { verifyToken } from '@/lib/auth';
+import { isServerAdmin, getServerUser } from '@/lib/server-auth';
 
 async function isAdmin() {
-    const token = (await cookies()).get('token')?.value;
-    if (!token) return false;
-    try {
-        const payload: any = verifyToken(token);
-        return payload?.role === 'admin';
-    } catch (error) {
-        return false;
-    }
+    return await isServerAdmin();
 }
 
 export async function GET(req: Request) {
@@ -60,11 +53,14 @@ export async function POST(req: Request) {
     try {
         await connectDB();
         const body = await req.json();
-        const token = (await cookies()).get('token')?.value;
-        const payload: any = verifyToken(token!);
+        const user = await getServerUser();
+
+        if (!user) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
 
         const log = await AuditLog.create({
-            adminId: payload.id,
+            adminId: user.id,
             action: body.action,
             details: body.details
         });

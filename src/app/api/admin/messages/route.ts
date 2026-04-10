@@ -1,18 +1,10 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import Message from '@/models/Message';
-import { cookies } from 'next/headers';
-import { verifyToken } from '@/lib/auth';
+import { isServerAdmin } from '@/lib/server-auth';
 
 async function isAdmin() {
-    const token = (await cookies()).get('token')?.value;
-    if (!token) return false;
-    try {
-        const decodedToken = verifyToken(token) as any;
-        return decodedToken?.role === 'admin';
-    } catch (error) {
-        return false;
-    }
+    return await isServerAdmin();
 }
 
 export async function GET() {

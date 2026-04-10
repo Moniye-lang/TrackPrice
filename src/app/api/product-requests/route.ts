@@ -2,21 +2,15 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import connectDB from '@/lib/db';
 import ProductRequest from '@/models/ProductRequest';
-import { verifyToken } from '@/lib/auth';
+import { getServerUser } from '@/lib/server-auth';
 
-async function getUserFromToken() {
-    const token = (await cookies()).get('token')?.value;
-    if (!token) return null;
-    try {
-        return verifyToken(token);
-    } catch {
-        return null;
-    }
+async function getAuthUser() {
+    return await getServerUser();
 }
 
 // POST to create a product request (User)
 export async function POST(req: Request) {
-    const userPayload = await getUserFromToken();
+    const userPayload = await getAuthUser();
     if (!userPayload) {
         return NextResponse.json({ error: 'Log in to suggest products' }, { status: 401 });
     }
@@ -48,7 +42,7 @@ export async function POST(req: Request) {
 
 // GET all requests (Admin)
 export async function GET(req: Request) {
-    const userPayload: any = await getUserFromToken();
+    const userPayload: any = await getAuthUser();
     if (!userPayload || userPayload.role !== 'admin') {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

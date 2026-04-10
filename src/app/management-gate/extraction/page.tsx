@@ -243,7 +243,7 @@ export default function ExtractionPage() {
                                                         className="object-cover"
                                                         onError={() => {
                                                             const newResults = [...results];
-                                                            newResults[i].imageUrl = `https://placehold.co/600x400?text=${encodeURIComponent(item.name)}`;
+                                                            newResults[i].imageUrl = `https://placehold.co/600x400/png?text=${encodeURIComponent(item.name)}`;
                                                             setResults(newResults);
                                                         }}
                                                     />

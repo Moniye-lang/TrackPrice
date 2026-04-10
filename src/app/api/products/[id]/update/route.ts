@@ -6,8 +6,7 @@ import PriceUpdate from '@/models/PriceUpdate';
 import PriceRequest from '@/models/PriceRequest';
 import GamificationRule from '@/models/GamificationRule';
 import { parsePriceRange } from '@/lib/price-utils';
-import { cookies } from 'next/headers';
-import { verifyToken } from '@/lib/auth';
+import { getServerUser } from '@/lib/server-auth';
 
 const REPUTATION_WEIGHTS = {
     'Beginner': 1,
@@ -15,25 +14,8 @@ const REPUTATION_WEIGHTS = {
     'Elite Contributor': 10,
 };
 
-interface DecodedToken {
-    id: string;
-    name: string;
-    email: string;
-    role: string;
-}
-
-async function getUserFromToken() {
-    const token = (await cookies()).get('token')?.value;
-    if (!token) return null;
-    try {
-        const decoded = verifyToken(token);
-        if (decoded && typeof decoded === 'object') {
-            return decoded as unknown as DecodedToken;
-        }
-        return null;
-    } catch {
-        return null;
-    }
+async function getAuthUser() {
+    return await getServerUser();
 }
 
 function calculateMedian(values: number[]) {
@@ -84,21 +66,21 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             return NextResponse.json({ error: 'Valid price is required' }, { status: 400 });
         }
 
-        const decodedToken = await getUserFromToken();
-        if (!decodedToken || !decodedToken.id) {
-            return NextResponse.json({ error: 'Authentication required to update price. Anonymous updates are not allowed.' }, { status: 401 });
-        }
+        const decodedToken = await getAuthUser();
 
         await connectDB();
 
-        const user = await User.findById(decodedToken.id);
-        if (!user) {
-            console.error('[Price Update] User not found in DB:', decodedToken.id);
-            return NextResponse.json({ error: 'User not found' }, { status: 401 });
-        }
+        let user = null;
+        if (decodedToken && decodedToken.id) {
+            user = await User.findById(decodedToken.id);
+            if (!user) {
+                console.error('[Price Update] User not found in DB:', decodedToken.id);
+                return NextResponse.json({ error: 'User not found' }, { status: 401 });
+            }
 
-        if (user.isBanned) {
-            return NextResponse.json({ error: 'Your account has been banned from submitting price updates.' }, { status: 403 });
+            if (user.isBanned) {
+                return NextResponse.json({ error: 'Your account has been banned from submitting price updates.' }, { status: 403 });
+            }
         }
 
         const product = await Product.findById(productId);
@@ -106,19 +88,21 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             return NextResponse.json({ error: 'Product not found' }, { status: 404 });
         }
 
-        console.log('[Price Update] Pre-check passed', { userId: user._id, productId: product._id });
+        console.log('[Price Update] Pre-check passed', { userId: user ? user._id : 'anonymous', productId: product._id });
 
         // 1. Spam Prevention & Daily Limits (Relaxed for testing)
-        const relaxationPeriod = 10 * 1000;
-        const limitTime = new Date(Date.now() - relaxationPeriod);
-        const existingUpdate = await PriceUpdate.findOne({
-            productId: product._id,
-            userId: user._id,
-            createdAt: { $gte: limitTime }
-        });
+        if (user) {
+            const relaxationPeriod = 10 * 1000;
+            const limitTime = new Date(Date.now() - relaxationPeriod);
+            const existingUpdate = await PriceUpdate.findOne({
+                productId: product._id,
+                userId: user._id,
+                createdAt: { $gte: limitTime }
+            });
 
-        if (existingUpdate) {
-            return NextResponse.json({ error: 'You have already updated this product recently.' }, { status: 429 });
+            if (existingUpdate) {
+                return NextResponse.json({ error: 'You have already updated this product recently.' }, { status: 429 });
+            }
         }
 
         // Fetch Gamification Rules
@@ -126,15 +110,17 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         if (!rule) rule = await GamificationRule.create({});
 
         // Check daily limit
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        if (!user.lastRewardedDate || user.lastRewardedDate < today) {
-            user.rewardedUpdatesToday = 0;
-            user.lastRewardedDate = today;
-        }
+        if (user) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            if (!user.lastRewardedDate || user.lastRewardedDate < today) {
+                user.rewardedUpdatesToday = 0;
+                user.lastRewardedDate = today;
+            }
 
-        if (user.rewardedUpdatesToday >= rule.dailyUpdateLimit) {
-            return NextResponse.json({ error: 'Daily update limit reached.' }, { status: 429 });
+            if (user.rewardedUpdatesToday >= rule.dailyUpdateLimit) {
+                return NextResponse.json({ error: 'Daily update limit reached.' }, { status: 429 });
+            }
         }
 
         // 2. Create the update record
@@ -142,7 +128,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         const parsedPrice = parsePriceRange(price);
         const newUpdate = await PriceUpdate.create({
             productId: product._id,
-            userId: user._id,
+            userId: user ? user._id : undefined,
             price: parsedPrice.price,
             maxPrice: parsedPrice.maxPrice,
             storeId: body.storeId || undefined,
@@ -191,7 +177,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
                 product.price = newMedianPrice;
                 product.flagged = false;
                 product.lastUpdated = new Date();
-                product.lastUpdatedBy = user.name || 'Anonymous';
+                product.lastUpdatedBy = user ? (user.name || 'Anonymous') : 'Anonymous';
             }
             product.updateRequested = false;
 
@@ -228,9 +214,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
                             updater.points += rule.pointsPerUpdate + streakBonus;
                             updater.rewardedUpdatesToday += 1;
 
-                            if (updater.points >= 500 && updater.reputationLevel === 'Beginner') {
+                            if (updater.points >= 50 && updater.reputationLevel === 'Beginner') {
                                 updater.reputationLevel = 'Trusted Contributor';
-                            } else if (updater.points >= 2000 && updater.reputationLevel === 'Trusted Contributor') {
+                            } else if (updater.points >= 200 && updater.reputationLevel === 'Trusted Contributor') {
                                 updater.reputationLevel = 'Elite Contributor';
                             }
                             await updater.save();
@@ -242,14 +228,14 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             const openRequest = await PriceRequest.findOne({ productId: product._id, status: 'open' });
             if (openRequest) {
                 openRequest.status = 'fulfilled';
-                openRequest.fulfilledBy = user._id;
+                openRequest.fulfilledBy = user ? user._id : undefined;
                 await openRequest.save();
-                user.points += rule.bonusPointsRequest;
+                if (user) user.points += rule.bonusPointsRequest;
             }
         }
 
         await product.save();
-        await user.save();
+        if (user) await user.save();
 
         console.log('[Price Update] Finished Successfully');
 
