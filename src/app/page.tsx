@@ -55,7 +55,7 @@ export default function Home() {
   const stats = homeData?.stats || { updatesToday: 0, marketsTracked: 0, lastUpdateMins: 0 };
   const stores = homeData?.stores || [];
 
-  const categories = ['All', 'Groceries',, 'Oil and Gas' ,'Beverages','Home' ,'Electronics', 'Clothing', , 'Health & Beauty', 'Books', 'Building Materials'];
+  const categories = ['All', 'Groceries', 'Oil and Gas', 'Beverages', 'Home', 'Electronics', 'Clothing', 'Health & Beauty', 'Books', 'Building Materials'];
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
