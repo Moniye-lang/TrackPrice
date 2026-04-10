@@ -1,7 +1,5 @@
 import { cookies } from 'next/headers';
-import { jwtVerify } from 'jose';
-
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret');
+import { verifyToken } from '@/lib/auth';
 
 export interface UserPayload {
     id: string;
@@ -20,7 +18,8 @@ export async function getServerUser(): Promise<UserPayload | null> {
         
         if (!token) return null;
 
-        const { payload } = await jwtVerify(token, JWT_SECRET);
+        const payload = verifyToken(token) as any;
+        if (!payload) return null;
         
         // Safety cast for the expected payload structure
         return {

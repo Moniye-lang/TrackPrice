@@ -178,7 +178,11 @@ export async function GET(req: NextRequest) {
             };
         });
 
-        return NextResponse.json(productsWithCounts);
+        const finalProducts = sort === 'updated' 
+            ? productsWithCounts.filter(p => p.priceStatus !== 'stable')
+            : productsWithCounts;
+
+        return NextResponse.json(finalProducts);
     } catch (error: any) {
         console.error('[Products GET] Detailed Error:', {
             name: error.name,
