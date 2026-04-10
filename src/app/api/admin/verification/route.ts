@@ -26,10 +26,25 @@ export async function GET() {
         const flaggedProducts = await Product.find({ flagged: true });
 
         // Fetch all pending price updates
-        const pendingUpdates = await PriceUpdate.find({ status: 'pending' })
+        let pendingUpdates = await PriceUpdate.find({ status: 'pending' })
             .populate('productId', 'name price imageUrl category flagged')
             .populate('userId', 'name email reputationLevel points isBanned')
             .sort({ createdAt: -1 });
+
+        // Auto-cleanup legacy exact-match proposals
+        const redundantIds: string[] = [];
+        pendingUpdates = pendingUpdates.filter((update: any) => {
+            if (update.productId && update.productId.price === update.price) {
+                redundantIds.push(update._id);
+                return false;
+            }
+            return true;
+        });
+
+        if (redundantIds.length > 0) {
+            await PriceUpdate.deleteMany({ _id: { $in: redundantIds } });
+            console.log(`[Admin] Automatically purged ${redundantIds.length} redundant zero-variance verification proposals.`);
+        }
 
         return NextResponse.json({
             flaggedProducts,

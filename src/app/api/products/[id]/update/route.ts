@@ -175,8 +175,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
         product.reportCount = validReportCount;
 
-        if (totalWeight >= rule.verificationThreshold) {
-            console.log('[Price Update] Threshold reached, updating product...');
+        const isExactMatch = parsedPrice.price === product.price;
+
+        if (totalWeight >= rule.verificationThreshold || isExactMatch) {
+            console.log('[Price Update] Threshold reached or exact match confirmed, updating product...');
 
             // Safeguard against division by zero or NaN
             const oldPrice = product.price || 1;
