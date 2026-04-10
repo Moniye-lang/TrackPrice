@@ -68,6 +68,15 @@ interface ProductParams {
   marketCategory?: string;
   storeId?: string;
   sort?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface PaginatedProducts {
+  products: Product[];
+  currentPage: number;
+  totalPages: number;
+  totalCount: number;
 }
 
 export function useProducts(params: ProductParams) {
@@ -77,7 +86,18 @@ export function useProducts(params: ProductParams) {
       const queryParams = new URLSearchParams(params as any);
       const res = await fetch(`/api/products?${queryParams}`);
       if (!res.ok) throw new Error('Failed to fetch products');
-      return res.json() as Promise<Product[]>;
+      
+      const data = await res.json();
+      // If the backend returns an array (backward compatibility), wrap it
+      if (Array.isArray(data)) {
+         return {
+            products: data,
+            currentPage: 1,
+            totalPages: 1,
+            totalCount: data.length
+         } as PaginatedProducts;
+      }
+      return data as PaginatedProducts;
     },
     staleTime: 60 * 1000, // 1 minute
   });

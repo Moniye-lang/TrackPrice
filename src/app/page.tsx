@@ -27,15 +27,26 @@ export default function Home() {
   const [marketCategory, setMarketCategory] = useState<'All' | 'Online' | 'Physical'>('Physical');
   const [sort, setSort] = useState('newest');
   const [storeId, setStoreId] = useState('All');
+  const [page, setPage] = useState(1);
+
+  // Reset page to 1 when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [search, category, marketCategory, sort, storeId]);
 
   const { data: homeData, isLoading: homeLoading } = useHomeData();
-  const { data: products, isLoading: productsLoading } = useProducts({ 
+  const { data: productsData, isLoading: productsLoading } = useProducts({ 
     search, 
     category, 
     marketCategory, 
     storeId, 
-    sort 
+    sort,
+    page,
+    limit: 12
   });
+
+  const products = productsData?.products || [];
+  const totalPages = productsData?.totalPages || 1;
 
   const featuredProducts = homeData?.featuredProducts || [];
   const staleProducts = homeData?.staleProducts || [];
@@ -282,10 +293,35 @@ export default function Home() {
               </Link>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {products?.map((product) => (
-                <ProductCard key={product._id} product={product} />
-              ))}
+            <div className="space-y-12">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {products?.map((product) => (
+                  <ProductCard key={product._id} product={product} />
+                ))}
+              </div>
+              
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center gap-4 pt-8 border-t border-slate-100">
+                  <Button
+                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                    className="px-6 py-2 bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                  >
+                    Previous
+                  </Button>
+                  <span className="text-sm font-black text-slate-500 uppercase tracking-widest">
+                    Page {page} of {totalPages}
+                  </span>
+                  <Button
+                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                    disabled={page === totalPages}
+                    className="px-6 py-2 bg-primary text-white rounded-xl font-bold hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-glow-sm disabled:hover:scale-100"
+                  >
+                    Next
+                  </Button>
+                </div>
+              )}
             </div>
           )}
         </div>

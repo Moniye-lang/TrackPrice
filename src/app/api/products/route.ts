@@ -19,6 +19,8 @@ export async function GET(req: NextRequest) {
         const marketCategory = searchParams.get('marketCategory');
         const featured = searchParams.get('featured') === 'true';
         const stale = searchParams.get('stale') === 'true';
+        const pageStr = searchParams.get('page');
+        const limitStr = searchParams.get('limit');
 
         console.log(`[Products GET] Processing with search=${search}, category=${category}, marketCategory=${marketCategory}, storeId=${storeId}, sort=${sort}, featured=${featured}, stale=${stale}`);
 
@@ -85,14 +87,27 @@ export async function GET(req: NextRequest) {
         else if (sort === 'updated') sortOption.lastUpdated = -1;
         else sortOption.createdAt = -1;
 
-        const products = await Product.find(query)
-            .populate('storeId')
-            .sort(sortOption)
-            .lean(); // Faster, plain objects
+        let queryChain = Product.find(query).populate('storeId').sort(sortOption);
+
+        const isPaginated = pageStr && limitStr;
+        let totalCount = 0;
+
+        if (isPaginated) {
+            const page = parseInt(pageStr, 10);
+            const limit = parseInt(limitStr, 10);
+            const skip = (page - 1) * limit;
+            totalCount = await Product.countDocuments(query);
+            queryChain = queryChain.skip(skip).limit(limit) as any;
+        }
+
+        const products = await queryChain.lean(); // Faster, plain objects
 
         console.log(`[Products GET] Found ${products.length} products`);
 
         if (products.length === 0) {
+            if (isPaginated) {
+                return NextResponse.json({ products: [], currentPage: parseInt(pageStr, 10), totalPages: 0, totalCount: 0 });
+            }
             return NextResponse.json([]);
         }
 
@@ -181,6 +196,16 @@ export async function GET(req: NextRequest) {
         const finalProducts = sort === 'updated' 
             ? productsWithCounts.filter(p => p.priceStatus !== 'stable')
             : productsWithCounts;
+
+        if (isPaginated) {
+            const limit = parseInt(limitStr as string, 10);
+            return NextResponse.json({
+                products: finalProducts,
+                currentPage: parseInt(pageStr as string, 10),
+                totalPages: Math.ceil(totalCount / limit),
+                totalCount
+            });
+        }
 
         return NextResponse.json(finalProducts);
     } catch (error: any) {

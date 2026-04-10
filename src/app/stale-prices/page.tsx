@@ -11,6 +11,8 @@ export default function StalePricesPage() {
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
     const [category, setCategory] = useState('All');
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
     const fetchStaleProducts = async () => {
         setLoading(true);
@@ -18,12 +20,19 @@ export default function StalePricesPage() {
             const params = new URLSearchParams({
                 stale: 'true',
                 search,
-                category
+                category,
+                page: page.toString(),
+                limit: '12'
             });
             const res = await fetch(`/api/products?${params}`);
             if (res.ok) {
                 const data = await res.json();
-                setProducts(data);
+                if (data.products) {
+                    setProducts(data.products);
+                    setTotalPages(data.totalPages || 1);
+                } else {
+                    setProducts(Array.isArray(data) ? data : []);
+                }
             }
         } catch (error) {
             console.error('Failed to fetch stale products');
@@ -34,10 +43,11 @@ export default function StalePricesPage() {
 
     useEffect(() => {
         fetchStaleProducts();
-    }, [category]);
+    }, [category, page]);
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
+        setPage(1);
         fetchStaleProducts();
     };
 
@@ -143,10 +153,34 @@ export default function StalePricesPage() {
                         </Link>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                        {products.map((product) => (
-                            <ProductCard key={product._id} product={product} />
-                        ))}
+                    <div className="space-y-12">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                            {products.map((product) => (
+                                <ProductCard key={product._id} product={product} />
+                            ))}
+                        </div>
+
+                        {totalPages > 1 && (
+                            <div className="flex justify-center items-center gap-4 pt-8 border-t border-slate-100">
+                                <button
+                                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                                    disabled={page === 1}
+                                    className="px-6 py-2 bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                                >
+                                    Previous
+                                </button>
+                                <span className="text-sm font-black text-slate-500 uppercase tracking-widest">
+                                    Page {page} of {totalPages}
+                                </span>
+                                <button
+                                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                                    disabled={page === totalPages}
+                                    className="px-6 py-2 bg-primary text-white rounded-xl font-bold hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-glow-sm disabled:hover:scale-100"
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
