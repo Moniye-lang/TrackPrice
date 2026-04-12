@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { isServerAdmin, getServerUser } from '@/lib/server-auth';
+import { revalidateProducts } from '@/lib/cache';
 import connectDB from '@/lib/db';
 import PriceUpdate from '@/models/PriceUpdate';
 import ScrapedProduct from '@/models/ScrapedProduct';
@@ -54,6 +55,8 @@ export async function POST(req: Request) {
                 queuedCount++;
             }
         }
+
+        revalidateProducts(); // Invalidate cache
 
         return NextResponse.json({
             success: true,
