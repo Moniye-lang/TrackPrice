@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import User from '@/models/User';
-import jwt from 'jsonwebtoken';
+import { signToken } from '@/lib/auth';
 import { OAuth2Client } from 'google-auth-library';
 
 const client = new OAuth2Client(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID);
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
         let user = await User.findOne({ email });
 
         if (!user) {
-            // Create a new user for Google Sign-In
+            // Create a new verified user for Google Sign-In
             // Provide a random password since they logged in via Google
             const randomPassword = Math.random().toString(36).slice(-10) + Math.random().toString(36).slice(-10);
             
@@ -41,31 +41,41 @@ export async function POST(req: NextRequest) {
                 email,
                 password: randomPassword, // won't be used
                 googleId,
+                isEmailVerified: true, // Google verifies emails
             });
             await user.save();
-        } else if (!user.googleId) {
-            // Link google account to existing email
-            user.googleId = googleId;
-            await user.save();
+        } else {
+            // Update existing user if needed
+            let updated = false;
+            if (!user.googleId) {
+                user.googleId = googleId;
+                updated = true;
+            }
+            if (!user.isEmailVerified) {
+                user.isEmailVerified = true;
+                updated = true;
+            }
+            if (updated) await user.save();
         }
 
-        // Generate JWT locally
-        const token = jwt.sign(
-            { id: user._id, email: user.email, role: user.role, name: user.name },
-            process.env.JWT_SECRET || 'fallback_secret_key',
-            { expiresIn: '7d' }
-        );
+        // Generate JWT locally using standardized utility
+        const token = signToken({ 
+            id: user._id, 
+            email: user.email, 
+            role: user.role, 
+            name: user.name 
+        });
 
         const response = NextResponse.json({ 
             message: 'Login successful', 
             user: { id: user._id, name: user.name, role: user.role } 
         }, { status: 200 });
         
-        response.cookies.set('auth_token', token, {
+        response.cookies.set('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
-            maxAge: 7 * 24 * 60 * 60, // 7 days
+            sameSite: 'lax',
+            maxAge: 60 * 60 * 24, // 1 day (standardized)
             path: '/',
         });
 

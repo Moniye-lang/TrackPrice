@@ -67,7 +67,6 @@ export default function RegisterPage() {
     };
 
     return (
-        <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''}>
         <div className="min-h-screen flex items-center justify-center bg-mesh px-4 py-12">
             <Card className="w-full max-w-md p-8 backdrop-blur-xl bg-white/70 border border-white/50 shadow-2xl">
                 <div className="text-center mb-6">
@@ -149,6 +148,5 @@ export default function RegisterPage() {
                 </div>
             </Card>
         </div>
-        </GoogleOAuthProvider>
     );
 }

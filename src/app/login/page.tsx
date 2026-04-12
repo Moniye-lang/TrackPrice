@@ -67,34 +67,33 @@ export default function LoginPage() {
     };
 
     return (
-        <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''}>
-            <div className="min-h-screen flex items-center justify-center bg-mesh px-4">
-                <Card className="w-full max-w-md p-8 backdrop-blur-xl bg-white/70 border border-white/50 shadow-2xl">
-                    <div className="text-center mb-6">
-                        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Welcome Back</h1>
-                        <p className="text-slate-500 font-medium mt-2">Log in to update prices and view the leaderboard.</p>
+        <div className="min-h-screen flex items-center justify-center bg-mesh px-4">
+            <Card className="w-full max-w-md p-8 backdrop-blur-xl bg-white/70 border border-white/50 shadow-2xl">
+                <div className="text-center mb-6">
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Welcome Back</h1>
+                    <p className="text-slate-500 font-medium mt-2">Log in to update prices and view the leaderboard.</p>
+                </div>
+
+                <div className="flex justify-center mb-6">
+                    <GoogleLogin
+                        onSuccess={handleGoogleSuccess}
+                        onError={() => setError('Google Login was unsuccessful')}
+                        useOneTap
+                        theme="filled_black"
+                        shape="pill"
+                    />
+                </div>
+
+                <div className="relative mb-6">
+                    <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-slate-200"></div>
                     </div>
-
-                    {/* <div className="flex justify-center mb-6">
-                        <GoogleLogin
-                            onSuccess={handleGoogleSuccess}
-                            onError={() => setError('Google Login was unsuccessful')}
-                            useOneTap
-                            theme="filled_black"
-                            shape="pill"
-                        />
+                    <div className="relative flex justify-center text-sm">
+                        <span className="px-2 bg-white text-slate-500">Or continue with</span>
                     </div>
+                </div>
 
-                    <div className="relative mb-6">
-                        <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-slate-200"></div>
-                        </div>
-                        <div className="relative flex justify-center text-sm">
-                            <span className="px-2 bg-white text-slate-500">Or continue with</span>
-                        </div>
-                    </div> */}
-
-                    <form onSubmit={handleLogin} className="space-y-5">
+                <form onSubmit={handleLogin} className="space-y-5">
                     <div>
                         <label className="block text-sm font-bold text-slate-700 mb-2">
                             Email Address
@@ -140,6 +139,5 @@ export default function LoginPage() {
                 </div>
             </Card>
         </div>
-        </GoogleOAuthProvider>
     );
 }
