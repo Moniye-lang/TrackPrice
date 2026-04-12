@@ -170,7 +170,9 @@ export default function VerifyEmailPage() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-mesh px-4 py-12">
             <Suspense fallback={
-                <Card className="w-full max-w-md p-8 animate-pulse bg-white/50 border border-white/20 h-96" />
+                <Card className="w-full max-w-md p-8 animate-pulse bg-white/50 border border-white/20 h-96">
+                    <div className="h-full w-full" />
+                </Card>
             }>
                 <VerifyEmailForm />
             </Suspense>
