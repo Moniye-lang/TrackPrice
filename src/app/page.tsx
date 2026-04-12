@@ -1,546 +1,409 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { ProductCard } from '@/components/ProductCard';
 import { Navbar } from '@/components/Navbar';
-import { Input, Button } from '@/components/ui-base';
+import { ProductCard } from '@/components/ProductCard';
+import { FilterSection } from '@/components/FilterSection';
+import { ClientBanners } from '@/components/ClientBanners';
+import { Pagination } from '@/components/Pagination';
 import { formatPriceRange } from '@/lib/price-utils';
-import { TrendingUp, TrendingDown, Clock, Search, Award, Sparkles, ChevronRight, AlertCircle, Volume2, MapPin, BarChart3, CheckCircle2, Plus, Zap, Globe, X, Star, Gift, ThumbsUp } from 'lucide-react';
+import { TrendingUp, TrendingDown, Clock, Search, Award, Sparkles, ChevronRight, AlertCircle, Volume2, MapPin, Globe, X, Star, Plus, ThumbsUp } from 'lucide-react';
+import Link from 'next/link';
+import { headers } from 'next/headers';
+import { unstable_cache } from 'next/cache';
+import { CACHE_TAGS } from '@/lib/cache';
+import connectDB from '@/lib/db';
+import Product from '@/models/Product';
+import Store from '@/models/Store';
+import User from '@/models/User';
+import Message from '@/models/Message';
+import PriceUpdate from '@/models/PriceUpdate';
+import { escapeRegex } from '@/lib/utils';
 
-function SafeProductThumb({ imageUrl, name }: { imageUrl: string; name: string }) {
-  const [imgError, setImgError] = useState(false);
-  const isValid = imageUrl && imageUrl.length > 5 && !imgError;
-  return isValid ? (
-    <Image src={imageUrl} alt={name} fill sizes="48px" className="object-cover group-hover:scale-110 transition-transform duration-500" onError={() => setImgError(true)} />
-  ) : (
-    <span className="text-2xl" aria-hidden="true">📦</span>
-  );
+// Reusable data fetching logic (same as API but optimized for direct server use)
+const getHomeData = unstable_cache(
+    async () => {
+        await connectDB();
+        
+        const [featured, stale, recent, leaderboard, stats, stores] = await Promise.all([
+            // Featured
+            Product.find({ isFeatured: true }).limit(4).populate('storeId').lean(),
+            // Stale
+            Product.find({
+                $or: [
+                    { category: 'Oil and Gas', lastUpdated: { $lt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) } },
+                    { category: { $ne: 'Oil and Gas' }, lastUpdated: { $lt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } }
+                ]
+            }).limit(5).lean(),
+            // Recent updates
+            Product.find().sort({ lastUpdated: -1 }).limit(5).lean(),
+            // Leaderboard
+            User.find({ role: 'user', isBanned: false }).sort({ points: -1 }).limit(3).select('name points reputationLevel').lean(),
+            // Stats
+            (async () => {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const updatesToday = await PriceUpdate.countDocuments({ status: 'verified', updatedAt: { $gt: today } });
+                const marketsTracked = await Store.countDocuments({});
+                const latestUpdate = await Product.findOne().sort({ lastUpdated: -1 }).select('lastUpdated');
+                const lastUpdateMins = latestUpdate ? Math.floor((Date.now() - latestUpdate.lastUpdated.getTime()) / 60000) : 0;
+                return { updatesToday, marketsTracked, lastUpdateMins };
+            })(),
+            // Stores
+            Store.find().sort({ name: 1 }).lean()
+        ]);
+
+        return {
+            featuredProducts: JSON.parse(JSON.stringify(featured)),
+            staleProducts: JSON.parse(JSON.stringify(stale)),
+            recentUpdates: JSON.parse(JSON.stringify(recent)),
+            leaderboard: JSON.parse(JSON.stringify(leaderboard)),
+            stats,
+            stores: JSON.parse(JSON.stringify(stores))
+        };
+    },
+    ['home-page-data'],
+    { revalidate: 300, tags: [CACHE_TAGS.PRODUCTS, CACHE_TAGS.STORES, CACHE_TAGS.STATS] }
+);
+
+const getProducts = unstable_cache(
+    async (params: any) => {
+        await connectDB();
+        const { search, category, marketCategory, storeId, sort, page = 1, limit = 12 } = params;
+        
+        const conditions: any[] = [];
+        if (search) {
+            conditions.push({ name: { $regex: escapeRegex(search), $options: 'i' } });
+        }
+        if (category && category !== 'All') {
+            conditions.push({ category });
+        }
+        if (marketCategory && marketCategory !== 'All') {
+            conditions.push({ marketCategory });
+        }
+        if (storeId && storeId !== 'All') {
+            conditions.push({ storeId });
+        }
+
+        const query = conditions.length > 0 ? { $and: conditions } : {};
+        
+        let sortOption: any = {};
+        if (sort === 'price_asc') sortOption.price = 1;
+        else if (sort === 'price_desc') sortOption.price = -1;
+        else if (sort === 'updated') sortOption.lastUpdated = -1;
+        else sortOption.createdAt = -1;
+
+        const skip = (page - 1) * limit;
+        const [products, totalCount] = await Promise.all([
+            Product.find(query).populate('storeId').sort(sortOption).skip(skip).limit(limit).lean(),
+            Product.countDocuments(query)
+        ]);
+
+        return {
+            products: JSON.parse(JSON.stringify(products)),
+            totalPages: Math.ceil(totalCount / limit),
+            totalCount
+        };
+    },
+    ['products-list-server'],
+    { revalidate: 300, tags: [CACHE_TAGS.PRODUCTS] }
+);
+
+export default async function Home({ searchParams }: { searchParams: Promise<any> }) {
+    const params = await searchParams;
+    const { search, category, marketCategory, storeId, sort, page } = params;
+
+    const [homeData, productsData] = await Promise.all([
+        getHomeData(),
+        getProducts({
+            search,
+            category,
+            marketCategory,
+            storeId,
+            sort,
+            page: parseInt(page || '1', 10),
+            limit: 12
+        })
+    ]);
+
+    const { featuredProducts, staleProducts, recentUpdates, leaderboard, stats, stores } = homeData;
+    const { products, totalPages } = productsData;
+    const currentPage = parseInt(page || '1', 10);
+
+    const categories = ['All', 'Groceries', 'Oil and Gas', 'Beverages', 'Home', 'Electronics', 'Clothing', 'Health & Beauty', 'Books', 'Building Materials'];
+
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "TrackPricely",
+        "url": "https://trackpricely.com",
+        "description": "Live price tracking for markets in Ibadan. Check prices before you buy anything.",
+    };
+
+    return (
+        <div className="min-h-screen bg-mesh selection:bg-primary/20">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
+            <Navbar />
+
+            {/* Hero Section */}
+            <section className="relative py-12 md:py-24 px-4 overflow-hidden">
+                <div className="max-w-4xl mx-auto text-center relative z-10">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-xs font-black mb-6 animate-fade-in uppercase tracking-[0.2em]">
+                        <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                        </span>
+                        Live Market Insights
+                    </div>
+                    <h1 className="text-4xl md:text-7xl font-black mb-6 tracking-tight text-slate-900 leading-[1] antialiased">
+                        Check prices before you <span className="text-primary italic">buy anything</span> in Ibadan
+                    </h1>
+                    <p className="text-slate-500 mb-8 text-lg md:text-xl font-medium max-w-2xl mx-auto px-4">
+                        Prices change daily — check before you buy today. Join people tracking live prices in Bodija, Dugbe, and beyond.
+                    </p>
+
+                    {/* Proof Bar */}
+                    <div className="flex flex-wrap justify-center items-center gap-4 md:gap-8 mb-10">
+                        <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 rounded-2xl border border-emerald-100/50 shadow-sm transition-all hover:scale-105">
+                            <CheckCircle2 size={16} className="text-emerald-500" />
+                            <span className="text-sm font-black text-emerald-800 uppercase tracking-tighter">
+                                {stats.updatesToday} Prices Updated Today
+                            </span>
+                        </div>
+                        <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-2xl border border-blue-100/50 shadow-sm transition-all hover:scale-105">
+                            <MapPin size={16} className="text-blue-500" />
+                            <span className="text-sm font-black text-blue-800 uppercase tracking-tighter">
+                                {stats.marketsTracked} Markets Tracked
+                            </span>
+                        </div>
+                        <div className="flex items-center gap-2 px-4 py-2 bg-amber-50 rounded-2xl border border-amber-100/50 shadow-sm transition-all hover:scale-105">
+                            <Clock size={16} className="text-amber-500" />
+                            <span className="text-sm font-black text-amber-800 uppercase tracking-tighter">
+                                Last Update: {stats.lastUpdateMins}m ago
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className="flex justify-center mb-10">
+                        <Link href="/stale-prices" className="group/cta flex items-center gap-4 bg-slate-900 border border-slate-800 px-8 py-4 rounded-3xl hover:bg-primary transition-all duration-500 shadow-2xl hover:shadow-primary/40 hover:-translate-y-1 scale-100">
+                            <div className="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center text-white shadow-glow group-hover/cta:bg-white group-hover/cta:text-primary transition-all">
+                                <TrendingUp size={20} />
+                            </div>
+                            <div className="text-left">
+                                <p className="text-xs font-black text-primary uppercase tracking-[0.3em] group-hover/cta:text-white transition-colors">Seen a different price?</p>
+                                <p className="text-sm font-black text-white uppercase tracking-widest leading-none mt-1">UPDATE IT NOW</p>
+                            </div>
+                            <ChevronRight size={20} className="text-slate-600 group-hover/cta:text-white group-hover/cta:translate-x-1 transition-all" />
+                        </Link>
+                    </div>
+
+                    {/* Interactive Filter Section */}
+                    <FilterSection stores={stores} categories={categories} />
+                </div>
+
+                {/* Background elements */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full -z-0 opacity-10 pointer-events-none">
+                    <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary rounded-full blur-3xl"></div>
+                    <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent rounded-full blur-3xl"></div>
+                </div>
+            </section>
+
+            <ClientBanners />
+
+            {/* Featured Section */}
+            {featuredProducts.length > 0 && !search && (category === 'All' || !category) && (
+                <section className="max-w-7xl mx-auto px-4 py-12 min-h-[500px]">
+                    <div className="flex justify-between items-end mb-8">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center text-accent">
+                                <Sparkles size={20} />
+                            </div>
+                            <div>
+                                <h2 className="text-2xl font-black text-slate-800 tracking-tight">Verified Hot Deals</h2>
+                                <p className="text-slate-400 text-xs font-black uppercase tracking-[0.2em] mt-1">Direct from community Consensus</p>
+                            </div>
+                        </div>
+                        <div className="h-px bg-slate-100 flex-1 mx-8 mb-2 hidden md:block"></div>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                        {featuredProducts.map((p: any, index: number) => (
+                            <ProductCard 
+                                key={p._id} 
+                                product={p} 
+                                priority={index < 4} 
+                            />
+                        ))}
+                    </div>
+                </section>
+            )}
+
+            {/* Main Content */}
+            <main className="max-w-7xl mx-auto px-4 py-16 grid grid-cols-1 lg:grid-cols-4 gap-12 pb-32 min-h-[1000px]">
+                <div className="lg:col-span-3">
+                    {!products || products.length === 0 ? (
+                        <div className="text-center py-20 bg-slate-50/50 rounded-3xl border-2 border-dashed border-slate-200 flex flex-col items-center">
+                            <div className="bg-white w-24 h-24 rounded-full flex items-center justify-center mb-6 shadow-premium">
+                                <Search size={40} className="text-slate-200" />
+                            </div>
+                            <h3 className="text-2xl font-black text-slate-700 mb-2">No products found</h3>
+                            <p className="text-slate-400 font-medium mb-8 max-w-sm">We couldn't find any products matching your search criteria. Try a different term or add it yourself!</p>
+                            <Link href="/add-product">
+                                <Button className="px-10 py-4 font-black text-xs tracking-[0.2em] uppercase shadow-glow rounded-2xl flex items-center gap-2">
+                                    <Plus size={16} />
+                                    Add Missing Product
+                                </Button>
+                            </Link>
+                        </div>
+                    ) : (
+                        <div className="space-y-12">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                                {products?.map((product: any, index: number) => (
+                                    <ProductCard key={product._id} product={product} priority={index < 3} />
+                                ))}
+                            </div>
+                            
+                            <Pagination currentPage={currentPage} totalPages={totalPages} />
+                        </div>
+                    )}
+                </div>
+
+                {/* Sidebar */}
+                <div className="space-y-12 lg:sticky lg:top-28 h-fit">
+                    {/* Stale Prices / Needs Update */}
+                    {staleProducts.length > 0 && (
+                        <div className="space-y-6">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                     <AlertCircle size={14} className="text-rose-500" />
+                                     <h3 className="text-xs font-black text-slate-800 uppercase tracking-[0.2em]">
+                                        Needs Update
+                                     </h3>
+                                </div>
+                                <Link href="/stale-prices" className="text-xs font-black text-primary hover:underline uppercase tracking-widest">
+                                    View All
+                                </Link>
+                            </div>
+                            <div className="space-y-4">
+                                {staleProducts.map((p: any) => (
+                                    <Link key={p._id} href={`/product/${p._id}`} className="flex items-center gap-4 group">
+                                        <div className="w-12 h-12 rounded-2xl overflow-hidden bg-slate-50 flex-shrink-0 border border-slate-100 relative flex items-center justify-center font-bold text-slate-300">
+                                            {p.imageUrl ? (
+                                                <Image 
+                                                    src={p.imageUrl} 
+                                                    alt={p.name} 
+                                                    fill 
+                                                    sizes="48px"
+                                                    className="object-cover"
+                                                />
+                                            ) : (
+                                                <span>📦</span>
+                                            )}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <h4 className="font-bold text-slate-800 text-sm truncate group-hover:text-primary transition-colors">{p.name}</h4>
+                                            <div className="flex items-center gap-1.5 text-xs font-black text-slate-400 uppercase tracking-widest mt-0.5">
+                                                <Clock size={10} />
+                                                Stale Price
+                                            </div>
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Recently Updated */}
+                    {recentUpdates.length > 0 && (
+                        <div className="space-y-6">
+                            <h3 className="text-xs font-black text-slate-800 uppercase tracking-[0.2em] flex items-center gap-2">
+                                <Volume2 size={14} className="text-primary" />
+                                Live Price Feed
+                            </h3>
+                            <div className="space-y-5">
+                                {recentUpdates.map((p: any) => {
+                                    const priceStatus = p.priceHistory && p.priceHistory.length >= 2 
+                                        ? (p.price < p.priceHistory[p.priceHistory.length-2].price ? 'down' : 'up')
+                                        : 'up';
+                                    
+                                    return (
+                                        <Link key={p._id} href={`/product/${p._id}`} className="flex items-start gap-4 group">
+                                            <div className={`mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0 ${priceStatus === 'down' ? 'bg-rose-500' : 'bg-emerald-500 opacity-50'}`}></div>
+                                            <div className="flex-1 min-w-0">
+                                                <h4 className="font-bold text-slate-700 text-sm truncate group-hover:text-primary transition-colors">{p.name}</h4>
+                                                <div className="flex items-center gap-2 mt-1">
+                                                    <p className={`text-xs font-black uppercase tracking-widest flex items-center gap-1 ${priceStatus === 'down' ? 'text-rose-600' : 'text-emerald-600'}`}>
+                                                        {priceStatus === 'down' ? <TrendingDown size={10} /> : <TrendingUp size={10} />}
+                                                        {priceStatus === 'down' ? 'Price Drop' : 'Updated'}
+                                                    </p>
+                                                    <span className="w-1 h-1 rounded-full bg-slate-200" />
+                                                    <span className="font-black text-slate-900 text-xs">{formatPriceRange(p.price)}</span>
+                                                </div>
+                                            </div>
+                                            <ChevronRight size={14} className="text-slate-200 group-hover:text-primary transition-colors self-center" />
+                                        </Link>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Leaderboard Snippet */}
+                    {leaderboard.length > 0 && (
+                        <div className="p-6 bg-slate-900 rounded-[32px] shadow-premium border border-slate-800 relative overflow-hidden group/card">
+                            <div className="absolute -top-12 -right-12 w-32 h-32 bg-primary/20 rounded-full group-hover/card:bg-primary/30 transition-colors" />
+                            <h3 className="text-xs font-black text-primary uppercase tracking-[0.3em] mb-8 flex items-center gap-2">
+                                <Award size={14} />
+                                Top Market Analysts
+                            </h3>
+                            <div className="space-y-6 relative z-10">
+                                {leaderboard.map((user: any, i: number) => (
+                                    <div key={user._id} className="flex items-center justify-between">
+                                        <div className="flex items-center gap-4">
+                                            <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-[10px] font-black shadow-lg ${i === 0 ? 'bg-gradient-to-br from-amber-300 to-amber-500 text-amber-950' :
+                                                i === 1 ? 'bg-gradient-to-br from-slate-200 to-slate-400 text-slate-900' :
+                                                    'bg-gradient-to-br from-orange-300 to-orange-500 text-orange-950'
+                                                }`}>
+                                                {i + 1}
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-black text-white antialiased">{user.name}</p>
+                                                <p className="text-xs font-black text-slate-500 uppercase tracking-[0.2em] mt-0.5">{user.reputationLevel}</p>
+                                            </div>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-xs font-black text-primary">{user.points}</p>
+                                            <p className="text-[10px] font-bold text-slate-600 uppercase">PTS</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                            <Link href="/leaderboard" className="block text-center mt-8 pt-6 border-t border-slate-800 text-xs font-black text-slate-400 hover:text-white transition-colors uppercase tracking-[0.2em]">
+                                View Full Rankings
+                            </Link>
+                        </div>
+                    )}
+                </div>
+            </main>
+        </div>
+    );
 }
-import { formatRelativeTime } from '@/lib/utils';
-import { useHomeData, useProducts } from '@/hooks/useHomeData';
 
-export default function Home() {
-  const [search, setSearch] = useState('');
-  const [category, setCategory] = useState('All');
-  const [marketCategory, setMarketCategory] = useState<'All' | 'Online' | 'Physical'>('Physical');
-  const [sort, setSort] = useState('newest');
-  const [storeId, setStoreId] = useState('All');
-  const [page, setPage] = useState(1);
-  const [showPointsBanner, setShowPointsBanner] = useState(true);
-
-  useEffect(() => {
-    const dismissed = sessionStorage.getItem('points-banner-dismissed');
-    if (dismissed) setShowPointsBanner(false);
-  }, []);
-
-  const dismissPointsBanner = () => {
-    sessionStorage.setItem('points-banner-dismissed', '1');
-    setShowPointsBanner(false);
-  };
-
-  // Reset page to 1 when filters change
-  useEffect(() => {
-    setPage(1);
-  }, [search, category, marketCategory, sort, storeId]);
-
-  const { data: homeData, isLoading: homeLoading } = useHomeData();
-  const { data: productsData, isLoading: productsLoading } = useProducts({ 
-    search, 
-    category, 
-    marketCategory, 
-    storeId, 
-    sort,
-    page,
-    limit: 12
-  });
-
-  const products = productsData?.products || [];
-  const totalPages = productsData?.totalPages || 1;
-
-  const featuredProducts = homeData?.featuredProducts || [];
-  const staleProducts = homeData?.staleProducts || [];
-  const recentUpdates = homeData?.recentUpdates || [];
-  const leaderboard = homeData?.leaderboard || [];
-  const stats = homeData?.stats || { updatesToday: 0, marketsTracked: 0, lastUpdateMins: 0 };
-  const stores = homeData?.stores || [];
-
-  const categories = ['All', 'Groceries', 'Oil and Gas', 'Beverages', 'Home', 'Electronics', 'Clothing', 'Health & Beauty', 'Books', 'Building Materials'];
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-  };
-
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "TrackPricely",
-    "url": "https://trackpricely.com",
-    "description": "Live price tracking for markets in Ibadan. Check prices before you buy anything.",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://trackpricely.com/search?q={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-mesh selection:bg-primary/20">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <Navbar />
-
-      {/* Hero Section */}
-      <section className="relative py-12 md:py-24 px-4 overflow-hidden">
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-xs font-black mb-6 animate-fade-in uppercase tracking-[0.2em]">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-            </span>
-            Live Market Insights
-          </div>
-          <h1 className="text-4xl md:text-7xl font-black mb-6 tracking-tight text-slate-900 leading-[1] antialiased">
-            Check prices before you <span className="text-primary italic">buy anything</span> in Ibadan
-          </h1>
-          <p className="text-slate-500 mb-8 text-lg md:text-xl font-medium max-w-2xl mx-auto px-4">
-            Prices change daily — check before you buy today. Join people tracking live prices in Bodija, Dugbe, and beyond.
-          </p>
-
-          {/* Proof Bar */}
-          <div className="flex flex-wrap justify-center items-center gap-4 md:gap-8 mb-10 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-            <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 rounded-2xl border border-emerald-100/50 shadow-sm transition-all hover:scale-105">
-                <CheckCircle2 size={16} className="text-emerald-500" />
-                <span className="text-sm font-black text-emerald-800 uppercase tracking-tighter">
-                    {stats.updatesToday} Prices Updated Today
-                </span>
-            </div>
-            <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-2xl border border-blue-100/50 shadow-sm transition-all hover:scale-105">
-                <MapPin size={16} className="text-blue-500" />
-                <span className="text-sm font-black text-blue-800 uppercase tracking-tighter">
-                    {stats.marketsTracked} Markets Tracked
-                </span>
-            </div>
-            <div className="flex items-center gap-2 px-4 py-2 bg-amber-50 rounded-2xl border border-amber-100/50 shadow-sm transition-all hover:scale-105">
-                <Clock size={16} className="text-amber-500" />
-                <span className="text-sm font-black text-amber-800 uppercase tracking-tighter">
-                    Last Update: {stats.lastUpdateMins}m ago
-                </span>
-            </div>
-          </div>
-
-          <div className="flex justify-center mb-10">
-            <Link href="/stale-prices" className="group/cta flex items-center gap-4 bg-slate-900 border border-slate-800 px-8 py-4 rounded-3xl hover:bg-primary transition-all duration-500 shadow-2xl hover:shadow-primary/40 hover:-translate-y-1 scale-100">
-              <div className="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center text-white shadow-glow group-hover/cta:bg-white group-hover/cta:text-primary transition-all">
-                <TrendingUp size={20} />
-              </div>
-              <div className="text-left">
-                  <p className="text-xs font-black text-primary uppercase tracking-[0.3em] group-hover/cta:text-white transition-colors">Seen a different price?</p>
-                  <p className="text-sm font-black text-white uppercase tracking-widest leading-none mt-1">UPDATE IT NOW</p>
-              </div>
-              <ChevronRight size={20} className="text-slate-600 group-hover/cta:text-white group-hover/cta:translate-x-1 transition-all" />
-            </Link>
-          </div>
-
-          <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2 max-w-3xl mx-auto bg-white/95 p-2 rounded-3xl border border-white/60 shadow-2xl">
-            <div className="relative flex-[2]">
-              <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" size={24} />
-              <Input
-                className="border-none bg-transparent focus:ring-0 text-slate-800 text-lg px-16 h-16 w-full"
-                placeholder="Search rice, eggs, oil, bread..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                aria-label="Search for products"
-              />
-            </div>
-            
-            <div className="h-10 w-px bg-slate-200 self-center hidden sm:block" />
-
-            <div className="relative flex-1">
-              <label htmlFor="market-selector" className="sr-only">Select Market</label>
-              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/60" size={20} aria-hidden="true" />
-              <select
-                id="market-selector"
-                value={storeId}
-                onChange={(e) => setStoreId(e.target.value)}
-                className="w-full h-16 bg-transparent border-none pl-12 pr-4 text-sm font-black text-slate-700 focus:ring-0 cursor-pointer outline-none appearance-none"
-              >
-                <option value="All">All Markets</option>
-                {stores.map((s: any) => (
-                  <option key={s._id} value={s._id}>{s.name} ({s.area})</option>
-                ))}
-              </select>
-            </div>
-
-            <Button type="submit" className="w-full sm:w-auto px-10 py-4 shadow-glow font-black h-16 rounded-2xl text-base">
-              Check Prices
-            </Button>
-          </form>
-        </div>
-
-        {/* Background elements */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full -z-0 opacity-10 pointer-events-none">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary rounded-full"></div>
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent rounded-full"></div>
-        </div>
-
-        {/* Market Snapshot and Trending Spotlight removed */}
-      </section>
-
-      {/* How to Earn Points Banner */}
-      {showPointsBanner && (
-        <section className="max-w-5xl mx-auto px-4 pb-2 pt-0">
-          <div className="relative rounded-[28px] overflow-hidden border border-primary/20 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 shadow-2xl">
-            {/* Glow blobs */}
-            <div className="absolute -top-16 -left-16 w-64 h-64 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute -bottom-16 -right-16 w-64 h-64 bg-accent/20 rounded-full blur-3xl pointer-events-none" />
-
-            <div className="relative z-10 p-6 md:p-8">
-              {/* Header row */}
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-primary/20 border border-primary/30 flex items-center justify-center">
-                    <Gift size={20} className="text-primary" />
-                  </div>
-                  <div>
-                    <h2 className="text-base font-black text-white tracking-tight">How to Earn Points</h2>
-                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-0.5">Contribute & climb the leaderboard</p>
-                  </div>
-                </div>
-                <button
-                  onClick={dismissPointsBanner}
-                  aria-label="Dismiss points info"
-                  className="w-8 h-8 rounded-xl bg-slate-700/60 hover:bg-slate-600 flex items-center justify-center transition-colors text-slate-400 hover:text-white"
-                >
-                  <X size={14} />
-                </button>
-              </div>
-
-              {/* Earning actions grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                {/* Update a price */}
-                <div className="group flex flex-col gap-3 p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-primary/40 hover:bg-primary/5 transition-all duration-300 hover:-translate-y-0.5">
-                  <div className="flex items-center justify-between">
-                    <div className="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center">
-                      <TrendingUp size={18} className="text-emerald-400" />
-                    </div>
-                    <span className="text-lg font-black text-primary">+10 <span className="text-[10px] font-bold text-slate-500 uppercase">pts</span></span>
-                  </div>
-                  <div>
-                    <p className="text-sm font-black text-white">Update a Price</p>
-                    <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">Spot a price change at any market? Submit it and earn instantly.</p>
-                  </div>
-                </div>
-
-                {/* Add a new product */}
-                <div className="group flex flex-col gap-3 p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-accent/40 hover:bg-accent/5 transition-all duration-300 hover:-translate-y-0.5">
-                  <div className="flex items-center justify-between">
-                    <div className="w-9 h-9 rounded-xl bg-violet-500/15 border border-violet-500/20 flex items-center justify-center">
-                      <Plus size={18} className="text-violet-400" />
-                    </div>
-                    <span className="text-lg font-black text-primary">+20 <span className="text-[10px] font-bold text-slate-500 uppercase">pts</span></span>
-                  </div>
-                  <div>
-                    <p className="text-sm font-black text-white">Request a Product</p>
-                    <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">Don't see an item listed? Request it and earn a bonus when it's added.</p>
-                  </div>
-                </div>
-
-                {/* Vouch a price */}
-                <div className="group flex flex-col gap-3 p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-amber-400/40 hover:bg-amber-400/5 transition-all duration-300 hover:-translate-y-0.5">
-                  <div className="flex items-center justify-between">
-                    <div className="w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-500/20 flex items-center justify-center">
-                      <ThumbsUp size={18} className="text-amber-400" />
-                    </div>
-                    <span className="text-lg font-black text-primary">+5 <span className="text-[10px] font-bold text-slate-500 uppercase">pts</span></span>
-                  </div>
-                  <div>
-                    <p className="text-sm font-black text-white">Vouch a Price</p>
-                    <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">Confirm someone else's price update to build community trust and earn extra.</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Footer row */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-5 border-t border-white/10">
-                <div className="flex items-center gap-2 text-xs text-slate-400">
-                  <Star size={12} className="text-amber-400 fill-amber-400" />
-                  <span>Points never expire — keep contributing to unlock higher reputation tiers.</span>
-                </div>
-                <Link
-                  href="/leaderboard"
-                  className="flex-shrink-0 flex items-center gap-2 px-5 py-2.5 bg-primary text-white text-xs font-black uppercase tracking-[0.2em] rounded-xl hover:scale-105 transition-all shadow-glow-sm"
-                >
-                  <Award size={13} />
-                  See Leaderboard
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Featured Section */}
-      {featuredProducts.length > 0 && !search && category === 'All' && (
-        <section className="max-w-7xl mx-auto px-4 py-12 min-h-[500px]">
-          <div className="flex justify-between items-end mb-8">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center text-accent">
-                <Sparkles size={20} />
-              </div>
-              <div>
-                <h2 className="text-2xl font-black text-slate-800 tracking-tight">Verified Hot Deals</h2>
-                <p className="text-slate-400 text-xs font-black uppercase tracking-[0.2em] mt-1">Direct from community Consensus</p>
-              </div>
-            </div>
-            <div className="h-px bg-slate-100 flex-1 mx-8 mb-2 hidden md:block"></div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {featuredProducts.map((p: any, index: number) => (
-              <ProductCard 
-                key={p._id} 
-                product={p} 
-                priority={index < 4} 
-              />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-16 grid grid-cols-1 lg:grid-cols-4 gap-12 pb-32 min-h-[1000px]">
-        <div className="lg:col-span-3">
-          <div className="flex flex-col lg:flex-row justify-between items-stretch lg:items-end mb-12 gap-6 lg:gap-8 overflow-hidden">
-            <div className="space-y-8 flex-1 min-w-0">
-              <div className="flex flex-col gap-6">
-                <h2 className="text-3xl font-black text-slate-900 tracking-tight">Market Intelligence</h2>
-                
-                {/* Market Category Tabs */}
-                <div className="flex items-center p-1.5 bg-white/95 rounded-[2rem] border border-slate-100 shadow-premium w-fit min-w-[300px]">
-                  <button
-                    onClick={() => setMarketCategory('Physical')}
-                    className={`flex items-center gap-3 px-8 py-3.5 rounded-[1.5rem] text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-500 ${marketCategory === 'Physical'
-                      ? 'bg-slate-900 text-white shadow-glow translate-y-[-2px]'
-                      : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'
-                      }`}
-                  >
-                    <MapPin size={16} className={marketCategory === 'Physical' ? 'text-primary' : ''} />
-                    Physical Markets
-                  </button>
-                  <button
-                    onClick={() => setMarketCategory('Online')}
-                    className={`flex items-center gap-3 px-8 py-3.5 rounded-[1.5rem] text-xs font-black uppercase tracking-[0.2em] transition-all duration-500 ${marketCategory === 'Online'
-                      ? 'bg-slate-900 text-white shadow-glow translate-y-[-2px]'
-                      : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'
-                      }`}
-                  >
-                    <Globe size={16} className={marketCategory === 'Online' ? 'text-primary' : ''} />
-                    Online Stores
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 overflow-x-auto pb-4 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
-                {categories.map((cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => setCategory(cat)}
-                    className={`px-6 py-2.5 rounded-xl text-sm font-display font-bold transition-all whitespace-nowrap ${category === cat
-                      ? 'bg-primary text-white shadow-glow'
-                      : 'bg-white text-slate-500 hover:bg-slate-50 border border-slate-100 shadow-sm'
-                      }`}
-                  >
-                    {cat}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4 bg-white/50 p-1.5 rounded-xl border border-slate-100 shadow-sm">
-              <span className="text-[10px] font-black text-slate-400 pl-3 uppercase tracking-widest">Sort By</span>
-              <select
-                value={sort}
-                onChange={(e) => setSort(e.target.value)}
-                className="bg-transparent border-none py-1.5 px-3 text-sm font-bold text-slate-700 focus:ring-0 cursor-pointer outline-none"
-              >
-                <option value="newest">Newest First</option>
-                <option value="price_asc">Price: Low to High</option>
-                <option value="price_desc">Price: High to Low</option>
-                <option value="updated">Recently Updated</option>
-              </select>
-            </div>
-          </div>
-
-          {productsLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="h-[400px] glass rounded-3xl relative overflow-hidden bg-white/20">
-                  <div className="absolute inset-0 animate-shimmer" />
-                </div>
-              ))}
-            </div>
-          ) : !products || products.length === 0 ? (
-            <div className="text-center py-20 bg-slate-50/50 rounded-3xl border-2 border-dashed border-slate-200 flex flex-col items-center">
-              <div className="bg-white w-24 h-24 rounded-full flex items-center justify-center mb-6 shadow-premium">
-                <Search size={40} className="text-slate-200" />
-              </div>
-              <h3 className="text-2xl font-black text-slate-700 mb-2">No products found</h3>
-              <p className="text-slate-400 font-medium mb-8 max-w-sm">We couldn't find any products matching your search criteria. Try a different term or add it yourself!</p>
-              <Link href="/add-product">
-                <Button className="px-10 py-4 font-black text-xs tracking-[0.2em] uppercase shadow-glow rounded-2xl flex items-center gap-2">
-                  <Plus size={16} />
-                  Add Missing Product
-                </Button>
-              </Link>
-            </div>
-          ) : (
-            <div className="space-y-12">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                {products?.map((product, index) => (
-                  <ProductCard key={product._id} product={product} priority={index < 6} />
-                ))}
-              </div>
-              
-              {/* Pagination Controls */}
-              {totalPages > 1 && (
-                <div className="flex justify-center items-center gap-4 pt-8 border-t border-slate-100">
-                  <Button
-                    onClick={() => setPage(p => Math.max(1, p - 1))}
-                    disabled={page === 1}
-                    className="px-6 py-2 bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
-                  >
-                    Previous
-                  </Button>
-                  <span className="text-sm font-black text-slate-500 uppercase tracking-widest">
-                    Page {page} of {totalPages}
-                  </span>
-                  <Button
-                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                    disabled={page === totalPages}
-                    className="px-6 py-2 bg-primary text-white rounded-xl font-bold hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-glow-sm disabled:hover:scale-100"
-                  >
-                    Next
-                  </Button>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Sidebar */}
-        <div className="space-y-12 lg:sticky lg:top-28 h-fit">
-          {/* Stale Prices / Needs Update */}
-          {staleProducts.length > 0 && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                   <AlertCircle size={14} className="text-rose-500" />
-                   <h3 className="text-xs font-black text-slate-800 uppercase tracking-[0.2em]">
-                      Needs Update
-                   </h3>
-                </div>
-                <Link href="/stale-prices" className="text-xs font-black text-primary hover:underline uppercase tracking-widest">
-                  View All
-                </Link>
-              </div>
-              <div className="space-y-4">
-                {staleProducts.map((p: any) => (
-                  <Link key={p._id} href={`/product/${p._id}`} className="flex items-center gap-4 group">
-                    <div className="w-12 h-12 rounded-2xl overflow-hidden bg-slate-50 flex-shrink-0 border border-slate-100 relative flex items-center justify-center">
-                      <SafeProductThumb imageUrl={p.imageUrl} name={p.name} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-bold text-slate-800 text-sm truncate group-hover:text-primary transition-colors">{p.name}</h4>
-                      <div className="flex items-center gap-1.5 text-xs font-black text-slate-400 uppercase tracking-widest mt-0.5">
-                        <Clock size={10} />
-                        Stale Price
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Recently Updated */}
-          {recentUpdates.length > 0 && (
-            <div className="space-y-6">
-              <h3 className="text-xs font-black text-slate-800 uppercase tracking-[0.2em] flex items-center gap-2">
-                <Volume2 size={14} className="text-primary" />
-                Live Price Feed
-              </h3>
-              <div className="space-y-5">
-                {recentUpdates.map((p: any) => (
-                  <Link key={p._id} href={`/product/${p._id}`} className="flex items-start gap-4 group">
-                    <div className={`mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0 ${p.priceStatus === 'down' ? 'bg-rose-500' : 'bg-emerald-500 opacity-50'}`}></div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-bold text-slate-700 text-sm truncate group-hover:text-primary transition-colors">{p.name}</h4>
-                      <div className="flex items-center gap-2 mt-1">
-                        <p className={`text-xs font-black uppercase tracking-widest flex items-center gap-1 ${p.priceStatus === 'down' ? 'text-rose-600' : 'text-emerald-600'}`}>
-                          {p.priceStatus === 'down' ? <TrendingDown size={10} /> : <TrendingUp size={10} />}
-                          {p.priceStatus === 'down' ? 'Price Drop' : 'Updated'}
-                        </p>
-                        <span className="w-1 h-1 rounded-full bg-slate-200" />
-                        <span className="font-black text-slate-900 text-xs">{formatPriceRange(p.price)}</span>
-                      </div>
-                    </div>
-                    <ChevronRight size={14} className="text-slate-200 group-hover:text-primary transition-colors self-center" />
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Leaderboard Snippet */}
-          {leaderboard.length > 0 && (
-            <div className="p-6 bg-slate-900 rounded-[32px] shadow-premium border border-slate-800 relative overflow-hidden group/card">
-              <div className="absolute -top-12 -right-12 w-32 h-32 bg-primary/20 rounded-full group-hover/card:bg-primary/30 transition-colors" />
-              <h3 className="text-xs font-black text-primary uppercase tracking-[0.3em] mb-8 flex items-center gap-2">
-                <Award size={14} />
-                Top Market Analysts
-              </h3>
-              <div className="space-y-6 relative z-10">
-                {leaderboard.slice(0, 3).map((user: any, i: number) => (
-                  <div key={user._id} className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-[10px] font-black shadow-lg ${i === 0 ? 'bg-gradient-to-br from-amber-300 to-amber-500 text-amber-950' :
-                        i === 1 ? 'bg-gradient-to-br from-slate-200 to-slate-400 text-slate-900' :
-                          'bg-gradient-to-br from-orange-300 to-orange-500 text-orange-950'
-                        }`}>
-                        {i + 1}
-                      </div>
-                      <div>
-                        <p className="text-sm font-black text-white antialiased">{user.name}</p>
-                        <p className="text-xs font-black text-slate-500 uppercase tracking-[0.2em] mt-0.5">{user.reputationLevel}</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs font-black text-primary">{user.points}</p>
-                      <p className="text-[10px] font-bold text-slate-600 uppercase">PTS</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <Link href="/leaderboard" className="block text-center mt-8 pt-6 border-t border-slate-800 text-xs font-black text-slate-400 hover:text-white transition-colors uppercase tracking-[0.2em]">
-                View Full Rankings
-              </Link>
-            </div>
-          )}
-        </div>
-      </main>
-
-      {/* Mobile Floating Action Button */}
-      <div className="sm:hidden fixed bottom-32 right-6 z-[60] flex flex-col items-end gap-3">
-        <Link href="/stale-prices" className="group">
-          <div className="bg-slate-900 border border-slate-800 text-white text-xs font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-xl mb-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-            Update Price
-          </div>
-          
-        </Link>
-      </div>
-    </div>
-  );
+function CheckCircle2(props: any) {
+    return (
+        <svg
+            {...props}
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        >
+            <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+            <path d="m9 12 2 2 4-4" />
+        </svg>
+    )
 }
