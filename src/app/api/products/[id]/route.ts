@@ -8,8 +8,58 @@ import AuditLog from '@/models/AuditLog';
 import { isValidObjectId } from '@/lib/db-utils';
 import { isServerAdmin, getServerUser } from '@/lib/server-auth';
 import { parsePriceRange } from '@/lib/price-utils';
+import { unstable_cache } from 'next/cache';
+import { CACHE_TAGS, revalidateProducts } from '@/lib/cache';
 
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret');
+// Data fetching logic extracted for caching
+const fetchProductDetail = async (productId: string) => {
+    await connectDB();
+    const product = await Product.findById(productId).lean();
+    if (!product) return null;
+
+    const suggestions = await PriceUpdate.find({
+        productId,
+        status: 'pending'
+    })
+        .populate('userId', 'name')
+        .sort({ createdAt: -1 })
+        .limit(5)
+        .lean();
+
+    let priceStatus = 'stable';
+    if (product.priceHistory && product.priceHistory.length >= 2) {
+        const history = [...product.priceHistory].sort((a: any, b: any) => 
+            new Date(b.verifiedAt).getTime() - new Date(a.verifiedAt).getTime()
+        );
+        const current = history[0].price;
+        const previous = history[1].price;
+        if (current < previous) priceStatus = 'down';
+        else if (current > previous) priceStatus = 'up';
+    }
+
+    return {
+        ...product,
+        _id: product._id?.toString() || productId,
+        priceStatus,
+        suggestions: (suggestions || []).map((s: any) => ({
+            _id: s._id?.toString() || 'unknown',
+            price: s.price,
+            maxPrice: s.maxPrice,
+            userName: s.userId?.name || 'Anonymous',
+            vouchCount: s.anonymousConfirmations?.length || 0,
+            createdAt: s.createdAt
+        }))
+    };
+};
+
+const getCachedProductDetail = (productId: string) => unstable_cache(
+    () => fetchProductDetail(productId),
+    [`product-detail-${productId}`],
+    {
+        revalidate: 300,
+        tags: [CACHE_TAGS.PRODUCT_BY_ID(productId), CACHE_TAGS.PRODUCTS]
+    }
+)();
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
     let productId = 'unknown';
@@ -18,59 +68,17 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
         productId = id;
 
         if (!isValidObjectId(productId)) {
-            console.log(`[Product ID GET] Invalid ID format: ${productId}`);
             return NextResponse.json({ error: 'Invalid product ID' }, { status: 400 });
         }
 
-        console.log(`[Product ID GET] Requested ID: ${productId}`);
-        await connectDB();
-        const product = await Product.findById(productId).lean();
+        const product = await getCachedProductDetail(productId);
         if (!product) {
-            console.log(`[Product ID GET] Product not found: ${productId}`);
             return NextResponse.json({ error: 'Product not found' }, { status: 404 });
         }
 
-        // Fetch recent pending suggestions
-        const suggestions = await PriceUpdate.find({
-            productId,
-            status: 'pending'
-        })
-            .populate('userId', 'name')
-            .sort({ createdAt: -1 })
-            .limit(5)
-            .lean();
-
-        // Calculate price status from history
-        let priceStatus = 'stable';
-        if (product.priceHistory && product.priceHistory.length >= 2) {
-            const history = [...product.priceHistory].sort((a: any, b: any) => 
-                new Date(b.verifiedAt).getTime() - new Date(a.verifiedAt).getTime()
-            );
-            const current = history[0].price;
-            const previous = history[1].price;
-            if (current < previous) priceStatus = 'down';
-            else if (current > previous) priceStatus = 'up';
-        }
-
-        return NextResponse.json({
-            ...product,
-            _id: product._id?.toString() || productId,
-            priceStatus,
-            suggestions: (suggestions || []).map((s: any) => ({
-                _id: s._id?.toString() || 'unknown',
-                price: s.price,
-                maxPrice: s.maxPrice,
-                userName: s.userId?.name || 'Anonymous',
-                vouchCount: s.anonymousConfirmations?.length || 0,
-                createdAt: s.createdAt
-            }))
-        });
+        return NextResponse.json(product);
     } catch (error: any) {
-        console.error(`[Product ID GET] Detailed Error for ID ${productId}:`, {
-            name: error.name,
-            message: error.message,
-            stack: error.stack
-        });
+        console.error(`[Product ID GET] Detailed Error for ID ${productId}:`, error);
 
         if (error.name === 'CastError' || error.name === 'BSONError') {
             return NextResponse.json({ error: 'Invalid product ID format', details: error.message }, { status: 400 });
@@ -111,6 +119,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         }
 
         const product = await Product.findByIdAndUpdate(id, updateData, { new: true });
+        
+        revalidateProducts(id); // Invalidate specific product and list
 
         // Audit Log
         const user = await getServerUser();
@@ -137,6 +147,8 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
         const { id } = await params;
         await connectDB();
         await Product.findByIdAndDelete(id);
+        
+        revalidateProducts(id); // Invalidate specific product and list
 
         // Audit Log
         const user = await getServerUser();

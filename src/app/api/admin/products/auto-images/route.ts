@@ -3,6 +3,7 @@ import connectDB from '@/lib/db';
 import Product from '@/models/Product';
 import { findProductImage } from '@/lib/image-scraper';
 import { isServerAdmin } from '@/lib/server-auth';
+import { revalidateProducts } from '@/lib/cache';
 
 export async function POST() {
     try {
@@ -42,6 +43,10 @@ export async function POST() {
                 failedCount++;
                 results.push({ name: product.name, status: 'failed' });
             }
+        }
+
+        if (updatedCount > 0) {
+            revalidateProducts(); // Invalidate list cache
         }
 
         return NextResponse.json({

@@ -2,9 +2,11 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import Product from '@/models/Product';
 import Store from '@/models/Store';
+import { unstable_cache } from 'next/cache';
+import { CACHE_TAGS } from '@/lib/cache';
 
-export async function GET() {
-    try {
+const getCachedStats = unstable_cache(
+    async () => {
         await connectDB();
         
         // 1. Updates Today (within the last 24 hours)
@@ -22,15 +24,35 @@ export async function GET() {
             .select('lastUpdated');
         
         let lastUpdateMins = 0;
+        let latestTimestamp = Date.now();
         if (lastProduct) {
-            const latest = new Date(lastProduct.lastUpdated);
-            const now = new Date();
-            lastUpdateMins = Math.floor((now.getTime() - latest.getTime()) / (1000 * 60));
+            latestTimestamp = new Date(lastProduct.lastUpdated).getTime();
         }
 
-        return NextResponse.json({
+        return {
             updatesToday,
             marketsTracked,
+            latestTimestamp
+        };
+    },
+    ['stats-summary'],
+    {
+        revalidate: 120, // 2 minutes
+        tags: [CACHE_TAGS.STATS]
+    }
+);
+
+export async function GET() {
+    try {
+        const stats = await getCachedStats();
+        
+        // Dynamic part: calculate mins since latestTimestamp
+        const now = Date.now();
+        const lastUpdateMins = Math.floor((now - stats.latestTimestamp) / (1000 * 60));
+
+        return NextResponse.json({
+            updatesToday: stats.updatesToday,
+            marketsTracked: stats.marketsTracked,
             lastUpdateMins: Math.max(0, lastUpdateMins)
         });
     } catch (error: any) {

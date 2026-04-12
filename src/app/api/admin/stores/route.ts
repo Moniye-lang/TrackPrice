@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import Store from '@/models/Store';
 import { isServerAdmin } from '@/lib/server-auth';
+import { revalidateStores } from '@/lib/cache';
 
 export async function GET() {
     try {
@@ -31,6 +32,7 @@ export async function POST(req: Request) {
         }
 
         const store = await Store.create({ name, area, city, type, imageUrl });
+        revalidateStores(); // Invalidate cache
         return NextResponse.json(store, { status: 201 });
     } catch (error: any) {
         if (error.code === 11000) {
@@ -53,6 +55,7 @@ export async function PUT(req: Request) {
         if (!id) return NextResponse.json({ error: 'Store ID required' }, { status: 400 });
 
         const store = await Store.findByIdAndUpdate(id, updateData, { new: true });
+        revalidateStores(); // Invalidate cache
         return NextResponse.json(store);
     } catch (error) {
         return NextResponse.json({ error: 'Failed to update store' }, { status: 500 });
@@ -72,6 +75,7 @@ export async function DELETE(req: Request) {
         if (!id) return NextResponse.json({ error: 'Store ID required' }, { status: 400 });
 
         await Store.findByIdAndDelete(id);
+        revalidateStores(); // Invalidate cache
         return NextResponse.json({ message: 'Store deleted successfully' });
     } catch (error) {
         return NextResponse.json({ error: 'Failed to delete store' }, { status: 500 });

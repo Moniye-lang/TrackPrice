@@ -5,6 +5,7 @@ import AuditLog from '@/models/AuditLog';
 import Product from '@/models/Product';
 import PriceUpdate from '@/models/PriceUpdate';
 import { isServerAdmin, getServerUser } from '@/lib/server-auth';
+import { revalidateProducts } from '@/lib/cache';
 
 // POST approve a price update forcefully
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -77,6 +78,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             }
         });
 
+        revalidateProducts(product._id.toString());
+        
         return NextResponse.json({ message: 'Price update manually approved successfully.' });
 
     } catch (error: any) {
