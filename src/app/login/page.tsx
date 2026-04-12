@@ -72,7 +72,7 @@ export default function LoginPage() {
                         <p className="text-slate-500 font-medium mt-2">Log in to update prices and view the leaderboard.</p>
                     </div>
 
-                    <div className="flex justify-center mb-6">
+                    {/* <div className="flex justify-center mb-6">
                         <GoogleLogin
                             onSuccess={handleGoogleSuccess}
                             onError={() => setError('Google Login was unsuccessful')}
@@ -89,7 +89,7 @@ export default function LoginPage() {
                         <div className="relative flex justify-center text-sm">
                             <span className="px-2 bg-white text-slate-500">Or continue with</span>
                         </div>
-                    </div>
+                    </div> */}
 
                     <form onSubmit={handleLogin} className="space-y-5">
                     <div>
