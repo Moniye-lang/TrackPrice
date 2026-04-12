@@ -16,6 +16,9 @@ export interface IUser extends Document {
     googleId?: string;
     resetOtp?: string;
     resetOtpExpiry?: Date;
+    isEmailVerified: boolean;
+    emailVerificationOtp?: string;
+    emailVerificationOtpExpiry?: Date;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -41,6 +44,9 @@ const UserSchema: Schema = new Schema(
         googleId: { type: String, unique: true, sparse: true },
         resetOtp: { type: String },
         resetOtpExpiry: { type: Date },
+        isEmailVerified: { type: Boolean, default: false },
+        emailVerificationOtp: { type: String },
+        emailVerificationOtpExpiry: { type: Date },
     },
     {
         timestamps: true,

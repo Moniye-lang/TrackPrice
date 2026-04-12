@@ -47,6 +47,15 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
         }
 
+        if (!user.isEmailVerified && user.role !== 'admin') {
+            console.log('[Login] Unverified attempt for:', email);
+            return NextResponse.json({ 
+                error: 'Please verify your email before logging in.',
+                verificationRequired: true,
+                email: user.email 
+            }, { status: 403 });
+        }
+
         const token = signToken({
             id: user._id,
             name: user.name,

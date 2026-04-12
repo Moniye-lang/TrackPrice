@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import User from '@/models/User';
 import { hashPassword, signToken } from '@/lib/auth';
+import { generateOtp, sendOtpEmail } from '@/lib/email-utils';
 
 // JWT secret is handled in @/lib/auth
 
@@ -25,33 +26,41 @@ export async function POST(req: Request) {
 
         // Add regular user role
         const hashedPassword = await hashPassword(password);
+        
+        // OTP Generation
+        const otp = generateOtp();
+        const otpExpiry = new Date(Date.now() + 15 * 60 * 1000); // 15 mins
+
         const user = new User({
             name: name.trim(),
             email,
             password: hashedPassword,
             role: 'user',
             points: 0,
-            reputationLevel: 'Beginner'
+            reputationLevel: 'Beginner',
+            isEmailVerified: false,
+            emailVerificationOtp: otp,
+            emailVerificationOtpExpiry: otpExpiry
         });
 
         await user.save();
 
-        const token = signToken({ id: user._id, name: user.name, email: user.email, role: user.role });
+        // Send OTP email
+        try {
+            await sendOtpEmail(email, otp, 'verification');
+        } catch (emailError) {
+            console.error('[Register API] Email send failed:', emailError);
+            // We still proceed since the user is created; they can resend later
+        }
 
-        const response = NextResponse.json(
-            { message: 'Registration successful', role: user.role },
+        return NextResponse.json(
+            { 
+                message: 'Registration successful. Please verify your email.', 
+                email: user.email,
+                verificationRequired: true 
+            },
             { status: 201 }
         );
-
-        response.cookies.set('token', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            maxAge: 60 * 60 * 24, // 1 day
-            path: '/',
-        });
-
-        return response;
     } catch (error: any) {
         console.error('[Register API] Error:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

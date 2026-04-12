@@ -30,6 +30,9 @@ export default function LoginPage() {
             if (res.ok) {
                 router.push('/');
                 router.refresh();
+            } else if (data.verificationRequired) {
+                const emailParam = encodeURIComponent(email || data.email);
+                router.push(`/verify-email?email=${emailParam}`);
             } else {
                 setError(data.error || 'Login failed');
             }

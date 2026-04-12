@@ -28,8 +28,10 @@ export default function RegisterPage() {
 
             const data = await res.json();
 
-            if (res.ok) {
-                router.push('/');
+            if (res.status === 201 || data.verificationRequired) {
+                // Redirect to verify email page
+                const emailParam = encodeURIComponent(email || data.email);
+                router.push(`/verify-email?email=${emailParam}`);
                 router.refresh();
             } else {
                 setError(data.error || 'Registration failed');
