@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import Product from '@/models/Product';
 import { getServerUser } from '@/lib/server-auth';
+import { revalidateProducts } from '@/lib/cache';
 
 export async function POST(req: NextRequest) {
     try {
@@ -33,6 +34,7 @@ export async function POST(req: NextRequest) {
         });
 
         await newProduct.save();
+        revalidateProducts(); // Invalidate cache
 
         return NextResponse.json({ message: 'Product added successfully', product: newProduct }, { status: 201 });
     } catch (error: any) {

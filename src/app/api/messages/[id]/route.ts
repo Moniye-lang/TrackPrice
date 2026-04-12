@@ -3,6 +3,7 @@ import connectDB from '@/lib/db';
 import Message from '@/models/Message';
 import { getServerUser, isServerAdmin } from '@/lib/server-auth';
 import { cleanText } from '@/lib/profanity';
+import { revalidateProducts } from '@/lib/cache';
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
@@ -28,6 +29,11 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
         }
 
         await Message.findByIdAndDelete(id);
+
+        if (message.productId) {
+            revalidateProducts(message.productId.toString());
+        }
+
         return NextResponse.json({ success: true });
     } catch (error) {
         return NextResponse.json({ error: 'Failed to delete message' }, { status: 500 });

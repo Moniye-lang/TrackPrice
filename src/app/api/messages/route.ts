@@ -5,6 +5,7 @@ import { cleanText } from '@/lib/profanity';
 import crypto from 'crypto';
 import { cookies } from 'next/headers';
 import { isServerAdmin, getServerUser } from '@/lib/server-auth';
+import { revalidateProducts } from '@/lib/cache';
 
 // Basic in-memory rate limiting
 const rateLimit = new Map<string, number>();
@@ -82,6 +83,10 @@ export async function POST(req: Request) {
         });
 
         rateLimit.set(ipHash, now);
+
+        if (productId) {
+            revalidateProducts(productId);
+        }
 
         return NextResponse.json(message, { status: 201 });
     } catch (error: any) {

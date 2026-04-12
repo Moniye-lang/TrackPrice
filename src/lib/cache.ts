@@ -8,6 +8,7 @@ export const CACHE_TAGS = {
   PRODUCT_BY_ID: (id: string) => `product-${id}`,
   STORES: 'stores',
   STATS: 'stats',
+  LEADERBOARD: 'leaderboard',
 } as const;
 
 /**
@@ -20,6 +21,13 @@ export function revalidateProducts(productId?: string) {
   if (productId) {
     revalidateTag(CACHE_TAGS.PRODUCT_BY_ID(productId));
   }
+}
+
+/**
+ * Revalidates leaderboard cache
+ */
+export function revalidateLeaderboard() {
+  revalidateTag(CACHE_TAGS.LEADERBOARD);
 }
 
 /**

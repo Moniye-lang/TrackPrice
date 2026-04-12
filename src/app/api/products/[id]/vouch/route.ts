@@ -4,7 +4,7 @@ import Product from '@/models/Product';
 import PriceUpdate from '@/models/PriceUpdate';
 import GamificationRule from '@/models/GamificationRule';
 import crypto from 'crypto';
-import { revalidateProducts } from '@/lib/cache';
+import { revalidateProducts, revalidateLeaderboard } from '@/lib/cache';
 
 function getIpHash(req: Request) {
     const forwarded = req.headers.get('x-forwarded-for');
@@ -72,6 +72,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         }
 
         revalidateProducts(productId); // Invalidate cache for this product
+        if (verified) {
+            revalidateLeaderboard(); // Invalidate leaderboard if someone earned points
+        }
         
         return NextResponse.json({
             message: verified ? 'Price verified by community!' : 'Your vouch has been recorded',

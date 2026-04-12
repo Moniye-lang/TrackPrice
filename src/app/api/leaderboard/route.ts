@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import User from '@/models/User';
+import { unstable_cache } from 'next/cache';
+import { CACHE_TAGS } from '@/lib/cache';
 
-export async function GET(req: Request) {
-    const { searchParams } = new URL(req.url);
-    const city = searchParams.get('city');
-
-    try {
+const getCachedLeaderboard = unstable_cache(
+    async (city: string | null) => {
         await connectDB();
 
         const query: any = { role: 'user', isBanned: false };
@@ -28,10 +27,25 @@ export async function GET(req: Request) {
             { $limit: 10 }
         ]);
 
-        return NextResponse.json({
+        return {
             users: topUsers,
             cities: topCities.map(c => c._id)
-        });
+        };
+    },
+    ['leaderboard-cache'],
+    {
+        revalidate: 300, // 5 minutes
+        tags: [CACHE_TAGS.LEADERBOARD]
+    }
+);
+
+export async function GET(req: Request) {
+    const { searchParams } = new URL(req.url);
+    const city = searchParams.get('city');
+
+    try {
+        const result = await getCachedLeaderboard(city);
+        return NextResponse.json(result);
     } catch (error: any) {
         return NextResponse.json({ error: 'Fetch failed' }, { status: 500 });
     }
