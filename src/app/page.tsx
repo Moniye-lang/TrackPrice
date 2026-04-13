@@ -3,6 +3,7 @@ import { ProductCard } from '@/components/ProductCard';
 import { FilterSection } from '@/components/FilterSection';
 import { ClientBanners } from '@/components/ClientBanners';
 import { Pagination } from '@/components/Pagination';
+import { Button } from '@/components/ui-base';
 import { formatPriceRange } from '@/lib/price-utils';
 import { TrendingUp, TrendingDown, Clock, Search, Award, Sparkles, ChevronRight, AlertCircle, Volume2, MapPin, Globe, X, Star, Plus, ThumbsUp } from 'lucide-react';
 import Link from 'next/link';
