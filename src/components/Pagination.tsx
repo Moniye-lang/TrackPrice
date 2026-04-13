@@ -62,11 +62,10 @@ export function Pagination({ currentPage, totalPages }: PaginationProps) {
         <div className="flex justify-center items-center gap-2 pt-8 border-t border-slate-100">
             {/* Previous Button */}
             <Button
-                variant="ghost"
-                size="icon"
+                variant="secondary"
                 onClick={() => goToPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
-                className="w-10 h-10 rounded-xl border border-slate-100 bg-white shadow-sm hover:bg-slate-50 disabled:opacity-30"
+                className="w-10 h-10 rounded-xl border border-slate-100 bg-white shadow-sm hover:bg-slate-50 disabled:opacity-30 p-0"
                 aria-label="Previous page"
             >
                 <ChevronLeft size={18} />
@@ -102,11 +101,10 @@ export function Pagination({ currentPage, totalPages }: PaginationProps) {
 
             {/* Next Button */}
             <Button
-                variant="ghost"
-                size="icon"
+                variant="secondary"
                 onClick={() => goToPage(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
-                className="w-10 h-10 rounded-xl border border-slate-100 bg-white shadow-sm hover:bg-slate-50 disabled:opacity-30"
+                className="w-10 h-10 rounded-xl border border-slate-100 bg-white shadow-sm hover:bg-slate-50 disabled:opacity-30 p-0"
                 aria-label="Next page"
             >
                 <ChevronRight size={18} />
