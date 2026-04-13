@@ -19,7 +19,8 @@ import {
     X,
     TrendingUp,
     Store,
-    History
+    History,
+    MapPin
 } from 'lucide-react';
 
 export default function AdminLayout({
@@ -69,6 +70,7 @@ export default function AdminLayout({
         { label: 'Products', href: '/management-gate/products', icon: Box },
         { label: 'Users', href: '/management-gate/users', icon: Users },
         { label: 'Markets/Stores', href: '/management-gate/stores', icon: Store },
+        { label: 'Areas', href: '/management-gate/locations', icon: MapPin },
         { label: 'Verification', href: '/management-gate/verification', icon: ShieldCheck },
         { label: 'Forum', href: '/management-gate/messages', icon: MessageSquare },
         { label: 'Requests', href: '/management-gate/product-requests', icon: ClipboardList },
