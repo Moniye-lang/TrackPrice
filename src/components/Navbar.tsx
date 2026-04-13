@@ -28,14 +28,14 @@ export function Navbar() {
         <div className="z-50">
             {/* Top Logo Bar (Mobile & Desktop) */}
             <header className="sticky top-0 z-50 w-full glass border-b border-primary/10 transition-all duration-500">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-24 flex items-center justify-between gap-4">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 sm:h-20 flex items-center justify-between gap-4">
                     <Link href="/" aria-label="TrackPricely Home" className="hover:scale-105 transition-transform flex-shrink-0 group flex items-center">
                         <Image 
                             src="/trplogo.PNG" 
                             alt="TrackPricely Logo" 
                             width={240} 
                             height={72} 
-                            className="h-12 sm:h-18 w-auto object-contain"
+                            className="h-9 sm:h-14 w-auto object-contain"
                             priority
                         />
                     </Link>
@@ -106,8 +106,8 @@ export function Navbar() {
                     {/* Mobile Profile Icon (Top Bar) */}
                     <div className="sm:hidden flex items-center gap-3">
                         {user ? (
-                            <Link href="/profile" aria-label="Profile" className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-premium-sm">
-                                <CircleUser size={24} />
+                            <Link href="/profile" aria-label="Profile" className="w-8 h-8 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-premium-sm">
+                                <CircleUser size={20} />
                             </Link>
                         ) : (
                             <Link href="/login" className="text-xs font-black text-primary hover:text-primary/80 uppercase tracking-widest border border-primary/20 px-4 py-2 rounded-xl bg-primary/5">
@@ -119,7 +119,7 @@ export function Navbar() {
             </header>
 
             {/* Mobile Bottom Navigation Bar (Floating) */}
-            <nav className="sm:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm bg-slate-950 border border-slate-800 px-4 py-3 flex justify-between items-center z-[100] shadow-[0_20px_50px_rgba(0,0,0,0.8)] rounded-[2.5rem] ring-1 ring-white/5">
+            <nav className="sm:hidden fixed bottom-4 left-1/2 -translate-x-1/2 w-[90%] max-w-sm bg-slate-950 border border-slate-800 px-4 py-2 flex justify-between items-center z-[100] shadow-[0_20px_50px_rgba(0,0,0,0.8)] rounded-[2rem] ring-1 ring-white/5">
                 <Link href="/" aria-label="Home" className={`flex flex-col items-center gap-1.5 transition-all duration-500 ${pathname === '/' ? 'text-primary scale-110 -translate-y-0.5' : 'text-slate-500 hover:text-slate-300'}`}>
                     <div className={`p-1.5 rounded-xl transition-all ${pathname === '/' ? 'bg-primary/20 shadow-glow-sm' : 'bg-transparent'}`}>
                         <Home size={22} strokeWidth={pathname === '/' ? 2.5 : 2} />
@@ -136,8 +136,8 @@ export function Navbar() {
 
                 {/* Growth Engine: Update Price */}
                 <Link href="/stale-prices" aria-label="Update Stale Prices" className={`flex flex-col items-center gap-1.5 transition-all duration-500 -translate-y-3`}>
-                    <div className="w-14 h-14 bg-primary rounded-full shadow-glow flex items-center justify-center text-white ring-4 ring-slate-950">
-                        <Plus size={28} strokeWidth={3} />
+                    <div className="w-12 h-12 bg-primary rounded-full shadow-glow flex items-center justify-center text-white ring-4 ring-slate-950">
+                        <Plus size={24} strokeWidth={3} />
                     </div>
                     <span className="text-[10px] font-black text-primary uppercase tracking-[0.1em]">Update</span>
                 </Link>
