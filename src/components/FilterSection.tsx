@@ -93,11 +93,11 @@ export function FilterSection({ stores, categories }: FilterSectionProps) {
 
             <div className="flex flex-col lg:flex-row justify-between items-stretch lg:items-end gap-6 lg:gap-8">
                 <div className="space-y-8 flex-1 min-w-0">
-                    <div className="flex flex-col gap-6">
-                        <h2 className="text-3xl font-black text-slate-900 tracking-tight">Market Intelligence</h2>
+                    <div className="flex flex-col items-center gap-6">
+                        <h2 className="text-3xl font-black text-slate-900 tracking-tight text-center">Market Intelligence</h2>
                         
                         {/* Market Category Tabs */}
-                        <div className="flex items-center p-1.5 bg-white/95 rounded-[2rem] border border-slate-100 shadow-premium w-fit min-w-[300px]">
+                        <div className="flex items-center justify-center p-1.5 bg-white/95 rounded-[2rem] border border-slate-100 shadow-premium w-fit min-w-[300px]">
                             <button
                                 onClick={() => updateFilter('marketCategory', 'Physical')}
                                 className={`flex items-center gap-3 px-8 py-3.5 rounded-[1.5rem] text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-500 ${activeMarketCategory === 'Physical'

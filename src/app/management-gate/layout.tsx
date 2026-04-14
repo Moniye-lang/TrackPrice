@@ -68,8 +68,8 @@ export default function AdminLayout({
         { label: 'Audit Logs', href: '/management-gate/audit-logs', icon: History },
         { label: 'Categorization', href: '/management-gate/categorization', icon: Zap },
         { label: 'Products', href: '/management-gate/products', icon: Box },
-        { label: 'Users', href: '/management-gate/users', icon: Users },
-        { label: 'Markets/Stores', href: '/management-gate/stores', icon: Store },
+        { label: 'USERS', href: '/management-gate/users', icon: Users },
+        { label: 'MARKETS/STORES', href: '/management-gate/stores', icon: Store },
         { label: 'Areas', href: '/management-gate/locations', icon: MapPin },
         { label: 'Verification', href: '/management-gate/verification', icon: ShieldCheck },
         { label: 'Forum', href: '/management-gate/messages', icon: MessageSquare },
@@ -94,41 +94,41 @@ export default function AdminLayout({
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 flex overflow-hidden font-sans">
+        <div className="min-h-screen bg-slate-950 flex overflow-hidden font-sans selection:bg-primary/30">
             {/* Mobile Header with Glassmorphism */}
-            <div className="md:hidden fixed top-0 w-full z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200/60 p-4 px-6 flex items-center justify-between shadow-sm">
-                <Link href="/management-gate/dashboard" className="text-xl font-black text-slate-900 tracking-tighter">
+            <div className="md:hidden fixed top-0 w-full z-40 bg-slate-950/80 backdrop-blur-xl border-b border-white/5 p-4 px-6 flex items-center justify-between shadow-sm">
+                <Link href="/management-gate/dashboard" className="text-xl font-black text-white tracking-tighter uppercase">
                     Admin<span className="text-primary">.</span>
                 </Link>
                 <button
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                    className="p-2 rounded-xl bg-slate-50 text-slate-600 hover:text-primary transition-all active:scale-95"
+                    className="p-2 rounded-xl bg-white/5 text-slate-400 hover:text-white transition-all active:scale-95"
                 >
                     {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
                 </button>
             </div>
 
-            {/* Sidebar (Deep Slate Theme) */}
+            {/* Sidebar (Premium Deep Navy Theme) */}
             <aside className={`
-                fixed inset-y-0 left-0 z-50 w-72 bg-slate-950 flex flex-col transform transition-all duration-500 ease-in-out
+                fixed inset-y-0 left-0 z-50 w-72 bg-[#050a14] border-r border-white/5 flex flex-col transform transition-all duration-500 ease-in-out
                 md:relative md:translate-x-0
-                ${isMobileMenuOpen ? 'translate-x-0 outline-none' : '-translate-x-full shadow-none'}
+                ${isMobileMenuOpen ? 'translate-x-0 outline-none shadow-2xl' : '-translate-x-full shadow-none'}
             `}>
                 {/* Sidebar Header */}
-                <div className="p-6 pb-2">
-                    <Link href="/management-gate/dashboard" className="flex items-center gap-3 group px-2">
-                        <Image 
-                            src="/trplogo.PNG" 
-                            alt="TrackPricely Admin" 
-                            width={160} 
-                            height={48} 
-                            className="h-10 w-auto object-contain" 
-                        />
+                <div className="p-8 pb-4">
+                    <Link href="/management-gate/dashboard" className="flex items-center gap-3 group">
+                        <div className="p-3 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/10 border border-primary/20 shadow-glow-sm">
+                            <Zap size={20} className="text-primary animate-pulse" />
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-sm font-black text-white tracking-[0.2em] uppercase">Core</span>
+                            <span className="text-[10px] font-bold text-slate-500 tracking-[0.3em] uppercase">Console V2</span>
+                        </div>
                     </Link>
                 </div>
 
                 {/* Navigation Scroll Area */}
-                <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto no-scrollbar">
+                <nav className="flex-1 px-6 py-8 space-y-2 overflow-y-auto no-scrollbar">
                     {navItems.map((item) => {
                         const Icon = item.icon;
                         const isActive = pathname === item.href;
@@ -138,14 +138,23 @@ export default function AdminLayout({
                                 href={item.href}
                                 onClick={() => setIsMobileMenuOpen(false)}
                                 className={`
-                                    flex items-center gap-4 px-4 py-3 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all duration-300 group
+                                    flex items-center gap-4 px-5 py-4 rounded-xl transition-all duration-300 group relative overflow-hidden
                                     ${isActive 
-                                        ? 'bg-primary text-white shadow-glow-sm' 
-                                        : 'text-slate-500 hover:bg-white/5 hover:text-white'}
+                                        ? 'bg-primary/10 text-primary shadow-glow-sm ring-1 ring-primary/20' 
+                                        : 'text-slate-400 hover:bg-white/5 hover:text-white'}
                                 `}
                             >
-                                <Icon size={18} className={`${isActive ? 'text-white' : 'text-slate-600 group-hover:text-primary'} transition-colors`} />
-                                {item.label}
+                                {isActive && (
+                                    <div className="absolute left-0 top-0 w-1 h-full bg-primary shadow-[0_0_15px_rgba(255,107,0,0.8)]" />
+                                )}
+                                <Icon size={20} className={`${isActive ? 'text-primary' : 'text-slate-500 group-hover:text-white'} transition-colors duration-300`} />
+                                <span className={`text-[11px] font-black uppercase tracking-[0.15em] ${isActive ? 'text-primary' : 'text-slate-300 group-hover:text-white'}`}>
+                                    {item.label}
+                                </span>
+                                
+                                {isActive && (
+                                    <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary shadow-glow animate-pulse" />
+                                )}
                             </Link>
                         );
                     })}

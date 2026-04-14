@@ -61,8 +61,8 @@ export default function AdminUsers() {
     }, []);
 
     const filteredUsers = users.filter(u => 
-        u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        u.email.toLowerCase().includes(searchTerm.toLowerCase())
+        u.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        u.email?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const handleUpdateUser = async (id: string, updates: Partial<User>) => {
@@ -166,18 +166,28 @@ export default function AdminUsers() {
                                                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-black shadow-sm border-2 transition-transform group-hover:scale-105 duration-500 ${
                                                         user.role === 'admin' 
                                                         ? 'bg-primary/10 border-primary/20 text-primary' 
+                                                        : user.isAnonymous
+                                                        ? 'bg-slate-900 border-slate-700 text-slate-500'
                                                         : 'bg-slate-100 border-slate-200 text-slate-400'
                                                     }`}>
-                                                        {user.name.charAt(0).toUpperCase()}
+                                                        {user.isAnonymous ? (
+                                                            <div className="opacity-40"><Shield size={20} /></div>
+                                                        ) : (
+                                                            user.name?.charAt(0).toUpperCase() || '?'
+                                                        )}
                                                     </div>
-                                                    <div className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-4 border-white flex items-center justify-center ${user.isBanned ? 'bg-rose-500' : 'bg-emerald-500'}`}>
-                                                        {user.isBanned ? <Ban size={8} className="text-white" /> : <ShieldCheck size={8} className="text-white" />}
-                                                    </div>
+                                                    {!user.isAnonymous && (
+                                                        <div className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-4 border-white flex items-center justify-center ${user.isBanned ? 'bg-rose-500' : 'bg-emerald-500'}`}>
+                                                            {user.isBanned ? <Ban size={8} className="text-white" /> : <ShieldCheck size={8} className="text-white" />}
+                                                        </div>
+                                                    )}
                                                 </div>
                                                 <div>
-                                                    <p className="font-black text-slate-900 text-sm tracking-tight leading-tight mb-1">{user.name}</p>
+                                                    <p className="font-black text-slate-900 text-sm tracking-tight leading-tight mb-1">
+                                                        {user.isAnonymous ? 'Anonymous Operator' : user.name}
+                                                    </p>
                                                     <div className="flex items-center gap-2">
-                                                        <Mail size={10} className="text-slate-300" />
+                                                        {user.isAnonymous ? <Fingerprint size={10} className="text-primary/60" /> : <Mail size={10} className="text-slate-300" />}
                                                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{user.email}</p>
                                                     </div>
                                                 </div>
@@ -189,24 +199,31 @@ export default function AdminUsers() {
                                                 <div className="flex flex-col gap-1">
                                                     <div className="flex items-center gap-1.5">
                                                         <TrendingUp size={12} className="text-primary" />
-                                                        <span className="text-sm font-black text-slate-900 tracking-tight">{user.points}</span>
+                                                        <span className="text-sm font-black text-slate-900 tracking-tight">{user.points || 0}</span>
                                                     </div>
                                                     <span className="text-[8px] font-black text-slate-300 uppercase tracking-widest">Merit Points</span>
                                                 </div>
                                                 <div className="flex flex-col gap-1">
                                                     <div className="flex items-center gap-1.5">
-                                                        <Box size={12} className="text-slate-400" />
-                                                        <span className="text-sm font-black text-slate-900 tracking-tight">{user.totalSubmissions || 0}</span>
+                                                        <Box size={12} className={user.isAnonymous ? 'text-primary' : 'text-slate-400'} />
+                                                        <span className="text-sm font-black text-slate-900 tracking-tight font-mono">{user.totalSubmissions || 0}</span>
                                                     </div>
                                                     <span className="text-[8px] font-black text-slate-300 uppercase tracking-widest">Updates</span>
                                                 </div>
-                                                <div className={`px-3 py-1.5 rounded-xl text-[8px] font-black uppercase tracking-widest shadow-sm ${
-                                                    user.reputationLevel === 'Elite Contributor' ? 'bg-amber-100 text-amber-700 border border-amber-200/50' :
-                                                    user.reputationLevel === 'Trusted Contributor' ? 'bg-indigo-100 text-indigo-700 border border-indigo-200/50' :
-                                                    'bg-slate-100 text-slate-600 border border-slate-200/50'
-                                                }`}>
-                                                    {user.reputationLevel}
-                                                </div>
+                                                {!user.isAnonymous && (
+                                                    <div className={`px-3 py-1.5 rounded-xl text-[8px] font-black uppercase tracking-widest shadow-sm ${
+                                                        user.reputationLevel === 'Elite Contributor' ? 'bg-amber-100 text-amber-700 border border-amber-200/50' :
+                                                        user.reputationLevel === 'Trusted Contributor' ? 'bg-indigo-100 text-indigo-700 border border-indigo-200/50' :
+                                                        'bg-slate-100 text-slate-600 border border-slate-200/50'
+                                                    }`}>
+                                                        {user.reputationLevel}
+                                                    </div>
+                                                )}
+                                                {user.isAnonymous && (
+                                                    <div className="px-3 py-1.5 rounded-xl text-[8px] font-black uppercase tracking-widest bg-slate-950 text-slate-500 border border-white/5">
+                                                        Guest Identity
+                                                    </div>
+                                                )}
                                             </div>
                                         </td>
 
@@ -215,17 +232,21 @@ export default function AdminUsers() {
                                                 <div className="flex items-center gap-2">
                                                     {user.role === 'admin' ? (
                                                         <Shield size={14} className="text-primary" />
+                                                    ) : user.isAnonymous ? (
+                                                        <Activity size={14} className="text-slate-500" />
                                                     ) : (
                                                         <UserCircle2 size={14} className="text-slate-400" />
                                                     )}
-                                                    <span className={`text-[10px] font-black uppercase tracking-widest ${user.role === 'admin' ? 'text-primary' : 'text-slate-600'}`}>
+                                                    <span className={`text-[10px] font-black uppercase tracking-widest ${
+                                                        user.role === 'admin' ? 'text-primary' : user.isAnonymous ? 'text-slate-500' : 'text-slate-600'
+                                                    }`}>
                                                         {user.role} Authorization
                                                     </span>
                                                 </div>
                                                 <div className="flex items-center gap-2">
                                                     <Calendar size={10} className="text-slate-300" />
                                                     <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-                                                        Reg {new Date(user.createdAt).toLocaleDateString()}
+                                                        {user.isAnonymous ? 'Active Since ' : 'Reg '} {new Date(user.createdAt).toLocaleDateString()}
                                                     </span>
                                                 </div>
                                             </div>

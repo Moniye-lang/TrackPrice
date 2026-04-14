@@ -82,9 +82,9 @@ export default function AdminProducts() {
     }, [searchParams]);
 
     const filteredProducts = (productsData as Product[]).filter(p => 
-        p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (p.storeLocation || '').toLowerCase().includes(searchTerm.toLowerCase())
+        p.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (p.storeLocation || '')?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const handleSubmit = async (e: React.FormEvent) => {

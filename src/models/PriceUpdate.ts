@@ -10,6 +10,7 @@ export interface IPriceUpdate extends Document {
     status: 'pending' | 'verified' | 'rejected';
     confirmations: mongoose.Types.ObjectId[];
     anonymousConfirmations: string[]; // IP hashes or session IDs
+    anonId?: string; // Unique ID for guest creators
     createdAt: Date;
     updatedAt: Date;
 }
@@ -18,6 +19,7 @@ const PriceUpdateSchema: Schema = new Schema(
     {
         productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
         userId: { type: Schema.Types.ObjectId, ref: 'User' },
+        anonId: { type: String, index: true }, // Store anon_id for Guest contributions
         price: { type: Number, required: true },
         maxPrice: { type: Number },
         storeId: { type: Schema.Types.ObjectId, ref: 'Store' },

@@ -21,7 +21,7 @@ export async function GET() {
         }
 
         // Aggregate to get submission counts along with user data
-        const users = await User.aggregate([
+        const registeredUsers = await User.aggregate([
             {
                 $lookup: {
                     from: 'priceupdates',
@@ -32,19 +32,44 @@ export async function GET() {
             },
             {
                 $addFields: {
-                    totalSubmissions: { $size: '$submissions' }
+                    totalSubmissions: { $size: '$submissions' },
+                    isAnonymous: false
                 }
             },
             {
                 $project: {
                     submissions: 0,
-                    password: 0 // Never return passwords
+                    password: 0
                 }
             },
             { $sort: { points: -1 } }
         ]);
 
-        return NextResponse.json(users);
+        // Aggregate unique anonymous users from PriceUpdates
+        const anonymousUsers = await PriceUpdate.aggregate([
+            { $match: { anonId: { $ne: null } } },
+            {
+                $group: {
+                    _id: '$anonId',
+                    totalSubmissions: { $sum: 1 },
+                    lastSeen: { $max: '$createdAt' }
+                }
+            },
+            {
+                $project: {
+                    _id: 1,
+                    name: 'Guest Operator',
+                    email: { $concat: ['ID: ', { $substr: ['$_id', 5, 8] }] }, // Mask the full UUID for privacy/UI
+                    role: 'anonymous',
+                    totalSubmissions: 1,
+                    points: { $literal: 0 },
+                    isAnonymous: { $literal: true },
+                    createdAt: '$lastSeen'
+                }
+            }
+        ]);
+
+        return NextResponse.json([...registeredUsers, ...anonymousUsers]);
 
     } catch (error: any) {
         return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });

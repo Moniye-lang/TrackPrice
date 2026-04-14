@@ -40,18 +40,29 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         }
 
         // Check if user already confirmed or is the original submitter
-        const currentUserIdStr = userPayload ? userPayload.id.toString() : 'anonymous';
-        const submitterIdStr = update.userId?.toString();
+        const cookies = require('next/headers').cookies;
+        const cookieStore = await cookies();
+        const anonId = cookieStore.get('anon_id')?.value;
+        
+        const currentUserIdStr = userPayload ? userPayload.id.toString() : (anonId || 'anonymous');
+        const submitterIdStr = update.userId?.toString() || update.anonId;
 
-        if (submitterIdStr && submitterIdStr === currentUserIdStr) {
+        if (currentUserIdStr !== 'anonymous' && submitterIdStr && submitterIdStr === currentUserIdStr) {
             return NextResponse.json({ error: 'You cannot confirm your own price report' }, { status: 400 });
         }
 
         update.confirmations = update.confirmations || [];
         update.anonymousConfirmations = update.anonymousConfirmations || [];
 
-        if (userPayload && update.confirmations.some(cid => cid?.toString() === currentUserIdStr)) {
-            return NextResponse.json({ error: 'You have already confirmed this price' }, { status: 400 });
+        // Check for existing confirmation (Registered or Anonymous)
+        if (userPayload) {
+            if (update.confirmations.some(cid => cid?.toString() === currentUserIdStr)) {
+                return NextResponse.json({ error: 'You have already confirmed this price' }, { status: 400 });
+            }
+        } else if (anonId) {
+            if (update.anonymousConfirmations.includes(anonId)) {
+                return NextResponse.json({ error: 'You have already confirmed this price' }, { status: 400 });
+            }
         }
 
         // Add confirmation
@@ -60,9 +71,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             console.log(`[Confirm API] Adding confirmation for user: ${currentUserIdStr}`);
             update.confirmations.push(new mongoose.Types.ObjectId(currentUserIdStr));
         } else {
-            console.log(`[Confirm API] Adding anonymous confirmation`);
-            // We just add a generic anonymous token or IP hash. Here we use 'anonymous' since we don't have good IP from req easily
-            update.anonymousConfirmations.push('anonymous');
+            console.log(`[Confirm API] Adding anonymous confirmation with ID: ${currentUserIdStr}`);
+            update.anonymousConfirmations.push(currentUserIdStr);
+            // Also tag the update with the anonId if it doesn't have a userId (for creator tracking)
+            if (!update.userId && !update.anonId && anonId) {
+                update.anonId = anonId;
+            }
         }
         await update.save();
 

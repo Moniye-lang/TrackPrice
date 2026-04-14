@@ -16,6 +16,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const { id: productId } = await params;
     const ipHash = getIpHash(req);
 
+    const cookies = require('next/headers').cookies;
+    const cookieStore = await cookies();
+    const anonId = cookieStore.get('anon_id')?.value;
+    const currentId = anonId || ipHash;
+
     try {
         await connectDB();
         const body = await req.json();
@@ -35,14 +40,20 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             return NextResponse.json({ error: 'Pending proposal not found' }, { status: 404 });
         }
 
-        // Check if this IP has already vouched
+        // Check if this guest has already vouched
         update.anonymousConfirmations = update.anonymousConfirmations || [];
-        if (update.anonymousConfirmations.includes(ipHash)) {
+        if (update.anonymousConfirmations.includes(currentId)) {
             return NextResponse.json({ error: 'You have already vouched for this price' }, { status: 400 });
         }
 
         // Add anonymous confirmation
-        update.anonymousConfirmations.push(ipHash);
+        update.anonymousConfirmations.push(currentId);
+        
+        // Also tag the update with the anonId if it doesn't have a userId
+        if (!update.userId && !update.anonId && anonId) {
+            update.anonId = anonId;
+        }
+        
         await update.save();
 
         // Calculate total weight (Anonymous vouches count less or have a different threshold)

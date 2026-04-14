@@ -125,10 +125,15 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
         // 2. Create the update record
         console.log('[Price Update] Creating Record...');
+        const cookies = require('next/headers').cookies;
+        const cookieStore = await cookies();
+        const anonId = cookieStore.get('anon_id')?.value;
+
         const parsedPrice = parsePriceRange(price);
         const newUpdate = await PriceUpdate.create({
             productId: product._id,
             userId: user ? user._id : undefined,
+            anonId: user ? undefined : anonId, // Store identified guest ID
             price: parsedPrice.price,
             maxPrice: parsedPrice.maxPrice,
             storeId: body.storeId || undefined,

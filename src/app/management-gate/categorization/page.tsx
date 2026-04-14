@@ -105,8 +105,8 @@ export default function CategorizationPage() {
     };
 
     const filteredProducts = products.filter(p => {
-        const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                             p.category.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSearch = p.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                             p.category?.toLowerCase().includes(searchTerm.toLowerCase());
         
         if (filter === 'Uncategorized') return matchesSearch && !p.marketCategory;
         if (filter === 'Online') return matchesSearch && p.marketCategory === 'Online';

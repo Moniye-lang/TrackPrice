@@ -136,8 +136,8 @@ export default function StoreManagement() {
     };
 
     const filteredStores = stores.filter(s => {
-        const matchesSearch = s.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                             s.area.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSearch = s.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                             s.area?.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesState = filterState === 'All' || s.city === filterState;
         return matchesSearch && matchesState;
     });

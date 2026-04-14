@@ -3,6 +3,7 @@ import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
 import Script from "next/script";
+import AnonymousIdentifier from "@/components/AnonymousIdentifier";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -45,6 +46,7 @@ export default function RootLayout({
           strategy="afterInteractive"
         />
         <Providers>
+          <AnonymousIdentifier />
           {children}
         </Providers>
       </body>
