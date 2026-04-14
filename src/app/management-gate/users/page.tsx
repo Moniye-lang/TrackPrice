@@ -13,6 +13,7 @@ interface User {
     isBanned: boolean;
     totalSubmissions: number;
     createdAt: string;
+    isAnonymous?: boolean;
 }
 
 import { 
@@ -32,7 +33,9 @@ import {
     RefreshCw,
     Circle,
     UserCircle2,
-    Box
+    Box,
+    Fingerprint,
+    Activity
 } from 'lucide-react';
 
 export default function AdminUsers() {

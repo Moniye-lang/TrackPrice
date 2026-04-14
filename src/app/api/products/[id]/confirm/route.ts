@@ -5,6 +5,8 @@ import PriceUpdate from '@/models/PriceUpdate';
 import User from '@/models/User';
 import GamificationRule from '@/models/GamificationRule';
 import { getServerUser } from '@/lib/server-auth';
+import { cookies } from 'next/headers';
+import mongoose from 'mongoose';
 
 const REPUTATION_WEIGHTS = {
     'Beginner': 1,
@@ -40,7 +42,6 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         }
 
         // Check if user already confirmed or is the original submitter
-        const cookies = require('next/headers').cookies;
         const cookieStore = await cookies();
         const anonId = cookieStore.get('anon_id')?.value;
         
@@ -66,7 +67,6 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         }
 
         // Add confirmation
-        const mongoose = require('mongoose');
         if (userPayload) {
             console.log(`[Confirm API] Adding confirmation for user: ${currentUserIdStr}`);
             update.confirmations.push(new mongoose.Types.ObjectId(currentUserIdStr));

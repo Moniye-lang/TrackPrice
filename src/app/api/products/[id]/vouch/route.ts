@@ -5,6 +5,7 @@ import PriceUpdate from '@/models/PriceUpdate';
 import GamificationRule from '@/models/GamificationRule';
 import crypto from 'crypto';
 import { revalidateProducts, revalidateLeaderboard } from '@/lib/cache';
+import { cookies } from 'next/headers';
 
 function getIpHash(req: Request) {
     const forwarded = req.headers.get('x-forwarded-for');
@@ -16,7 +17,6 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const { id: productId } = await params;
     const ipHash = getIpHash(req);
 
-    const cookies = require('next/headers').cookies;
     const cookieStore = await cookies();
     const anonId = cookieStore.get('anon_id')?.value;
     const currentId = anonId || ipHash;

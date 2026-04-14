@@ -7,6 +7,7 @@ import PriceRequest from '@/models/PriceRequest';
 import GamificationRule from '@/models/GamificationRule';
 import { parsePriceRange } from '@/lib/price-utils';
 import { getServerUser } from '@/lib/server-auth';
+import { cookies } from 'next/headers';
 
 const REPUTATION_WEIGHTS = {
     'Beginner': 1,
@@ -125,7 +126,6 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
         // 2. Create the update record
         console.log('[Price Update] Creating Record...');
-        const cookies = require('next/headers').cookies;
         const cookieStore = await cookies();
         const anonId = cookieStore.get('anon_id')?.value;
 
