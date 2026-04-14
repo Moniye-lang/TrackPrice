@@ -122,18 +122,26 @@ export async function scrapeProducts(url: string): Promise<ExtractedProduct[]> {
 
     let browser;
     if (isLocal) {
-        const { chromium } = require('playwright');
-        browser = await chromium.launch({ headless: true });
+        try {
+            const { chromium } = require('playwright');
+            browser = await chromium.launch({ headless: true });
+        } catch (err: any) {
+            throw new Error(`Local Browser Launch Failed: ${err.message}. Ensure you have run 'npx playwright install chromium'.`);
+        }
     } else {
         const chromium = require('@sparticuz/chromium');
         const { chromium: coreChromium } = require('playwright-core');
         chromium.setGraphicsMode = false;
-        browser = await coreChromium.launch({
-            args: chromium.args,
-            defaultViewport: chromium.defaultViewport,
-            executablePath: await chromium.executablePath(),
-            headless: chromium.headless,
-        });
+        try {
+            browser = await coreChromium.launch({
+                args: chromium.args,
+                defaultViewport: chromium.defaultViewport,
+                executablePath: await chromium.executablePath(),
+                headless: chromium.headless,
+            });
+        } catch (err: any) {
+            throw new Error(`Cloud Browser Launch Failed: ${err.message}. Check @sparticuz/chromium compatibility.`);
+        }
     }
 
     try {
@@ -290,10 +298,16 @@ export async function scrapeProducts(url: string): Promise<ExtractedProduct[]> {
         }
 
         return products;
-    } catch (error) {
+    } catch (error: any) {
         console.error('Scraping error:', error);
-        throw new Error('Failed to extract products. Ensure the URL is accessible and valid.');
+        throw error; // Re-throw the original error instead of masking it with a generic one
     } finally {
-        await browser.close();
+        if (browser) {
+            try {
+                await browser.close();
+            } catch (closeErr) {
+                console.warn('Silent error closing browser:', closeErr);
+            }
+        }
     }
 }

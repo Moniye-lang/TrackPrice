@@ -9,9 +9,16 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const { url } = await req.json();
-        if (!url || !url.startsWith('http')) {
-            return NextResponse.json({ error: 'Invalid URL provided.' }, { status: 400 });
+        let body;
+        try {
+            body = await req.json();
+        } catch (e) {
+            return NextResponse.json({ error: 'Missing or malformed request body. Expected JSON with "url".' }, { status: 400 });
+        }
+
+        const { url } = body;
+        if (!url || typeof url !== 'string' || !url.startsWith('http')) {
+            return NextResponse.json({ error: 'Invalid URL provided. Please enter a full URL (starting with http/https).' }, { status: 400 });
         }
 
         // Run scraper
@@ -32,6 +39,10 @@ export async function POST(req: Request) {
 
     } catch (error: any) {
         console.error('Error in /api/admin/scrape:', error);
-        return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
+        const errorMessage = error.message || 'Internal Server Error';
+        return NextResponse.json({ 
+            error: errorMessage,
+            details: error.stack?.split('\n').slice(0, 2).join(' ') // Provide a hint of where it crashed
+        }, { status: 500 });
     }
 }
