@@ -6,6 +6,7 @@ import crypto from 'crypto';
 import { cookies } from 'next/headers';
 import { isServerAdmin, getServerUser } from '@/lib/server-auth';
 import { revalidateProducts } from '@/lib/cache';
+import Notification from '@/models/Notification';
 
 // Basic in-memory rate limiting
 const rateLimit = new Map<string, number>();
@@ -61,12 +62,14 @@ export async function POST(req: Request) {
 
         // Check if user is an admin
         const cookieStore = await cookies();
+        const anonId = cookieStore.get('anon_id')?.value;
         const isAdmin = await isServerAdmin();
         const currentUser = await getServerUser();
 
         let replyToContent = undefined;
+        let parentMsg = null;
         if (parentId) {
-            const parentMsg = await Message.findById(parentId);
+            parentMsg = await Message.findById(parentId);
             if (parentMsg) {
                 replyToContent = parentMsg.content.substring(0, 50) + (parentMsg.content.length > 50 ? '...' : '');
             }
@@ -75,12 +78,33 @@ export async function POST(req: Request) {
         const message = await Message.create({
             content: cleanedContent,
             userId: currentUser?.id || undefined,
+            anonId: currentUser ? undefined : anonId,
             productId: productId || undefined,
             ipHash,
             isAdmin,
             parentId: parentId || undefined,
             replyToContent,
         });
+
+        // Trigger Notification if it's a reply
+        if (parentMsg) {
+            // Don't notify if replying to yourself
+            const isSelfReply = (currentUser && parentMsg.userId?.toString() === currentUser.id) || 
+                              (anonId && parentMsg.anonId === anonId);
+            
+            if (!isSelfReply) {
+                await Notification.create({
+                    recipientUserId: parentMsg.userId,
+                    recipientAnonId: parentMsg.anonId,
+                    type: 'REPLY',
+                    messageId: message._id,
+                    targetMessageId: parentMsg._id,
+                    productId: productId || undefined,
+                    content: `Replied to your comment: "${cleanedContent.substring(0, 30)}..."`,
+                    read: false
+                });
+            }
+        }
 
         rateLimit.set(ipHash, now);
 
