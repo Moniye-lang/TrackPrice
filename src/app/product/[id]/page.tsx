@@ -116,7 +116,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 body: JSON.stringify({ content: editContent }),
             });
             if (res.ok) {
-                setEditingMessageId(null);
+                setEditMessage(null);
                 setEditContent('');
                 refetch();
             }
