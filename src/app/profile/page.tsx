@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { Button, Card } from '@/components/ui-base';
 import Link from 'next/link';
 import { Navbar } from '@/components/Navbar';
+import { useAuthStore } from '@/store/useAuthStore';
+import { useRouter } from 'next/navigation';
 
 interface User {
     name: string;
@@ -27,6 +29,17 @@ export default function ProfilePage() {
     const [user, setUser] = useState<User | null>(null);
     const [activity, setActivity] = useState<Activity[]>([]);
     const [loading, setLoading] = useState(true);
+    const logoutStore = useAuthStore((state) => state.logout);
+    const router = useRouter();
+
+    const handleLogout = async () => {
+        const res = await fetch('/api/auth/logout', { method: 'POST' });
+        if (res.ok) {
+            logoutStore();
+            router.refresh();
+            router.push('/');
+        }
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -106,9 +119,17 @@ export default function ProfilePage() {
                             </div>
                         </div>
                     </div>
-                    <Link href="/settings" className="w-full md:w-auto">
-                        <Button variant="secondary" className="w-full md:w-auto px-6 py-2 text-xs font-black uppercase tracking-widest bg-slate-50 border-none">Edit Profile</Button>
-                    </Link>
+                    <div className="flex flex-col gap-3 w-full md:w-auto mt-6 md:mt-0">
+                        <Link href="/settings" className="w-full">
+                            <Button variant="secondary" className="w-full px-6 py-2.5 text-xs font-black uppercase tracking-widest bg-slate-50 hover:bg-slate-100 border-none">Account Settings</Button>
+                        </Link>
+                        <button 
+                            onClick={handleLogout} 
+                            className="w-full px-6 py-2.5 text-xs font-black uppercase tracking-widest text-slate-500 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:text-rose-500 transition-colors shadow-sm"
+                        >
+                            Log Out
+                        </button>
+                    </div>
                 </div>
 
                 {/* Recent Activity */}

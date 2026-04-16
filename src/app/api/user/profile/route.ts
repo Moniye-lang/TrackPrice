@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import connectDB from '@/lib/db';
 import User from '@/models/User';
+import Notification from '@/models/Notification';
+import Message from '@/models/Message';
+import PriceUpdate from '@/models/PriceUpdate';
 import { getServerUser } from '@/lib/server-auth';
 
 export async function PUT(req: Request) {
@@ -33,7 +36,20 @@ export async function DELETE(req: Request) {
 
     try {
         await connectDB();
-        await User.findByIdAndDelete(userPayload.id);
+        const userId = userPayload.id;
+
+        // Cascade cleanup:
+        // 1. Delete notifications (private to user)
+        await Notification.deleteMany({ recipientUserId: userId });
+
+        // 2. Anonymize forum messages (preserve thread context)
+        await Message.updateMany({ userId: userId }, { $set: { userId: null } });
+
+        // 3. Anonymize price suggestions (preserve price history)
+        await PriceUpdate.updateMany({ userId: userId }, { $set: { userId: null } });
+
+        // 4. Finally delete the user
+        await User.findByIdAndDelete(userId);
 
         const response = NextResponse.json({ message: 'Account deleted' });
         

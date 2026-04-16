@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button, Input, Card } from '@/components/ui-base';
 import { Navbar } from '@/components/Navbar';
 import { useAuthStore } from '@/store/useAuthStore';
-import { LogOut, Trash2 } from 'lucide-react';
+import { LogOut, Trash2, Activity } from 'lucide-react';
 
 export default function SettingsPage() {
     const router = useRouter();
@@ -127,38 +127,75 @@ export default function SettingsPage() {
                         </div>
                     </form>
 
-                    <div className="mt-8 pt-8 border-t border-slate-100 flex flex-col gap-4">
-                        <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest">Account Actions</h3>
+                    <div className="mt-10 pt-10 border-t border-slate-100">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="w-8 h-8 rounded-lg bg-rose-50 flex items-center justify-center text-rose-500">
+                                <Activity size={18} />
+                            </div>
+                            <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest">Danger Zone</h3>
+                        </div>
                         
-                        <button
-                            type="button"
-                            onClick={handleLogout}
-                            className="flex items-center justify-center gap-2 w-full py-4 rounded-xl bg-slate-50 text-slate-600 font-black uppercase text-xs hover:bg-slate-100 hover:text-slate-800 transition-colors border border-slate-200"
-                        >
-                            <LogOut size={16} />
-                            Log Out
-                        </button>
-                        
-                        {!showDeleteConfirm ? (
+                        <div className="space-y-4">
                             <button
                                 type="button"
-                                onClick={() => setShowDeleteConfirm(true)}
-                                className="flex items-center justify-center gap-2 w-full py-4 rounded-xl bg-rose-50 text-rose-600 font-black uppercase text-xs hover:bg-rose-100 hover:text-rose-700 transition-colors border border-rose-200"
+                                onClick={handleLogout}
+                                className="flex items-center justify-between w-full p-4 rounded-xl bg-slate-50 text-slate-600 font-bold text-sm hover:bg-slate-100 hover:text-slate-800 transition-all border border-slate-100 group"
                             >
-                                <Trash2 size={16} />
-                                Delete Account
-                            </button>
-                        ) : (
-                            <div className="p-4 bg-rose-50 border border-rose-200 rounded-xl space-y-4">
-                                <p className="text-sm text-rose-800 font-bold">Are you sure? This action cannot be undone and will permanently delete your account and all associated data.</p>
-                                <div className="flex gap-3">
-                                    <Button type="button" onClick={() => setShowDeleteConfirm(false)} variant="secondary" className="flex-1 py-3 text-xs bg-white text-slate-600 border-none">Cancel</Button>
-                                    <Button type="button" onClick={handleDeleteAccount} disabled={deleting} className="flex-1 py-3 text-xs bg-rose-500 hover:bg-rose-600 text-white shadow-glow-sm border-none">
-                                        {deleting ? 'Deleting...' : 'Yes, Delete'}
-                                    </Button>
+                                <div className="flex items-center gap-3">
+                                    <LogOut size={18} className="text-slate-400 group-hover:text-primary transition-colors" />
+                                    <span>Log out of session</span>
                                 </div>
-                            </div>
-                        )}
+                                <span className="text-[10px] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">Disconnect</span>
+                            </button>
+                            
+                            {!showDeleteConfirm ? (
+                                <button
+                                    type="button"
+                                    onClick={() => setShowDeleteConfirm(true)}
+                                    className="flex items-center justify-between w-full p-4 rounded-xl bg-rose-50/50 text-rose-600 font-bold text-sm hover:bg-rose-50 hover:text-rose-700 transition-all border border-rose-100 group"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <Trash2 size={18} className="text-rose-400 group-hover:text-rose-600 transition-colors" />
+                                        <span>Permanently delete account</span>
+                                    </div>
+                                    <span className="text-[10px] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">Irreversible</span>
+                                </button>
+                            ) : (
+                                <div className="p-6 bg-rose-50 border border-rose-200 rounded-2xl space-y-6 animate-in fade-in slide-in-from-top-2 duration-300">
+                                    <div className="flex gap-4">
+                                        <div className="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center text-rose-600 flex-shrink-0">
+                                            <Trash2 size={20} />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-black text-rose-900 leading-tight">Wait, are you sure?</h4>
+                                            <p className="text-xs text-rose-700 mt-1 font-medium leading-relaxed">
+                                                This will permanently delete your profile, points, and private notifications. 
+                                                Your forum messages and price updates will be anonymized to keep the community data helpful.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-3">
+                                        <Button 
+                                            type="button" 
+                                            onClick={() => setShowDeleteConfirm(false)} 
+                                            variant="secondary" 
+                                            className="flex-1 py-3 text-xs bg-white text-slate-600 border-slate-200"
+                                        >
+                                            Nevermind
+                                        </Button>
+                                        <Button 
+                                            type="button" 
+                                            onClick={handleDeleteAccount} 
+                                            disabled={deleting} 
+                                            variant="danger"
+                                            className="flex-1 py-3 text-xs shadow-glow-sm border-none"
+                                        >
+                                            {deleting ? 'Processing...' : 'Delete Everything'}
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </Card>
             </div>
