@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { Button, Card } from '@/components/ui-base';
 import { Navbar } from '@/components/Navbar';
 import { formatRelativeTime } from '@/lib/utils';
+import { useAuth } from '@/hooks/useAuth';
+import { Edit2, Trash2 } from 'lucide-react';
 
 import { formatPriceRange } from '@/lib/price-utils';
 
@@ -19,6 +21,8 @@ interface Message {
     };
     parentId?: string;
     replyToContent?: string;
+    userId?: string;
+    anonId?: string;
     createdAt: string;
 }
 
@@ -29,6 +33,11 @@ export default function ForumPage() {
     const [posting, setPosting] = useState(false);
     const [error, setError] = useState('');
     const [replyingTo, setReplyingTo] = useState<Message | null>(null);
+    const { user } = useAuth();
+    const [currentAnonId, setCurrentAnonId] = useState<string | null>(null);
+    const [editMessage, setEditMessage] = useState<Message | null>(null);
+    const [editContent, setEditContent] = useState('');
+    const [highlightedMsgId, setHighlightedMsgId] = useState<string | null>(null);
 
     const fetchMessages = async () => {
         try {
@@ -50,6 +59,21 @@ export default function ForumPage() {
 
     useEffect(() => {
         fetchMessages();
+
+        const getCookie = (name: string) => {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop()?.split(';').shift();
+            return null;
+        };
+        setCurrentAnonId(getCookie('anon_id') || null);
+
+        // Check for hash highlight
+        if (window.location.hash.startsWith('#msg-')) {
+            const msgId = window.location.hash.replace('#msg-', '');
+            setHighlightedMsgId(msgId);
+            setTimeout(() => setHighlightedMsgId(null), 3000); // Remove highlight after 3 seconds
+        }
     }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -87,6 +111,42 @@ export default function ForumPage() {
 
     const handleReport = (id: string) => {
         alert('Message reported to administrators.');
+    };
+
+    const handleDelete = async (id: string) => {
+        if (!confirm('Are you sure you want to delete this message?')) return;
+        try {
+            const res = await fetch(`/api/messages/${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                fetchMessages();
+            } else {
+                alert('Failed to delete message');
+            }
+        } catch (e) {
+            alert('An error occurred');
+        }
+    };
+
+    const submitEdit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!editMessage || !editContent.trim()) return;
+
+        try {
+            const res = await fetch(`/api/messages/${editMessage._id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: editContent })
+            });
+            if (res.ok) {
+                setEditMessage(null);
+                setEditContent('');
+                fetchMessages();
+            } else {
+                alert('Failed to edit message');
+            }
+        } catch (e) {
+            alert('An error occurred');
+        }
     };
 
     return (
@@ -196,8 +256,18 @@ export default function ForumPage() {
                         </div>
                     ) : (
                         <div className="grid gap-6">
-                            {messages.map((msg) => (
-                                <Card key={msg._id} className="relative group p-8 hover:shadow-glow transition-all duration-500 hover:-translate-y-1">
+                            {messages.map((msg) => {
+                                const isOwner = (user && msg.userId === user.id) || 
+                                              (!user && currentAnonId && msg.anonId === currentAnonId) || 
+                                              (user?.role === 'admin');
+                                const isHighlighted = highlightedMsgId === msg._id;
+
+                                return (
+                                <Card 
+                                    key={msg._id} 
+                                    id={`msg-${msg._id}`}
+                                    className={`relative group p-8 hover:shadow-glow transition-all duration-500 hover:-translate-y-1 ${isHighlighted ? 'ring-4 ring-primary bg-primary/5 animate-pulse' : ''}`}
+                                >
                                     <div className="flex gap-6 items-start">
                                         <div className="w-12 h-12 rounded-2xl bg-slate-50 flex-shrink-0 flex items-center justify-center text-xl font-black text-slate-300 group-hover:bg-primary/5 group-hover:text-primary transition-colors duration-300">
                                             #
@@ -245,6 +315,25 @@ export default function ForumPage() {
                                                     >
                                                         REPLY
                                                     </button>
+                                                    {isOwner && (
+                                                        <>
+                                                            <button
+                                                                onClick={() => {
+                                                                    setEditMessage(msg);
+                                                                    setEditContent(msg.content);
+                                                                }}
+                                                                className="px-3 py-1.5 rounded-lg hover:bg-slate-100 hover:text-slate-700 transition-all duration-300 flex items-center gap-1.5"
+                                                            >
+                                                                <Edit2 size={12} /> EDIT
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleDelete(msg._id)}
+                                                                className="px-3 py-1.5 rounded-lg hover:bg-rose-50 hover:text-rose-500 transition-all duration-300 flex items-center gap-1.5"
+                                                            >
+                                                                <Trash2 size={12} /> DELETE
+                                                            </button>
+                                                        </>
+                                                    )}
                                                     <button
                                                         onClick={() => handleReport(msg._id)}
                                                         className="px-3 py-1.5 rounded-lg hover:bg-rose-50 hover:text-rose-500 transition-all duration-300"
@@ -256,11 +345,43 @@ export default function ForumPage() {
                                         </div>
                                     </div>
                                 </Card>
-                            ))}
+                            )})}
                         </div>
                     )}
                 </section>
             </main>
+
+            {/* Edit Modal */}
+            {editMessage && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <Card className="w-full max-w-lg p-6 bg-white shadow-2xl relative animate-in zoom-in-95">
+                        <h3 className="text-xl font-black text-slate-800 tracking-tight flex items-center gap-2 mb-4">
+                            <Edit2 size={20} className="text-primary" /> Edit Message
+                        </h3>
+                        <form onSubmit={submitEdit} className="space-y-4">
+                            <textarea
+                                className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-slate-700 resize-none h-32"
+                                value={editContent}
+                                onChange={(e) => setEditContent(e.target.value)}
+                                maxLength={300}
+                                required
+                            />
+                            <div className="flex justify-end gap-3 mt-4">
+                                <button
+                                    type="button"
+                                    onClick={() => setEditMessage(null)}
+                                    className="px-6 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-100 transition-colors uppercase tracking-widest"
+                                >
+                                    Cancel
+                                </button>
+                                <Button type="submit" className="px-6 py-2.5 rounded-xl text-sm font-black uppercase tracking-widest bg-primary hover:bg-primary/90 text-white shadow-glow-sm">
+                                    Save Changes
+                                </Button>
+                            </div>
+                        </form>
+                    </Card>
+                </div>
+            )}
         </div>
     );
 }

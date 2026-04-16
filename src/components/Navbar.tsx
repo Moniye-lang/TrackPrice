@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Home, Trophy, User, MessageSquare, CircleUser, LogOut, LayoutDashboard, Search, Activity, Heart, ShoppingBag, Menu, X, TrendingUp, Plus } from 'lucide-react';
+import { Home, Trophy, User, MessageSquare, CircleUser, LogOut, LayoutDashboard, Search, Activity, Heart, ShoppingBag, Menu, X, TrendingUp, Plus, Bell } from 'lucide-react';
 import { Button } from './ui-base';
 import { useAuth } from '@/hooks/useAuth';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -14,6 +14,46 @@ export function Navbar() {
     const logoutStore = useAuthStore((state) => state.logout);
     const router = useRouter();
     const pathname = usePathname();
+    const [notifications, setNotifications] = useState<any[]>([]);
+    const [showNotifications, setShowNotifications] = useState(false);
+
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            try {
+                const res = await fetch('/api/notifications');
+                if (res.ok) {
+                    const data = await res.json();
+                    setNotifications(data);
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchNotifications();
+        // optionally refresh every 30s
+        const interval = setInterval(fetchNotifications, 30000);
+        return () => clearInterval(interval);
+    }, [pathname]);
+
+    const markAsRead = async (id: string, messageId: string, productId?: string) => {
+        try {
+            await fetch('/api/notifications', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ notificationId: id })
+            });
+            setNotifications(prev => prev.filter(n => n._id !== id));
+            
+            setShowNotifications(false);
+            if (productId) {
+                router.push(`/product/${productId}#msg-${messageId}`);
+            } else {
+                router.push(`/forum#msg-${messageId}`);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     const handleLogout = async () => {
         const res = await fetch('/api/auth/logout', { method: 'POST' });
@@ -53,8 +93,48 @@ export function Navbar() {
                         </Link>
 
                         {/* Actions */}
-                        <div className="flex items-center gap-3">
-                         
+                        <div className="flex items-center gap-3 relative">
+                            <button 
+                                onClick={() => setShowNotifications(!showNotifications)}
+                                className="relative p-2 hover:bg-slate-100 rounded-full transition-colors flex items-center justify-center text-slate-600 hover:text-primary"
+                                aria-label="Notifications"
+                            >
+                                <Bell size={24} />
+                                {notifications.length > 0 && (
+                                    <span className="absolute top-0 right-0 w-5 h-5 bg-rose-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center ring-2 ring-white animate-pulse shadow-glow">
+                                        {notifications.length}
+                                    </span>
+                                )}
+                            </button>
+
+                            {/* Notifications Dropdown */}
+                            {showNotifications && (
+                                <div className="absolute top-full right-0 mt-4 w-80 bg-white border border-slate-200 rounded-2xl shadow-premium overflow-hidden z-50">
+                                    <div className="px-4 py-3 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
+                                        <h3 className="font-black text-sm uppercase tracking-widest text-slate-800">Notifications</h3>
+                                    </div>
+                                    <div className="max-h-96 overflow-y-auto">
+                                        {notifications.length === 0 ? (
+                                            <div className="px-4 py-8 text-center text-sm text-slate-500">
+                                                No new notifications
+                                            </div>
+                                        ) : (
+                                            notifications.map(notif => (
+                                                <button
+                                                    key={notif._id}
+                                                    onClick={() => markAsRead(notif._id, notif.messageId?._id, notif.productId?._id)}
+                                                    className="w-full text-left px-4 py-3 hover:bg-slate-50 border-b border-slate-50 transition-colors"
+                                                >
+                                                    <div className="text-xs font-semibold text-primary mb-1">New Reply</div>
+                                                    <div className="text-sm text-slate-600 line-clamp-2">
+                                                        {notif.content || "Someone replied to your message."}
+                                                    </div>
+                                                </button>
+                                            ))
+                                        )}
+                                    </div>
+                                </div>
+                            )}
 
                             <Link href="/stale-prices" className="flex items-center gap-2 bg-primary/5 hover:bg-primary text-primary hover:text-white px-5 py-2.5 rounded-xl border border-primary/20 transition-all duration-500 group/btn shadow-glow-sm">
                                 <TrendingUp size={16} className="group-hover/btn:scale-110 transition-transform" />
@@ -104,7 +184,49 @@ export function Navbar() {
                     </nav>
 
                     {/* Mobile Profile Icon (Top Bar) */}
-                    <div className="sm:hidden flex items-center gap-3">
+                    <div className="sm:hidden flex items-center gap-3 relative">
+                        <button 
+                            onClick={() => setShowNotifications(!showNotifications)}
+                            className="relative p-2 bg-slate-50 rounded-full transition-colors flex items-center justify-center text-slate-600 border border-slate-200"
+                        >
+                            <Bell size={20} />
+                            {notifications.length > 0 && (
+                                <span className="absolute -top-1 -right-1 w-4 h-4 bg-rose-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center ring-2 ring-white">
+                                    {notifications.length}
+                                </span>
+                            )}
+                        </button>
+                        
+                        {/* Mobile Notifications Dropdown */}
+                        {showNotifications && (
+                            <div className="absolute top-full right-0 mt-2 w-[calc(100vw-2rem)] max-w-sm bg-white border border-slate-200 rounded-2xl shadow-premium overflow-hidden z-50">
+                                <div className="px-4 py-3 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
+                                    <h3 className="font-black text-sm uppercase tracking-widest text-slate-800">Notifications</h3>
+                                    <button onClick={() => setShowNotifications(false)} className="text-slate-400 hover:text-slate-600"><X size={16} /></button>
+                                </div>
+                                <div className="max-h-[60vh] overflow-y-auto">
+                                    {notifications.length === 0 ? (
+                                        <div className="px-4 py-8 text-center text-sm text-slate-500">
+                                            No new notifications
+                                        </div>
+                                    ) : (
+                                        notifications.map(notif => (
+                                            <button
+                                                key={notif._id}
+                                                onClick={() => markAsRead(notif._id, notif.messageId?._id, notif.productId?._id)}
+                                                className="w-full text-left px-4 py-3 hover:bg-slate-50 border-b border-slate-50 transition-colors"
+                                            >
+                                                <div className="text-xs font-semibold text-primary mb-1">New Reply</div>
+                                                <div className="text-sm text-slate-600 line-clamp-2">
+                                                    {notif.content || "Someone replied to your message."}
+                                                </div>
+                                            </button>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
                         {user ? (
                             <Link href="/profile" aria-label="Profile" className="w-8 h-8 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-premium-sm">
                                 <CircleUser size={20} />

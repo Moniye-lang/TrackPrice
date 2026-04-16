@@ -50,6 +50,7 @@ interface Message {
     _id: string;
     content: string;
     userId?: string;
+    anonId?: string;
     isAdmin?: boolean;
     productId?: {
         _id: string;
@@ -83,8 +84,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     const [error, setError] = useState('');
     const [replyingTo, setReplyingTo] = useState<Message | null>(null);
 
+    // Guest auth & highlight
+    const [currentAnonId, setCurrentAnonId] = useState<string | null>(null);
+    const [highlightedMsgId, setHighlightedMsgId] = useState<string | null>(null);
+
     // Edit / delete state
-    const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+    const [editMessage, setEditMessage] = useState<Message | null>(null);
     const [editContent, setEditContent] = useState('');
     const [editSaving, setEditSaving] = useState(false);
     const [deletingMessageId, setDeletingMessageId] = useState<string | null>(null);
@@ -138,6 +143,21 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             document.title = `${product.name} - ₦${product.price.toLocaleString()} | TrackPricely`;
         } else {
             document.title = 'Product Details | TrackPricely';
+        }
+
+        const getCookie = (name: string) => {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop()?.split(';').shift();
+            return null;
+        };
+        setCurrentAnonId(getCookie('anon_id') || null);
+
+        // Check for hash highlight
+        if (window.location.hash.startsWith('#msg-')) {
+            const msgId = window.location.hash.replace('#msg-', '');
+            setHighlightedMsgId(msgId);
+            setTimeout(() => setHighlightedMsgId(null), 3000);
         }
     }, [product]);
 
@@ -653,11 +673,17 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                         ) : (
                             <div className="grid gap-6">
                                 {messages.map((msg) => {
-                                    const canModify = authUser && (authUser.id === msg.userId || authUser.role === 'admin');
-                                    const isEditing = editingMessageId === msg._id;
+                                    const canModify = (authUser && msg.userId === authUser.id) || 
+                                                      (!authUser && currentAnonId && msg.anonId === currentAnonId) || 
+                                                      (authUser?.role === 'admin');
+                                    const isHighlighted = highlightedMsgId === msg._id;
 
                                     return (
-                                        <Card key={msg._id} className="relative group p-6 sm:p-8 hover:shadow-glow transition-all duration-500 hover:-translate-y-1 bg-white/60">
+                                        <Card 
+                                            key={msg._id} 
+                                            id={`msg-${msg._id}`}
+                                            className={`relative group p-6 sm:p-8 hover:shadow-glow transition-all duration-500 hover:-translate-y-1 bg-white/60 ${isHighlighted ? 'ring-4 ring-primary bg-primary/5 animate-pulse' : ''}`}
+                                        >
                                             <div className="flex gap-4 sm:gap-6 items-start">
                                                 <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-slate-50 flex-shrink-0 flex items-center justify-center text-slate-200 group-hover:bg-primary/5 group-hover:text-primary transition-colors duration-300">
                                                     <MessageCircle size={20} />
@@ -680,39 +706,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                                                 </div>
                                                             )}
 
-                                                            {isEditing ? (
-                                                                <div className="space-y-3">
-                                                                    <textarea
-                                                                        className="w-full p-4 bg-white border border-primary/30 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all resize-none text-slate-700 text-base shadow-inner min-h-[100px]"
-                                                                        value={editContent}
-                                                                        onChange={(e) => setEditContent(e.target.value)}
-                                                                        maxLength={300}
-                                                                        autoFocus
-                                                                    />
-                                                                    <div className="flex items-center justify-between">
-                                                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{editContent.length}/300</span>
-                                                                        <div className="flex items-center gap-2">
-                                                                            <button
-                                                                                onClick={() => { setEditingMessageId(null); setEditContent(''); }}
-                                                                                className="px-4 py-1.5 text-xs font-black text-slate-500 hover:text-slate-800 uppercase tracking-widest border border-slate-200 rounded-xl hover:bg-slate-50 transition-all"
-                                                                            >
-                                                                                Cancel
-                                                                            </button>
-                                                                            <button
-                                                                                onClick={() => handleEditMessage(msg._id)}
-                                                                                disabled={editSaving || !editContent.trim()}
-                                                                                className="px-4 py-1.5 text-xs font-black text-white bg-primary rounded-xl uppercase tracking-widest hover:scale-105 transition-all shadow-glow disabled:opacity-50 disabled:hover:scale-100"
-                                                                            >
-                                                                                {editSaving ? 'Saving...' : 'Save'}
-                                                                            </button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            ) : (
-                                                                <p className="text-slate-700 text-base sm:text-lg leading-relaxed font-medium whitespace-pre-wrap antialiased break-words">
-                                                                    {msg.content}
-                                                                </p>
-                                                            )}
+                                                            <p className="text-slate-700 text-base sm:text-lg leading-relaxed font-medium whitespace-pre-wrap antialiased break-words">
+                                                                {msg.content}
+                                                            </p>
                                                         </div>
                                                         <div className="flex items-center gap-2 ml-2 flex-shrink-0">
                                                             {msg.isAdmin && (
@@ -720,10 +716,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                                                     Admin
                                                                 </span>
                                                             )}
-                                                            {canModify && !isEditing && (
+                                                            {canModify && (
                                                                 <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                                                     <button
-                                                                        onClick={() => { setEditingMessageId(msg._id); setEditContent(msg.content); }}
+                                                                        onClick={() => { setEditMessage(msg); setEditContent(msg.content); }}
                                                                         title="Edit message"
                                                                         className="p-1.5 rounded-lg hover:bg-primary/10 hover:text-primary text-slate-400 transition-all"
                                                                     >
@@ -746,18 +742,16 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                                             <Clock size={12} />
                                                             {formatRelativeTime(msg.createdAt)}
                                                         </span>
-                                                        {!isEditing && (
-                                                            <button
-                                                                onClick={() => {
-                                                                    setReplyingTo(msg);
-                                                                    const section = document.querySelector('section');
-                                                                    if (section) section.scrollIntoView({ behavior: 'smooth' });
-                                                                }}
-                                                                className="px-3 py-1.5 rounded-xl hover:bg-primary/5 hover:text-primary transition-all duration-300 font-black"
-                                                            >
-                                                                REPLY
-                                                            </button>
-                                                        )}
+                                                        <button
+                                                            onClick={() => {
+                                                                setReplyingTo(msg);
+                                                                const section = document.querySelector('section');
+                                                                if (section) section.scrollIntoView({ behavior: 'smooth' });
+                                                            }}
+                                                            className="px-3 py-1.5 rounded-xl hover:bg-primary/5 hover:text-primary transition-all duration-300 font-black"
+                                                        >
+                                                            REPLY
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -769,6 +763,38 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                     </section>
                 </div>
             </main>
+
+            {/* Edit Modal */}
+            {editMessage && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <Card className="w-full max-w-lg p-6 bg-white shadow-2xl relative animate-in zoom-in-95">
+                        <h3 className="text-xl font-black text-slate-800 tracking-tight flex items-center gap-2 mb-4">
+                            <Pencil size={20} className="text-primary" /> Edit Message
+                        </h3>
+                        <form onSubmit={(e) => { e.preventDefault(); handleEditMessage(editMessage._id); }} className="space-y-4">
+                            <textarea
+                                className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-slate-700 resize-none h-32"
+                                value={editContent}
+                                onChange={(e) => setEditContent(e.target.value)}
+                                maxLength={300}
+                                required
+                            />
+                            <div className="flex justify-end gap-3 mt-4">
+                                <button
+                                    type="button"
+                                    onClick={() => setEditMessage(null)}
+                                    className="px-6 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-100 transition-colors uppercase tracking-widest"
+                                >
+                                    Cancel
+                                </button>
+                                <Button type="submit" disabled={editSaving} className="px-6 py-2.5 rounded-xl text-sm font-black uppercase tracking-widest bg-primary hover:bg-primary/90 text-white shadow-glow-sm">
+                                    {editSaving ? 'Saving...' : 'Save Changes'}
+                                </Button>
+                            </div>
+                        </form>
+                    </Card>
+                </div>
+            )}
         </div>
     );
 }

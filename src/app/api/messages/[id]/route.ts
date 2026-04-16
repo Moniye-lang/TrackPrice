@@ -4,6 +4,7 @@ import Message from '@/models/Message';
 import { getServerUser, isServerAdmin } from '@/lib/server-auth';
 import { cleanText } from '@/lib/profanity';
 import { revalidateProducts } from '@/lib/cache';
+import { cookies } from 'next/headers';
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
@@ -12,8 +13,10 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
 
         const user = await getServerUser();
         const admin = await isServerAdmin();
+        const cookieStore = await cookies();
+        const anonId = cookieStore.get('anon_id')?.value;
 
-        if (!user && !admin) {
+        if (!user && !admin && !anonId) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
@@ -23,7 +26,8 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
         }
 
         // Only the author or an admin can delete
-        const isOwner = user && message.userId?.toString() === user.id;
+        const isOwner = (user && message.userId?.toString() === user.id) || 
+                        (!user && anonId && message.anonId === anonId);
         if (!isOwner && !admin) {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
         }
@@ -47,8 +51,10 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 
         const user = await getServerUser();
         const admin = await isServerAdmin();
+        const cookieStore = await cookies();
+        const anonId = cookieStore.get('anon_id')?.value;
 
-        if (!user && !admin) {
+        if (!user && !admin && !anonId) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
@@ -58,7 +64,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         }
 
         // Only the author or an admin can edit
-        const isOwner = user && message.userId?.toString() === user.id;
+        const isOwner = (user && message.userId?.toString() === user.id) || 
+                        (!user && anonId && message.anonId === anonId);
         if (!isOwner && !admin) {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
         }
