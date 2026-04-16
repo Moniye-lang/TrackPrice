@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import Message from '@/models/Message';
+import User from '@/models/User';
 import { cleanText } from '@/lib/profanity';
 import crypto from 'crypto';
 import { cookies } from 'next/headers';
