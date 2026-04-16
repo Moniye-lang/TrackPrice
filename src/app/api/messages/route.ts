@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import Message from '@/models/Message';
 import User from '@/models/User';
+import Product from '@/models/Product';
 import { cleanText } from '@/lib/profanity';
 import crypto from 'crypto';
 import { cookies } from 'next/headers';
@@ -33,8 +34,9 @@ export async function GET(req: Request) {
             .populate('userId', 'name')
             .sort({ createdAt: -1 });
         return NextResponse.json(messages);
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 });
+    } catch (error: any) {
+        console.error('API Messages GET Error:', error);
+        return NextResponse.json({ error: error.message || 'Failed to fetch messages' }, { status: 500 });
     }
 }
 
