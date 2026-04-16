@@ -94,6 +94,47 @@ export function Navbar() {
 
                         {/* Actions */}
                         <div className="flex items-center gap-3 relative">
+<button 
+    onClick={() => setShowNotifications(!showNotifications)}
+    className="relative p-2 hover:bg-slate-100 rounded-full transition-colors flex items-center justify-center text-slate-600 hover:text-primary"
+    aria-label="Notifications"
+>
+    <Bell size={24} />
+    {notifications.length > 0 && (
+        <span className="absolute top-0 right-0 w-5 h-5 bg-rose-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center ring-2 ring-white animate-pulse shadow-glow">
+            {notifications.length}
+        </span>
+    )}
+</button>
+
+{/* Notifications Dropdown */}
+{showNotifications && (
+    <div className="absolute top-full right-0 mt-4 w-80 bg-white border border-slate-200 rounded-2xl shadow-premium overflow-hidden z-50">
+        <div className="px-4 py-3 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
+            <h3 className="font-black text-sm uppercase tracking-widest text-slate-800">Notifications</h3>
+        </div>
+        <div className="max-h-96 overflow-y-auto">
+            {notifications.length === 0 ? (
+                <div className="px-4 py-8 text-center text-sm text-slate-500">
+                    No new notifications
+                </div>
+            ) : (
+                notifications.map(notif => (
+                    <button
+                        key={notif._id}
+                        onClick={() => markAsRead(notif._id, notif.messageId?._id, notif.productId?._id)}
+                        className="w-full text-left px-4 py-3 hover:bg-slate-50 border-b border-slate-50 transition-colors"
+                    >
+                        <div className="text-xs font-semibold text-primary mb-1">New Reply</div>
+                        <div className="text-sm text-slate-600 line-clamp-2">
+                            {notif.content || "Someone replied to your message."}
+                        </div>
+                    </button>
+                ))
+            )}
+        </div>
+    </div>
+)}
 
                             <Link href="/stale-prices" className="flex items-center gap-2 bg-primary/5 hover:bg-primary text-primary hover:text-white px-5 py-2.5 rounded-xl border border-primary/20 transition-all duration-500 group/btn shadow-glow-sm">
                                 <TrendingUp size={16} className="group-hover/btn:scale-110 transition-transform" />
@@ -155,47 +196,6 @@ export function Navbar() {
                                 </span>
                             )}
                         </button>
-                                        <button 
-                                            onClick={() => setShowNotifications(!showNotifications)}
-                                            className="relative p-2 hover:bg-slate-100 rounded-full transition-colors flex items-center justify-center text-slate-600 hover:text-primary"
-                                            aria-label="Notifications"
-                                        >
-                                            <Bell size={24} />
-                                            {notifications.length > 0 && (
-                                                <span className="absolute top-0 right-0 w-5 h-5 bg-rose-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center ring-2 ring-white animate-pulse shadow-glow">
-                                                    {notifications.length}
-                                                </span>
-                                            )}
-                                        </button>
-            
-                                        {/* Notifications Dropdown */}
-                                        {showNotifications && (
-                                            <div className="absolute top-full right-0 mt-4 w-80 bg-white border border-slate-200 rounded-2xl shadow-premium overflow-hidden z-50">
-                                                <div className="px-4 py-3 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
-                                                    <h3 className="font-black text-sm uppercase tracking-widest text-slate-800">Notifications</h3>
-                                                </div>
-                                                <div className="max-h-96 overflow-y-auto">
-                                                    {notifications.length === 0 ? (
-                                                        <div className="px-4 py-8 text-center text-sm text-slate-500">
-                                                            No new notifications
-                                                        </div>
-                                                    ) : (
-                                                        notifications.map(notif => (
-                                                            <button
-                                                                key={notif._id}
-                                                                onClick={() => markAsRead(notif._id, notif.messageId?._id, notif.productId?._id)}
-                                                                className="w-full text-left px-4 py-3 hover:bg-slate-50 border-b border-slate-50 transition-colors"
-                                                            >
-                                                                <div className="text-xs font-semibold text-primary mb-1">New Reply</div>
-                                                                <div className="text-sm text-slate-600 line-clamp-2">
-                                                                    {notif.content || "Someone replied to your message."}
-                                                                </div>
-                                                            </button>
-                                                        ))
-                                                    )}
-                                                </div>
-                                            </div>
-                                        )}
                         
                         {/* Mobile Notifications Dropdown */}
                         {showNotifications && (

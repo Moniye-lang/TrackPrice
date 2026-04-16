@@ -183,7 +183,7 @@ export default function AdminLayout({
 
             {/* Backdrop for Mobile */}
             {isMobileMenuOpen && (
-                <div
+                <div    
                     className="fixed inset-0 bg-slate-950/60 z-40 md:hidden backdrop-blur-md transition-all duration-500"
                     onClick={() => setIsMobileMenuOpen(false)}
                 />
