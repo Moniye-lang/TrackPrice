@@ -26,3 +26,23 @@ export async function PUT(req: Request) {
         return NextResponse.json({ error: 'Update failed' }, { status: 500 });
     }
 }
+
+export async function DELETE(req: Request) {
+    const userPayload = await getServerUser();
+    if (!userPayload || !userPayload.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    try {
+        await connectDB();
+        await User.findByIdAndDelete(userPayload.id);
+
+        const response = NextResponse.json({ message: 'Account deleted' });
+        
+        response.cookies.set('admin_token', '', { expires: new Date(0), path: '/' });
+        response.cookies.set('user_token', '', { expires: new Date(0), path: '/' });
+        response.cookies.set('token', '', { expires: new Date(0), path: '/' });
+
+        return response;
+    } catch (error: any) {
+        return NextResponse.json({ error: 'Deletion failed' }, { status: 500 });
+    }
+}
