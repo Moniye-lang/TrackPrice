@@ -705,7 +705,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                             <div className="flex gap-4 sm:gap-6 items-start">
                                                 <div 
                                                     className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex-shrink-0 flex items-center justify-center text-xl font-black transition-colors duration-300 shadow-inner"
-                                                    style={anonColor ? { backgroundColor: `${anonColor}15`, color: anonColor } : { backgroundColor: '#f1f5f9', color: '#94a3b8' }}
+                                                    style={anonColor ? { backgroundColor: anonColor, color: '#ffffff' } : { backgroundColor: '#f1f5f9', color: '#94a3b8' }}
                                                 >
                                                     {(authorName || 'U').charAt(0).toUpperCase()}
                                                 </div>
