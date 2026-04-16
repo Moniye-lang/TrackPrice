@@ -21,10 +21,23 @@ interface Message {
     };
     parentId?: string;
     replyToContent?: string;
-    userId?: string;
+    userId?: {
+        _id: string;
+        name: string;
+    } | string;
     anonId?: string;
     createdAt: string;
 }
+
+const getAnonColor = (anonId: string) => {
+    if (!anonId) return '#94a3b8'; // slate-400
+    let hash = 0;
+    for (let i = 0; i < anonId.length; i++) {
+        hash = anonId.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const c = (hash & 0x00FFFFFF).toString(16).toUpperCase();
+    return '#' + '00000'.substring(0, 6 - c.length) + c;
+};
 
 export default function ForumPage() {
     const [messages, setMessages] = useState<Message[]>([]);
@@ -257,10 +270,15 @@ export default function ForumPage() {
                     ) : (
                         <div className="grid gap-6">
                             {messages.map((msg) => {
-                                const isOwner = (user && msg.userId === user.id) || 
+                                const msgUserId = typeof msg.userId === 'object' ? msg.userId?._id : msg.userId;
+                                const isOwner = (user && msgUserId === user.id) || 
                                               (!user && currentAnonId && msg.anonId === currentAnonId) || 
                                               (user?.role === 'admin');
                                 const isHighlighted = highlightedMsgId === msg._id;
+                                
+                                const isAnon = !msg.userId && msg.anonId;
+                                const authorName = msg.userId && typeof msg.userId === 'object' ? msg.userId.name : (isAnon ? 'Anonymous' : 'User');
+                                const anonColor = isAnon && msg.anonId ? getAnonColor(msg.anonId) : null;
 
                                 return (
                                 <Card 
@@ -269,12 +287,25 @@ export default function ForumPage() {
                                     className={`relative group p-8 hover:shadow-glow transition-all duration-500 hover:-translate-y-1 ${isHighlighted ? 'ring-4 ring-primary bg-primary/5 animate-pulse' : ''}`}
                                 >
                                     <div className="flex gap-6 items-start">
-                                        <div className="w-12 h-12 rounded-2xl bg-slate-50 flex-shrink-0 flex items-center justify-center text-xl font-black text-slate-300 group-hover:bg-primary/5 group-hover:text-primary transition-colors duration-300">
-                                            #
+                                        <div 
+                                            className="w-12 h-12 rounded-2xl flex-shrink-0 flex items-center justify-center text-xl font-black transition-colors duration-300 shadow-inner"
+                                            style={anonColor ? { backgroundColor: `${anonColor}15`, color: anonColor } : { backgroundColor: '#f1f5f9', color: '#94a3b8' }}
+                                        >
+                                            {authorName.charAt(0).toUpperCase()}
                                         </div>
                                         <div className="flex-1 space-y-4">
                                             <div className="flex justify-between items-start mb-2">
                                                 <div className="space-y-2 flex-1">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-sm font-black tracking-tight" style={anonColor ? { color: anonColor } : { color: '#0f172a' }}>
+                                                            {authorName}
+                                                        </span>
+                                                        {msg.isAdmin && (
+                                                            <span className="flex-shrink-0 bg-amber-100 text-amber-700 text-[9px] font-black px-2 py-1 rounded-md tracking-tighter uppercase border border-amber-200 animate-pulse">
+                                                                Admin
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                     {msg.productId && (
                                                         <div className="flex items-center gap-2 mb-3">
                                                             <span className="text-[10px] font-black bg-primary/10 text-primary px-2 py-0.5 rounded uppercase tracking-widest">
@@ -295,11 +326,6 @@ export default function ForumPage() {
                                                         {msg.content}
                                                     </p>
                                                 </div>
-                                                {msg.isAdmin && (
-                                                    <span className="flex-shrink-0 bg-amber-100 text-amber-700 text-[9px] font-black px-2 py-1 rounded-md tracking-tighter uppercase border border-amber-200 animate-pulse">
-                                                        Admin
-                                                    </span>
-                                                )}
                                             </div>
                                             <div className="flex justify-between items-center pt-4 border-t border-slate-50 text-[11px] font-black text-slate-400 uppercase tracking-widest">
                                                 <span className="flex items-center gap-1.5">

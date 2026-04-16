@@ -49,7 +49,10 @@ interface Product {
 interface Message {
     _id: string;
     content: string;
-    userId?: string;
+    userId?: {
+        _id: string;
+        name: string;
+    } | string;
     anonId?: string;
     isAdmin?: boolean;
     productId?: {
@@ -69,6 +72,16 @@ interface AuthUser {
     email: string;
     role: string;
 }
+
+const getAnonColor = (anonId: string) => {
+    if (!anonId) return '#94a3b8'; // slate-400
+    let hash = 0;
+    for (let i = 0; i < anonId.length; i++) {
+        hash = anonId.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const c = (hash & 0x00FFFFFF).toString(16).toUpperCase();
+    return '#' + '00000'.substring(0, 6 - c.length) + c;
+};
 
 export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
@@ -673,10 +686,15 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                         ) : (
                             <div className="grid gap-6">
                                 {messages.map((msg) => {
-                                    const canModify = (authUser && msg.userId === authUser.id) || 
+                                    const msgUserId = typeof msg.userId === 'object' ? msg.userId?._id : msg.userId;
+                                    const canModify = (authUser && msgUserId === authUser.id) || 
                                                       (!authUser && currentAnonId && msg.anonId === currentAnonId) || 
                                                       (authUser?.role === 'admin');
                                     const isHighlighted = highlightedMsgId === msg._id;
+                                    
+                                    const isAnon = !msg.userId && msg.anonId;
+                                    const authorName = msg.userId && typeof msg.userId === 'object' ? msg.userId.name : (isAnon ? 'Anonymous' : 'User');
+                                    const anonColor = isAnon && msg.anonId ? getAnonColor(msg.anonId) : null;
 
                                     return (
                                         <Card 
@@ -685,12 +703,20 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                             className={`relative group p-6 sm:p-8 hover:shadow-glow transition-all duration-500 hover:-translate-y-1 bg-white/60 ${isHighlighted ? 'ring-4 ring-primary bg-primary/5 animate-pulse' : ''}`}
                                         >
                                             <div className="flex gap-4 sm:gap-6 items-start">
-                                                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-slate-50 flex-shrink-0 flex items-center justify-center text-slate-200 group-hover:bg-primary/5 group-hover:text-primary transition-colors duration-300">
-                                                    <MessageCircle size={20} />
+                                                <div 
+                                                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex-shrink-0 flex items-center justify-center text-xl font-black transition-colors duration-300 shadow-inner"
+                                                    style={anonColor ? { backgroundColor: `${anonColor}15`, color: anonColor } : { backgroundColor: '#f1f5f9', color: '#94a3b8' }}
+                                                >
+                                                    {authorName.charAt(0).toUpperCase()}
                                                 </div>
                                                 <div className="flex-1 space-y-4 min-w-0">
                                                     <div className="flex justify-between items-start mb-2">
                                                         <div className="space-y-2 flex-1 min-w-0">
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="text-sm font-black tracking-tight" style={anonColor ? { color: anonColor } : { color: '#0f172a' }}>
+                                                                    {authorName}
+                                                                </span>
+                                                            </div>
                                                             {msg.productId && (
                                                                 <div className="flex items-center gap-2 mb-2">
                                                                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider bg-slate-100 px-2 py-0.5 rounded-md flex items-center gap-1.5">

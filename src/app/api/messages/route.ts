@@ -29,6 +29,7 @@ export async function GET(req: Request) {
 
         const messages = await Message.find(query)
             .populate('productId', 'name price maxPrice')
+            .populate('userId', 'name')
             .sort({ createdAt: -1 });
         return NextResponse.json(messages);
     } catch (error) {
