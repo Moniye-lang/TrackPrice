@@ -45,10 +45,13 @@ const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLI
 );
 Input.displayName = "Input";
 
-const Card = ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div className={cn("bg-white rounded-2xl shadow-premium border border-slate-100 overflow-hidden transition-all duration-300", className)}>
-        {children}
-    </div>
+const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+    ({ children, className, ...props }, ref) => (
+        <div ref={ref} className={cn("bg-white rounded-2xl shadow-premium border border-slate-100 overflow-hidden transition-all duration-300", className)} {...props}>
+            {children}
+        </div>
+    )
 );
+Card.displayName = "Card";
 
 export { Button, Input, Card, cn };
