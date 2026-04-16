@@ -277,7 +277,7 @@ export default function ForumPage() {
                                 const isHighlighted = highlightedMsgId === msg._id;
                                 
                                 const isAnon = !msg.userId && msg.anonId;
-                                const authorName = msg.userId && typeof msg.userId === 'object' ? msg.userId.name : (isAnon ? 'Anonymous' : 'User');
+                                const authorName = (msg.userId && typeof msg.userId === 'object' && msg.userId.name) ? msg.userId.name : (isAnon ? 'Anonymous' : 'User');
                                 const anonColor = isAnon && msg.anonId ? getAnonColor(msg.anonId) : null;
 
                                 return (
@@ -291,7 +291,7 @@ export default function ForumPage() {
                                             className="w-12 h-12 rounded-2xl flex-shrink-0 flex items-center justify-center text-xl font-black transition-colors duration-300 shadow-inner"
                                             style={anonColor ? { backgroundColor: `${anonColor}15`, color: anonColor } : { backgroundColor: '#f1f5f9', color: '#94a3b8' }}
                                         >
-                                            {authorName.charAt(0).toUpperCase()}
+                                            {(authorName || 'U').charAt(0).toUpperCase()}
                                         </div>
                                         <div className="flex-1 space-y-4">
                                             <div className="flex justify-between items-start mb-2">
