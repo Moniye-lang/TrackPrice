@@ -1,29 +1,45 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
-import Message from '@/models/Message';
+import mongoose from 'mongoose';
 import Product from '@/models/Product';
 import User from '@/models/User';
+import Message from '@/models/Message';
 import { isServerAdmin } from '@/lib/server-auth';
 
-async function isAdmin() {
+async function checkAdmin() {
     return await isServerAdmin();
 }
 
 export async function GET() {
     try {
         await connectDB();
+        
+        // Ensure models are registered even if not explicitly used in this line
+        // sometimes necessary for Mongoose population in some environments
+        if (!mongoose.models.Product) mongoose.model('Product');
+        if (!mongoose.models.User) mongoose.model('User');
+
         const messages = await Message.find()
-            .populate('productId', 'name price maxPrice')
+            .populate({
+                path: 'productId',
+                select: 'name price maxPrice',
+                model: Product // Explicitly pass model
+            })
             .sort({ createdAt: -1 });
+            
         return NextResponse.json(messages);
     } catch (error: any) {
-        console.error('API Error /api/admin/messages:', error.message);
-        return NextResponse.json({ error: 'Failed to fetch messages', details: error.message }, { status: 500 });
+        console.error('CRITICAL: /api/admin/messages GET failure:', error);
+        return NextResponse.json({ 
+            error: 'Failed to fetch messages', 
+            details: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined 
+        }, { status: 500 });
     }
 }
 
 export async function DELETE(req: Request) {
-    if (!(await isAdmin())) {
+    if (!(await checkAdmin())) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
