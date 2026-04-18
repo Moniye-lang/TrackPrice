@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import Message from '@/models/Message';
+import Product from '@/models/Product';
+import User from '@/models/User';
 import { isServerAdmin } from '@/lib/server-auth';
 
 async function isAdmin() {
@@ -14,8 +16,9 @@ export async function GET() {
             .populate('productId', 'name price maxPrice')
             .sort({ createdAt: -1 });
         return NextResponse.json(messages);
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 });
+    } catch (error: any) {
+        console.error('API Error /api/admin/messages:', error.message);
+        return NextResponse.json({ error: 'Failed to fetch messages', details: error.message }, { status: 500 });
     }
 }
 

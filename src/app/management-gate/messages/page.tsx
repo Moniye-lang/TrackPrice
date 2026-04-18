@@ -34,15 +34,24 @@ import {
 export default function ForumModeration() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     const fetchMessages = async () => {
         setLoading(true);
+        setError(null);
         try {
             const res = await fetch('/api/admin/messages');
             const data = await res.json();
-            setMessages(data);
+            if (res.ok) {
+                setMessages(Array.isArray(data) ? data : []);
+            } else {
+                setError(data.error || 'Failed to fetch messages');
+                setMessages([]);
+            }
         } catch (error) {
             console.error('Failed to fetch messages');
+            setError('Network error or server unreachable');
+            setMessages([]);
         } finally {
             setLoading(false);
         }
@@ -85,6 +94,18 @@ export default function ForumModeration() {
                     <span className="text-[10px] font-black uppercase tracking-widest">Refresh Feed</span>
                 </Button>
             </div>
+
+            {error && (
+                <div className="bg-rose-50 border border-rose-100 p-6 rounded-[2rem] flex items-center gap-4 animate-in fade-in slide-in-from-top-4">
+                    <div className="w-12 h-12 rounded-2xl bg-rose-100 text-rose-500 flex items-center justify-center shadow-sm border border-rose-200">
+                        <ShieldAlert size={24} />
+                    </div>
+                    <div>
+                        <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest leading-none mb-1">System Error Detected</p>
+                        <p className="text-rose-600 font-bold text-sm tracking-tight">{error}</p>
+                    </div>
+                </div>
+            )}
 
             {loading ? (
                 <div className="flex flex-col items-center justify-center py-32 gap-4">
