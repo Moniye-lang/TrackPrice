@@ -46,12 +46,25 @@ export async function DELETE(req: Request) {
     try {
         const { searchParams } = new URL(req.url);
         const id = searchParams.get('id');
-        if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 });
+        
+        let idsToDelete: string[] = [];
+        
+        if (id) {
+            idsToDelete = [id];
+        } else {
+            const body = await req.json();
+            idsToDelete = body.ids;
+        }
+
+        if (!idsToDelete || !Array.isArray(idsToDelete) || idsToDelete.length === 0) {
+            return NextResponse.json({ error: 'IDs required' }, { status: 400 });
+        }
 
         await connectDB();
-        await Message.findByIdAndDelete(id);
-        return NextResponse.json({ message: 'Message deleted' });
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed to delete message' }, { status: 400 });
+        await Message.deleteMany({ _id: { $in: idsToDelete } });
+        return NextResponse.json({ message: `${idsToDelete.length} messages deleted successfully` });
+    } catch (error: any) {
+        console.error('DELETE /api/admin/messages error:', error);
+        return NextResponse.json({ error: 'Failed to delete messages', details: error.message }, { status: 400 });
     }
 }
