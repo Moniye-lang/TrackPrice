@@ -8,6 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Edit2, Trash2 } from 'lucide-react';
 
 import { formatPriceRange } from '@/lib/price-utils';
+import { getAnonymousIdentity } from '@/lib/identity';
 
 interface Message {
     _id: string;
@@ -29,15 +30,6 @@ interface Message {
     createdAt: string;
 }
 
-const getAnonColor = (anonId: string) => {
-    if (!anonId) return '#94a3b8'; // slate-400
-    let hash = 0;
-    for (let i = 0; i < anonId.length; i++) {
-        hash = anonId.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    const c = (hash & 0x00FFFFFF).toString(16).toUpperCase();
-    return '#' + '00000'.substring(0, 6 - c.length) + c;
-};
 
 export default function ForumPage() {
     const [messages, setMessages] = useState<Message[]>([]);
@@ -276,9 +268,11 @@ export default function ForumPage() {
                                               (user?.role === 'admin');
                                 const isHighlighted = highlightedMsgId === msg._id;
                                 
-                                const isAnon = !msg.userId && msg.anonId;
-                                const authorName = (msg.userId && typeof msg.userId === 'object' && msg.userId.name) ? msg.userId.name : (isAnon ? 'Anonymous' : 'User');
-                                const anonColor = isAnon && msg.anonId ? getAnonColor(msg.anonId) : null;
+                                const isAnon = !msg.userId && !!msg.anonId;
+                                const identity = getAnonymousIdentity(msg.anonId);
+                                const authorName = (msg.userId && typeof msg.userId === 'object' && msg.userId.name) 
+                                    ? msg.userId.name 
+                                    : (isAnon ? identity.shortId : 'User');
 
                                 return (
                                 <Card 
@@ -288,16 +282,16 @@ export default function ForumPage() {
                                 >
                                     <div className="flex gap-6 items-start">
                                         <div 
-                                            className="w-12 h-12 rounded-2xl flex-shrink-0 flex items-center justify-center text-xl font-black transition-colors duration-300 shadow-inner"
-                                            style={anonColor ? { backgroundColor: anonColor, color: '#ffffff' } : { backgroundColor: '#f1f5f9', color: '#94a3b8' }}
+                                            className="w-12 h-12 rounded-2xl flex-shrink-0 flex items-center justify-center text-xl font-black transition-all duration-500 shadow-inner group-hover:scale-105"
+                                            style={isAnon ? { background: identity.gradient, color: '#ffffff' } : { backgroundColor: '#f1f5f9', color: '#94a3b8' }}
                                         >
-                                            {(authorName || 'U').charAt(0).toUpperCase()}
+                                            {authorName.charAt(0).toUpperCase()}
                                         </div>
                                         <div className="flex-1 space-y-4">
                                             <div className="flex justify-between items-start mb-2">
                                                 <div className="space-y-2 flex-1">
                                                     <div className="flex items-center gap-2">
-                                                        <span className="text-sm font-black tracking-tight" style={anonColor ? { color: anonColor } : { color: '#0f172a' }}>
+                                                        <span className="text-sm font-black tracking-tight text-slate-700">
                                                             {authorName}
                                                         </span>
                                                         {msg.isAdmin && (

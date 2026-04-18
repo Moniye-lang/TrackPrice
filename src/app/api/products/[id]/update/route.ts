@@ -8,6 +8,7 @@ import GamificationRule from '@/models/GamificationRule';
 import { parsePriceRange } from '@/lib/price-utils';
 import { getServerUser } from '@/lib/server-auth';
 import { cookies } from 'next/headers';
+import { getAnonymousIdentity } from '@/lib/identity';
 
 const REPUTATION_WEIGHTS = {
     'Beginner': 1,
@@ -182,7 +183,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
                 product.price = newMedianPrice;
                 product.flagged = false;
                 product.lastUpdated = new Date();
-                product.lastUpdatedBy = user ? (user.name || 'Anonymous') : 'Anonymous';
+                const identity = getAnonymousIdentity(anonId);
+                product.lastUpdatedBy = user ? (user.name || 'User') : `Guest ${identity.shortId}`;
             }
             product.updateRequested = false;
 
