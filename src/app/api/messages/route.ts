@@ -77,7 +77,6 @@ export async function POST(req: Request) {
         // Check if user is an admin
         const cookieStore = await cookies();
         const anonId = cookieStore.get('anon_id')?.value;
-        const isAdmin = await isServerAdmin();
         const currentUser = await getServerUser();
 
         let replyToContent = undefined;
