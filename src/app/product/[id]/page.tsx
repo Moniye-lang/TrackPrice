@@ -9,7 +9,7 @@ import { formatRelativeTime } from '@/lib/utils';
 import Link from 'next/link';
 import { use } from 'react';
 import { formatPriceRange } from '@/lib/price-utils';
-import { MapPin, Users, MessageCircle, Check, X, Send, History, TrendingDown, TrendingUp, Sparkles, Clock, ArrowLeft, ExternalLink, AlertTriangle, ChevronRight, CornerDownRight, Pencil, Trash2 } from 'lucide-react';
+import { MapPin, Users, MessageCircle, Check, X, Send, History, TrendingDown, TrendingUp, Sparkles, Clock, ArrowLeft, ExternalLink, AlertTriangle, ChevronRight, CornerDownRight, Pencil, Trash2, Lock, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useProduct } from '@/hooks/useHomeData';
 import { getAnonymousIdentity } from '@/lib/identity';
@@ -98,6 +98,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     const [editContent, setEditContent] = useState('');
     const [editSaving, setEditSaving] = useState(false);
     const [deletingMessageId, setDeletingMessageId] = useState<string | null>(null);
+    const [systemConfig, setSystemConfig] = useState<{ forumLocked: boolean, forumLockedMessage: string } | null>(null);
 
     const handleDeleteMessage = async (msgId: string) => {
         setDeletingMessageId(msgId);
@@ -164,6 +165,19 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             setHighlightedMsgId(msgId);
             setTimeout(() => setHighlightedMsgId(null), 3000);
         }
+
+        const fetchConfig = async () => {
+            try {
+                const res = await fetch('/api/config');
+                if (res.ok) {
+                    const data = await res.json();
+                    setSystemConfig(data);
+                }
+            } catch (error) {
+                console.error('Failed to fetch config');
+            }
+        };
+        fetchConfig();
     }, [product]);
 
     useEffect(() => {
@@ -598,68 +612,93 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 <div className="lg:col-span-2 space-y-10">
                     {/* Post a message */}
                     <section className="relative">
-                        <Card className="glass !bg-white/40 border-white/60 p-8 relative overflow-hidden">
-                            <div className="relative z-10">
-                                <div className="flex items-center gap-3 mb-6">
-                                    <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-inner">
-                                        <MessageCircle size={24} />
+                        {systemConfig?.forumLocked && authUser?.role !== 'admin' ? (
+                            <Card className="glass !bg-rose-50/40 border-rose-200/60 p-10 relative overflow-hidden group">
+                                <div className="absolute -right-8 -bottom-8 text-rose-500/5 group-hover:text-rose-500/10 transition-colors pointer-events-none">
+                                    <Lock size={180} />
+                                </div>
+                                <div className="relative z-10 flex flex-col items-center text-center space-y-6">
+                                    <div className="w-20 h-20 rounded-[2.5rem] bg-rose-100 text-rose-500 flex items-center justify-center shadow-premium border border-rose-200 animate-bounce-subtle">
+                                        <Lock size={40} />
                                     </div>
-                                    <div>
-                                        <h2 className="text-2xl font-black text-slate-800 tracking-tight">Product Discussion</h2>
-                                        <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">
-                                            {replyingTo ? 'Replying to insight' : `${messages.length} ${messages.length === 1 ? 'message' : 'messages'} · Post anonymously`}
+                                    <div className="space-y-2">
+                                        <h2 className="text-3xl font-black text-slate-800 tracking-tight">Support <span className="text-rose-500 italic">Paused</span></h2>
+                                        <p className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Maintenance Protocol Active</p>
+                                    </div>
+                                    <div className="bg-white/60 backdrop-blur-md border border-rose-100 p-6 rounded-3xl max-w-lg shadow-sm">
+                                        <p className="text-slate-600 font-bold leading-relaxed italic">
+                                            "{systemConfig.forumLockedMessage}"
                                         </p>
                                     </div>
+                                    <div className="flex items-center gap-2 text-[10px] font-black text-rose-400 uppercase tracking-widest">
+                                        <AlertCircle size={14} />
+                                        <span>Contribution access is temporarily restricted</span>
+                                    </div>
                                 </div>
-                                {/* ... rest of the form ... */}
-
-                                {replyingTo && (
-                                    <div className="mb-6 bg-slate-50/80 border border-slate-200 p-4 rounded-xl relative group animate-in fade-in slide-in-from-top-2">
-                                        <div className="flex items-center justify-between mb-2">
-                                            <span className="text-[10px] font-black text-primary uppercase tracking-widest flex items-center gap-2">
-                                                <span className="w-1 h-3 bg-primary rounded-full"></span>
-                                                Replying to
-                                            </span>
-                                            <button
-                                                onClick={() => setReplyingTo(null)}
-                                                className="text-[10px] font-black text-slate-400 hover:text-rose-500 transition-colors uppercase tracking-widest"
-                                            >
-                                                Cancel
-                                            </button>
+                            </Card>
+                        ) : (
+                            <Card className="glass !bg-white/40 border-white/60 p-8 relative overflow-hidden">
+                                <div className="relative z-10">
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-inner">
+                                            <MessageCircle size={24} />
                                         </div>
-                                        <p className="text-sm text-slate-600 font-medium italic truncate">"{replyingTo.content}"</p>
-                                    </div>
-                                )}
-
-                                <form onSubmit={handleSubmitMessage} className="space-y-6">
-                                    <div className="relative">
-                                        <textarea
-                                            className="w-full p-6 bg-white/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-300 min-h-[140px] resize-none text-slate-700 text-lg placeholder:text-slate-300 shadow-inner"
-                                            placeholder="What's your take on this price? (Max 300 characters)"
-                                            value={content}
-                                            onChange={(e) => setContent(e.target.value)}
-                                            maxLength={300}
-                                            required
-                                        />
-                                        <div className="absolute bottom-4 right-6 flex items-center gap-2">
-                                            <span className="text-[10px] font-black text-slate-300 tracking-tighter uppercase">
-                                                {content.length} / 300
-                                            </span>
+                                        <div>
+                                            <h2 className="text-2xl font-black text-slate-800 tracking-tight">Product Discussion</h2>
+                                            <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">
+                                                {replyingTo ? 'Replying to insight' : `${messages.length} ${messages.length === 1 ? 'message' : 'messages'} · Post anonymously`}
+                                            </p>
                                         </div>
                                     </div>
-                                    <div className="flex justify-end">
-                                        <Button type="submit" className="w-full sm:w-auto px-10 py-4 shadow-glow font-black tracking-wide" disabled={posting}>
-                                            {posting ? 'PUBLISHING...' : replyingTo ? 'POST REPLY' : 'POST MESSAGE'}
-                                        </Button>
-                                    </div>
-                                    {error && (
-                                        <div className="bg-rose-50 border border-rose-100 p-4 rounded-xl flex items-center gap-3">
-                                            <p className="text-rose-600 text-sm font-bold">{error}</p>
+
+                                    {replyingTo && (
+                                        <div className="mb-6 bg-slate-50/80 border border-slate-200 p-4 rounded-xl relative group animate-in fade-in slide-in-from-top-2">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <span className="text-[10px] font-black text-primary uppercase tracking-widest flex items-center gap-2">
+                                                    <span className="w-1 h-3 bg-primary rounded-full"></span>
+                                                    Replying to
+                                                </span>
+                                                <button
+                                                    onClick={() => setReplyingTo(null)}
+                                                    className="text-[10px] font-black text-slate-400 hover:text-rose-500 transition-colors uppercase tracking-widest"
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                            <p className="text-sm text-slate-600 font-medium italic truncate">"{replyingTo.content}"</p>
                                         </div>
                                     )}
-                                </form>
-                            </div>
-                        </Card>
+
+                                    <form onSubmit={handleSubmitMessage} className="space-y-6">
+                                        <div className="relative">
+                                            <textarea
+                                                className="w-full p-6 bg-white/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-300 min-h-[140px] resize-none text-slate-700 text-lg placeholder:text-slate-300 shadow-inner"
+                                                placeholder="What's your take on this price? (Max 300 characters)"
+                                                value={content}
+                                                onChange={(e) => setContent(e.target.value)}
+                                                maxLength={300}
+                                                required
+                                            />
+                                            <div className="absolute bottom-4 right-6 flex items-center gap-2">
+                                                <span className="text-[10px] font-black text-slate-300 tracking-tighter uppercase">
+                                                    {content.length} / 300
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-end">
+                                            <Button type="submit" className="w-full sm:w-auto px-10 py-4 shadow-glow font-black tracking-wide" disabled={posting}>
+                                                {posting ? 'PUBLISHING...' : replyingTo ? 'POST REPLY' : 'POST MESSAGE'}
+                                            </Button>
+                                        </div>
+                                        {error && (
+                                            <div className="bg-rose-50 border border-rose-100 p-4 rounded-xl flex items-center gap-3">
+                                                <p className="text-rose-600 text-sm font-bold">{error}</p>
+                                            </div>
+                                        )}
+                                    </form>
+                                </div>
+                            </Card>
+                        )}
                     </section>
 
                     {/* Messages list */}
@@ -736,7 +775,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                                                     Admin
                                                                 </span>
                                                             )}
-                                                            {canModify && (
+                                                            {canModify && (!systemConfig?.forumLocked || authUser?.role === 'admin') && (
                                                                 <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                                                     <button
                                                                         onClick={() => { setEditMessage(msg); setEditContent(msg.content); }}
@@ -762,16 +801,18 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                                             <Clock size={12} />
                                                             {formatRelativeTime(msg.createdAt)}
                                                         </span>
-                                                        <button
-                                                            onClick={() => {
-                                                                setReplyingTo(msg);
-                                                                const section = document.querySelector('section');
-                                                                if (section) section.scrollIntoView({ behavior: 'smooth' });
-                                                            }}
-                                                            className="px-3 py-1.5 rounded-xl hover:bg-primary/5 hover:text-primary transition-all duration-300 font-black"
-                                                        >
-                                                            REPLY
-                                                        </button>
+                                                        {(!systemConfig?.forumLocked || authUser?.role === 'admin') && (
+                                                            <button
+                                                                onClick={() => {
+                                                                    setReplyingTo(msg);
+                                                                    const section = document.querySelector('section');
+                                                                    if (section) section.scrollIntoView({ behavior: 'smooth' });
+                                                                }}
+                                                                className="px-3 py-1.5 rounded-xl hover:bg-primary/5 hover:text-primary transition-all duration-300 font-black"
+                                                            >
+                                                                REPLY
+                                                            </button>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>

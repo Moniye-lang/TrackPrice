@@ -5,7 +5,7 @@ import { Button, Card } from '@/components/ui-base';
 import { Navbar } from '@/components/Navbar';
 import { formatRelativeTime } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
-import { Edit2, Trash2 } from 'lucide-react';
+import { Edit2, Trash2, Lock, AlertCircle } from 'lucide-react';
 
 import { formatPriceRange } from '@/lib/price-utils';
 import { getAnonymousIdentity } from '@/lib/identity';
@@ -43,6 +43,7 @@ export default function ForumPage() {
     const [editMessage, setEditMessage] = useState<Message | null>(null);
     const [editContent, setEditContent] = useState('');
     const [highlightedMsgId, setHighlightedMsgId] = useState<string | null>(null);
+    const [systemConfig, setSystemConfig] = useState<{ forumLocked: boolean, forumLockedMessage: string } | null>(null);
 
     const fetchMessages = async () => {
         try {
@@ -62,8 +63,21 @@ export default function ForumPage() {
         }
     };
 
+    const fetchConfig = async () => {
+        try {
+            const res = await fetch('/api/config');
+            if (res.ok) {
+                const data = await res.json();
+                setSystemConfig(data);
+            }
+        } catch (error) {
+            console.error('Failed to fetch config');
+        }
+    };
+
     useEffect(() => {
         fetchMessages();
+        fetchConfig();
 
         const getCookie = (name: string) => {
             const value = `; ${document.cookie}`;
@@ -162,73 +176,100 @@ export default function ForumPage() {
                 {/* Form Section */}
                 <section className="relative mb-20">
                     <div className="absolute -top-24 -left-20 w-64 h-64 bg-primary/10 rounded-full blur-3xl -z-10 animate-pulse"></div>
-                    <Card className="glass !bg-white/40 border-white/60 p-8 relative overflow-hidden">
-                        <div className="relative z-10">
-                            <div className="flex items-center gap-3 mb-6">
-                                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-2xl shadow-inner">
-                                    🎭
+                    
+                    {systemConfig?.forumLocked && user?.role !== 'admin' ? (
+                        <Card className="glass !bg-rose-50/40 border-rose-200/60 p-10 relative overflow-hidden group">
+                            <div className="absolute -right-8 -bottom-8 text-rose-500/5 group-hover:text-rose-500/10 transition-colors pointer-events-none">
+                                <Lock size={180} />
+                            </div>
+                            <div className="relative z-10 flex flex-col items-center text-center space-y-6">
+                                <div className="w-20 h-20 rounded-[2.5rem] bg-rose-100 text-rose-500 flex items-center justify-center shadow-premium border border-rose-200 animate-bounce-subtle">
+                                    <Lock size={40} />
                                 </div>
-                                <div>
-                                    <h2 className="text-2xl font-black text-slate-800 tracking-tight">Post Anonymously</h2>
-                                    <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">{replyingTo ? 'Replying to conversation' : 'Share insights with the community'}</p>
+                                <div className="space-y-2">
+                                    <h2 className="text-3xl font-black text-slate-800 tracking-tight">Discussions <span className="text-rose-500 italic">Restricted</span></h2>
+                                    <p className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Maintenance Protocol Active</p>
+                                </div>
+                                <div className="bg-white/60 backdrop-blur-md border border-rose-100 p-6 rounded-3xl max-w-lg shadow-sm">
+                                    <p className="text-slate-600 font-bold leading-relaxed italic">
+                                        "{systemConfig.forumLockedMessage}"
+                                    </p>
+                                </div>
+                                <div className="flex items-center gap-2 text-[10px] font-black text-rose-400 uppercase tracking-widest">
+                                    <AlertCircle size={14} />
+                                    <span>Posting is temporarily disabled for all non-administrative personnel</span>
                                 </div>
                             </div>
-
-                            {replyingTo && (
-                                <div className="mb-6 bg-slate-50/80 border border-slate-200 p-4 rounded-xl relative group animate-in fade-in slide-in-from-top-2">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <span className="text-[10px] font-black text-primary uppercase tracking-widest flex items-center gap-2">
-                                            <span className="w-1 h-3 bg-primary rounded-full"></span>
-                                            Replying to
-                                        </span>
-                                        <button
-                                            onClick={() => setReplyingTo(null)}
-                                            className="text-[10px] font-black text-slate-400 hover:text-rose-500 transition-colors uppercase tracking-widest"
-                                        >
-                                            Cancel
-                                        </button>
+                        </Card>
+                    ) : (
+                        <Card className="glass !bg-white/40 border-white/60 p-8 relative overflow-hidden">
+                            <div className="relative z-10">
+                                <div className="flex items-center gap-3 mb-6">
+                                    <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-2xl shadow-inner">
+                                        🎭
                                     </div>
-                                    <p className="text-sm text-slate-600 font-medium italic truncate">"{replyingTo.content}"</p>
-                                </div>
-                            )}
-
-                            <form onSubmit={handleSubmit} className="space-y-6">
-                                <div className="relative">
-                                    <textarea
-                                        className="w-full p-6 bg-white/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-300 min-h-[160px] resize-none text-slate-700 text-lg placeholder:text-slate-300 shadow-inner"
-                                        placeholder="What's the latest deal? (Max 300 characters)"
-                                        value={content}
-                                        onChange={(e) => setContent(e.target.value)}
-                                        maxLength={300}
-                                        required
-                                    />
-                                    <div className="absolute bottom-4 right-6 flex items-center gap-2">
-                                        <div className={`h-1.5 w-1.5 rounded-full ${content.length > 250 ? 'bg-orange-500 animate-pulse' : 'bg-slate-200'}`} />
-                                        <span className="text-[10px] font-black text-slate-400 tracking-tighter uppercase whitespace-nowrap">
-                                            {content.length} / 300 Characters
-                                        </span>
+                                    <div>
+                                        <h2 className="text-2xl font-black text-slate-800 tracking-tight">Post Anonymously</h2>
+                                        <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">{replyingTo ? 'Replying to conversation' : 'Share insights with the community'}</p>
                                     </div>
                                 </div>
 
-                                <div className="flex justify-end">
-                                    <Button type="submit" className="w-full sm:w-auto px-12 py-4 shadow-glow font-black tracking-wide" disabled={posting}>
-                                        {posting ? (
-                                            <span className="flex items-center gap-2">
-                                                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                                PUBLISHING...
+                                {replyingTo && (
+                                    <div className="mb-6 bg-slate-50/80 border border-slate-200 p-4 rounded-xl relative group animate-in fade-in slide-in-from-top-2">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <span className="text-[10px] font-black text-primary uppercase tracking-widest flex items-center gap-2">
+                                                <span className="w-1 h-3 bg-primary rounded-full"></span>
+                                                Replying to
                                             </span>
-                                        ) : replyingTo ? 'POST REPLY' : 'SHARE MESSAGE'}
-                                    </Button>
-                                </div>
-                                {error && (
-                                    <div className="bg-rose-50 border border-rose-100 p-4 rounded-xl flex items-center gap-3 animate-shake">
-                                        <span className="text-xl">⚠️</span>
-                                        <p className="text-rose-600 text-sm font-bold antialiased">{error}</p>
+                                            <button
+                                                onClick={() => setReplyingTo(null)}
+                                                className="text-[10px] font-black text-slate-400 hover:text-rose-500 transition-colors uppercase tracking-widest"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                        <p className="text-sm text-slate-600 font-medium italic truncate">"{replyingTo.content}"</p>
                                     </div>
                                 )}
-                            </form>
-                        </div>
-                    </Card>
+
+                                <form onSubmit={handleSubmit} className="space-y-6">
+                                    <div className="relative">
+                                        <textarea
+                                            className="w-full p-6 bg-white/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-300 min-h-[160px] resize-none text-slate-700 text-lg placeholder:text-slate-300 shadow-inner"
+                                            placeholder="What's the latest deal? (Max 300 characters)"
+                                            value={content}
+                                            onChange={(e) => setContent(e.target.value)}
+                                            maxLength={300}
+                                            required
+                                        />
+                                        <div className="absolute bottom-4 right-6 flex items-center gap-2">
+                                            <div className={`h-1.5 w-1.5 rounded-full ${content.length > 250 ? 'bg-orange-500 animate-pulse' : 'bg-slate-200'}`} />
+                                            <span className="text-[10px] font-black text-slate-400 tracking-tighter uppercase whitespace-nowrap">
+                                                {content.length} / 300 Characters
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex justify-end">
+                                        <Button type="submit" className="w-full sm:w-auto px-12 py-4 shadow-glow font-black tracking-wide" disabled={posting}>
+                                            {posting ? (
+                                                <span className="flex items-center gap-2">
+                                                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                                    PUBLISHING...
+                                                </span>
+                                            ) : replyingTo ? 'POST REPLY' : 'SHARE MESSAGE'}
+                                        </Button>
+                                    </div>
+                                    {error && (
+                                        <div className="bg-rose-50 border border-rose-100 p-4 rounded-xl flex items-center gap-3 animate-shake">
+                                            <span className="text-xl">⚠️</span>
+                                            <p className="text-rose-600 text-sm font-bold antialiased">{error}</p>
+                                        </div>
+                                    )}
+                                </form>
+                            </div>
+                        </Card>
+                    )}
                 </section>
 
                 {/* Discussions Section */}
@@ -326,32 +367,36 @@ export default function ForumPage() {
                                                     🕰️ {formatRelativeTime(msg.createdAt)}
                                                 </span>
                                                 <div className="flex items-center gap-4">
-                                                    <button
-                                                        onClick={() => {
-                                                            setReplyingTo(msg);
-                                                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                                                        }}
-                                                        className="px-3 py-1.5 rounded-lg hover:bg-primary/5 hover:text-primary transition-all duration-300 flex items-center gap-1.5"
-                                                    >
-                                                        REPLY
-                                                    </button>
-                                                    {isOwner && (
+                                                    {(!systemConfig?.forumLocked || user?.role === 'admin') && (
                                                         <>
                                                             <button
                                                                 onClick={() => {
-                                                                    setEditMessage(msg);
-                                                                    setEditContent(msg.content);
+                                                                    setReplyingTo(msg);
+                                                                    window.scrollTo({ top: 0, behavior: 'smooth' });
                                                                 }}
-                                                                className="px-3 py-1.5 rounded-lg hover:bg-slate-100 hover:text-slate-700 transition-all duration-300 flex items-center gap-1.5"
+                                                                className="px-3 py-1.5 rounded-lg hover:bg-primary/5 hover:text-primary transition-all duration-300 flex items-center gap-1.5"
                                                             >
-                                                                <Edit2 size={12} /> EDIT
+                                                                REPLY
                                                             </button>
-                                                            <button
-                                                                onClick={() => handleDelete(msg._id)}
-                                                                className="px-3 py-1.5 rounded-lg hover:bg-rose-50 hover:text-rose-500 transition-all duration-300 flex items-center gap-1.5"
-                                                            >
-                                                                <Trash2 size={12} /> DELETE
-                                                            </button>
+                                                            {isOwner && (
+                                                                <>
+                                                                    <button
+                                                                        onClick={() => {
+                                                                            setEditMessage(msg);
+                                                                            setEditContent(msg.content);
+                                                                        }}
+                                                                        className="px-3 py-1.5 rounded-lg hover:bg-slate-100 hover:text-slate-700 transition-all duration-300 flex items-center gap-1.5"
+                                                                    >
+                                                                        <Edit2 size={12} /> EDIT
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={() => handleDelete(msg._id)}
+                                                                        className="px-3 py-1.5 rounded-lg hover:bg-rose-50 hover:text-rose-500 transition-all duration-300 flex items-center gap-1.5"
+                                                                    >
+                                                                        <Trash2 size={12} /> DELETE
+                                                                    </button>
+                                                                </>
+                                                            )}
                                                         </>
                                                     )}
                                                     <button

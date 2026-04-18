@@ -51,6 +51,8 @@ export async function PUT(req: Request) {
         if (body.bonusPointsRequest !== undefined) rule.bonusPointsRequest = body.bonusPointsRequest;
         if (body.dailyUpdateLimit !== undefined) rule.dailyUpdateLimit = body.dailyUpdateLimit;
         if (body.verificationThreshold !== undefined) rule.verificationThreshold = body.verificationThreshold;
+        if (body.forumLocked !== undefined) rule.forumLocked = body.forumLocked;
+        if (body.forumLockedMessage !== undefined) rule.forumLockedMessage = body.forumLockedMessage;
 
         await rule.save();
 

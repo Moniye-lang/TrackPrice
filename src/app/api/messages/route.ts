@@ -9,6 +9,7 @@ import { cookies } from 'next/headers';
 import { isServerAdmin, getServerUser } from '@/lib/server-auth';
 import { revalidateProducts } from '@/lib/cache';
 import Notification from '@/models/Notification';
+import GamificationRule from '@/models/GamificationRule';
 
 // Basic in-memory rate limiting
 const rateLimit = new Map<string, number>();
@@ -60,6 +61,15 @@ export async function POST(req: Request) {
                 { error: `Please wait ${Math.ceil((LIMIT_TIME - (now - lastPost)) / 1000)}s before posting again.` },
                 { status: 429 }
             );
+        }
+
+        // Check if forum is locked
+        const isAdmin = await isServerAdmin();
+        if (!isAdmin) {
+            const rule = await GamificationRule.findOne();
+            if (rule?.forumLocked) {
+                return NextResponse.json({ error: rule.forumLockedMessage || 'The forum is locked.' }, { status: 403 });
+            }
         }
 
         const cleanedContent = cleanText(content);

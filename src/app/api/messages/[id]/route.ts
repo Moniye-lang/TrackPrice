@@ -5,6 +5,7 @@ import { getServerUser, isServerAdmin } from '@/lib/server-auth';
 import { cleanText } from '@/lib/profanity';
 import { revalidateProducts } from '@/lib/cache';
 import { cookies } from 'next/headers';
+import GamificationRule from '@/models/GamificationRule';
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
@@ -18,6 +19,14 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
 
         if (!user && !admin && !anonId) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        // Check if forum is locked
+        if (!admin) {
+            const rule = await GamificationRule.findOne();
+            if (rule?.forumLocked) {
+                return NextResponse.json({ error: rule.forumLockedMessage || 'The forum is locked' }, { status: 403 });
+            }
         }
 
         const message = await Message.findById(id);
@@ -56,6 +65,14 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 
         if (!user && !admin && !anonId) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        // Check if forum is locked
+        if (!admin) {
+            const rule = await GamificationRule.findOne();
+            if (rule?.forumLocked) {
+                return NextResponse.json({ error: rule.forumLockedMessage || 'The forum is locked' }, { status: 403 });
+            }
         }
 
         const message = await Message.findById(id);

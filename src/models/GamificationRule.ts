@@ -5,6 +5,8 @@ export interface IGamificationRule extends Document {
     bonusPointsRequest: number;
     dailyUpdateLimit: number;
     verificationThreshold: number;
+    forumLocked: boolean;
+    forumLockedMessage: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -15,6 +17,8 @@ const GamificationRuleSchema: Schema = new Schema(
         bonusPointsRequest: { type: Number, default: 20 },
         dailyUpdateLimit: { type: Number, default: 20 },
         verificationThreshold: { type: Number, default: 5 },
+        forumLocked: { type: Boolean, default: false },
+        forumLockedMessage: { type: String, default: 'The forum is currently undergoing maintenance. Please check back later.' },
     },
     {
         timestamps: true,

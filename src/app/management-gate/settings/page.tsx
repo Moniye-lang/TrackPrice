@@ -8,6 +8,8 @@ interface Rules {
     bonusPointsRequest: number;
     dailyUpdateLimit: number;
     verificationThreshold: number;
+    forumLocked: boolean;
+    forumLockedMessage: string;
 }
 
 import { 
@@ -55,9 +57,9 @@ export default function AdminSettings() {
         fetchRules();
     }, []);
 
-    const handleChange = (key: keyof Rules, value: string) => {
+    const handleChange = (key: keyof Rules, value: string | boolean) => {
         if (!rules) return;
-        setRules({ ...rules, [key]: Number(value) });
+        setRules({ ...rules, [key]: value });
     };
 
     const handleSave = async (e: React.FormEvent) => {
@@ -195,7 +197,7 @@ export default function AdminSettings() {
                                         min="0"
                                         className="h-16 pl-6 pr-12 text-2xl font-black bg-slate-50 border-transparent focus:bg-white focus:border-primary transition-all rounded-2xl shadow-inner group-hover:bg-white"
                                         value={rules.pointsPerUpdate}
-                                        onChange={(e) => handleChange('pointsPerUpdate', e.target.value)}
+                                        onChange={(e) => handleChange('pointsPerUpdate', Number(e.target.value))}
                                         required
                                     />
                                     <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors">
@@ -218,7 +220,7 @@ export default function AdminSettings() {
                                         min="0"
                                         className="h-16 pl-6 pr-12 text-2xl font-black bg-slate-50 border-transparent focus:bg-white focus:border-amber-400 transition-all rounded-2xl shadow-inner group-hover:bg-white"
                                         value={rules.bonusPointsRequest}
-                                        onChange={(e) => handleChange('bonusPointsRequest', e.target.value)}
+                                        onChange={(e) => handleChange('bonusPointsRequest', Number(e.target.value))}
                                         required
                                     />
                                     <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-amber-500 transition-colors">
@@ -258,7 +260,7 @@ export default function AdminSettings() {
                                         min="1"
                                         className="h-16 pl-6 pr-12 text-2xl font-black bg-slate-50 border-transparent focus:bg-white focus:border-indigo-400 transition-all rounded-2xl shadow-inner group-hover:bg-white"
                                         value={rules.dailyUpdateLimit}
-                                        onChange={(e) => handleChange('dailyUpdateLimit', e.target.value)}
+                                        onChange={(e) => handleChange('dailyUpdateLimit', Number(e.target.value))}
                                         required
                                     />
                                     <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-500 transition-colors">
@@ -281,7 +283,7 @@ export default function AdminSettings() {
                                         min="1"
                                         className="h-16 pl-6 pr-12 text-2xl font-black bg-slate-50 border-transparent focus:bg-white focus:border-indigo-400 transition-all rounded-2xl shadow-inner group-hover:bg-white"
                                         value={rules.verificationThreshold}
-                                        onChange={(e) => handleChange('verificationThreshold', e.target.value)}
+                                        onChange={(e) => handleChange('verificationThreshold', Number(e.target.value))}
                                         required
                                     />
                                     <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-500 transition-colors">
@@ -350,6 +352,59 @@ export default function AdminSettings() {
                                     {archiving ? 'Processing' : 'Archive Registry'}
                                 </Button>
                             </div>
+                        </div>
+                    </Card>
+                </div>
+
+                {/* Forum Governance Section */}
+                <div className="space-y-6">
+                    <div className="flex items-center gap-3 mb-2 px-2">
+                        <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center border border-rose-100 shadow-sm">
+                            <Lock size={20} />
+                        </div>
+                        <div>
+                            <h2 className="text-lg font-black text-slate-900 tracking-tight">Forum Governance</h2>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Access control & Maintenance messaging</p>
+                        </div>
+                    </div>
+
+                    <Card className="p-8 border-none shadow-premium bg-white rounded-[2.5rem] space-y-8 relative overflow-hidden">
+                        <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                            <div className="space-y-1">
+                                <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest">Lock Public Discussions</h3>
+                                <p className="text-[10px] font-bold text-slate-400 leading-relaxed max-w-md">
+                                    When enabled, all non-admin users will be prevented from posting messages, replies, or editing content across the ecosystem.
+                                </p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => handleChange('forumLocked', !rules.forumLocked)}
+                                className={`w-16 h-8 rounded-full transition-all duration-500 relative ${rules.forumLocked ? 'bg-rose-500 shadow-glow-sm' : 'bg-slate-200'}`}
+                            >
+                                <div className={`absolute top-1 w-6 h-6 rounded-full bg-white shadow-sm transition-all duration-500 ${rules.forumLocked ? 'left-9' : 'left-1'}`} />
+                            </button>
+                        </div>
+
+                        <div className="space-y-4">
+                            <label className="flex items-center justify-between">
+                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Maintenance Broadcast Message</span>
+                                <span className="text-[10px] font-bold text-rose-500 bg-rose-50 px-2 py-0.5 rounded-lg border border-rose-100 uppercase tracking-widest">Global Alert</span>
+                            </label>
+                            <div className="relative group">
+                                <textarea
+                                    className="w-full p-6 text-sm font-bold bg-slate-50 border-transparent focus:bg-white focus:border-rose-400 transition-all rounded-3xl shadow-inner group-hover:bg-white min-h-[120px] resize-none text-slate-700 outline-none"
+                                    value={rules.forumLockedMessage}
+                                    onChange={(e) => handleChange('forumLockedMessage', e.target.value)}
+                                    placeholder="Enter custom maintenance message..."
+                                    required
+                                />
+                                <div className="absolute right-6 bottom-6 text-slate-300 group-focus-within:text-rose-500 transition-colors">
+                                    <AlertCircle size={20} />
+                                </div>
+                            </div>
+                            <p className="text-[10px] font-bold text-slate-400 leading-relaxed px-2">
+                                This message will be displayed prominently on the Forum and Product pages when discussions are restricted.
+                            </p>
                         </div>
                     </Card>
                 </div>
