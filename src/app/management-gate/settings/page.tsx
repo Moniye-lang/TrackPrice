@@ -57,7 +57,7 @@ export default function AdminSettings() {
         fetchRules();
     }, []);
 
-    const handleChange = (key: keyof Rules, value: string | boolean) => {
+    const handleChange = (key: keyof Rules, value: string | boolean | number) => {
         if (!rules) return;
         setRules({ ...rules, [key]: value });
     };
