@@ -16,7 +16,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Missing or malformed request body. Expected JSON with "url".' }, { status: 400 });
         }
 
-        const { url } = body;
+        const { url, location } = body;
         if (!url || typeof url !== 'string' || !url.startsWith('http')) {
             return NextResponse.json({ error: 'Invalid URL provided. Please enter a full URL (starting with http/https).' }, { status: 400 });
         }
@@ -28,8 +28,8 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Extraction Failed: No products detected.' }, { status: 400 });
         }
 
-        // Run matcher
-        const matchedData = await matchScrapedProducts(scrapedData);
+        // Run matcher with location context
+        const matchedData = await matchScrapedProducts(scrapedData, location);
 
         return NextResponse.json({
             success: true,

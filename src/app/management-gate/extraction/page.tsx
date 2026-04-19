@@ -43,7 +43,7 @@ export default function ExtractionPage() {
             const res = await fetch('/api/admin/scrape', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url })
+                body: JSON.stringify({ url, location })
             });
 
             const data = await res.json();
