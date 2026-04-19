@@ -14,6 +14,8 @@ export function Navbar() {
     const logoutStore = useAuthStore((state) => state.logout);
     const router = useRouter();
     const pathname = usePathname();
+    const [notifications, setNotifications] = useState<any[]>([]);
+    const [showNotifications, setShowNotifications] = useState(false);
     const [forumCount, setForumCount] = useState(0);
     const [unreadForum, setUnreadForum] = useState(0);
 
