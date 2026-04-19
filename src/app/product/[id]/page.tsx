@@ -5,11 +5,11 @@ import Image from 'next/image';
 import { Button, Card } from '@/components/ui-base';
 import { Navbar } from '@/components/Navbar';
 import { PriceProposalWidget } from '@/components/PriceProposalWidget';
-import { formatRelativeTime } from '@/lib/utils';
+import { formatRelativeTime, formatTimestamp } from '@/lib/utils';
 import Link from 'next/link';
 import { use } from 'react';
 import { formatPriceRange } from '@/lib/price-utils';
-import { MapPin, Users, MessageCircle, Check, X, Send, History, TrendingDown, TrendingUp, Sparkles, Clock, ArrowLeft, ExternalLink, AlertTriangle, ChevronRight, CornerDownRight, Pencil, Trash2, Lock, AlertCircle } from 'lucide-react';
+import { MapPin, Users, MessageCircle, Check, X, Send, History, TrendingDown, TrendingUp, Sparkles, Clock, ArrowLeft, ExternalLink, AlertTriangle, ChevronRight, CornerDownRight, Pencil, Trash2, Lock, AlertCircle, MoreHorizontal, Reply, Flag } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useProduct } from '@/hooks/useHomeData';
 import { getAnonymousIdentity } from '@/lib/identity';
@@ -99,6 +99,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     const [editSaving, setEditSaving] = useState(false);
     const [deletingMessageId, setDeletingMessageId] = useState<string | null>(null);
     const [systemConfig, setSystemConfig] = useState<{ forumLocked: boolean, forumLockedMessage: string } | null>(null);
+    const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
 
     const handleDeleteMessage = async (msgId: string) => {
         setDeletingMessageId(msgId);
@@ -733,88 +734,107 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                         <Card 
                                             key={msg._id} 
                                             id={`msg-${msg._id}`}
-                                            className={`relative group p-6 sm:p-8 hover:shadow-glow transition-all duration-500 hover:-translate-y-1 bg-white/60 border-l-4 ${isHighlighted ? 'ring-4 ring-primary bg-primary/5 animate-pulse' : ''}`}
+                                            className={`relative group p-4 sm:p-6 hover:shadow-glow transition-all duration-500 bg-white/60 border-l-4 ${isHighlighted ? 'ring-4 ring-primary bg-primary/5 animate-pulse' : ''}`}
                                             style={{ borderLeftColor: isAnon ? identity.color : 'transparent' }}
                                         >
-                                            <div className="flex gap-4 sm:gap-6 items-start">
+                                            <div className="flex gap-3 sm:gap-4 items-start">
+                                                {/* Avatar */}
                                                 <div 
-                                                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex-shrink-0 flex items-center justify-center text-xl font-black transition-all duration-500 shadow-inner group-hover:scale-105"
+                                                    className="w-10 h-10 rounded-2xl flex-shrink-0 flex items-center justify-center text-sm font-black shadow-inner"
                                                     style={isAnon ? { background: identity.gradient, color: '#ffffff' } : { backgroundColor: '#f1f5f9', color: '#94a3b8' }}
                                                 >
                                                     {isAnon ? identity.avatarLabel : authorName.charAt(0).toUpperCase()}
                                                 </div>
-                                                <div className="flex-1 space-y-4 min-w-0">
-                                                    <div className="flex justify-between items-start mb-2">
-                                                        <div className="space-y-2 flex-1 min-w-0">
-                                                            <div className="flex items-center gap-2">
-                                                                <span className="text-sm font-black tracking-tight text-slate-800">
-                                                                    {authorName}
-                                                                </span>
-                                                            </div>
-                                                            {msg.productId && (
-                                                                <div className="flex items-center gap-2 mb-2">
-                                                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider bg-slate-100 px-2 py-0.5 rounded-md flex items-center gap-1.5">
-                                                                        <Check size={10} className="text-emerald-500" />
-                                                                        Verified at: {formatPriceRange(msg.productId.price, msg.productId.maxPrice)}
-                                                                    </span>
-                                                                </div>
-                                                            )}
-                                                            {msg.replyToContent && (
-                                                                <div className="inline-flex items-center gap-2 bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-xl mb-2 max-w-full">
-                                                                    <CornerDownRight size={14} className="text-primary/40 flex-shrink-0" />
-                                                                    <p className="text-xs font-bold text-slate-400 italic truncate italic">"{msg.replyToContent}"</p>
-                                                                </div>
-                                                            )}
 
-                                                            <p className="text-slate-700 text-base sm:text-lg leading-relaxed font-medium whitespace-pre-wrap antialiased break-words">
-                                                                {msg.content}
-                                                            </p>
-                                                        </div>
-                                                        <div className="flex items-center gap-2 ml-2 flex-shrink-0">
+                                                {/* Content */}
+                                                <div className="flex-1 min-w-0">
+                                                    {/* Header row */}
+                                                    <div className="flex items-center justify-between gap-2 mb-1">
+                                                        <div className="flex items-center gap-2 min-w-0">
+                                                            <span className="text-sm font-black tracking-tight text-slate-800 truncate">{authorName}</span>
                                                             {msg.isAdmin && (
-                                                                <span className="bg-primary/10 text-primary text-[9px] font-black px-2 py-1 rounded-md tracking-tighter uppercase border border-primary/20 animate-pulse">
+                                                                <span className="bg-primary/10 text-primary text-[9px] font-black px-2 py-0.5 rounded-md tracking-tighter uppercase border border-primary/20 flex-shrink-0">
                                                                     Admin
                                                                 </span>
                                                             )}
-                                                            {canModify && (!systemConfig?.forumLocked || authUser?.role === 'admin') && (
-                                                                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                        </div>
+                                                        {/* Three-dot action menu */}
+                                                        <div className="relative flex-shrink-0">
+                                                            <button
+                                                                onClick={() => setActiveMenuId(activeMenuId === msg._id ? null : msg._id)}
+                                                                className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-300 hover:text-slate-600 hover:bg-slate-100 transition-all"
+                                                            >
+                                                                {activeMenuId === msg._id ? <X size={14} /> : <MoreHorizontal size={14} />}
+                                                            </button>
+                                                            {activeMenuId === msg._id && (
+                                                                <div className="absolute right-0 top-8 z-50 bg-white rounded-2xl shadow-2xl border border-slate-100 p-1.5 min-w-[160px] animate-in fade-in zoom-in-95 duration-150">
+                                                                    {(!systemConfig?.forumLocked || authUser?.role === 'admin') && (
+                                                                        <button
+                                                                            onClick={() => {
+                                                                                setReplyingTo(msg);
+                                                                                setActiveMenuId(null);
+                                                                                const section = document.querySelector('section');
+                                                                                if (section) section.scrollIntoView({ behavior: 'smooth' });
+                                                                            }}
+                                                                            className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-primary/5 hover:text-primary transition-all"
+                                                                        >
+                                                                            <Reply size={14} /> Reply
+                                                                        </button>
+                                                                    )}
+                                                                    {canModify && (!systemConfig?.forumLocked || authUser?.role === 'admin') && (
+                                                                        <>
+                                                                            <button
+                                                                                onClick={() => { setEditMessage(msg); setEditContent(msg.content); setActiveMenuId(null); }}
+                                                                                className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all"
+                                                                            >
+                                                                                <Pencil size={14} /> Edit
+                                                                            </button>
+                                                                            <button
+                                                                                onClick={() => { handleDeleteMessage(msg._id); setActiveMenuId(null); }}
+                                                                                disabled={deletingMessageId === msg._id}
+                                                                                className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-rose-50 hover:text-rose-500 transition-all disabled:opacity-50"
+                                                                            >
+                                                                                <Trash2 size={14} /> Delete
+                                                                            </button>
+                                                                        </>
+                                                                    )}
+                                                                    <div className="my-1 h-px bg-slate-100" />
                                                                     <button
-                                                                        onClick={() => { setEditMessage(msg); setEditContent(msg.content); }}
-                                                                        title="Edit message"
-                                                                        className="p-1.5 rounded-lg hover:bg-primary/10 hover:text-primary text-slate-400 transition-all"
+                                                                        onClick={() => setActiveMenuId(null)}
+                                                                        className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-rose-50 hover:text-rose-400 transition-all"
                                                                     >
-                                                                        <Pencil size={13} />
-                                                                    </button>
-                                                                    <button
-                                                                        onClick={() => handleDeleteMessage(msg._id)}
-                                                                        disabled={deletingMessageId === msg._id}
-                                                                        title="Delete message"
-                                                                        className="p-1.5 rounded-lg hover:bg-rose-50 hover:text-rose-500 text-slate-400 transition-all disabled:opacity-50"
-                                                                    >
-                                                                        <Trash2 size={13} />
+                                                                        <Flag size={14} /> Report
                                                                     </button>
                                                                 </div>
                                                             )}
                                                         </div>
                                                     </div>
-                                                    <div className="pt-4 border-t border-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-widest flex justify-between items-center">
-                                                        <span className="flex items-center gap-1.5">
-                                                            <Clock size={12} />
-                                                            {formatRelativeTime(msg.createdAt)}
+
+                                                    {/* Verified-at tag */}
+                                                    {msg.productId && (
+                                                        <div className="flex items-center gap-2 mb-2">
+                                                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider bg-slate-100 px-2 py-0.5 rounded-md flex items-center gap-1.5">
+                                                                <Check size={10} className="text-emerald-500" />
+                                                                Verified at: {formatPriceRange(msg.productId.price, msg.productId.maxPrice)}
+                                                            </span>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Reply quote */}
+                                                    {msg.replyToContent && (
+                                                        <div className="flex items-center gap-2 bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-xl mb-2 max-w-full">
+                                                            <CornerDownRight size={14} className="text-primary/40 flex-shrink-0" />
+                                                            <p className="text-xs font-bold text-slate-400 italic truncate">"{msg.replyToContent}"</p>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Message body + inline timestamp */}
+                                                    <p className="text-slate-700 text-base leading-relaxed font-medium whitespace-pre-wrap antialiased break-words">
+                                                        {msg.content}
+                                                        <span className="inline-block ml-2 align-bottom text-[10px] font-semibold text-slate-300 whitespace-nowrap">
+                                                            {formatTimestamp(msg.createdAt)}
                                                         </span>
-                                                        {(!systemConfig?.forumLocked || authUser?.role === 'admin') && (
-                                                            <button
-                                                                onClick={() => {
-                                                                    setReplyingTo(msg);
-                                                                    const section = document.querySelector('section');
-                                                                    if (section) section.scrollIntoView({ behavior: 'smooth' });
-                                                                }}
-                                                                className="px-3 py-1.5 rounded-xl hover:bg-primary/5 hover:text-primary transition-all duration-300 font-black"
-                                                            >
-                                                                REPLY
-                                                            </button>
-                                                        )}
-                                                    </div>
+                                                    </p>
                                                 </div>
                                             </div>
                                         </Card>

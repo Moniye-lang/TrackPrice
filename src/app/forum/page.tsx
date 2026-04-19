@@ -3,9 +3,9 @@
 import { useState, useEffect } from 'react';
 import { Button, Card } from '@/components/ui-base';
 import { Navbar } from '@/components/Navbar';
-import { formatRelativeTime } from '@/lib/utils';
+import { formatTimestamp } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
-import { Edit2, Trash2, Lock, AlertCircle } from 'lucide-react';
+import { Edit2, Trash2, Lock, AlertCircle, MoreHorizontal, Reply, Flag, X } from 'lucide-react';
 
 import { formatPriceRange } from '@/lib/price-utils';
 import { getAnonymousIdentity } from '@/lib/identity';
@@ -43,6 +43,7 @@ export default function ForumPage() {
     const [editMessage, setEditMessage] = useState<Message | null>(null);
     const [editContent, setEditContent] = useState('');
     const [highlightedMsgId, setHighlightedMsgId] = useState<string | null>(null);
+    const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
     const [systemConfig, setSystemConfig] = useState<{ forumLocked: boolean, forumLockedMessage: string } | null>(null);
 
     const fetchMessages = async () => {
@@ -319,95 +320,111 @@ export default function ForumPage() {
                                 <Card 
                                     key={msg._id} 
                                     id={`msg-${msg._id}`}
-                                    className={`relative group p-8 hover:shadow-glow transition-all duration-500 hover:-translate-y-1 border-l-4 ${isHighlighted ? 'ring-4 ring-primary bg-primary/5 animate-pulse' : ''}`}
+                                    className={`relative group p-4 sm:p-6 hover:shadow-glow transition-all duration-500 border-l-4 ${isHighlighted ? 'ring-4 ring-primary bg-primary/5 animate-pulse' : ''}`}
                                     style={{ borderLeftColor: isAnon ? identity.color : 'transparent' }}
                                 >
-                                    <div className="flex gap-6 items-start">
+                                    <div className="flex gap-3 sm:gap-4 items-start">
+                                        {/* Avatar */}
                                         <div 
-                                            className="w-12 h-12 rounded-2xl flex-shrink-0 flex items-center justify-center text-xl font-black transition-all duration-500 shadow-inner group-hover:scale-105"
+                                            className="w-10 h-10 rounded-2xl flex-shrink-0 flex items-center justify-center text-sm font-black shadow-inner"
                                             style={isAnon ? { background: identity.gradient, color: '#ffffff' } : { backgroundColor: '#f1f5f9', color: '#94a3b8' }}
                                         >
                                             {isAnon ? identity.avatarLabel : authorName.charAt(0).toUpperCase()}
                                         </div>
-                                        <div className="flex-1 space-y-4">
-                                            <div className="flex justify-between items-start mb-2">
-                                                <div className="space-y-2 flex-1">
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="text-sm font-black tracking-tight text-slate-800">
-                                                            {authorName}
+
+                                        {/* Content */}
+                                        <div className="flex-1 min-w-0">
+                                            {/* Header row */}
+                                            <div className="flex items-center justify-between gap-2 mb-1">
+                                                <div className="flex items-center gap-2 min-w-0">
+                                                    <span className="text-sm font-black tracking-tight text-slate-800 truncate">{authorName}</span>
+                                                    {msg.isAdmin && (
+                                                        <span className="flex-shrink-0 bg-amber-100 text-amber-700 text-[9px] font-black px-2 py-0.5 rounded-md tracking-tighter uppercase border border-amber-200">
+                                                            Admin
                                                         </span>
-                                                        {msg.isAdmin && (
-                                                            <span className="flex-shrink-0 bg-amber-100 text-amber-700 text-[9px] font-black px-2 py-1 rounded-md tracking-tighter uppercase border border-amber-200 animate-pulse">
-                                                                Admin
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                    {msg.productId && (
-                                                        <div className="flex items-center gap-2 mb-3">
-                                                            <span className="text-[10px] font-black bg-primary/10 text-primary px-2 py-0.5 rounded uppercase tracking-widest">
-                                                                {msg.productId.name}
-                                                            </span>
-                                                            <span className="text-[10px] font-bold text-slate-400">
-                                                                {formatPriceRange(msg.productId.price, msg.productId.maxPrice)}
-                                                            </span>
-                                                        </div>
                                                     )}
-                                                    {msg.replyToContent && (
-                                                        <div className="inline-flex items-center gap-2 bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-lg mb-2">
-                                                            <span className="text-lg opacity-40">➥</span>
-                                                            <p className="text-xs font-bold text-slate-400 italic">"{msg.replyToContent}"</p>
-                                                        </div>
-                                                    )}
-                                                    <p className="text-slate-700 text-lg leading-relaxed font-medium whitespace-pre-wrap selection:bg-primary/10 antialiased">
-                                                        {msg.content}
-                                                    </p>
                                                 </div>
-                                            </div>
-                                            <div className="flex justify-between items-center pt-4 border-t border-slate-50 text-[11px] font-black text-slate-400 uppercase tracking-widest">
-                                                <span className="flex items-center gap-1.5">
-                                                    🕰️ {formatRelativeTime(msg.createdAt)}
-                                                </span>
-                                                <div className="flex items-center gap-4">
-                                                    {(!systemConfig?.forumLocked || user?.role === 'admin') && (
-                                                        <>
-                                                            <button
-                                                                onClick={() => {
-                                                                    setReplyingTo(msg);
-                                                                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                                                                }}
-                                                                className="px-3 py-1.5 rounded-lg hover:bg-primary/5 hover:text-primary transition-all duration-300 flex items-center gap-1.5"
-                                                            >
-                                                                REPLY
-                                                            </button>
-                                                            {isOwner && (
+                                                {/* Three-dot action menu */}
+                                                <div className="relative flex-shrink-0">
+                                                    <button
+                                                        onClick={() => setActiveMenuId(activeMenuId === msg._id ? null : msg._id)}
+                                                        className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-300 hover:text-slate-600 hover:bg-slate-100 transition-all"
+                                                    >
+                                                        {activeMenuId === msg._id ? <X size={14} /> : <MoreHorizontal size={14} />}
+                                                    </button>
+                                                    {activeMenuId === msg._id && (
+                                                        <div className="absolute right-0 top-8 z-50 bg-white rounded-2xl shadow-2xl border border-slate-100 p-1.5 min-w-[160px] animate-in fade-in zoom-in-95 duration-150">
+                                                            {(!systemConfig?.forumLocked || user?.role === 'admin') && (
+                                                                <button
+                                                                    onClick={() => {
+                                                                        setReplyingTo(msg);
+                                                                        setActiveMenuId(null);
+                                                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                                                    }}
+                                                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-primary/5 hover:text-primary transition-all"
+                                                                >
+                                                                    <Reply size={14} /> Reply
+                                                                </button>
+                                                            )}
+                                                            {isOwner && (!systemConfig?.forumLocked || user?.role === 'admin') && (
                                                                 <>
                                                                     <button
                                                                         onClick={() => {
                                                                             setEditMessage(msg);
                                                                             setEditContent(msg.content);
+                                                                            setActiveMenuId(null);
                                                                         }}
-                                                                        className="px-3 py-1.5 rounded-lg hover:bg-slate-100 hover:text-slate-700 transition-all duration-300 flex items-center gap-1.5"
+                                                                        className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all"
                                                                     >
-                                                                        <Edit2 size={12} /> EDIT
+                                                                        <Edit2 size={14} /> Edit
                                                                     </button>
                                                                     <button
-                                                                        onClick={() => handleDelete(msg._id)}
-                                                                        className="px-3 py-1.5 rounded-lg hover:bg-rose-50 hover:text-rose-500 transition-all duration-300 flex items-center gap-1.5"
+                                                                        onClick={() => { handleDelete(msg._id); setActiveMenuId(null); }}
+                                                                        className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-rose-50 hover:text-rose-500 transition-all"
                                                                     >
-                                                                        <Trash2 size={12} /> DELETE
+                                                                        <Trash2 size={14} /> Delete
                                                                     </button>
                                                                 </>
                                                             )}
-                                                        </>
+                                                            <div className="my-1 h-px bg-slate-100" />
+                                                            <button
+                                                                onClick={() => { handleReport(msg._id); setActiveMenuId(null); }}
+                                                                className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-rose-50 hover:text-rose-400 transition-all"
+                                                            >
+                                                                <Flag size={14} /> Report
+                                                            </button>
+                                                        </div>
                                                     )}
-                                                    <button
-                                                        onClick={() => handleReport(msg._id)}
-                                                        className="px-3 py-1.5 rounded-lg hover:bg-rose-50 hover:text-rose-500 transition-all duration-300"
-                                                    >
-                                                        REPORT
-                                                    </button>
                                                 </div>
                                             </div>
+
+                                            {/* Product tag */}
+                                            {msg.productId && (
+                                                <div className="flex items-center gap-2 mb-2">
+                                                    <span className="text-[10px] font-black bg-primary/10 text-primary px-2 py-0.5 rounded uppercase tracking-widest">
+                                                        {msg.productId.name}
+                                                    </span>
+                                                    <span className="text-[10px] font-bold text-slate-400">
+                                                        {formatPriceRange(msg.productId.price, msg.productId.maxPrice)}
+                                                    </span>
+                                                </div>
+                                            )}
+
+                                            {/* Reply quote */}
+                                            {msg.replyToContent && (
+                                                <div className="flex items-center gap-2 bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-lg mb-2">
+                                                    <span className="text-base opacity-40">➥</span>
+                                                    <p className="text-xs font-bold text-slate-400 italic truncate">"{msg.replyToContent}"</p>
+                                                </div>
+                                            )}
+
+                                            {/* Message body + inline timestamp */}
+                                            <p className="text-slate-700 text-base leading-relaxed font-medium whitespace-pre-wrap break-words antialiased">
+                                                {msg.content}
+                                                <span className="inline-block ml-2 align-bottom text-[10px] font-semibold text-slate-300 whitespace-nowrap">
+                                                    {formatTimestamp(msg.createdAt)}
+                                                </span>
+                                            </p>
                                         </div>
                                     </div>
                                 </Card>
