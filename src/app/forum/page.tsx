@@ -302,7 +302,7 @@ export default function ForumPage() {
                             <p className="text-slate-400 font-medium">Be the first to spark a conversation!</p>
                         </div>
                     ) : (
-                        <div className="grid gap-6">
+                        <div className="grid gap-4">
                             {messages.map((msg) => {
                                 const msgUserId = typeof msg.userId === 'object' ? msg.userId?._id : msg.userId;
                                 const isOwner = (user && msgUserId === user.id) || 
@@ -320,52 +320,51 @@ export default function ForumPage() {
                                 <Card 
                                     key={msg._id} 
                                     id={`msg-${msg._id}`}
-                                    className={`relative group p-4 sm:p-6 hover:shadow-glow transition-all duration-500 border-l-4 overflow-visible ${isHighlighted ? 'ring-4 ring-primary bg-primary/5 animate-pulse' : ''}`}
+                                    className={`relative overflow-visible border-l-4 transition-all duration-300 select-none ${isHighlighted ? 'ring-4 ring-primary bg-primary/5 animate-pulse' : ''}`}
                                     style={{ borderLeftColor: isAnon ? identity.color : 'transparent' }}
+                                    onTouchStart={(e) => {
+                                        (e.currentTarget as any)._touchStartX = e.touches[0].clientX;
+                                    }}
+                                    onTouchEnd={(e) => {
+                                        const startX = (e.currentTarget as any)._touchStartX;
+                                        const endX = e.changedTouches[0].clientX;
+                                        if (startX - endX > 60 && (!systemConfig?.forumLocked || user?.role === 'admin')) {
+                                            setReplyingTo(msg);
+                                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                                        }
+                                    }}
                                 >
-                                    <div className="flex gap-3 sm:gap-4 items-start">
+                                    <div className="flex gap-3 p-4 items-start">
                                         {/* Avatar */}
                                         <div 
-                                            className="w-10 h-10 rounded-2xl flex-shrink-0 flex items-center justify-center text-sm font-black shadow-inner"
+                                            className="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center text-xs font-black shadow-inner mt-0.5"
                                             style={isAnon ? { background: identity.gradient, color: '#ffffff' } : { backgroundColor: '#f1f5f9', color: '#94a3b8' }}
                                         >
                                             {isAnon ? identity.avatarLabel : authorName.charAt(0).toUpperCase()}
                                         </div>
 
-                                        {/* Content */}
+                                        {/* Content column */}
                                         <div className="flex-1 min-w-0">
-                                            {/* Header row */}
+                                            {/* Header: name + ⋯ menu */}
                                             <div className="flex items-center justify-between gap-2 mb-1">
-                                                <div className="flex items-center gap-2 min-w-0">
+                                                <div className="flex items-center gap-1.5 min-w-0">
                                                     <span className="text-sm font-black tracking-tight text-slate-800 truncate">{authorName}</span>
                                                     {msg.isAdmin && (
-                                                        <span className="flex-shrink-0 bg-amber-100 text-amber-700 text-[9px] font-black px-2 py-0.5 rounded-md tracking-tighter uppercase border border-amber-200">
+                                                        <span className="flex-shrink-0 bg-amber-100 text-amber-700 text-[9px] font-black px-1.5 py-0.5 rounded tracking-tighter uppercase border border-amber-200">
                                                             Admin
                                                         </span>
                                                     )}
                                                 </div>
-                                                {/* Three-dot action menu */}
+                                                {/* ⋯ always visible */}
                                                 <div className="relative flex-shrink-0">
                                                     <button
                                                         onClick={() => setActiveMenuId(activeMenuId === msg._id ? null : msg._id)}
-                                                        className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-300 hover:text-slate-600 hover:bg-slate-100 transition-all"
+                                                        className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all"
                                                     >
                                                         {activeMenuId === msg._id ? <X size={14} /> : <MoreHorizontal size={14} />}
                                                     </button>
                                                     {activeMenuId === msg._id && (
-                                                        <div className="absolute right-0 top-8 z-50 bg-white rounded-2xl shadow-2xl border border-slate-100 p-1.5 min-w-[160px] animate-in fade-in zoom-in-95 duration-150">
-                                                            {(!systemConfig?.forumLocked || user?.role === 'admin') && (
-                                                                <button
-                                                                    onClick={() => {
-                                                                        setReplyingTo(msg);
-                                                                        setActiveMenuId(null);
-                                                                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                                                                    }}
-                                                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-primary/5 hover:text-primary transition-all"
-                                                                >
-                                                                    <Reply size={14} /> Reply
-                                                                </button>
-                                                            )}
+                                                        <div className="absolute right-0 top-8 z-50 bg-white rounded-2xl shadow-2xl border border-slate-100 p-1.5 min-w-[150px] animate-in fade-in zoom-in-95 duration-150">
                                                             {isOwner && (!systemConfig?.forumLocked || user?.role === 'admin') && (
                                                                 <>
                                                                     <button
@@ -384,9 +383,9 @@ export default function ForumPage() {
                                                                     >
                                                                         <Trash2 size={14} /> Delete
                                                                     </button>
+                                                                    <div className="my-1 h-px bg-slate-100" />
                                                                 </>
                                                             )}
-                                                            <div className="my-1 h-px bg-slate-100" />
                                                             <button
                                                                 onClick={() => { handleReport(msg._id); setActiveMenuId(null); }}
                                                                 className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-rose-50 hover:text-rose-400 transition-all"
@@ -410,21 +409,49 @@ export default function ForumPage() {
                                                 </div>
                                             )}
 
-                                            {/* Reply quote */}
+                                            {/* Clickable reply quote → scrolls to original */}
                                             {msg.replyToContent && (
-                                                <div className="flex items-center gap-2 bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-lg mb-2">
-                                                    <span className="text-base opacity-40">➥</span>
+                                                <button
+                                                    onClick={() => {
+                                                        const parentId = (msg as any).parentId;
+                                                        if (parentId) {
+                                                            const el = document.getElementById(`msg-${parentId}`);
+                                                            if (el) {
+                                                                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                                el.classList.add('ring-4', 'ring-primary');
+                                                                setTimeout(() => el.classList.remove('ring-4', 'ring-primary'), 1500);
+                                                            }
+                                                        }
+                                                    }}
+                                                    className="flex items-center gap-2 w-full bg-slate-50 hover:bg-primary/5 border border-slate-100 px-3 py-1.5 rounded-lg mb-2 text-left transition-colors"
+                                                >
+                                                    <span className="text-primary/50 font-black text-base">➥</span>
                                                     <p className="text-xs font-bold text-slate-400 italic truncate">"{msg.replyToContent}"</p>
-                                                </div>
+                                                </button>
                                             )}
 
-                                            {/* Message body + inline timestamp */}
-                                            <p className="text-slate-700 text-base leading-relaxed font-medium whitespace-pre-wrap break-words antialiased">
+                                            {/* Message body */}
+                                            <p className="text-slate-700 text-[15px] leading-relaxed font-medium whitespace-pre-wrap break-words antialiased">
                                                 {msg.content}
-                                                <span className="inline-block ml-2 align-bottom text-[11px] font-black text-slate-700 whitespace-nowrap">
+                                            </p>
+
+                                            {/* Footer: Reply button (left) + timestamp (right) */}
+                                            <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-50">
+                                                {(!systemConfig?.forumLocked || user?.role === 'admin') ? (
+                                                    <button
+                                                        onClick={() => {
+                                                            setReplyingTo(msg);
+                                                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                                                        }}
+                                                        className="flex items-center gap-1.5 text-[11px] font-black text-slate-400 hover:text-primary transition-colors uppercase tracking-wide"
+                                                    >
+                                                        <Reply size={12} /> Reply
+                                                    </button>
+                                                ) : <span />}
+                                                <span className="text-[11px] font-black text-slate-700 tracking-tight">
                                                     {formatTimestamp(msg.createdAt)}
                                                 </span>
-                                            </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </Card>
