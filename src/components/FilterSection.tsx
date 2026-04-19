@@ -112,13 +112,14 @@ export function FilterSection({ stores, categories }: FilterSectionProps) {
                 </Button>
             </form>
 
-            <div className="flex flex-col lg:flex-row justify-between items-stretch lg:items-end gap-6 lg:gap-8">
-                <div className="space-y-8 flex-1 min-w-0">
-                    <div className="flex flex-col items-center gap-6">
-                        <h2 className="text-3xl font-black text-slate-900 tracking-tight text-center">Market Intelligence</h2>
+            <div className="space-y-12">
+                {/* Header Section: Centered Market Intelligence & Filters */}
+                <div className="flex flex-col items-center space-y-8 relative">
+                    <div className="flex flex-col items-center gap-6 w-full">
+                        <h2 className="text-4xl font-black text-slate-900 tracking-tight text-center">Market Intelligence</h2>
                         
                         {/* Market Category Tabs */}
-                        <div className="flex items-center justify-center p-1.5 bg-white/95 rounded-[2rem] border border-slate-100 shadow-premium w-fit min-w-[300px]">
+                        <div className="flex items-center justify-center p-1.5 bg-white/95 rounded-[2rem] border border-slate-100 shadow-premium w-fit min-w-[320px]">
                             <button
                                 onClick={() => updateFilter('marketCategory', 'Physical')}
                                 className={`flex items-center gap-3 px-8 py-3.5 rounded-[1.5rem] text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-500 ${activeMarketCategory === 'Physical'
@@ -141,27 +142,33 @@ export function FilterSection({ stores, categories }: FilterSectionProps) {
                             </button>
                         </div>
 
-                        {/* City / State Filter */}
-                        <div className="flex items-center gap-2 flex-wrap justify-center">
-                            <span className="flex items-center gap-1.5 text-[10px] font-black text-slate-400 uppercase tracking-widest mr-1">
+                        {/* City / State Filter Row */}
+                        <div className="flex items-center gap-3 flex-wrap justify-center bg-white/40 p-2 rounded-2xl border border-white/60">
+                            <span className="flex items-center gap-1.5 text-[10px] font-black text-slate-400 uppercase tracking-widest px-3 border-r border-slate-200">
                                 <Building2 size={12} /> City
                             </span>
-                            {cities.map((city) => (
-                                <button
-                                    key={city}
-                                    onClick={() => updateCityFilter(city)}
-                                    className={`px-5 py-2 rounded-xl text-xs font-black uppercase tracking-wide transition-all whitespace-nowrap ${activeCity === city
-                                        ? 'bg-primary text-white shadow-glow'
-                                        : 'bg-white text-slate-500 hover:bg-slate-50 border border-slate-100 shadow-sm'
-                                        }`}
-                                >
-                                    {city === 'All' ? 'All Cities' : city}
-                                </button>
-                            ))}
+                            <div className="flex items-center gap-2">
+                                {cities.map((city) => (
+                                    <button
+                                        key={city}
+                                        onClick={() => updateCityFilter(city)}
+                                        className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.15em] transition-all whitespace-nowrap ${activeCity === city
+                                            ? 'bg-primary text-white shadow-glow-sm'
+                                            : 'bg-white text-slate-500 hover:bg-slate-50 border border-slate-100 shadow-sm'
+                                            }`}
+                                    >
+                                        {city === 'All' ? 'All Cities' : city}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                     </div>
+                </div>
 
-                    <div className="flex items-center gap-2 overflow-x-auto pb-4 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
+                {/* Sub-Filters: Categories & Sort */}
+                <div className="flex flex-col lg:flex-row justify-between items-center gap-8 pt-4 border-t border-slate-100/50">
+                    {/* Category Pills (Centered or Left-aligned on Desktop) */}
+                    <div className="flex items-center gap-2 overflow-x-auto pb-4 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 flex-1 justify-center lg:justify-start">
                         {categories.map((cat) => (
                             <button
                                 key={cat}
@@ -175,20 +182,21 @@ export function FilterSection({ stores, categories }: FilterSectionProps) {
                             </button>
                         ))}
                     </div>
-                </div>
 
-                <div className="flex items-center gap-4 bg-white/50 p-1.5 rounded-xl border border-slate-100 shadow-sm">
-                    <span className="text-[10px] font-black text-slate-400 pl-3 uppercase tracking-widest">Sort By</span>
-                    <select
-                        value={searchParams.get('sort') || 'newest'}
-                        onChange={(e) => updateFilter('sort', e.target.value)}
-                        className="bg-transparent border-none py-1.5 px-3 text-sm font-bold text-slate-700 focus:ring-0 cursor-pointer outline-none"
-                    >
-                        <option value="newest">Newest First</option>
-                        <option value="price_asc">Price: Low to High</option>
-                        <option value="price_desc">Price: High to Low</option>
-                        <option value="updated">Recently Updated</option>
-                    </select>
+                    {/* Sort Dropdown (Right-aligned) */}
+                    <div className="flex items-center gap-4 bg-white/50 p-1.5 rounded-xl border border-slate-100 shadow-sm flex-shrink-0">
+                        <span className="text-[10px] font-black text-slate-400 pl-3 uppercase tracking-widest">Sort By</span>
+                        <select
+                            value={searchParams.get('sort') || 'newest'}
+                            onChange={(e) => updateFilter('sort', e.target.value)}
+                            className="bg-transparent border-none py-1.5 px-3 text-sm font-bold text-slate-700 focus:ring-0 cursor-pointer outline-none"
+                        >
+                            <option value="newest">Newest First</option>
+                            <option value="price_asc">Price: Low to High</option>
+                            <option value="price_desc">Price: High to Low</option>
+                            <option value="updated">Recently Updated</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>

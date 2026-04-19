@@ -20,14 +20,18 @@ export async function GET(req: Request) {
         await connectDB();
         const { searchParams } = new URL(req.url);
         const productId = searchParams.get('productId');
+        const countOnly = searchParams.get('countOnly') === 'true';
 
         let query: Record<string, any> = {};
         if (productId) {
-            // Return messages for a specific product
             query = { productId };
         } else {
-            // Return ONLY general forum messages, NOT product-specific ones
             query = { productId: { $exists: false } };
+        }
+
+        if (countOnly) {
+            const count = await Message.countDocuments(query);
+            return NextResponse.json({ count });
         }
 
         const messages = await Message.find(query)

@@ -14,24 +14,44 @@ export function Navbar() {
     const logoutStore = useAuthStore((state) => state.logout);
     const router = useRouter();
     const pathname = usePathname();
-    const [notifications, setNotifications] = useState<any[]>([]);
-    const [showNotifications, setShowNotifications] = useState(false);
+    const [forumCount, setForumCount] = useState(0);
+    const [unreadForum, setUnreadForum] = useState(0);
 
     useEffect(() => {
-        const fetchNotifications = async () => {
+        const fetchCounts = async () => {
             try {
-                const res = await fetch('/api/notifications');
-                if (res.ok) {
-                    const data = await res.json();
+                // Fetch notifications
+                const notifRes = await fetch('/api/notifications');
+                if (notifRes.ok) {
+                    const data = await notifRes.json();
                     setNotifications(data);
+                }
+
+                // Fetch forum message count efficiently
+                const forumRes = await fetch('/api/messages?countOnly=true');
+                if (forumRes.ok) {
+                    const data = await forumRes.json();
+                    const currentTotal = data.count || 0;
+                    setForumCount(currentTotal);
+
+                    // Calculate unread based on local storage
+                    const lastSeen = localStorage.getItem('forum_last_seen_count');
+                    const lastSeenCount = lastSeen ? parseInt(lastSeen, 10) : 0;
+                    
+                    if (pathname === '/forum') {
+                        localStorage.setItem('forum_last_seen_count', currentTotal.toString());
+                        setUnreadForum(0);
+                    } else {
+                        setUnreadForum(Math.max(0, currentTotal - lastSeenCount));
+                    }
                 }
             } catch (error) {
                 console.error(error);
             }
         };
-        fetchNotifications();
-        // optionally refresh every 30s
-        const interval = setInterval(fetchNotifications, 30000);
+
+        fetchCounts();
+        const interval = setInterval(fetchCounts, 30000);
         return () => clearInterval(interval);
     }, [pathname]);
 
@@ -84,6 +104,11 @@ export function Navbar() {
                     <nav className="hidden sm:flex items-center gap-10">
                         <Link href="/forum" className={`text-base font-black uppercase tracking-widest transition-colors relative group ${pathname === '/forum' ? 'text-primary' : 'text-slate-600 hover:text-primary'}`}>
                             Forum
+                            {unreadForum > 0 && (
+                                <span className="absolute -top-3 -right-6 bg-rose-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full shadow-glow animate-bounce-subtle">
+                                    {unreadForum > 99 ? '99+' : unreadForum}
+                                </span>
+                            )}
                             <span className={`absolute -bottom-1 left-0 h-0.5 bg-primary transition-all ${pathname === '/forum' ? 'w-full' : 'w-0 group-hover:w-full'}`} />
                         </Link>
 
@@ -264,7 +289,12 @@ export function Navbar() {
                     <span className="text-[10px] font-black text-primary uppercase tracking-[0.1em]">Update</span>
                 </Link>
 
-                <Link href="/forum" aria-label="Forum" className={`flex flex-col items-center gap-1.5 transition-all duration-500 ${pathname === '/forum' ? 'text-primary scale-110 -translate-y-0.5' : 'text-slate-500 hover:text-slate-300'}`}>
+                <Link href="/forum" aria-label="Forum" className={`flex flex-col items-center gap-1.5 transition-all duration-500 relative ${pathname === '/forum' ? 'text-primary scale-110 -translate-y-0.5' : 'text-slate-500 hover:text-slate-300'}`}>
+                    {unreadForum > 0 && (
+                        <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-[8px] font-black w-4 h-4 flex items-center justify-center rounded-full ring-2 ring-slate-950 z-10 animate-bounce-subtle">
+                            {unreadForum > 9 ? '9+' : unreadForum}
+                        </span>
+                    )}
                     <div className={`p-1.5 rounded-xl transition-all ${pathname === '/forum' ? 'bg-primary/20 shadow-glow-sm' : 'bg-transparent'}`}>
                         <MessageSquare size={22} strokeWidth={pathname === '/forum' ? 2.5 : 2} />
                     </div>

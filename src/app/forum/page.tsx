@@ -173,45 +173,41 @@ export default function ForumPage() {
         <div className="min-h-screen bg-mesh selection:bg-primary/20">
             <Navbar />
 
-            <main className="max-w-4xl mx-auto px-4 py-16 scroll-mt-24">
+            <main className="max-w-4xl mx-auto px-4 py-16 pb-40 md:pb-16 scroll-mt-24">
                 {/* Form Section */}
                 <section className="relative mb-20">
                     <div className="absolute -top-24 -left-20 w-64 h-64 bg-primary/10 rounded-full blur-3xl -z-10 animate-pulse"></div>
                     
                     {systemConfig?.forumLocked && user?.role !== 'admin' ? (
-                        <Card className="glass !bg-rose-50/40 border-rose-200/60 p-10 relative overflow-hidden group">
+                        <Card className="glass !bg-rose-50/40 border-rose-200/60 p-6 sm:p-10 relative overflow-hidden group">
                             <div className="absolute -right-8 -bottom-8 text-rose-500/5 group-hover:text-rose-500/10 transition-colors pointer-events-none">
                                 <Lock size={180} />
                             </div>
                             <div className="relative z-10 flex flex-col items-center text-center space-y-6">
-                                <div className="w-20 h-20 rounded-[2.5rem] bg-rose-100 text-rose-500 flex items-center justify-center shadow-premium border border-rose-200 animate-bounce-subtle">
-                                    <Lock size={40} />
+                                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-[2rem] bg-rose-100 text-rose-500 flex items-center justify-center shadow-premium border border-rose-200 animate-bounce-subtle">
+                                    <Lock size={32} className="sm:size-[40px]" />
                                 </div>
                                 <div className="space-y-2">
-                                    <h2 className="text-3xl font-black text-slate-800 tracking-tight">Discussions <span className="text-rose-500 italic">Restricted</span></h2>
-                                    <p className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Maintenance Protocol Active</p>
+                                    <h2 className="text-2xl sm:text-3xl font-black text-slate-800 tracking-tight">Discussions <span className="text-rose-500 italic">Restricted</span></h2>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Maintenance Protocol Active</p>
                                 </div>
                                 <div className="bg-white/60 backdrop-blur-md border border-rose-100 p-6 rounded-3xl max-w-lg shadow-sm">
-                                    <p className="text-slate-600 font-bold leading-relaxed italic">
+                                    <p className="text-slate-600 font-bold leading-relaxed italic text-sm sm:text-base">
                                         "{systemConfig.forumLockedMessage}"
                                     </p>
-                                </div>
-                                <div className="flex items-center gap-2 text-[10px] font-black text-rose-400 uppercase tracking-widest">
-                                    <AlertCircle size={14} />
-                                    <span>Posting is temporarily disabled for all non-administrative personnel</span>
                                 </div>
                             </div>
                         </Card>
                     ) : (
-                        <Card className="glass !bg-white/40 border-white/60 p-8 relative overflow-hidden">
+                        <Card className="glass !bg-white/40 border-white/60 p-6 sm:p-8 relative overflow-hidden">
                             <div className="relative z-10">
                                 <div className="flex items-center gap-3 mb-6">
-                                    <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-2xl shadow-inner">
+                                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-xl sm:text-2xl shadow-inner">
                                         🎭
                                     </div>
                                     <div>
-                                        <h2 className="text-2xl font-black text-slate-800 tracking-tight">Post Anonymously</h2>
-                                        <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">{replyingTo ? 'Replying to conversation' : 'Share insights with the community'}</p>
+                                        <h2 className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight">Post Anonymously</h2>
+                                        <p className="text-[9px] sm:text-sm font-bold text-slate-400 uppercase tracking-widest">{replyingTo ? 'Replying to conversation' : 'Share insights with the community'}</p>
                                     </div>
                                 </div>
 
@@ -236,7 +232,7 @@ export default function ForumPage() {
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     <div className="relative">
                                         <textarea
-                                            className="w-full p-6 bg-white/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-300 min-h-[160px] resize-none text-slate-700 text-lg placeholder:text-slate-300 shadow-inner"
+                                            className="w-full p-4 sm:p-6 bg-white/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-300 min-h-[140px] sm:min-h-[160px] resize-none text-slate-700 text-base sm:text-lg placeholder:text-slate-300 shadow-inner"
                                             placeholder="What's the latest deal? (Max 300 characters)"
                                             value={content}
                                             onChange={(e) => setContent(e.target.value)}
@@ -252,7 +248,7 @@ export default function ForumPage() {
                                     </div>
 
                                     <div className="flex justify-end">
-                                        <Button type="submit" className="w-full sm:w-auto px-12 py-4 shadow-glow font-black tracking-wide" disabled={posting}>
+                                        <Button type="submit" className="w-full sm:w-auto px-12 py-3.5 sm:py-4 shadow-glow font-black tracking-wide text-sm" disabled={posting}>
                                             {posting ? (
                                                 <span className="flex items-center gap-2">
                                                     <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -274,13 +270,13 @@ export default function ForumPage() {
                 </section>
 
                 {/* Discussions Section */}
-                <section className="space-y-8">
+                <section className="space-y-6 sm:space-y-8">
                     <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-                        <h3 className="text-2xl font-black text-slate-800 tracking-tight flex items-center gap-3">
+                        <h3 className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight flex items-center gap-3">
                             Real-time Feed
                             <span className="inline-flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
                         </h3>
-                        <span className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                        <span className="text-[10px] sm:text-xs font-black text-slate-400 uppercase tracking-widest">
                             {messages.length} messages
                         </span>
                     </div>
@@ -334,10 +330,10 @@ export default function ForumPage() {
                                         }
                                     }}
                                 >
-                                    <div className="flex gap-3 p-4 items-start">
+                                    <div className="flex gap-3 p-4 sm:p-5 items-start">
                                         {/* Avatar */}
                                         <div 
-                                            className="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center text-xs font-black shadow-inner mt-0.5"
+                                            className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex-shrink-0 flex items-center justify-center text-xs sm:text-sm font-black shadow-inner mt-0.5"
                                             style={isAnon ? { background: identity.gradient, color: '#ffffff' } : { backgroundColor: '#f1f5f9', color: '#94a3b8' }}
                                         >
                                             {isAnon ? identity.avatarLabel : authorName.charAt(0).toUpperCase()}
@@ -359,12 +355,12 @@ export default function ForumPage() {
                                                 <div className="relative flex-shrink-0">
                                                     <button
                                                         onClick={() => setActiveMenuId(activeMenuId === msg._id ? null : msg._id)}
-                                                        className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all"
+                                                        className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all"
                                                     >
-                                                        {activeMenuId === msg._id ? <X size={14} /> : <MoreHorizontal size={14} />}
+                                                        {activeMenuId === msg._id ? <X size={16} /> : <MoreHorizontal size={16} />}
                                                     </button>
                                                     {activeMenuId === msg._id && (
-                                                        <div className="absolute right-0 top-8 z-50 bg-white rounded-2xl shadow-2xl border border-slate-100 p-1.5 min-w-[150px] animate-in fade-in zoom-in-95 duration-150">
+                                                        <div className="absolute right-0 top-10 z-50 bg-white rounded-2xl shadow-2xl border border-slate-100 p-1.5 min-w-[150px] animate-in fade-in zoom-in-95 duration-150">
                                                             {isOwner && (!systemConfig?.forumLocked || user?.role === 'admin') && (
                                                                 <>
                                                                     <button
@@ -413,9 +409,9 @@ export default function ForumPage() {
                                             {msg.replyToContent && (
                                                 <button
                                                     onClick={() => {
-                                                        const parentId = (msg as any).parentId;
-                                                        if (parentId) {
-                                                            const el = document.getElementById(`msg-${parentId}`);
+                                                        const pId = (msg as any).parentId;
+                                                        if (pId) {
+                                                            const el = document.getElementById(`msg-${pId}`);
                                                             if (el) {
                                                                 el.scrollIntoView({ behavior: 'smooth', block: 'center' });
                                                                 el.classList.add('ring-4', 'ring-primary');
@@ -423,7 +419,7 @@ export default function ForumPage() {
                                                             }
                                                         }
                                                     }}
-                                                    className="flex items-center gap-2 w-full bg-slate-50 hover:bg-primary/5 border border-slate-100 px-3 py-1.5 rounded-lg mb-2 text-left transition-colors"
+                                                    className="flex items-center gap-2 w-full bg-slate-50 hover:bg-primary/5 border border-slate-100 px-3 py-2 rounded-xl mb-2 text-left transition-colors"
                                                 >
                                                     <span className="text-primary/50 font-black text-base">➥</span>
                                                     <p className="text-xs font-bold text-slate-400 italic truncate">"{msg.replyToContent}"</p>
@@ -431,24 +427,25 @@ export default function ForumPage() {
                                             )}
 
                                             {/* Message body */}
-                                            <p className="text-slate-700 text-[15px] leading-relaxed font-medium whitespace-pre-wrap break-words antialiased">
+                                            <p className="text-slate-700 text-sm sm:text-[15px] leading-relaxed font-medium whitespace-pre-wrap break-words antialiased">
                                                 {msg.content}
                                             </p>
 
                                             {/* Footer: Reply button (left) + timestamp (right) */}
-                                            <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-50">
+                                            <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-50">
                                                 {(!systemConfig?.forumLocked || user?.role === 'admin') ? (
                                                     <button
                                                         onClick={() => {
                                                             setReplyingTo(msg);
                                                             window.scrollTo({ top: 0, behavior: 'smooth' });
                                                         }}
-                                                        className="flex items-center gap-1.5 text-[11px] font-black text-slate-400 hover:text-primary transition-colors uppercase tracking-wide"
+                                                        className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-50 text-[10px] font-black text-slate-500 hover:text-primary hover:bg-primary/5 transition-all uppercase tracking-widest"
                                                     >
-                                                        <Reply size={12} /> Reply
+                                                        <Reply size={12} className="text-slate-400 group-hover:text-primary" />
+                                                        Reply
                                                     </button>
                                                 ) : <span />}
-                                                <span className="text-[11px] font-black text-slate-700 tracking-tight">
+                                                <span className="text-[10px] font-black text-slate-400 tracking-tight">
                                                     {formatTimestamp(msg.createdAt)}
                                                 </span>
                                             </div>
