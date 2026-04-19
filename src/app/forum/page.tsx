@@ -320,7 +320,7 @@ export default function ForumPage() {
                                 <Card 
                                     key={msg._id} 
                                     id={`msg-${msg._id}`}
-                                    className={`relative group p-4 sm:p-6 hover:shadow-glow transition-all duration-500 border-l-4 ${isHighlighted ? 'ring-4 ring-primary bg-primary/5 animate-pulse' : ''}`}
+                                    className={`relative group p-4 sm:p-6 hover:shadow-glow transition-all duration-500 border-l-4 overflow-visible ${isHighlighted ? 'ring-4 ring-primary bg-primary/5 animate-pulse' : ''}`}
                                     style={{ borderLeftColor: isAnon ? identity.color : 'transparent' }}
                                 >
                                     <div className="flex gap-3 sm:gap-4 items-start">
@@ -421,7 +421,7 @@ export default function ForumPage() {
                                             {/* Message body + inline timestamp */}
                                             <p className="text-slate-700 text-base leading-relaxed font-medium whitespace-pre-wrap break-words antialiased">
                                                 {msg.content}
-                                                <span className="inline-block ml-2 align-bottom text-[10px] font-semibold text-slate-300 whitespace-nowrap">
+                                                <span className="inline-block ml-2 align-bottom text-[11px] font-black text-slate-700 whitespace-nowrap">
                                                     {formatTimestamp(msg.createdAt)}
                                                 </span>
                                             </p>
