@@ -319,20 +319,21 @@ export default function ForumPage() {
                                 <Card 
                                     key={msg._id} 
                                     id={`msg-${msg._id}`}
-                                    className={`relative group p-8 hover:shadow-glow transition-all duration-500 hover:-translate-y-1 ${isHighlighted ? 'ring-4 ring-primary bg-primary/5 animate-pulse' : ''}`}
+                                    className={`relative group p-8 hover:shadow-glow transition-all duration-500 hover:-translate-y-1 border-l-4 ${isHighlighted ? 'ring-4 ring-primary bg-primary/5 animate-pulse' : ''}`}
+                                    style={{ borderLeftColor: isAnon ? identity.color : 'transparent' }}
                                 >
                                     <div className="flex gap-6 items-start">
                                         <div 
                                             className="w-12 h-12 rounded-2xl flex-shrink-0 flex items-center justify-center text-xl font-black transition-all duration-500 shadow-inner group-hover:scale-105"
                                             style={isAnon ? { background: identity.gradient, color: '#ffffff' } : { backgroundColor: '#f1f5f9', color: '#94a3b8' }}
                                         >
-                                            {authorName.charAt(0).toUpperCase()}
+                                            {isAnon ? identity.avatarLabel : authorName.charAt(0).toUpperCase()}
                                         </div>
                                         <div className="flex-1 space-y-4">
                                             <div className="flex justify-between items-start mb-2">
                                                 <div className="space-y-2 flex-1">
                                                     <div className="flex items-center gap-2">
-                                                        <span className="text-sm font-black tracking-tight text-slate-700">
+                                                        <span className="text-sm font-black tracking-tight text-slate-800">
                                                             {authorName}
                                                         </span>
                                                         {msg.isAdmin && (

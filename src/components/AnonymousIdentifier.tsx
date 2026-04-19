@@ -9,7 +9,9 @@ import { useEffect } from 'react';
  */
 export default function AnonymousIdentifier() {
   useEffect(() => {
-    // Check if anon_id already exists in cookies
+    const LIFESPAN_DAYS = 60;
+    const STORAGE_KEY = 'tp_anon_id';
+
     const getCookie = (name: string) => {
       const value = `; ${document.cookie}`;
       const parts = value.split(`; ${name}=`);
@@ -24,12 +26,27 @@ export default function AnonymousIdentifier() {
       document.cookie = `${name}=${value || ""}${expires}; path=/; SameSite=Lax`;
     };
 
-    if (!getCookie('anon_id')) {
-      const newId = `anon_${crypto.randomUUID()}`;
-      setCookie('anon_id', newId, 3650); // ~10 years
-      console.log('Generated new anonymous ID:', newId);
+    // 1. Try to get ID from cookie or localStorage
+    let existingId = getCookie('anon_id');
+    const localId = localStorage.getItem(STORAGE_KEY);
+
+    // 2. Synthesize/Restore if missing in one but present in other
+    if (!existingId && localId) {
+        existingId = localId;
+    } else if (existingId && !localId) {
+        localStorage.setItem(STORAGE_KEY, existingId);
     }
+
+    // 3. Generate new if absolutely missing
+    if (!existingId) {
+      existingId = `anon_${crypto.randomUUID()}`;
+      localStorage.setItem(STORAGE_KEY, existingId);
+      console.log('Generated new anonymous ID:', existingId);
+    }
+
+    // 4. Always refresh/set cookie to extend lifespan (rolling expiry)
+    setCookie('anon_id', existingId, LIFESPAN_DAYS);
   }, []);
 
-  return null; // This component doesn't render anything
+  return null;
 }

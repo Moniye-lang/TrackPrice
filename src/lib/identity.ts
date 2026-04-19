@@ -5,6 +5,7 @@
 
 export interface Identity {
     shortId: string;
+    avatarLabel: string;
     color: string;
     gradient: string;
     label: string;
@@ -17,6 +18,7 @@ export function getAnonymousIdentity(anonId: string | undefined): Identity {
     if (!anonId) {
         return {
             shortId: 'GUEST',
+            avatarLabel: 'GT',
             color: '#94a3b8', // slate-400
             gradient: 'linear-gradient(135deg, #94a3b8 0%, #64748b 100%)',
             label: 'Guest'
@@ -39,14 +41,13 @@ export function getAnonymousIdentity(anonId: string | undefined): Identity {
     const gradient = `linear-gradient(135deg, hsl(${h}, ${s}%, ${l}%) 0%, hsl(${(h + 40) % 360}, ${s}%, ${l - 10}%) 100%)`;
 
     // Extract short ID from UUID (last 4 characters)
-    // UUID format is normally xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-    // or anon_xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
     const idParts = anonId.split('_');
     const uuid = idParts[idParts.length - 1];
     const shortId = uuid.slice(-4).toUpperCase();
 
     return {
         shortId,
+        avatarLabel: shortId.slice(0, 2),
         color,
         gradient,
         label: shortId
