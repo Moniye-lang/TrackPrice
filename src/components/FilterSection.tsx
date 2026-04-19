@@ -2,13 +2,14 @@
 
 import { useState, useEffect, TransitionStartFunction } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Search, MapPin, Globe } from 'lucide-react';
+import { Search, MapPin, Globe, Building2 } from 'lucide-react';
 import { Input, Button } from '@/components/ui-base';
 
 interface Store {
     _id: string;
     name: string;
     area: string;
+    city: string;
 }
 
 interface FilterSectionProps {
@@ -44,6 +45,19 @@ export function FilterSection({ stores, categories }: FilterSectionProps) {
         router.push(`?${params.toString()}`, { scroll: false });
     };
 
+    // When city changes, clear the storeId filter too (different scope)
+    const updateCityFilter = (city: string) => {
+        const params = new URLSearchParams(searchParams.toString());
+        if (city && city !== 'All') {
+            params.set('city', city);
+        } else {
+            params.delete('city');
+        }
+        params.delete('storeId'); // reset market when city changes
+        params.delete('page');
+        router.push(`?${params.toString()}`, { scroll: false });
+    };
+
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
         updateFilter('search', searchTerm);
@@ -51,7 +65,14 @@ export function FilterSection({ stores, categories }: FilterSectionProps) {
 
     const activeCategory = searchParams.get('category') || 'All';
     const activeMarketCategory = searchParams.get('marketCategory') || 'Physical';
+    const activeCity = searchParams.get('city') || 'All';
     const activeStoreId = searchParams.get('storeId') || 'All';
+
+    // Derive unique cities from stores list
+    const cities = ['All', ...Array.from(new Set(stores.map(s => s.city).filter(Boolean))).sort()];
+
+    // Filter stores to only show those in the selected city
+    const filteredStores = activeCity === 'All' ? stores : stores.filter(s => s.city === activeCity);
 
     return (
         <div className="space-y-8">
@@ -80,7 +101,7 @@ export function FilterSection({ stores, categories }: FilterSectionProps) {
                         className="w-full h-16 bg-transparent border-none pl-12 pr-4 text-sm font-black text-slate-700 focus:ring-0 cursor-pointer outline-none appearance-none"
                     >
                         <option value="All">All Markets</option>
-                        {stores.map((s) => (
+                        {filteredStores.map((s) => (
                             <option key={s._id} value={s._id}>{s.name} ({s.area})</option>
                         ))}
                     </select>
@@ -119,6 +140,25 @@ export function FilterSection({ stores, categories }: FilterSectionProps) {
                                 Online Stores
                             </button>
                         </div>
+
+                        {/* City / State Filter */}
+                        <div className="flex items-center gap-2 flex-wrap justify-center">
+                            <span className="flex items-center gap-1.5 text-[10px] font-black text-slate-400 uppercase tracking-widest mr-1">
+                                <Building2 size={12} /> City
+                            </span>
+                            {cities.map((city) => (
+                                <button
+                                    key={city}
+                                    onClick={() => updateCityFilter(city)}
+                                    className={`px-5 py-2 rounded-xl text-xs font-black uppercase tracking-wide transition-all whitespace-nowrap ${activeCity === city
+                                        ? 'bg-primary text-white shadow-glow'
+                                        : 'bg-white text-slate-500 hover:bg-slate-50 border border-slate-100 shadow-sm'
+                                        }`}
+                                >
+                                    {city === 'All' ? 'All Cities' : city}
+                                </button>
+                            ))}
+                        </div>
                     </div>
 
                     <div className="flex items-center gap-2 overflow-x-auto pb-4 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
@@ -154,3 +194,4 @@ export function FilterSection({ stores, categories }: FilterSectionProps) {
         </div>
     );
 }
+

@@ -479,13 +479,19 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                                             disabled={verifying}
                                                             className="bg-emerald-500 hover:bg-emerald-600 text-white font-black py-4 rounded-2xl shadow-glow-sm"
                                                         >
-                                                            {verifying ? '...' : 'YES'}
+                                                            {verifying ? '...' : 'YES — Confirm'}
                                                         </Button>
                                                         <Button
-                                                            onClick={() => setShowUpdateForm(true)}
+                                                            onClick={() => {
+                                                                if (!authUser) {
+                                                                    setUpdateMsg('🔒 Sign in to suggest a new price.');
+                                                                    return;
+                                                                }
+                                                                setShowUpdateForm(true);
+                                                            }}
                                                             className="bg-slate-800 hover:bg-slate-700 text-slate-400 font-black py-4 rounded-2xl border border-slate-700"
                                                         >
-                                                            NO
+                                                            NO — Update
                                                         </Button>
                                                     </div>
 

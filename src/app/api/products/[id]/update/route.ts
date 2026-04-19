@@ -92,6 +92,17 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
         console.log('[Price Update] Pre-check passed', { userId: user ? user._id : 'anonymous', productId: product._id });
 
+        // Block anonymous users from suggesting NEW prices (they can only confirm the current price)
+        if (!user) {
+            const isConfirmingExistingPrice = numericPrice === product.price;
+            if (!isConfirmingExistingPrice) {
+                return NextResponse.json(
+                    { error: 'You must be signed in to suggest a new price. Anonymous users can only confirm the current price.' },
+                    { status: 403 }
+                );
+            }
+        }
+
         // 1. Spam Prevention & Daily Limits (Relaxed for testing)
         if (user) {
             const relaxationPeriod = 10 * 1000;

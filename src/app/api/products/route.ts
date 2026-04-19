@@ -15,6 +15,7 @@ const fetchProducts = async (params: {
     search: string | null;
     category: string | null;
     marketCategory: string | null;
+    city: string | null;
     storeId: string | null;
     sort: string;
     featured: boolean;
@@ -22,7 +23,7 @@ const fetchProducts = async (params: {
     page: string | null;
     limit: string | null;
 }) => {
-    const { search, category, marketCategory, storeId, sort, featured, stale, page: pageStr, limit: limitStr } = params;
+    const { search, category, marketCategory, city, storeId, sort, featured, stale, page: pageStr, limit: limitStr } = params;
     
     const conditions: any[] = [];
     
@@ -43,6 +44,17 @@ const fetchProducts = async (params: {
     }
     if (marketCategory && marketCategory !== 'All') {
         conditions.push({ marketCategory });
+    }
+    if (city && city !== 'All') {
+        // Filter by city: find all stores in that city, then match products to those stores
+        const storesInCity = await Store.find({ city: { $regex: escapeRegex(city), $options: 'i' } }).lean();
+        const storeIds = storesInCity.map((s: any) => s._id);
+        conditions.push({
+            $or: [
+                { storeId: { $in: storeIds } },
+                { storeLocation: { $regex: escapeRegex(city), $options: 'i' } }
+            ]
+        });
     }
     if (storeId && storeId !== 'All') {
         try {
@@ -209,6 +221,7 @@ export async function GET(req: NextRequest) {
             search: searchParams.get('search'),
             category: searchParams.get('category'),
             marketCategory: searchParams.get('marketCategory'),
+            city: searchParams.get('city'),
             storeId: searchParams.get('storeId'),
             sort: searchParams.get('sort') || 'newest',
             featured: searchParams.get('featured') === 'true',
