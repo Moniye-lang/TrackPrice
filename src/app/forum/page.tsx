@@ -137,7 +137,7 @@ export default function ForumPage() {
                 body: JSON.stringify({
                     content,
                     parentId: replyingTo?._id,
-                    city: selectedCity
+                    city: selectedCity || undefined
                 }),
             });
 

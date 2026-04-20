@@ -16,7 +16,7 @@ export const ProductSchema = z.object({
 
 export const MessageSchema = z.object({
     content: z.string().min(1, "Content is required").max(300, "Content exceeds 300 characters"),
-    productId: z.string().optional(),
-    parentId: z.string().optional(),
-    city: z.string().optional(),
+    productId: z.string().nullable().optional(),
+    parentId: z.string().nullable().optional(),
+    city: z.string().nullable().optional(),
 });

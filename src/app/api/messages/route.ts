@@ -107,7 +107,7 @@ export async function POST(req: Request) {
             isAdmin,
             parentId: parentId || undefined,
             replyToContent,
-            city,
+            city: city || undefined,
         });
 
         // Trigger Notification if it's a reply
