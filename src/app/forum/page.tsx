@@ -223,6 +223,7 @@ export default function ForumPage() {
                                     {city}
                                 </button>
                             ))}
+                            </div>
                         </div>
                     </div>
                     {selectedCity && (
@@ -541,7 +542,8 @@ export default function ForumPage() {
                                         </div>
                                     </div>
                                 </Card>
-                            )})}
+                            );
+                        })}
                         </div>
                     )}
                 </section>
