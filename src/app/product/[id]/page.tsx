@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Button, Card } from '@/components/ui-base';
 import { Navbar } from '@/components/Navbar';
+import { BackToTop } from '@/components/BackToTop';
 import { PriceProposalWidget } from '@/components/PriceProposalWidget';
 import { formatRelativeTime, formatTimestamp } from '@/lib/utils';
 import Link from 'next/link';
@@ -725,7 +726,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                             <div className="grid gap-6">
                                 {messages.map((msg) => {
                                     const msgUserId = typeof msg.userId === 'object' ? msg.userId?._id : msg.userId;
-                                    const canModify = (authUser && msgUserId === authUser.id) || 
+                                    const canModify = (authUser && (msgUserId === authUser.id || msgUserId === (authUser as any)._id)) || 
                                                       (!authUser && currentAnonId && msg.anonId === currentAnonId) || 
                                                       (authUser?.role === 'admin');
                                     const isHighlighted = highlightedMsgId === msg._id;
@@ -883,6 +884,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                     </Card>
                 </div>
             )}
+            <BackToTop />
         </div>
     );
 }

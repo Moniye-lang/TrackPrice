@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Button, Card } from '@/components/ui-base';
 import { Navbar } from '@/components/Navbar';
+import { BackToTop } from '@/components/BackToTop';
 import { formatTimestamp } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
 import { Edit2, Trash2, Lock, AlertCircle, MoreHorizontal, Reply, Flag, X } from 'lucide-react';
@@ -305,7 +306,7 @@ export default function ForumPage() {
                         <div className="grid gap-6">
                             {messages.map((msg) => {
                                 const msgUserId = typeof msg.userId === 'object' ? msg.userId?._id : msg.userId;
-                                const isOwner = (user && msgUserId === user.id) || 
+                                const isOwner = (user && (msgUserId === user.id || msgUserId === (user as any)._id)) || 
                                               (!user && currentAnonId && msg.anonId === currentAnonId) || 
                                               (user?.role === 'admin');
                                 const isHighlighted = highlightedMsgId === msg._id;
@@ -514,6 +515,7 @@ export default function ForumPage() {
                     </Card>
                 </div>
             )}
+            <BackToTop />
         </div>
     );
 }
