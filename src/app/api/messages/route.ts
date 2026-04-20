@@ -23,7 +23,7 @@ export async function GET(req: Request) {
         const productId = searchParams.get('productId');
         const city = searchParams.get('city');
         const countOnly = searchParams.get('countOnly') === 'true';
-|
+
         let query: Record<string, any> = {};
         if (productId) {
             query = { productId };
@@ -34,12 +34,12 @@ export async function GET(req: Request) {
                 query.city = city;
             }
         }
-|
+
         if (countOnly) {
             const count = await Message.countDocuments(query);
             return NextResponse.json({ count });
         }
-|
+
         const messages = await Message.find(query)
             .populate('productId', 'name price maxPrice')
             .populate('userId', 'name')

@@ -203,7 +203,7 @@ export default function ForumPage() {
     return (
         <div className="min-h-screen bg-mesh selection:bg-primary/20">
             <Navbar />
-|
+
             <main className="max-w-4xl mx-auto px-4 py-8 sm:py-16 pb-40 md:pb-16 scroll-mt-24">
                 {/* Unified City Forum Selector */}
                 <div className="flex flex-col items-center mb-12 space-y-6">
