@@ -18,23 +18,23 @@ export async function GET() {
         const regex = new RegExp(onlineKeywords.join('|'), 'i');
 
         // Update Products
-        const productResult = await Product.updateMany(
+        const productResult = await (Product as any).updateMany(
             { 
                 $or: [
                     { name: regex },
                     { brand: regex },
-                    { storeLocation: regex } // Sometimes "Jumia" is in location
+                    { storeLocation: regex }
                 ],
-                marketCategory: { $in: [null, undefined] } // Only target legacy items
+                marketCategory: { $nin: ['Online', 'Physical'] }
             },
             { $set: { marketCategory: 'Online' } }
         );
 
         // Update PriceUpdates
-        const updateResult = await PriceUpdate.updateMany(
+        const updateResult = await (PriceUpdate as any).updateMany(
             { 
                 storeLocation: regex,
-                marketCategory: { $in: [null, undefined] }
+                marketCategory: { $nin: ['Online', 'Physical'] }
             },
             { $set: { marketCategory: 'Online' } }
         );
