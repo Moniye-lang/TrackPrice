@@ -16,9 +16,19 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Missing or malformed request body. Expected JSON with "url".' }, { status: 400 });
         }
 
-        const { url, location } = body;
+        let { url, location, marketCategory } = body;
         if (!url || typeof url !== 'string' || !url.startsWith('http')) {
             return NextResponse.json({ error: 'Invalid URL provided. Please enter a full URL (starting with http/https).' }, { status: 400 });
+        }
+
+        // Auto-detect category based on URL if not explicitly provided
+        if (!marketCategory) {
+            const onlineDomains = ['jumia.com', 'konga.com', 'amazon', 'ebay', 'aliexpress', 'chowdeck', 'glovo'];
+            if (onlineDomains.some(domain => url.toLowerCase().includes(domain))) {
+                marketCategory = 'Online';
+            } else {
+                marketCategory = 'Physical';
+            }
         }
 
         // Run scraper
@@ -28,8 +38,8 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Extraction Failed: No products detected.' }, { status: 400 });
         }
 
-        // Run matcher with location context
-        const matchedData = await matchScrapedProducts(scrapedData, location);
+        // Run matcher with location and category context
+        const matchedData = await matchScrapedProducts(scrapedData, location, marketCategory);
 
         return NextResponse.json({
             success: true,

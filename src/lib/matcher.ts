@@ -10,17 +10,19 @@ export interface MatchResult {
     matchedProductName?: string;
 }
 
-export async function matchScrapedProducts(scraped: { name: string, price: number }[], location?: string): Promise<MatchResult[]> {
+export async function matchScrapedProducts(scraped: { name: string, price: number }[], location?: string, marketCategory?: string): Promise<MatchResult[]> {
     await connectDB();
 
-    // Fetch products to match against, filtering by location if provided
+    // Fetch products to match against, filtering by location and category if provided
     let query: Record<string, any> = {};
     if (location && location.trim()) {
-        // Match storeLocation case-insensitively or via sub-string
         query.storeLocation = { $regex: location.trim(), $options: 'i' };
     }
+    if (marketCategory) {
+        query.marketCategory = marketCategory;
+    }
 
-    const existingProducts = await Product.find(query, '_id name brand variant storeLocation').lean() as any[];
+    const existingProducts = await Product.find(query, '_id name brand variant storeLocation marketCategory').lean() as any[];
 
     // If no local products found and location was provided, we might want to return 
     // nothing to avoid cross-location matches. However, to be safe, if we find nothing locally,

@@ -27,6 +27,7 @@ import { Button, Input, Card } from '@/components/ui-base';
 export default function ExtractionPage() {
     const [url, setUrl] = useState('');
     const [location, setLocation] = useState('');
+    const [marketCategory, setMarketCategory] = useState<'Physical' | 'Online'>('Physical');
     const [loading, setLoading] = useState(false);
     const [results, setResults] = useState<any[]>([]);
     const [error, setError] = useState('');
@@ -43,7 +44,7 @@ export default function ExtractionPage() {
             const res = await fetch('/api/admin/scrape', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url, location })
+                body: JSON.stringify({ url, location, marketCategory })
             });
 
             const data = await res.json();
@@ -79,7 +80,7 @@ export default function ExtractionPage() {
             const res = await fetch('/api/admin/scrape/approve', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ items: results, sourceUrl: url, location })
+                body: JSON.stringify({ items: results, sourceUrl: url, location, marketCategory })
             });
 
             const data = await res.json();
@@ -132,7 +133,17 @@ export default function ExtractionPage() {
                             <Input
                                 type="url"
                                 value={url}
-                                onChange={(e) => setUrl(e.target.value)}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    setUrl(val);
+                                    // Auto-detect category
+                                    const onlineDomains = ['jumia', 'konga', 'amazon', 'ebay', 'aliexpress', 'chowdeck', 'glovo'];
+                                    if (onlineDomains.some(d => val.toLowerCase().includes(d))) {
+                                        setMarketCategory('Online');
+                                    } else if (val.length > 5) {
+                                        setMarketCategory('Physical');
+                                    }
+                                }}
                                 placeholder="https://chowdeck.com/store/chicken-republic..."
                                 className="h-16 pl-6 pr-12 text-sm font-bold bg-slate-50 border-transparent focus:bg-white focus:border-primary transition-all rounded-2xl shadow-inner group-hover:bg-white"
                                 disabled={loading}
@@ -142,7 +153,7 @@ export default function ExtractionPage() {
                             </div>
                         </div>
                     </div>
-                    <div className="lg:col-span-4 space-y-3">
+                    <div className="lg:col-span-3 space-y-3">
                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2 flex items-center gap-2">
                             <MapPin size={12} className="text-slate-400" />
                             Entity Origin (Location)
@@ -155,6 +166,26 @@ export default function ExtractionPage() {
                             className="h-16 px-6 text-sm font-bold bg-slate-50 border-transparent focus:bg-white focus:border-primary transition-all rounded-2xl shadow-inner group-hover:bg-white"
                             disabled={loading}
                         />
+                    </div>
+                    <div className="lg:col-span-3 space-y-3">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2 flex items-center gap-2">
+                            <Layers size={12} className="text-primary" />
+                            Market Channel
+                        </label>
+                        <div className="h-16 flex bg-slate-50 p-1 rounded-2xl border border-transparent hover:border-slate-100 transition-all shadow-inner">
+                            <button
+                                onClick={() => setMarketCategory('Physical')}
+                                className={`flex-1 flex items-center justify-center gap-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${marketCategory === 'Physical' ? 'bg-white text-slate-900 shadow-premium' : 'text-slate-400 hover:text-slate-600'}`}
+                            >
+                                <MapPin size={14} /> Physical
+                            </button>
+                            <button
+                                onClick={() => setMarketCategory('Online')}
+                                className={`flex-1 flex items-center justify-center gap-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${marketCategory === 'Online' ? 'bg-white text-slate-900 shadow-premium' : 'text-slate-400 hover:text-slate-600'}`}
+                            >
+                                <Activity size={14} /> Online
+                            </button>
+                        </div>
                     </div>
                     <div className="lg:col-span-2">
                         <Button
