@@ -91,14 +91,19 @@ export function FilterSection({ stores, categories }: FilterSectionProps) {
                 
                 <div className="h-10 w-px bg-slate-200 self-center hidden sm:block" />
 
-                <div className="relative flex-1">
-                    <label htmlFor="market-selector" className="sr-only">Select Market</label>
-                    <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/60" size={20} aria-hidden="true" />
+                <div className="relative flex-1 group/market">
+                    <span className="absolute -top-6 left-4 text-[9px] font-black text-primary uppercase tracking-widest opacity-0 group-hover/market:opacity-100 group-focus-within/market:opacity-100 transition-opacity">
+                        Specific Market
+                    </span>
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center justify-center">
+                        <MapPin className="text-primary/60 relative z-10" size={20} aria-hidden="true" />
+                        <span className="absolute inset-0 bg-primary/20 rounded-full animate-ping scale-150" />
+                    </div>
                     <select
                         id="market-selector"
                         value={activeStoreId}
                         onChange={(e) => updateFilter('storeId', e.target.value)}
-                        className="w-full h-16 bg-transparent border-none pl-12 pr-4 text-sm font-black text-slate-700 focus:ring-0 cursor-pointer outline-none appearance-none"
+                        className="w-full h-16 bg-transparent border-none pl-12 pr-4 text-xs font-black text-slate-700 focus:ring-0 cursor-pointer outline-none appearance-none"
                     >
                         <option value="All">All Markets</option>
                         {filteredStores.map((s) => (

@@ -517,9 +517,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                                             e.preventDefault();
                                                             window.location.href = `/product/${product._id}/price-change`;
                                                         }}
-                                                        className="w-full bg-slate-800 hover:bg-slate-700 text-white font-black py-4 rounded-2xl border border-slate-700 flex items-center justify-center gap-2"
+                                                        className="w-full bg-slate-800 hover:bg-slate-700 text-white font-black py-4 rounded-2xl border border-slate-700 flex items-center justify-center gap-2 group/confirm overflow-hidden relative shadow-glow-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
                                                     >
-                                                        <Users size={16} />
+                                                        <div className="absolute inset-0 bg-primary/5 animate-pulse pointer-events-none" />
+                                                        <div className="absolute -inset-1 bg-gradient-to-r from-transparent via-white/5 to-transparent skew-x-[30deg] -translate-x-[200%] group-hover/confirm:translate-x-[200%] transition-transform duration-1000" />
+                                                        <Users size={16} className="text-primary group-hover/confirm:scale-110 transition-transform" />
                                                         CONFIRM PRICES
                                                     </Button>
                                                 </div>

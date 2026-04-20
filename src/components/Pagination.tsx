@@ -20,7 +20,7 @@ export function Pagination({ currentPage, totalPages }: PaginationProps) {
         } else {
             params.delete('page');
         }
-        router.push(`?${params.toString()}`, { scroll: false });
+        router.push(`?${params.toString()}`, { scroll: true });
     };
 
     if (totalPages <= 1) return null;
