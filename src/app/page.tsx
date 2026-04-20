@@ -77,9 +77,21 @@ const getProducts = unstable_cache(
         if (category && category !== 'All') {
             conditions.push({ category });
         }
-        if (marketCategory && marketCategory !== 'All') {
-            conditions.push({ marketCategory });
+        // Market Channel Filtering: Default to Physical if not specified
+        const activeMarketCat = marketCategory || 'Physical';
+        
+        if (activeMarketCat === 'Physical') {
+            conditions.push({
+                $or: [
+                    { marketCategory: 'Physical' },
+                    { marketCategory: { $exists: false } },
+                    { marketCategory: null }
+                ]
+            });
+        } else if (activeMarketCat === 'Online') {
+            conditions.push({ marketCategory: 'Online' });
         }
+        
         if (storeId && storeId !== 'All') {
             conditions.push({ storeId });
         }
