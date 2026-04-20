@@ -478,8 +478,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                                         <Button
                                                             onClick={handleVerifyPrice}
                                                             disabled={verifying}
-                                                            className="bg-emerald-500 hover:bg-emerald-600 text-white font-black py-4 rounded-2xl shadow-glow-sm"
+                                                            className="bg-emerald-500 hover:bg-emerald-600 text-white font-black py-4 rounded-2xl shadow-glow-sm relative overflow-hidden group/yes transition-all active:scale-95"
                                                         >
+                                                            <div className="absolute inset-0 bg-white/10 animate-pulse pointer-events-none" />
+                                                            <div className="absolute -inset-1 bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[30deg] -translate-x-[200%] group-hover/yes:translate-x-[200%] transition-transform duration-1000" />
                                                             {verifying ? '...' : 'YES — Confirm'}
                                                         </Button>
                                                         <Button
@@ -504,8 +506,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                                             </p>
                                                             <Button
                                                                 onClick={() => handleConfirmPrice(product.suggestions![0]._id)}
-                                                                className="w-full bg-primary/20 hover:bg-primary text-primary hover:text-white font-black py-3 rounded-2xl border border-primary/20 transition-all text-xs mb-3"
+                                                                className="w-full bg-primary/20 hover:bg-primary text-primary hover:text-white font-black py-3 rounded-2xl border border-primary/20 transition-all text-xs mb-3 relative overflow-hidden group/join"
                                                             >
+                                                                <div className="absolute inset-0 bg-primary/5 animate-pulse pointer-events-none" />
                                                                 JOIN CONSENSUS
                                                             </Button>
                                                         </div>
@@ -603,8 +606,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                         <div className="flex items-center gap-4">
                                             <button
                                                 onClick={() => handleConfirmPrice(suggestion._id)}
-                                                className="bg-primary/10 text-primary hover:bg-primary hover:text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-xl shadow-sm hover:shadow-premium hover:scale-105 transition-all border border-primary/20"
+                                                className="bg-primary/10 text-primary hover:bg-primary hover:text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-xl shadow-sm hover:shadow-premium hover:scale-105 transition-all border border-primary/20 relative overflow-hidden group/btn"
                                             >
+                                                <div className="absolute inset-0 bg-primary/5 animate-pulse pointer-events-none" />
                                                 Confirm
                                             </button>
                                             <div className="text-[10px] font-black text-primary/40 group-hover/item:text-primary transition-colors">
