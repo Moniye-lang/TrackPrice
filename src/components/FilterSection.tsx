@@ -174,7 +174,7 @@ export function FilterSection({ stores, categories }: FilterSectionProps) {
                 <div className="flex flex-col lg:flex-row justify-between items-center gap-8 pt-4 border-t border-slate-100/50 w-full">
                     {/* Category Pills (Horizontal Scroll) */}
                     <div className="flex items-center gap-2 overflow-x-auto pb-4 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 flex-1 justify-start min-w-0">
-                        <div className="flex items-center gap-2 mx-auto lg:mx-0">
+                        <div className="flex items-center gap-2 w-max after:content-[''] after:w-4 sm:after:hidden">
                         {categories.map((cat) => (
                             <button
                                 key={cat}
