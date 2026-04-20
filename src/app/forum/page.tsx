@@ -46,10 +46,33 @@ export default function ForumPage() {
     const [highlightedMsgId, setHighlightedMsgId] = useState<string | null>(null);
     const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
     const [systemConfig, setSystemConfig] = useState<{ forumLocked: boolean, forumLockedMessage: string } | null>(null);
+    
+    // City Scoping State
+    const [cities, setCities] = useState<string[]>([]);
+    const [selectedCity, setSelectedCity] = useState<string | null>(null);
+
+    const fetchCities = async () => {
+        try {
+            const res = await fetch('/api/cities');
+            if (res.ok) {
+                const data = await res.json();
+                setCities(data);
+                // Default to first city if none selected
+                if (data.length > 0 && !selectedCity) {
+                    setSelectedCity(data[0]);
+                }
+            }
+        } catch (e) {
+            console.error('Failed to fetch cities');
+        }
+    };
 
     const fetchMessages = async () => {
         try {
-            const res = await fetch('/api/messages');
+            const url = selectedCity && selectedCity !== 'All' 
+                ? `/api/messages?city=${selectedCity}` 
+                : '/api/messages';
+            const res = await fetch(url);
             const data = await res.json();
             if (Array.isArray(data)) {
                 setMessages(data);
@@ -78,7 +101,7 @@ export default function ForumPage() {
     };
 
     useEffect(() => {
-        fetchMessages();
+        fetchCities();
         fetchConfig();
 
         const getCookie = (name: string) => {
@@ -97,6 +120,12 @@ export default function ForumPage() {
         }
     }, []);
 
+    // Re-fetch messages when city changes
+    useEffect(() => {
+        setLoading(true);
+        fetchMessages();
+    }, [selectedCity]);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!content.trim()) return;
@@ -110,7 +139,8 @@ export default function ForumPage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     content,
-                    parentId: replyingTo?._id
+                    parentId: replyingTo?._id,
+                    city: selectedCity
                 }),
             });
 
@@ -173,8 +203,41 @@ export default function ForumPage() {
     return (
         <div className="min-h-screen bg-mesh selection:bg-primary/20">
             <Navbar />
-
+|
             <main className="max-w-4xl mx-auto px-4 py-8 sm:py-16 pb-40 md:pb-16 scroll-mt-24">
+                {/* Unified City Forum Selector */}
+                <div className="flex flex-col items-center mb-12 space-y-6">
+                    <div className="flex items-center gap-2 flex-wrap justify-center bg-white/40 p-2 rounded-2xl border border-white/60">
+                        <span className="flex items-center gap-1.5 text-[10px] font-black text-slate-400 uppercase tracking-widest px-3 border-r border-slate-200">
+                             Select Forum
+                        </span>
+                        <div className="flex items-center gap-2">
+                            {['All Cities', ...cities].map((city) => (
+                                <button
+                                    key={city}
+                                    onClick={() => setSelectedCity(city === 'All Cities' ? null : city)}
+                                    className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.15em] transition-all whitespace-nowrap ${
+                                        (selectedCity === city || (city === 'All Cities' && !selectedCity))
+                                        ? 'bg-primary text-white shadow-glow-sm scale-105'
+                                        : 'bg-white text-slate-500 hover:bg-slate-50 border border-slate-100 shadow-sm'
+                                    }`}
+                                >
+                                    {city}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                    {selectedCity && (
+                        <div className="animate-in fade-in slide-in-from-top-1">
+                            <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em] flex items-center gap-2">
+                                <span className="w-8 h-px bg-primary/20"></span>
+                                You are in the {selectedCity} Forum
+                                <span className="w-8 h-px bg-primary/20"></span>
+                            </p>
+                        </div>
+                    )}
+                </div>
+
                 {/* Form Section */}
                 <section className="relative mb-16 sm:mb-20">
                     <div className="absolute -top-24 -left-20 w-64 h-64 bg-primary/10 rounded-full blur-3xl -z-10 animate-pulse"></div>
@@ -275,10 +338,12 @@ export default function ForumPage() {
                     <div className="flex items-center justify-between border-b border-slate-100 pb-5">
                         <div className="space-y-1">
                             <h3 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-3">
-                                Real-time <span className="text-primary italic">Feed</span>
+                                {selectedCity ? `${selectedCity} Forum` : 'Real-time'} <span className="text-primary italic">Feed</span>
                                 <span className="inline-flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
                             </h3>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Live community insights</p>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                                {selectedCity ? `Localized chatter for ${selectedCity}` : 'Live global community insights'}
+                            </p>
                         </div>
                         <div className="bg-white border border-slate-100 px-4 py-1.5 rounded-full shadow-premium-sm flex items-center gap-2">
                             <span className="text-xs font-black text-primary">{messages.length}</span>

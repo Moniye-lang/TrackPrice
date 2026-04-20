@@ -21,20 +21,25 @@ export async function GET(req: Request) {
         await connectDB();
         const { searchParams } = new URL(req.url);
         const productId = searchParams.get('productId');
+        const city = searchParams.get('city');
         const countOnly = searchParams.get('countOnly') === 'true';
-
+|
         let query: Record<string, any> = {};
         if (productId) {
             query = { productId };
         } else {
             query = { productId: { $exists: false } };
+            // Add city filter for general forum if provided
+            if (city && city !== 'All') {
+                query.city = city;
+            }
         }
-
+|
         if (countOnly) {
             const count = await Message.countDocuments(query);
             return NextResponse.json({ count });
         }
-
+|
         const messages = await Message.find(query)
             .populate('productId', 'name price maxPrice')
             .populate('userId', 'name')
@@ -53,7 +58,7 @@ export async function POST(req: Request) {
         await connectDB();
         const rawBody = await req.json();
         const body = MessageSchema.parse(rawBody);
-        const { content, productId, parentId } = body;
+        const { content, productId, parentId, city } = body;
 
         // Rate limiting logic
         const ip = req.headers.get('x-forwarded-for') || 'anonymous';
@@ -102,6 +107,7 @@ export async function POST(req: Request) {
             isAdmin,
             parentId: parentId || undefined,
             replyToContent,
+            city,
         });
 
         // Trigger Notification if it's a reply

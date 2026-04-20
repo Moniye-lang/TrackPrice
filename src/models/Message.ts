@@ -10,6 +10,7 @@ export interface IMessage extends Document {
     isAdmin: boolean;
     parentId?: string;
     replyToContent?: string;
+    city?: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -25,6 +26,7 @@ const MessageSchema: Schema = new Schema(
         isAdmin: { type: Boolean, default: false },
         parentId: { type: Schema.Types.ObjectId, ref: 'Message', required: false },
         replyToContent: { type: String, required: false },
+        city: { type: String, required: false, index: true },
     },
     {
         timestamps: true,
