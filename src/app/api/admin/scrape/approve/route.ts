@@ -34,7 +34,7 @@ export async function POST(req: Request) {
                     productId: item.matchedProductId,
                     userId: user?.id as string,
                     price: item.price,
-                    storeLocation: location || undefined,
+                    storeLocation: marketCategory === 'Online' ? undefined : (location || undefined),
                     marketCategory: marketCategory || 'Physical',
                     status: 'pending'
                 });
@@ -47,7 +47,7 @@ export async function POST(req: Request) {
                     category: 'Uncategorized',
                     marketCategory: marketCategory || 'Physical',
                     imageUrl: item.imageUrl || `https://placehold.co/600x400?text=${encodeURIComponent(item.name)}`,
-                    storeLocation: location || undefined,
+                    storeLocation: marketCategory === 'Online' ? undefined : (location || undefined),
                     reportCount: 0,
                     priceHistory: [{
                         price: item.price,

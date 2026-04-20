@@ -15,11 +15,22 @@ export async function matchScrapedProducts(scraped: { name: string, price: numbe
 
     // Fetch products to match against, filtering by location and category if provided
     let query: Record<string, any> = {};
-    if (location && location.trim()) {
-        query.storeLocation = { $regex: location.trim(), $options: 'i' };
-    }
-    if (marketCategory) {
-        query.marketCategory = marketCategory;
+    
+    if (marketCategory === 'Physical') {
+        // Apply location filtering for Physical products
+        if (location && location.trim()) {
+            query.storeLocation = { $regex: location.trim(), $options: 'i' };
+        }
+
+        // Physical search includes products explicitly marked Physical OR legacy products with no category
+        query.$or = [
+            { marketCategory: 'Physical' },
+            { marketCategory: { $exists: false } },
+            { marketCategory: null }
+        ];
+    } else if (marketCategory === 'Online') {
+        // Online search is strict and IGNORES location (Online is global)
+        query.marketCategory = 'Online';
     }
 
     const existingProducts = await Product.find(query, '_id name brand variant storeLocation marketCategory').lean() as any[];

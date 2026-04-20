@@ -8,6 +8,7 @@ export interface IPriceUpdate extends Document {
     storeId?: mongoose.Types.ObjectId;
     storeLocation?: string;
     status: 'pending' | 'verified' | 'rejected';
+    marketCategory?: 'Online' | 'Physical';
     confirmations: mongoose.Types.ObjectId[];
     anonymousConfirmations: string[]; // IP hashes or session IDs
     anonId?: string; // Unique ID for guest creators
@@ -24,6 +25,7 @@ const PriceUpdateSchema: Schema = new Schema(
         maxPrice: { type: Number },
         storeId: { type: Schema.Types.ObjectId, ref: 'Store' },
         storeLocation: { type: String },
+        marketCategory: { type: String, enum: ['Online', 'Physical'] },
         status: { type: String, enum: ['pending', 'verified', 'rejected'], default: 'pending' },
         confirmations: [{ type: Schema.Types.ObjectId, ref: 'User' }],
         anonymousConfirmations: [{ type: String }],

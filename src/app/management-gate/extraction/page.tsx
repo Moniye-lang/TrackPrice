@@ -153,7 +153,7 @@ export default function ExtractionPage() {
                             </div>
                         </div>
                     </div>
-                    <div className="lg:col-span-3 space-y-3">
+                    <div className={`lg:col-span-3 space-y-3 transition-opacity duration-300 ${marketCategory === 'Online' ? 'opacity-40 grayscale pointer-events-none' : ''}`}>
                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2 flex items-center gap-2">
                             <MapPin size={12} className="text-slate-400" />
                             Entity Origin (Location)
@@ -162,9 +162,9 @@ export default function ExtractionPage() {
                             type="text"
                             value={location}
                             onChange={(e) => setLocation(e.target.value)}
-                            placeholder="e.g. Bodija Market"
+                            placeholder={marketCategory === 'Online' ? 'Global / Digital' : 'e.g. Bodija Market'}
                             className="h-16 px-6 text-sm font-bold bg-slate-50 border-transparent focus:bg-white focus:border-primary transition-all rounded-2xl shadow-inner group-hover:bg-white"
-                            disabled={loading}
+                            disabled={loading || marketCategory === 'Online'}
                         />
                     </div>
                     <div className="lg:col-span-3 space-y-3">

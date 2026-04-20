@@ -7,6 +7,7 @@ export interface IScrapedProduct extends Document {
     matchedProductId?: mongoose.Types.ObjectId;
     matchScore?: number;
     status: 'pending' | 'approved' | 'rejected' | 'edited';
+    marketCategory?: 'Online' | 'Physical';
     createdAt: Date;
     updatedAt: Date;
 }
@@ -18,6 +19,7 @@ const ScrapedProductSchema: Schema = new Schema(
         sourceUrl: { type: String, required: true },
         matchedProductId: { type: Schema.Types.ObjectId, ref: 'Product', default: null },
         matchScore: { type: Number, default: 0 },
+        marketCategory: { type: String, enum: ['Online', 'Physical'] },
         status: { type: String, enum: ['pending', 'approved', 'rejected', 'edited'], default: 'pending' },
     },
     {
