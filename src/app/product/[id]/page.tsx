@@ -743,7 +743,32 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                             id={`msg-${msg._id}`}
                                             className={`relative group p-4 sm:p-6 hover:shadow-glow transition-all duration-500 bg-white/60 border-l-4 overflow-visible ${isHighlighted ? 'ring-4 ring-primary bg-primary/5 animate-pulse' : ''}`}
                                             style={{ borderLeftColor: isAnon ? identity.color : 'transparent' }}
+                                            onTouchStart={(e) => {
+                                                (e.currentTarget as any)._touchStartX = e.touches[0].clientX;
+                                            }}
+                                            onTouchMove={(e) => {
+                                                const moveX = e.touches[0].clientX;
+                                                const startX = (e.currentTarget as any)._touchStartX;
+                                                const diff = startX - moveX;
+                                                if (diff > 0 && diff < 80) {
+                                                    e.currentTarget.style.transform = `translateX(-${diff}px)`;
+                                                }
+                                            }}
+                                            onTouchEnd={(e) => {
+                                                const startX = (e.currentTarget as any)._touchStartX;
+                                                const endX = e.changedTouches[0].clientX;
+                                                e.currentTarget.style.transform = '';
+                                                if (startX - endX > 70 && (!systemConfig?.forumLocked || authUser?.role === 'admin')) {
+                                                    setReplyingTo(msg);
+                                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                                }
+                                            }}
                                         >
+                                            {/* Swipe Indicator (Mobile Only) */}
+                                            <div className="absolute right-[-40px] top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none md:hidden">
+                                                <Reply size={20} className="text-primary" />
+                                                <span className="text-[8px] font-black text-primary uppercase">Reply</span>
+                                            </div>
                                             <div className="flex gap-3 sm:gap-4 items-start">
                                                 {/* Avatar */}
                                                 <div 
