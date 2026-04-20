@@ -57,10 +57,7 @@ export default function ForumPage() {
             if (res.ok) {
                 const data = await res.json();
                 setCities(data);
-                // Default to first city if none selected
-                if (data.length > 0 && !selectedCity) {
-                    setSelectedCity(data[0]);
-                }
+                // No longer defaulting to first city - will remain null (All Cities)
             }
         } catch (e) {
             console.error('Failed to fetch cities');
@@ -206,12 +203,13 @@ export default function ForumPage() {
 
             <main className="max-w-4xl mx-auto px-4 py-8 sm:py-16 pb-40 md:pb-16 scroll-mt-24">
                 {/* Unified City Forum Selector */}
-                <div className="flex flex-col items-center mb-12 space-y-6">
-                    <div className="flex items-center gap-2 flex-wrap justify-center bg-white/40 p-2 rounded-2xl border border-white/60">
-                        <span className="flex items-center gap-1.5 text-[10px] font-black text-slate-400 uppercase tracking-widest px-3 border-r border-slate-200">
-                             Select Forum
-                        </span>
-                        <div className="flex items-center gap-2">
+                <div className="flex flex-col items-center mb-12 space-y-6 w-full">
+                    <div className="w-full flex items-center justify-center pointer-events-none">
+                        <div className="flex items-center gap-2 bg-white/40 p-2 rounded-2xl border border-white/60 overflow-x-auto no-scrollbar max-w-full pointer-events-auto">
+                            <span className="flex items-center gap-1.5 text-[10px] font-black text-slate-400 uppercase tracking-widest px-3 border-r border-slate-200 whitespace-nowrap">
+                                 Select Forum
+                            </span>
+                            <div className="flex items-center gap-2">
                             {['All Cities', ...cities].map((city) => (
                                 <button
                                     key={city}
