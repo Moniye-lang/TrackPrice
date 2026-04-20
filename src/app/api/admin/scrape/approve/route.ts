@@ -14,7 +14,7 @@ export async function POST(req: Request) {
         
         const user = await getServerUser();
 
-        const { items, sourceUrl, location } = await req.json();
+        const { items, sourceUrl, location, marketCategory } = await req.json();
 
         if (!Array.isArray(items) || items.length === 0) {
             return NextResponse.json({ error: 'No items provided for approval.' }, { status: 400 });
@@ -32,18 +32,20 @@ export async function POST(req: Request) {
                 // Create a pending PriceUpdate
                 await PriceUpdate.create({
                     productId: item.matchedProductId,
-                    userId: user?.id as string, // Admins act as the submitter
+                    userId: user?.id as string,
                     price: item.price,
                     storeLocation: location || undefined,
-                    status: 'pending' // Still requires verification per system logic
+                    marketCategory: marketCategory || 'Physical',
+                    status: 'pending'
                 });
                 approvedCount++;
             } else {
-                // Create a new Product directly instead of queueing it
+                // Create a new Product
                 await Product.create({
                     name: item.name,
                     price: item.price,
                     category: 'Uncategorized',
+                    marketCategory: marketCategory || 'Physical',
                     imageUrl: item.imageUrl || `https://placehold.co/600x400?text=${encodeURIComponent(item.name)}`,
                     storeLocation: location || undefined,
                     reportCount: 0,
@@ -52,6 +54,7 @@ export async function POST(req: Request) {
                         verifiedAt: new Date()
                     }]
                 });
+                approvedCount++;
                 queuedCount++;
             }
         }
