@@ -68,11 +68,22 @@ export function FilterSection({ stores, categories }: FilterSectionProps) {
     const activeCity = searchParams.get('city') || 'All';
     const activeStoreId = searchParams.get('storeId') || 'All';
 
+    const normalizeCity = (city: string) => {
+        if (!city) return '';
+        const lower = city.toLowerCase();
+        if (lower === 'online') return 'Online';
+        if (lower.endsWith('oyo')) return 'Oyo';
+        if (lower.endsWith('lagos')) return 'Lagos';
+        return city;
+    };
+
     // Derive unique cities from stores list
-    const cities = ['All', ...Array.from(new Set(stores.map(s => s.city).filter(Boolean))).sort()];
+    const cities = ['All', ...Array.from(new Set(stores.map(s => normalizeCity(s.city)).filter(c => c && c !== 'Online'))).sort()];
 
     // Filter stores to only show those in the selected city
-    const filteredStores = activeCity === 'All' ? stores : stores.filter(s => s.city === activeCity);
+    const filteredStores = activeCity === 'All' 
+        ? stores 
+        : stores.filter(s => normalizeCity(s.city) === activeCity);
 
     return (
         <div className="space-y-8">

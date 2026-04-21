@@ -95,7 +95,8 @@ const getProducts = unstable_cache(
         if (storeId && storeId !== 'All') {
             conditions.push({ storeId });
         } else if (city && city !== 'All') {
-            const storesInCity = await Store.find({ city }).select('_id').lean();
+            const cityRegex = new RegExp(`${escapeRegex(city)}$`, 'i');
+            const storesInCity = await Store.find({ city: cityRegex }).select('_id').lean();
             const storeIds = storesInCity.map((s: any) => s._id);
             if (storeIds.length > 0) {
                 conditions.push({ storeId: { $in: storeIds } });
