@@ -101,13 +101,13 @@ export function Navbar() {
                             alt="TrackPricely Logo" 
                             width={240} 
                             height={72} 
-                            className="h-9 sm:h-14 w-auto object-contain"
+                            className="h-9 md:h-12 lg:h-14 w-auto object-contain"
                             priority
                         />
                     </Link>
 
                     {/* Desktop Navigation Links */}
-                    <nav className="hidden sm:flex items-center gap-10">
+                    <nav className="hidden lg:flex items-center gap-4 xl:gap-10">
                         <Link href="/forum" className={`text-base font-black uppercase tracking-widest transition-colors relative group ${pathname === '/forum' ? 'text-primary' : 'text-slate-600 hover:text-primary'}`}>
                             Forum
                             {unreadForum > 0 && (
@@ -225,7 +225,7 @@ export function Navbar() {
                     </nav>
 
                     {/* Mobile Profile Icon (Top Bar) */}
-                    <div className="sm:hidden flex items-center gap-3 relative">
+                    <div className="lg:hidden flex items-center gap-3 relative">
                         {mounted && (
                             <button
                                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
@@ -290,7 +290,7 @@ export function Navbar() {
             </header>
 
             {/* Mobile Bottom Navigation Bar (Floating) */}
-            <nav className="sm:hidden fixed bottom-4 left-1/2 -translate-x-1/2 w-[90%] max-w-sm bg-slate-950 border border-slate-800 px-4 py-2 flex justify-between items-center z-[100] shadow-[0_20px_50px_rgba(0,0,0,0.8)] rounded-[2rem] ring-1 ring-white/5">
+            <nav className="lg:hidden fixed bottom-4 left-1/2 -translate-x-1/2 w-[90%] max-w-sm bg-slate-950 border border-slate-800 px-4 py-2 flex justify-between items-center z-[100] shadow-[0_20px_50px_rgba(0,0,0,0.8)] rounded-[2rem] ring-1 ring-white/5">
                 <Link href="/" aria-label="Home" className={`flex flex-col items-center gap-1.5 transition-all duration-500 ${pathname === '/' ? 'text-primary scale-110 -translate-y-0.5' : 'text-slate-500 hover:text-slate-300'}`}>
                     <div className={`p-1.5 rounded-xl transition-all ${pathname === '/' ? 'bg-primary/20 shadow-glow-sm' : 'bg-transparent'}`}>
                         <Home size={22} strokeWidth={pathname === '/' ? 2.5 : 2} />

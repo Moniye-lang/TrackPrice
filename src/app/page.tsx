@@ -68,7 +68,7 @@ const getHomeData = unstable_cache(
 const getProducts = unstable_cache(
     async (params: any) => {
         await connectDB();
-        const { search, category, marketCategory, storeId, sort, page = 1, limit = 12 } = params;
+        const { search, category, marketCategory, storeId, city, sort, page = 1, limit = 12 } = params;
         
         const conditions: any[] = [];
         if (search) {
@@ -94,6 +94,14 @@ const getProducts = unstable_cache(
         
         if (storeId && storeId !== 'All') {
             conditions.push({ storeId });
+        } else if (city && city !== 'All') {
+            const storesInCity = await Store.find({ city }).select('_id').lean();
+            const storeIds = storesInCity.map((s: any) => s._id);
+            if (storeIds.length > 0) {
+                conditions.push({ storeId: { $in: storeIds } });
+            } else {
+                conditions.push({ storeId: null }); // Force no results if city has no stores
+            }
         }
 
         const query = conditions.length > 0 ? { $and: conditions } : {};
@@ -122,7 +130,7 @@ const getProducts = unstable_cache(
 
 export default async function Home({ searchParams }: { searchParams: Promise<any> }) {
     const params = await searchParams;
-    const { search, category, marketCategory, storeId, sort, page } = params;
+    const { search, category, marketCategory, storeId, city, sort, page } = params;
 
     const [homeData, productsData] = await Promise.all([
         getHomeData(),
@@ -131,6 +139,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<any
             category,
             marketCategory,
             storeId,
+            city,
             sort,
             page: parseInt(page || '1', 10),
             limit: 12
