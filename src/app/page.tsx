@@ -97,11 +97,16 @@ async function getProducts(params: any) {
         const cityRegex = new RegExp(`${escapeRegex(city)}$`, 'i');
         const storesInCity = await Store.find({ city: cityRegex }).select('_id').lean();
         const storeIds = storesInCity.map((s: any) => s._id);
+
+        // Match products linked via storeId OR via legacy storeLocation text field
+        const cityOrConditions: any[] = [];
         if (storeIds.length > 0) {
-            conditions.push({ storeId: { $in: storeIds } });
-        } else {
-            conditions.push({ storeId: null }); // Force no results if city has no stores
+            cityOrConditions.push({ storeId: { $in: storeIds } });
         }
+        // Also catch products whose freetext storeLocation contains the city name
+        cityOrConditions.push({ storeLocation: { $regex: escapeRegex(city), $options: 'i' } });
+
+        conditions.push({ $or: cityOrConditions });
     }
 
     const query = conditions.length > 0 ? { $and: conditions } : {};
