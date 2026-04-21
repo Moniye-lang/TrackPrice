@@ -77,12 +77,14 @@ export function FilterSection({ stores, categories }: FilterSectionProps) {
         return city;
     };
 
-    // Derive unique cities from stores list
-    const cities = ['All', ...Array.from(new Set(stores.map(s => normalizeCity(s.city)).filter(c => c && c !== 'Online'))).sort()];
+    // Derive unique cities from stores list (excluding Online stores)
+    const cities = ['All', ...Array.from(new Set(
+        stores.map(s => normalizeCity(s.city)).filter(c => c && c !== 'Online')
+    )).sort()];
 
     // Filter stores to only show those in the selected city
-    const filteredStores = activeCity === 'All' 
-        ? stores 
+    const filteredStores = activeCity === 'All'
+        ? stores
         : stores.filter(s => normalizeCity(s.city) === activeCity);
 
     return (
