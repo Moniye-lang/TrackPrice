@@ -169,30 +169,30 @@ export default async function Home({ searchParams }: { searchParams: Promise<any
                         </span>
                         Live Market Insights
                     </div>
-                    <h1 className="text-4xl md:text-7xl font-black mb-6 tracking-tight text-slate-900 leading-[1] antialiased">
+                    <h1 className="text-4xl md:text-7xl font-black mb-6 tracking-tight text-slate-900 dark:text-white leading-[1] antialiased">
                         Check prices before you <span className="text-primary italic">buy anything</span> in Ibadan
                     </h1>
-                    <p className="text-slate-500 mb-8 text-lg md:text-xl font-medium max-w-2xl mx-auto px-4">
+                    <p className="text-slate-500 dark:text-slate-400 mb-8 text-lg md:text-xl font-medium max-w-2xl mx-auto px-4">
                         Prices change daily — check before you buy today. Join people tracking live prices in Bodija, Dugbe, and beyond.
                     </p>
 
                     {/* Proof Bar */}
                     <div className="flex flex-wrap justify-center items-center gap-4 md:gap-8 mb-10">
-                        <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 rounded-2xl border border-emerald-100/50 shadow-sm transition-all hover:scale-105">
+                        <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 dark:bg-emerald-500/10 rounded-2xl border border-emerald-100/50 dark:border-emerald-500/20 shadow-sm transition-all hover:scale-105">
                             <CheckCircle2 size={16} className="text-emerald-500" />
-                            <span className="text-sm font-black text-emerald-800 uppercase tracking-tighter">
+                            <span className="text-sm font-black text-emerald-800 dark:text-emerald-400 uppercase tracking-tighter">
                                 {stats.updatesToday} Prices Updated Today
                             </span>
                         </div>
-                        <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-2xl border border-blue-100/50 shadow-sm transition-all hover:scale-105">
+                        <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-500/10 rounded-2xl border border-blue-100/50 dark:border-blue-500/20 shadow-sm transition-all hover:scale-105">
                             <MapPin size={16} className="text-blue-500" />
-                            <span className="text-sm font-black text-blue-800 uppercase tracking-tighter">
+                            <span className="text-sm font-black text-blue-800 dark:text-blue-400 uppercase tracking-tighter">
                                 {stats.marketsTracked} Markets Tracked
                             </span>
                         </div>
-                        <div className="flex items-center gap-2 px-4 py-2 bg-amber-50 rounded-2xl border border-amber-100/50 shadow-sm transition-all hover:scale-105">
+                        <div className="flex items-center gap-2 px-4 py-2 bg-amber-50 dark:bg-amber-500/10 rounded-2xl border border-amber-100/50 dark:border-amber-500/20 shadow-sm transition-all hover:scale-105">
                             <Clock size={16} className="text-amber-500" />
-                            <span className="text-sm font-black text-amber-800 uppercase tracking-tighter">
+                            <span className="text-sm font-black text-amber-800 dark:text-amber-400 uppercase tracking-tighter">
                                 Last Update: {stats.lastUpdateMins}m ago
                             </span>
                         </div>
@@ -255,11 +255,11 @@ export default async function Home({ searchParams }: { searchParams: Promise<any
             <main className="max-w-7xl mx-auto px-4 py-16 grid grid-cols-1 lg:grid-cols-4 gap-12 pb-32 min-h-[1000px]">
                 <div className="lg:col-span-3">
                     {!products || products.length === 0 ? (
-                        <div className="text-center py-20 bg-slate-50/50 rounded-3xl border-2 border-dashed border-slate-200 flex flex-col items-center">
-                            <div className="bg-white w-24 h-24 rounded-full flex items-center justify-center mb-6 shadow-premium">
-                                <Search size={40} className="text-slate-200" />
+                        <div className="text-center py-20 bg-slate-50/50 dark:bg-slate-900/50 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-800 flex flex-col items-center">
+                            <div className="bg-white dark:bg-slate-800 w-24 h-24 rounded-full flex items-center justify-center mb-6 shadow-premium">
+                                <Search size={40} className="text-slate-200 dark:text-slate-600" />
                             </div>
-                            <h3 className="text-2xl font-black text-slate-700 mb-2">No products found</h3>
+                            <h3 className="text-2xl font-black text-slate-700 dark:text-slate-200 mb-2">No products found</h3>
                             <p className="text-slate-400 font-medium mb-8 max-w-sm">We couldn't find any products matching your search criteria. Try a different term or add it yourself!</p>
                             <Link href="/add-product">
                                 <Button className="px-10 py-4 font-black text-xs tracking-[0.2em] uppercase shadow-glow rounded-2xl flex items-center gap-2">

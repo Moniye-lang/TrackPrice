@@ -3,10 +3,11 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Home, Trophy, User, MessageSquare, CircleUser, LogOut, LayoutDashboard, Search, Activity, Heart, ShoppingBag, Menu, X, TrendingUp, Plus, Bell } from 'lucide-react';
+import { Home, Trophy, User, MessageSquare, CircleUser, LogOut, LayoutDashboard, Search, Activity, Heart, ShoppingBag, Menu, X, TrendingUp, Plus, Bell, Sun, Moon } from 'lucide-react';
 import { Button } from './ui-base';
 import { useAuth } from '@/hooks/useAuth';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useTheme } from 'next-themes';
 import Image from 'next/image';
 
 export function Navbar() {
@@ -18,8 +19,11 @@ export function Navbar() {
     const [showNotifications, setShowNotifications] = useState(false);
     const [forumCount, setForumCount] = useState(0);
     const [unreadForum, setUnreadForum] = useState(0);
+    const { theme, setTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        setMounted(true);
         const fetchCounts = async () => {
             try {
                 // Fetch notifications
@@ -121,9 +125,19 @@ export function Navbar() {
 
                         {/* Actions */}
                         <div className="flex items-center gap-3 relative">
+{mounted && (
+    <button
+        onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+        className="relative p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-primary"
+        aria-label="Toggle Dark Mode"
+    >
+        {theme === 'dark' ? <Sun size={24} /> : <Moon size={24} />}
+    </button>
+)}
+
 <button 
     onClick={() => setShowNotifications(!showNotifications)}
-    className="relative p-2 hover:bg-slate-100 rounded-full transition-colors flex items-center justify-center text-slate-600 hover:text-primary"
+    className="relative p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-primary"
     aria-label="Notifications"
 >
     <Bell size={24} />
@@ -212,9 +226,17 @@ export function Navbar() {
 
                     {/* Mobile Profile Icon (Top Bar) */}
                     <div className="sm:hidden flex items-center gap-3 relative">
+                        {mounted && (
+                            <button
+                                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                                className="relative p-2 bg-slate-50 dark:bg-slate-800 rounded-full transition-colors flex items-center justify-center text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
+                            >
+                                {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+                            </button>
+                        )}
                         <button 
                             onClick={() => setShowNotifications(!showNotifications)}
-                            className="relative p-2 bg-slate-50 rounded-full transition-colors flex items-center justify-center text-slate-600 border border-slate-200"
+                            className="relative p-2 bg-slate-50 dark:bg-slate-800 rounded-full transition-colors flex items-center justify-center text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
                         >
                             <Bell size={20} />
                             {notifications.length > 0 && (

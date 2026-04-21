@@ -31,24 +31,37 @@ export const metadata: Metadata = {
   },
 };
 
+import { ThemeProvider } from "@/components/ThemeProvider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.variable} ${outfit.variable} antialiased`}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.variable} ${outfit.variable} antialiased dark:bg-slate-950 dark:text-slate-50 transition-colors duration-300`}>
         <Script 
           async 
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5565112876103304"
           crossOrigin="anonymous"
           strategy="afterInteractive"
         />
-        <Providers>
-          <AnonymousIdentifier />
-          {children}
-        </Providers>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <Providers>
+            <AnonymousIdentifier />
+            <div className="flex flex-col min-h-screen">
+              <main className="flex-grow">
+                {children}
+              </main>
+              <footer className="w-full pb-24 pt-6 sm:pb-8 sm:pt-8 text-center bg-slate-950 border-t border-slate-900 mt-auto relative z-[40]">
+                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                  &copy; {new Date().getFullYear()} TrackPrice. All Rights Reserved.
+                </p>
+              </footer>
+            </div>
+          </Providers>
+        </ThemeProvider>
       </body>
     </html>
   );

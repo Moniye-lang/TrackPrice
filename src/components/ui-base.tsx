@@ -10,9 +10,9 @@ const Button = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HT
     ({ className, variant = 'primary', ...props }, ref) => {
         const variants = {
             primary: 'bg-primary text-white hover:shadow-glow hover:scale-[1.02] shadow-md',
-            secondary: 'bg-slate-100 text-slate-700 hover:bg-slate-200',
+            secondary: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700',
             danger: 'bg-rose-500 text-white hover:bg-rose-600',
-            glass: 'glass text-primary hover:bg-white/40',
+            glass: 'glass text-primary hover:bg-white/40 dark:hover:bg-white/10',
         };
         return (
             <button
@@ -35,7 +35,7 @@ const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLI
             <input
                 ref={ref}
                 className={cn(
-                    "w-full px-4 py-3 bg-white/50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-300 placeholder:text-slate-400",
+                    "w-full px-4 py-3 bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-300 placeholder:text-slate-400 dark:placeholder:text-slate-500 text-slate-900 dark:text-slate-100",
                     className
                 )}
                 {...props}
@@ -47,7 +47,7 @@ Input.displayName = "Input";
 
 const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
     ({ children, className, ...props }, ref) => (
-        <div ref={ref} className={cn("bg-white rounded-2xl shadow-premium border border-slate-100 overflow-hidden transition-all duration-300", className)} {...props}>
+        <div ref={ref} className={cn("bg-white dark:bg-slate-900/80 rounded-2xl shadow-premium border border-slate-100 dark:border-white/5 overflow-hidden transition-all duration-300", className)} {...props}>
             {children}
         </div>
     )

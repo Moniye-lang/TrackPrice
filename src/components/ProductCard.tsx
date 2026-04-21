@@ -53,7 +53,7 @@ export function ProductCard({ product, priority }: ProductCardProps) {
         <div className="block group h-full">
             <Card className="flex flex-col h-full hover:shadow-glow transition-all duration-500 hover:-translate-y-2 border-slate-100 overflow-hidden relative">
                 <Link href={`/product/${product._id}`} className="absolute inset-0 z-0" aria-label={`View details for ${product.name}`} />
-                <div className="relative h-64 w-full overflow-hidden bg-slate-50 z-10 pointer-events-none">
+                <div className="relative h-64 w-full overflow-hidden bg-slate-50 dark:bg-slate-800 z-10 pointer-events-none">
                     {hasImage ? (
                         <Image
                             src={product.imageUrl}
@@ -67,8 +67,8 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                             loading={priority ? undefined : "lazy"}
                         />
                     ) : (
-                        <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100/50">
-                            <div className="w-20 h-20 rounded-full bg-white shadow-premium flex items-center justify-center text-slate-300 group-hover:text-primary/40 group-hover:scale-110 transition-all duration-500">
+                        <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 dark:from-slate-800 to-slate-100/50 dark:to-slate-900/50">
+                            <div className="w-20 h-20 rounded-full bg-white dark:bg-slate-700 shadow-premium flex items-center justify-center text-slate-300 dark:text-slate-500 group-hover:text-primary/40 group-hover:scale-110 transition-all duration-500">
                                 <span className="text-4xl" aria-hidden="true">📦</span>
                             </div>
                         </div>
@@ -95,7 +95,7 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                     </div>
 
                     {/* Category Badge */}
-                    <div className="absolute top-4 right-4 bg-white/95 px-3 py-1.5 rounded-full text-xs font-black tracking-widest text-primary uppercase shadow-lg border border-primary/10 flex items-center gap-1.5 z-20">
+                    <div className="absolute top-4 right-4 bg-white/95 dark:bg-slate-900/95 px-3 py-1.5 rounded-full text-xs font-black tracking-widest text-primary uppercase shadow-lg border border-primary/10 flex items-center gap-1.5 z-20">
                         <Sparkles size={10} className="text-accent" />
                         {product.category}
                     </div>
@@ -141,7 +141,7 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                 <div className="p-5 flex-1 flex flex-col z-10 pointer-events-none">
                     <div className="mb-auto">
                         <div className="flex justify-between items-start gap-2 mb-3">
-                            <h3 className="text-xl font-black text-slate-800 line-clamp-2 group-hover:text-primary transition-colors duration-300 antialiased leading-[1.1]">
+                            <h3 className="text-xl font-black text-slate-800 dark:text-slate-100 line-clamp-2 group-hover:text-primary transition-colors duration-300 antialiased leading-[1.1]">
                                 {product.brand && <span className="text-primary/70">{product.brand} </span>}
                                 {product.name}
                             </h3>
@@ -156,15 +156,15 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                         </div>
 
                         {(product.variant || product.size) && (
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+                            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">
                                 {product.variant} {product.size && `| ${product.size}`}
                             </p>
                         )}
 
                         {(product.storeId || product.storeLocation) && (
-                            <div className="inline-flex self-start items-center gap-1.5 mb-4 bg-slate-100/50 px-2 py-1 rounded border border-slate-200">
+                            <div className="inline-flex self-start items-center gap-1.5 mb-4 bg-slate-100/50 dark:bg-slate-800/50 px-2 py-1 rounded border border-slate-200 dark:border-slate-700">
                                 <MapPin size={12} className="text-primary" aria-hidden="true" />
-                                <p className="text-[11px] font-black text-slate-800 uppercase tracking-wide truncate max-w-[200px]">
+                                <p className="text-[11px] font-black text-slate-800 dark:text-slate-200 uppercase tracking-wide truncate max-w-[200px]">
                                     {product.storeId ? `${product.storeId.name} • ${product.storeId.area}` : product.storeLocation}
                                 </p>
                             </div>
@@ -173,7 +173,7 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                         <div className="flex items-center gap-3 mt-4">
                             <span className={`text-3xl font-black tracking-tightest group-hover:text-primary transition-colors ${product.priceStatus === 'down' ? 'text-rose-600' :
                                     product.priceStatus === 'up' ? 'text-emerald-600' :
-                                        'text-slate-900'
+                                        'text-slate-900 dark:text-slate-50'
                                 }`}>
                                 {formatPriceRange(product.price, product.maxPrice)}
                             </span>
@@ -195,7 +195,7 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                     </div>
 
                     {/* Trust Indicators Bar */}
-                    <div className="mt-5 flex items-center justify-between p-3 bg-slate-50 border border-slate-100/80 rounded-2xl group-hover:bg-primary/5 group-hover:border-primary/10 transition-colors duration-500">
+                    <div className="mt-5 flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/30 border border-slate-100/80 dark:border-white/5 rounded-2xl group-hover:bg-primary/5 group-hover:border-primary/10 transition-colors duration-500">
                         <div className="flex items-center gap-4">
                             <div className="flex flex-col">
                                 <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Signals</span>
@@ -217,15 +217,15 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                             </div>
                         </div>
                         {(product.messageCount ?? 0) > 0 && (
-                            <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white rounded-xl shadow-premium-sm border border-slate-50" aria-label={`${product.messageCount} messages`}>
+                            <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white dark:bg-slate-700/50 rounded-xl shadow-premium-sm border border-slate-50 dark:border-slate-600" aria-label={`${product.messageCount} messages`}>
                                 <MessageCircle size={12} className="text-primary" aria-hidden="true" />
-                                <span className="text-xs font-black text-slate-700">{product.messageCount}</span>
+                                <span className="text-xs font-black text-slate-700 dark:text-slate-200">{product.messageCount}</span>
                             </div>
                         )}
                     </div>
 
                     {/* Primary CTA Button */}
-                    <div className="mt-5 pt-5 border-t border-slate-50 flex items-center justify-between">
+                    <div className="mt-5 pt-5 border-t border-slate-50 dark:border-slate-800 flex items-center justify-between">
                         <div className="flex items-center gap-2">
                             <Clock size={12} className="text-slate-400" aria-hidden="true" />
                             <span className="text-xs font-black text-slate-500 uppercase tracking-widest">

@@ -77,11 +77,11 @@ export function FilterSection({ stores, categories }: FilterSectionProps) {
     return (
         <div className="space-y-8">
             {/* Hero Search Section */}
-            <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2 max-w-3xl mx-auto bg-white/95 p-2 rounded-3xl border border-white/60 shadow-2xl">
+            <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2 max-w-3xl mx-auto bg-white/95 dark:bg-slate-900/90 p-2 rounded-3xl border border-white/60 dark:border-slate-800 shadow-2xl">
                 <div className="relative flex-[2]">
-                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" size={24} />
+                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 dark:text-slate-500" size={24} />
                     <Input
-                        className="border-none bg-transparent focus:ring-0 text-slate-800 text-lg px-16 h-16 w-full"
+                        className="border-none bg-transparent focus:ring-0 text-slate-800 dark:text-slate-100 text-lg px-16 h-16 w-full"
                         placeholder="Search rice, eggs, oil, bread..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -89,7 +89,7 @@ export function FilterSection({ stores, categories }: FilterSectionProps) {
                     />
                 </div>
                 
-                <div className="h-10 w-px bg-slate-200 self-center hidden sm:block" />
+                <div className="h-10 w-px bg-slate-200 dark:bg-slate-800 self-center hidden sm:block" />
 
                 <div className="relative flex-1 group/market">
                     <span className="absolute -top-6 left-4 text-[9px] font-black text-primary uppercase tracking-widest opacity-0 group-hover/market:opacity-100 group-focus-within/market:opacity-100 transition-opacity">
@@ -103,7 +103,7 @@ export function FilterSection({ stores, categories }: FilterSectionProps) {
                         id="market-selector"
                         value={activeStoreId}
                         onChange={(e) => updateFilter('storeId', e.target.value)}
-                        className="w-full h-16 bg-transparent border-none pl-12 pr-4 text-xs font-black text-slate-700 focus:ring-0 cursor-pointer outline-none appearance-none"
+                        className="w-full h-16 bg-transparent border-none pl-12 pr-4 text-xs font-black text-slate-700 dark:text-slate-300 focus:ring-0 cursor-pointer outline-none appearance-none"
                     >
                         <option value="All">All Markets</option>
                         {filteredStores.map((s) => (
@@ -121,15 +121,15 @@ export function FilterSection({ stores, categories }: FilterSectionProps) {
                 {/* Header Section: Centered Market Intelligence & Filters */}
                 <div className="flex flex-col items-center space-y-8 relative">
                     <div className="flex flex-col items-center gap-6 w-full">
-                        <h2 className="text-4xl font-black text-slate-900 tracking-tight text-center">Market Intelligence</h2>
+                        <h2 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight text-center">Market Intelligence</h2>
                         
                         {/* Market Category Tabs */}
-                        <div className="flex items-center justify-center p-1.5 bg-white/95 rounded-[2rem] border border-slate-100 shadow-premium w-fit min-w-[320px]">
+                        <div className="flex items-center justify-center p-1.5 bg-white/95 dark:bg-slate-900/90 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-premium w-fit min-w-[320px]">
                             <button
                                 onClick={() => updateFilter('marketCategory', 'Physical')}
                                 className={`flex items-center gap-3 px-8 py-3.5 rounded-[1.5rem] text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-500 ${activeMarketCategory === 'Physical'
-                                    ? 'bg-slate-900 text-white shadow-glow translate-y-[-2px]'
-                                    : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'
+                                    ? 'bg-slate-900 dark:bg-primary text-white shadow-glow translate-y-[-2px]'
+                                    : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                                     }`}
                             >
                                 <MapPin size={16} className={activeMarketCategory === 'Physical' ? 'text-primary' : ''} />
@@ -138,8 +138,8 @@ export function FilterSection({ stores, categories }: FilterSectionProps) {
                             <button
                                 onClick={() => updateFilter('marketCategory', 'Online')}
                                 className={`flex items-center gap-3 px-8 py-3.5 rounded-[1.5rem] text-xs font-black uppercase tracking-[0.2em] transition-all duration-500 ${activeMarketCategory === 'Online'
-                                    ? 'bg-slate-900 text-white shadow-glow translate-y-[-2px]'
-                                    : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'
+                                    ? 'bg-slate-900 dark:bg-primary text-white shadow-glow translate-y-[-2px]'
+                                    : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                                     }`}
                             >
                                 <Globe size={16} className={activeMarketCategory === 'Online' ? 'text-primary' : ''} />
@@ -148,8 +148,8 @@ export function FilterSection({ stores, categories }: FilterSectionProps) {
                         </div>
 
                         {/* City / State Filter Row */}
-                        <div className="flex items-center gap-3 flex-wrap justify-center bg-white/40 p-2 rounded-2xl border border-white/60">
-                            <span className="flex items-center gap-1.5 text-[10px] font-black text-slate-400 uppercase tracking-widest px-3 border-r border-slate-200">
+                        <div className="flex items-center gap-3 flex-wrap justify-center bg-white/40 dark:bg-slate-900/40 p-2 rounded-2xl border border-white/60 dark:border-slate-800">
+                            <span className="flex items-center gap-1.5 text-[10px] font-black text-slate-400 uppercase tracking-widest px-3 border-r border-slate-200 dark:border-slate-700">
                                 <Building2 size={12} /> City
                             </span>
                             <div className="flex items-center gap-2">
@@ -159,7 +159,7 @@ export function FilterSection({ stores, categories }: FilterSectionProps) {
                                         onClick={() => updateCityFilter(city)}
                                         className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.15em] transition-all whitespace-nowrap ${activeCity === city
                                             ? 'bg-primary text-white shadow-glow-sm'
-                                            : 'bg-white text-slate-500 hover:bg-slate-50 border border-slate-100 shadow-sm'
+                                            : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-100 dark:border-slate-700 shadow-sm'
                                             }`}
                                     >
                                         {city === 'All' ? 'All Cities' : city}
@@ -171,7 +171,7 @@ export function FilterSection({ stores, categories }: FilterSectionProps) {
                 </div>
 
                 {/* Sub-Filters: Categories & Sort */}
-                <div className="flex flex-col lg:flex-row justify-between items-center gap-8 pt-4 border-t border-slate-100/50 w-full">
+                <div className="flex flex-col lg:flex-row justify-between items-center gap-8 pt-4 border-t border-slate-100/50 dark:border-slate-800/50 w-full">
                     {/* Category Pills (Horizontal Scroll) */}
                     <div className="w-full lg:flex-1 overflow-x-auto pb-4 no-scrollbar min-w-0">
                         <div className="flex items-center gap-2 w-max">
@@ -181,7 +181,7 @@ export function FilterSection({ stores, categories }: FilterSectionProps) {
                                 onClick={() => updateFilter('category', cat)}
                                 className={`px-6 py-2.5 rounded-xl text-sm font-display font-bold transition-all whitespace-nowrap ${activeCategory === cat
                                     ? 'bg-primary text-white shadow-glow'
-                                    : 'bg-white text-slate-500 hover:bg-slate-50 border border-slate-100 shadow-sm'
+                                    : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-100 dark:border-slate-700 shadow-sm'
                                     }`}
                             >
                                 {cat}
@@ -191,12 +191,12 @@ export function FilterSection({ stores, categories }: FilterSectionProps) {
                     </div>
 
                     {/* Sort Dropdown (Right-aligned) */}
-                    <div className="flex items-center gap-4 bg-white/50 p-1.5 rounded-xl border border-slate-100 shadow-sm flex-shrink-0">
+                    <div className="flex items-center gap-4 bg-white/50 dark:bg-slate-900/50 p-1.5 rounded-xl border border-slate-100 dark:border-slate-800 shadow-sm flex-shrink-0">
                         <span className="text-[10px] font-black text-slate-400 pl-3 uppercase tracking-widest">Sort By</span>
                         <select
                             value={searchParams.get('sort') || 'newest'}
                             onChange={(e) => updateFilter('sort', e.target.value)}
-                            className="bg-transparent border-none py-1.5 px-3 text-sm font-bold text-slate-700 focus:ring-0 cursor-pointer outline-none"
+                            className="bg-transparent border-none py-1.5 px-3 text-sm font-bold text-slate-700 dark:text-slate-200 focus:ring-0 cursor-pointer outline-none"
                         >
                             <option value="newest">Newest First</option>
                             <option value="price_asc">Price: Low to High</option>
