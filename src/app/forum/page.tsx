@@ -242,34 +242,34 @@ export default function ForumPage() {
                     <div className="absolute -top-24 -left-20 w-64 h-64 bg-primary/10 rounded-full blur-3xl -z-10 animate-pulse"></div>
                     
                     {systemConfig?.forumLocked && user?.role !== 'admin' ? (
-                        <Card className="glass !bg-rose-50/40 border-rose-200/60 p-6 sm:p-10 relative overflow-hidden group">
+                        <Card className="glass !bg-rose-50/40 dark:!bg-rose-950/20 border-rose-200/60 dark:border-rose-900/40 p-6 sm:p-10 relative overflow-hidden group">
                             <div className="absolute -right-8 -bottom-8 text-rose-500/5 group-hover:text-rose-500/10 transition-colors pointer-events-none">
                                 <Lock size={180} />
                             </div>
                             <div className="relative z-10 flex flex-col items-center text-center space-y-6">
-                                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-[2rem] bg-rose-100 text-rose-500 flex items-center justify-center shadow-premium border border-rose-200 animate-bounce-subtle">
+                                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-[2rem] bg-rose-100 dark:bg-rose-900/30 text-rose-500 flex items-center justify-center shadow-premium border border-rose-200 dark:border-rose-800/50 animate-bounce-subtle">
                                     <Lock size={32} className="sm:size-[40px]" />
                                 </div>
                                 <div className="space-y-1">
-                                    <h2 className="text-xl sm:text-3xl font-black text-slate-800 tracking-tight">Discussions <span className="text-rose-500 italic">Restricted</span></h2>
+                                    <h2 className="text-xl sm:text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tight">Discussions <span className="text-rose-500 italic">Restricted</span></h2>
                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Maintenance Protocol Active</p>
                                 </div>
-                                <div className="bg-white/60 backdrop-blur-md border border-rose-100 p-6 rounded-3xl max-w-lg shadow-sm">
-                                    <p className="text-slate-600 font-bold leading-relaxed italic text-sm sm:text-base">
+                                <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-md border border-rose-100 dark:border-rose-900/30 p-6 rounded-3xl max-w-lg shadow-sm">
+                                    <p className="text-slate-600 dark:text-slate-300 font-bold leading-relaxed italic text-sm sm:text-base">
                                         "{systemConfig.forumLockedMessage}"
                                     </p>
                                 </div>
                             </div>
                         </Card>
                     ) : (
-                        <Card className="glass !bg-white/40 border-white/60 p-5 sm:p-8 relative overflow-hidden">
+                        <Card className="glass !bg-white/40 dark:!bg-slate-900/60 border-white/60 dark:border-slate-800 p-5 sm:p-8 relative overflow-hidden">
                             <div className="relative z-10">
                                 <div className="flex items-center gap-3 mb-6">
-                                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-xl sm:text-2xl shadow-premium-sm">
+                                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center text-xl sm:text-2xl shadow-premium-sm">
                                         🎭
                                     </div>
                                     <div>
-                                        <h2 className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight leading-tight">Post Anonymously</h2>
+                                        <h2 className="text-xl sm:text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight leading-tight">Post Anonymously</h2>
                                         <p className="text-[9px] sm:text-sm font-bold text-slate-400 uppercase tracking-widest">{replyingTo ? 'Replying to conversation' : 'Share insights with the community'}</p>
                                     </div>
                                 </div>
@@ -295,7 +295,7 @@ export default function ForumPage() {
                                 <form onSubmit={handleSubmit} className="space-y-5">
                                     <div className="relative">
                                         <textarea
-                                            className="w-full p-4 sm:p-6 bg-white/60 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-300 min-h-[140px] sm:min-h-[160px] resize-none text-slate-700 text-base sm:text-lg placeholder:text-slate-300 shadow-inner"
+                                            className="w-full p-4 sm:p-6 bg-white/60 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-300 min-h-[140px] sm:min-h-[160px] resize-none text-slate-700 dark:text-slate-100 text-base sm:text-lg placeholder:text-slate-300 dark:placeholder:text-slate-500 shadow-inner"
                                             placeholder="What's the latest deal? (Max 300 characters)"
                                             value={content}
                                             onChange={(e) => setContent(e.target.value)}
@@ -336,7 +336,7 @@ export default function ForumPage() {
                 <section className="space-y-6 sm:space-y-8">
                     <div className="flex items-center justify-between border-b border-slate-100 pb-5">
                         <div className="space-y-1">
-                            <h3 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+                            <h3 className="text-2xl font-black text-slate-900 dark:text-slate-50 tracking-tight flex items-center gap-3">
                                 {selectedCity ? `${selectedCity} Forum` : 'Real-time'} <span className="text-primary italic">Feed</span>
                                 <span className="inline-flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
                             </h3>
@@ -344,7 +344,7 @@ export default function ForumPage() {
                                 {selectedCity ? `Localized chatter for ${selectedCity}` : 'Live global community insights'}
                             </p>
                         </div>
-                        <div className="bg-white border border-slate-100 px-4 py-1.5 rounded-full shadow-premium-sm flex items-center gap-2">
+                        <div className="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 px-4 py-1.5 rounded-full shadow-premium-sm flex items-center gap-2">
                             <span className="text-xs font-black text-primary">{messages.length}</span>
                             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Messages</span>
                         </div>
@@ -359,11 +359,11 @@ export default function ForumPage() {
                             ))}
                         </div>
                     ) : messages.length === 0 ? (
-                        <div className="text-center py-24 glass rounded-[2.5rem] border-2 border-dashed border-slate-200">
-                            <div className="bg-slate-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <div className="text-center py-24 glass rounded-[2.5rem] border-2 border-dashed border-slate-200 dark:border-slate-800">
+                            <div className="bg-slate-50 dark:bg-slate-800/50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
                                 <span className="text-4xl opacity-50">💬</span>
                             </div>
-                            <h3 className="text-2xl font-black text-slate-700 mb-2">The floor is yours</h3>
+                            <h3 className="text-2xl font-black text-slate-700 dark:text-slate-200 mb-2">The floor is yours</h3>
                             <p className="text-slate-400 font-medium">Be the first to spark a conversation!</p>
                         </div>
                     ) : (
@@ -432,7 +432,7 @@ export default function ForumPage() {
                                             {/* Header: name + ⋯ menu */}
                                             <div className="flex items-center justify-between gap-3 mb-2">
                                                 <div className="flex items-center gap-2 min-w-0">
-                                                    <span className="text-[15px] font-black tracking-tight text-slate-800 truncate">{authorName}</span>
+                                                    <span className="text-[15px] font-black tracking-tight text-slate-800 dark:text-slate-200 truncate">{authorName}</span>
                                                     {msg.isAdmin && (
                                                         <span className="flex-shrink-0 bg-blue-600 text-white text-[8px] font-black px-1.5 py-0.5 rounded-md tracking-widest uppercase">
                                                             MODERATOR
@@ -443,12 +443,12 @@ export default function ForumPage() {
                                                 <div className="relative flex-shrink-0">
                                                     <button
                                                         onClick={() => setActiveMenuId(activeMenuId === msg._id ? null : msg._id)}
-                                                        className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-all border border-transparent hover:border-slate-100"
+                                                        className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all border border-transparent hover:border-slate-100 dark:hover:border-slate-700"
                                                     >
                                                         {activeMenuId === msg._id ? <X size={18} /> : <MoreHorizontal size={18} />}
                                                     </button>
                                                     {activeMenuId === msg._id && (
-                                                        <div className="absolute right-0 top-11 z-50 bg-white rounded-2xl shadow-premium-lg border border-slate-100 p-2 min-w-[160px] animate-in fade-in zoom-in-95 duration-200">
+                                                        <div className="absolute right-0 top-11 z-50 bg-white dark:bg-slate-800 rounded-2xl shadow-premium-lg border border-slate-100 dark:border-slate-700 p-2 min-w-[160px] animate-in fade-in zoom-in-95 duration-200">
                                                             {isOwner && (!systemConfig?.forumLocked || user?.role === 'admin') && (
                                                                 <>
                                                                     <button
@@ -457,13 +457,13 @@ export default function ForumPage() {
                                                                             setEditContent(msg.content);
                                                                             setActiveMenuId(null);
                                                                         }}
-                                                                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all"
+                                                                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-all"
                                                                     >
                                                                         <Edit2 size={16} /> Edit Message
                                                                     </button>
                                                                     <button
                                                                         onClick={() => { handleDelete(msg._id); setActiveMenuId(null); }}
-                                                                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-rose-50 hover:text-rose-600 transition-all"
+                                                                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-rose-50 dark:hover:bg-rose-500/10 hover:text-rose-600 dark:hover:text-rose-400 transition-all"
                                                                     >
                                                                         <Trash2 size={16} /> Delete Message
                                                                     </button>
@@ -472,7 +472,7 @@ export default function ForumPage() {
                                                             )}
                                                             <button
                                                                 onClick={() => { handleReport(msg._id); setActiveMenuId(null); }}
-                                                                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-50 transition-all"
+                                                                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all"
                                                             >
                                                                 <Flag size={16} /> Report Content
                                                             </button>
@@ -507,17 +507,17 @@ export default function ForumPage() {
                                                             }
                                                         }
                                                     }}
-                                                    className="flex items-center gap-3 w-full bg-slate-50 hover:bg-slate-100 border border-slate-100 px-4 py-2.5 rounded-2xl mb-3 text-left transition-all group/quote"
+                                                    className="flex items-center gap-3 w-full bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-100 dark:border-slate-700 px-4 py-2.5 rounded-2xl mb-3 text-left transition-all group/quote"
                                                 >
                                                     <span className="text-primary font-black text-lg group-hover/quote:scale-110 transition-transform">➥</span>
-                                                    <p className="text-xs font-bold text-slate-500 truncate antialiased">
-                                                        Replying to: <span className="italic font-medium text-slate-400">"{msg.replyToContent}"</span>
+                                                    <p className="text-xs font-bold text-slate-500 dark:text-slate-400 truncate antialiased">
+                                                        Replying to: <span className="italic font-medium text-slate-400 dark:text-slate-500">"{msg.replyToContent}"</span>
                                                     </p>
                                                 </button>
                                             )}
 
                                             {/* Message body */}
-                                            <p className="text-slate-900 text-sm sm:text-[16px] leading-relaxed font-bold whitespace-pre-wrap break-words antialiased mb-4">
+                                            <p className="text-slate-900 dark:text-slate-100 text-sm sm:text-[16px] leading-relaxed font-bold whitespace-pre-wrap break-words antialiased mb-4">
                                                 {msg.content}
                                             </p>
 
@@ -552,13 +552,13 @@ export default function ForumPage() {
             {/* Edit Modal */}
             {editMessage && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                    <Card className="w-full max-w-lg p-6 bg-white shadow-2xl relative animate-in zoom-in-95">
-                        <h3 className="text-xl font-black text-slate-800 tracking-tight flex items-center gap-2 mb-4">
+                    <Card className="w-full max-w-lg p-6 bg-white dark:bg-slate-900 shadow-2xl relative animate-in zoom-in-95">
+                        <h3 className="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight flex items-center gap-2 mb-4">
                             <Edit2 size={20} className="text-primary" /> Edit Message
                         </h3>
                         <form onSubmit={submitEdit} className="space-y-4">
                             <textarea
-                                className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-slate-700 resize-none h-32"
+                                className="w-full p-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-slate-700 dark:text-slate-100 resize-none h-32"
                                 value={editContent}
                                 onChange={(e) => setEditContent(e.target.value)}
                                 maxLength={300}
@@ -568,7 +568,7 @@ export default function ForumPage() {
                                 <button
                                     type="button"
                                     onClick={() => setEditMessage(null)}
-                                    className="px-6 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-100 transition-colors uppercase tracking-widest"
+                                    className="px-6 py-2.5 rounded-xl text-sm font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors uppercase tracking-widest"
                                 >
                                     Cancel
                                 </button>
