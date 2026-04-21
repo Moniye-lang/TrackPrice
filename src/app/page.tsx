@@ -65,69 +65,65 @@ const getHomeData = unstable_cache(
     { revalidate: 300, tags: [CACHE_TAGS.PRODUCTS, CACHE_TAGS.STORES, CACHE_TAGS.STATS] }
 );
 
-const getProducts = unstable_cache(
-    async (params: any) => {
-        await connectDB();
-        const { search, category, marketCategory, storeId, city, sort, page = 1, limit = 12 } = params;
-        
-        const conditions: any[] = [];
-        if (search) {
-            conditions.push({ name: { $regex: escapeRegex(search), $options: 'i' } });
+async function getProducts(params: any) {
+    await connectDB();
+    const { search, category, marketCategory, storeId, city, sort, page = 1, limit = 12 } = params;
+    
+    const conditions: any[] = [];
+    if (search) {
+        conditions.push({ name: { $regex: escapeRegex(search), $options: 'i' } });
+    }
+    if (category && category !== 'All') {
+        conditions.push({ category });
+    }
+    // Market Channel Filtering: Default to Physical if not specified
+    const activeMarketCat = marketCategory || 'Physical';
+    
+    if (activeMarketCat === 'Physical') {
+        conditions.push({
+            $or: [
+                { marketCategory: 'Physical' },
+                { marketCategory: { $exists: false } },
+                { marketCategory: null }
+            ]
+        });
+    } else if (activeMarketCat === 'Online') {
+        conditions.push({ marketCategory: 'Online' });
+    }
+    
+    if (storeId && storeId !== 'All') {
+        conditions.push({ storeId });
+    } else if (city && city !== 'All') {
+        const cityRegex = new RegExp(`${escapeRegex(city)}$`, 'i');
+        const storesInCity = await Store.find({ city: cityRegex }).select('_id').lean();
+        const storeIds = storesInCity.map((s: any) => s._id);
+        if (storeIds.length > 0) {
+            conditions.push({ storeId: { $in: storeIds } });
+        } else {
+            conditions.push({ storeId: null }); // Force no results if city has no stores
         }
-        if (category && category !== 'All') {
-            conditions.push({ category });
-        }
-        // Market Channel Filtering: Default to Physical if not specified
-        const activeMarketCat = marketCategory || 'Physical';
-        
-        if (activeMarketCat === 'Physical') {
-            conditions.push({
-                $or: [
-                    { marketCategory: 'Physical' },
-                    { marketCategory: { $exists: false } },
-                    { marketCategory: null }
-                ]
-            });
-        } else if (activeMarketCat === 'Online') {
-            conditions.push({ marketCategory: 'Online' });
-        }
-        
-        if (storeId && storeId !== 'All') {
-            conditions.push({ storeId });
-        } else if (city && city !== 'All') {
-            const cityRegex = new RegExp(`${escapeRegex(city)}$`, 'i');
-            const storesInCity = await Store.find({ city: cityRegex }).select('_id').lean();
-            const storeIds = storesInCity.map((s: any) => s._id);
-            if (storeIds.length > 0) {
-                conditions.push({ storeId: { $in: storeIds } });
-            } else {
-                conditions.push({ storeId: null }); // Force no results if city has no stores
-            }
-        }
+    }
 
-        const query = conditions.length > 0 ? { $and: conditions } : {};
-        
-        let sortOption: any = {};
-        if (sort === 'price_asc') sortOption.price = 1;
-        else if (sort === 'price_desc') sortOption.price = -1;
-        else if (sort === 'updated') sortOption.lastUpdated = -1;
-        else sortOption.createdAt = -1;
+    const query = conditions.length > 0 ? { $and: conditions } : {};
+    
+    let sortOption: any = {};
+    if (sort === 'price_asc') sortOption.price = 1;
+    else if (sort === 'price_desc') sortOption.price = -1;
+    else if (sort === 'updated') sortOption.lastUpdated = -1;
+    else sortOption.createdAt = -1;
 
-        const skip = (page - 1) * limit;
-        const [products, totalCount] = await Promise.all([
-            Product.find(query).populate('storeId').sort(sortOption).skip(skip).limit(limit).lean(),
-            Product.countDocuments(query)
-        ]);
+    const skip = (page - 1) * limit;
+    const [products, totalCount] = await Promise.all([
+        Product.find(query).populate('storeId').sort(sortOption).skip(skip).limit(limit).lean(),
+        Product.countDocuments(query)
+    ]);
 
-        return {
-            products: JSON.parse(JSON.stringify(products)),
-            totalPages: Math.ceil(totalCount / limit),
-            totalCount
-        };
-    },
-    ['products-list-server'],
-    { revalidate: 300, tags: [CACHE_TAGS.PRODUCTS] }
-);
+    return {
+        products: JSON.parse(JSON.stringify(products)),
+        totalPages: Math.ceil(totalCount / limit),
+        totalCount
+    };
+}
 
 export default async function Home({ searchParams }: { searchParams: Promise<any> }) {
     const params = await searchParams;
