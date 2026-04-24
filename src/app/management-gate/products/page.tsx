@@ -57,6 +57,7 @@ function SafeProductImg({ imageUrl, name, sizes }: { imageUrl: string; name: str
 
 export default function AdminProducts() {
     const searchParams = useSearchParams();
+    const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const { data: productsData, isLoading: loading, refetch } = useAdminProducts({ page: currentPage, search: searchTerm });
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -65,10 +66,13 @@ export default function AdminProducts() {
     const [submitting, setSubmitting] = useState(false);
     const [autoImageLoading, setAutoImageLoading] = useState(false);
     const [cleaningDuplicates, setCleaningDuplicates] = useState(false);
-    const [searchTerm, setSearchTerm] = useState('');
 
     const products = Array.isArray(productsData) ? productsData : (productsData?.products || []);
     const totalPages = productsData?.totalPages || 1;
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm]);
 
     // Form states
     const [name, setName] = useState('');
