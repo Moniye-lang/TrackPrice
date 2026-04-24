@@ -89,7 +89,12 @@ const fetchProducts = async (params: {
 
     // Status Filter: Non-admins only see approved products
     if (!isAdmin) {
-        conditions.push({ status: 'approved' });
+        conditions.push({ 
+            $or: [
+                { status: 'approved' },
+                { status: { $exists: false } }
+            ]
+        });
     }
 
     const query = conditions.length > 0 ? { $and: conditions } : {};

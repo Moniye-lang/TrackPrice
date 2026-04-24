@@ -26,7 +26,10 @@ const getHomeData = unstable_cache(
         
         const [featured, stale, recent, leaderboard, stats, stores] = await Promise.all([
             // Featured
-            Product.find({ isFeatured: true, status: 'approved' }).limit(4).populate('storeId').lean(),
+            Product.find({ 
+                isFeatured: true, 
+                $or: [{ status: 'approved' }, { status: { $exists: false } }] 
+            }).limit(4).populate('storeId').lean(),
             // Stale
             Product.find({
                 $or: [
@@ -35,7 +38,9 @@ const getHomeData = unstable_cache(
                 ]
             }).limit(5).lean(),
             // Recent updates
-            Product.find({ status: 'approved' }).sort({ lastUpdated: -1 }).limit(5).lean(),
+            Product.find({ 
+                $or: [{ status: 'approved' }, { status: { $exists: false } }] 
+            }).sort({ lastUpdated: -1 }).limit(5).lean(),
             // Leaderboard
             User.find({ role: 'user', isBanned: false }).sort({ points: -1 }).limit(3).select('name points reputationLevel').lean(),
             // Stats
@@ -44,7 +49,9 @@ const getHomeData = unstable_cache(
                 today.setHours(0, 0, 0, 0);
                 const updatesToday = await PriceUpdate.countDocuments({ status: 'verified', updatedAt: { $gt: today } });
                 const marketsTracked = await Store.countDocuments({});
-                const latestUpdate = await Product.findOne({ status: 'approved' }).sort({ lastUpdated: -1 }).select('lastUpdated');
+                const latestUpdate = await Product.findOne({ 
+                    $or: [{ status: 'approved' }, { status: { $exists: false } }] 
+                }).sort({ lastUpdated: -1 }).select('lastUpdated');
                 const lastUpdateMins = latestUpdate ? Math.floor((Date.now() - latestUpdate.lastUpdated.getTime()) / 60000) : 0;
                 return { updatesToday, marketsTracked, lastUpdateMins };
             })(),
@@ -116,7 +123,12 @@ async function getProducts(params: any) {
     }
 
     // Always filter by status: 'approved' for home page
-    conditions.push({ status: 'approved' });
+    conditions.push({ 
+        $or: [
+            { status: 'approved' },
+            { status: { $exists: false } }
+        ]
+    });
 
     const query = conditions.length > 0 ? { $and: conditions } : {};
     
