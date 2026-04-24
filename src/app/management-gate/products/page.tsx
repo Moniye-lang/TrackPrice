@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { Button, Input, Card } from '@/components/ui-base';
@@ -57,6 +57,7 @@ function SafeProductImg({ imageUrl, name, sizes }: { imageUrl: string; name: str
 }
 
 export default function AdminProducts() {
+    const listRef = useRef<HTMLDivElement>(null);
     const searchParams = useSearchParams();
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
@@ -74,6 +75,13 @@ export default function AdminProducts() {
     useEffect(() => {
         setCurrentPage(1);
     }, [searchTerm]);
+
+    // Scroll to top of list when page changes
+    useEffect(() => {
+        if (currentPage > 1) {
+            listRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }, [currentPage]);
 
     // Form states
     const [name, setName] = useState('');
@@ -406,7 +414,7 @@ export default function AdminProducts() {
                     <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Querying Catalogue Database</p>
                 </div>
             ) : (
-                <div className="space-y-6 pb-20">
+                <div ref={listRef} className="space-y-6 pb-20">
                     {/* Mobile View: Cards */}
                     <div className="grid grid-cols-1 gap-4 md:hidden">
                         {products.map((product: Product) => (

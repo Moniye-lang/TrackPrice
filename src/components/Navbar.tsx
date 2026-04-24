@@ -108,7 +108,7 @@ export function Navbar() {
 
                     {/* Desktop Navigation Links */}
                     <nav className="hidden lg:flex items-center gap-4 xl:gap-10">
-                        <Link href="/forum" className={`text-base font-black uppercase tracking-widest transition-colors relative group ${pathname === '/forum' ? 'text-primary' : 'text-slate-600 hover:text-primary'}`}>
+                        <Link href="/forum" className={`text-base font-black uppercase tracking-widest transition-colors relative group ${pathname === '/forum' ? 'text-primary' : 'text-slate-600 dark:text-slate-400 hover:text-primary'}`}>
                             Forum
                             {unreadForum > 0 && (
                                 <span className="absolute -top-3 -right-6 bg-rose-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full shadow-glow animate-bounce-subtle">
@@ -118,7 +118,7 @@ export function Navbar() {
                             <span className={`absolute -bottom-1 left-0 h-0.5 bg-primary transition-all ${pathname === '/forum' ? 'w-full' : 'w-0 group-hover:w-full'}`} />
                         </Link>
 
-                        <Link href="/leaderboard" className={`text-base font-black uppercase tracking-widest transition-colors relative group ${pathname === '/leaderboard' ? 'text-primary' : 'text-slate-600 hover:text-primary'}`}>
+                        <Link href="/leaderboard" className={`text-base font-black uppercase tracking-widest transition-colors relative group ${pathname === '/leaderboard' ? 'text-primary' : 'text-slate-600 dark:text-slate-400 hover:text-primary'}`}>
                             Leaderboard
                             <span className={`absolute -bottom-1 left-0 h-0.5 bg-primary transition-all ${pathname === '/leaderboard' ? 'w-full' : 'w-0 group-hover:w-full'}`} />
                         </Link>
@@ -142,7 +142,7 @@ export function Navbar() {
 >
     <Bell size={24} />
     {notifications.length > 0 && (
-        <span className="absolute top-0 right-0 w-5 h-5 bg-rose-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center ring-2 ring-white animate-pulse shadow-glow">
+        <span className="absolute top-0 right-0 w-5 h-5 bg-rose-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center ring-2 ring-white dark:ring-slate-900 animate-pulse shadow-glow">
             {notifications.length}
         </span>
     )}
@@ -211,8 +211,8 @@ export function Navbar() {
                                 </button>
                             </div>
                         ) : (
-                            <div className="flex items-center gap-8 border-l border-slate-100 pl-8 ml-2">
-                                <Link href="/login" className="text-sm font-black text-slate-500 hover:text-primary uppercase tracking-widest">
+                            <div className="flex items-center gap-8 border-l border-slate-100 dark:border-slate-800 pl-8 ml-2">
+                                <Link href="/login" className="text-sm font-black text-slate-500 dark:text-slate-400 hover:text-primary uppercase tracking-widest">
                                     Log In
                                 </Link>
                                 <Link href="/register">
@@ -248,14 +248,14 @@ export function Navbar() {
                         
                         {/* Mobile Notifications Dropdown */}
                         {showNotifications && (
-                            <div className="absolute top-full right-0 mt-2 w-[calc(100vw-2rem)] max-w-sm bg-white border border-slate-200 rounded-2xl shadow-premium overflow-hidden z-50">
-                                <div className="px-4 py-3 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
-                                    <h3 className="font-black text-sm uppercase tracking-widest text-slate-800">Notifications</h3>
+                            <div className="absolute top-full right-0 mt-2 w-[calc(100vw-2rem)] max-w-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-premium overflow-hidden z-50">
+                                <div className="px-4 py-3 bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+                                    <h3 className="font-black text-sm uppercase tracking-widest text-slate-800 dark:text-slate-100">Notifications</h3>
                                     <button onClick={() => setShowNotifications(false)} className="text-slate-400 hover:text-slate-600"><X size={16} /></button>
                                 </div>
                                 <div className="max-h-[60vh] overflow-y-auto">
                                     {notifications.length === 0 ? (
-                                        <div className="px-4 py-8 text-center text-sm text-slate-500">
+                                        <div className="px-4 py-8 text-center text-sm text-slate-500 dark:text-slate-400">
                                             No new notifications
                                         </div>
                                     ) : (
@@ -263,10 +263,10 @@ export function Navbar() {
                                             <button
                                                 key={notif._id}
                                                 onClick={() => markAsRead(notif._id, notif.messageId?._id, notif.productId?._id)}
-                                                className="w-full text-left px-4 py-3 hover:bg-slate-50 border-b border-slate-50 transition-colors"
+                                                className="w-full text-left px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 border-b border-slate-50 dark:border-slate-800 transition-colors"
                                             >
                                                 <div className="text-xs font-semibold text-primary mb-1">New Reply</div>
-                                                <div className="text-sm text-slate-600 line-clamp-2">
+                                                <div className="text-sm text-slate-600 dark:text-slate-300 line-clamp-2">
                                                     {notif.content || "Someone replied to your message."}
                                                 </div>
                                             </button>

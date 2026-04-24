@@ -51,7 +51,7 @@ export function ProductCard({ product, priority }: ProductCardProps) {
 
     return (
         <div className="block group h-full">
-            <Card className="flex flex-col h-full hover:shadow-glow transition-all duration-500 hover:-translate-y-2 border-slate-100 overflow-hidden relative">
+            <Card className="flex flex-col h-full hover:shadow-glow transition-all duration-500 hover:-translate-y-2 border-slate-100 dark:border-slate-800 overflow-hidden relative">
                 <Link href={`/product/${product._id}`} className="absolute inset-0 z-0" aria-label={`View details for ${product.name}`} />
                 <div className="relative h-64 w-full overflow-hidden bg-slate-50 dark:bg-slate-800 z-10 pointer-events-none">
                     {hasImage ? (
@@ -120,7 +120,7 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                             </div>
                             <div className="min-w-0">
                                 <p className="text-xs font-black text-primary uppercase tracking-widest mb-0.5">Proposed Price</p>
-                                <p className="text-sm font-black text-slate-800 tracking-tighter custom-truncate">
+                                <p className="text-sm font-black text-slate-800 dark:text-slate-100 tracking-tighter custom-truncate">
                                     ₦{product.pendingUpdate.price.toLocaleString()}
                                 </p>
                             </div>
@@ -198,12 +198,12 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                     <div className="mt-5 flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/30 border border-slate-100/80 dark:border-white/5 rounded-2xl group-hover:bg-primary/5 group-hover:border-primary/10 transition-colors duration-500">
                         <div className="flex items-center gap-4">
                             <div className="flex flex-col">
-                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Signals</span>
+                                <span className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1">Signals</span>
                                 {(product.reportCount || 0) > 0 ? (
-                                    <div className="flex items-center gap-1.5 text-slate-700">
-                                        <Users size={12} className="text-slate-500" aria-hidden="true" />
+                                    <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
+                                        <Users size={12} className="text-slate-500 dark:text-slate-400" aria-hidden="true" />
                                         <span className="text-[11px] font-black uppercase tracking-tight">
-                                            {product.reportCount} <span className="text-slate-500 font-bold ml-0.5">Confirmations</span>
+                                            {product.reportCount} <span className="text-slate-500 dark:text-slate-400 font-bold ml-0.5">Confirmations</span>
                                         </span>
                                     </div>
                                 ) : (
