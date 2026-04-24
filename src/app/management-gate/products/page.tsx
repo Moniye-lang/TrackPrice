@@ -36,6 +36,7 @@ import {
     AlertCircle,
     CheckCircle2,
     RefreshCw,
+    Activity,
     Box,
     Globe,
     Check,
