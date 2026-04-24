@@ -32,6 +32,9 @@ export async function GET(req: Request) {
             // Add city filter for general forum if provided
             if (city && city !== 'All') {
                 query.city = city;
+            } else {
+                // If no city provided, only show global messages (no city field)
+                query.city = { $exists: false };
             }
         }
 

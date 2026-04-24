@@ -17,6 +17,7 @@ interface Product {
     storeLocation?: string;
     lastUpdated: string;
     isFeatured?: boolean;
+    status: 'pending' | 'approved' | 'rejected';
 }
 
 import { 
@@ -35,9 +36,12 @@ import {
     AlertCircle,
     CheckCircle2,
     RefreshCw,
-    Activity,
     Box,
-    Globe
+    Globe,
+    Check,
+    ChevronLeft,
+    ChevronRight,
+    Trash
 } from 'lucide-react';
 import { useAdminProducts } from '@/hooks/useAdmin';
 
@@ -53,13 +57,18 @@ function SafeProductImg({ imageUrl, name, sizes }: { imageUrl: string; name: str
 
 export default function AdminProducts() {
     const searchParams = useSearchParams();
-    const { data: productsData = [], isLoading: loading, refetch } = useAdminProducts();
+    const [currentPage, setCurrentPage] = useState(1);
+    const { data: productsData, isLoading: loading, refetch } = useAdminProducts({ page: currentPage, search: searchTerm });
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
     const [showForm, setShowForm] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [submitting, setSubmitting] = useState(false);
     const [autoImageLoading, setAutoImageLoading] = useState(false);
+    const [cleaningDuplicates, setCleaningDuplicates] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+
+    const products = Array.isArray(productsData) ? productsData : (productsData?.products || []);
+    const totalPages = productsData?.totalPages || 1;
 
     // Form states
     const [name, setName] = useState('');
@@ -81,11 +90,43 @@ export default function AdminProducts() {
         }
     }, [searchParams]);
 
-    const filteredProducts = (productsData as Product[]).filter(p => 
-        p.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (p.storeLocation || '')?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const handleCleanDuplicates = async () => {
+        if (!confirm('This will permanently delete duplicate products, keeping only the most recently updated version for each unique name and location. Proceed?')) return;
+        setCleaningDuplicates(true);
+        try {
+            const res = await fetch('/api/admin/products/delete-duplicates', { method: 'POST' });
+            const data = await res.json();
+            if (res.ok) {
+                alert(data.message);
+                refetch();
+            } else {
+                alert(data.error || 'Failed to cleanup duplicates');
+            }
+        } catch (error) {
+            console.error(error);
+            alert('An error occurred during cleanup.');
+        } finally {
+            setCleaningDuplicates(false);
+        }
+    };
+
+    const handleApprove = async (id: string) => {
+        try {
+            const res = await fetch(`/api/products/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: 'approved' }),
+            });
+            if (res.ok) {
+                refetch();
+            } else {
+                const data = await res.json();
+                alert(data.error || 'Failed to approve product');
+            }
+        } catch (error) {
+            console.error('Failed to approve product');
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -224,10 +265,19 @@ export default function AdminProducts() {
                 </div>
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
                     <Button 
+                        onClick={handleCleanDuplicates} 
+                        disabled={cleaningDuplicates} 
+                        variant="secondary"
+                        className="bg-rose-50 dark:bg-rose-950/20 border-rose-100 dark:border-rose-900/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/40 shadow-sm flex items-center justify-center gap-2 px-6 py-3 rounded-2xl transition-all"
+                    >
+                        <Trash size={16} />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Clean Duplicates</span>
+                    </Button>
+                    <Button 
                         onClick={handleAutoImages} 
                         disabled={autoImageLoading} 
                         variant="secondary"
-                        className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50 shadow-sm flex items-center justify-center gap-2 px-6 py-3 rounded-2xl transition-all"
+                        className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 shadow-sm flex items-center justify-center gap-2 px-6 py-3 rounded-2xl transition-all"
                     >
                         <RefreshCw size={16} className={autoImageLoading ? 'animate-spin' : ''} />
                         <span className="text-[10px] font-black uppercase tracking-widest">Auto-Fetch Images</span>
@@ -250,7 +300,7 @@ export default function AdminProducts() {
                     placeholder="Search catalogue..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full bg-white border border-slate-100 py-4 md:py-5 pl-16 pr-6 rounded-[1.5rem] md:rounded-3xl shadow-premium outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/20 transition-all font-bold text-slate-700 text-sm placeholder:text-slate-300"
+                    className="w-full bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 py-4 md:py-5 pl-16 pr-6 rounded-[1.5rem] md:rounded-3xl shadow-premium outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/20 transition-all font-bold text-slate-700 dark:text-slate-200 text-sm placeholder:text-slate-300 dark:placeholder:text-slate-600"
                     aria-label="Search catalogue"
                 />
             </div>
@@ -258,7 +308,7 @@ export default function AdminProducts() {
             {showForm && (
                 <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-md" onClick={() => setShowForm(false)} />
-                    <Card className="max-w-2xl w-full p-6 md:p-10 relative z-10 animate-in zoom-in-95 duration-300 border-none shadow-premium-lg rounded-3xl md:rounded-[2.5rem] bg-white max-h-[90vh] overflow-y-auto custom-scrollbar">
+                    <Card className="max-w-2xl w-full p-6 md:p-10 relative z-10 animate-in zoom-in-95 duration-300 border-none shadow-premium-lg rounded-3xl md:rounded-[2.5rem] bg-white dark:bg-slate-900 max-h-[90vh] overflow-y-auto custom-scrollbar">
                         <button 
                             onClick={() => setShowForm(false)}
                             className="absolute top-4 right-4 md:top-8 md:right-8 p-3 rounded-2xl bg-slate-50 text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-all"
@@ -354,15 +404,20 @@ export default function AdminProducts() {
                 <div className="space-y-6 pb-20">
                     {/* Mobile View: Cards */}
                     <div className="grid grid-cols-1 gap-4 md:hidden">
-                        {filteredProducts.map((product) => (
-                            <Card key={product._id} className="p-5 border-none shadow-premium bg-white rounded-3xl group relative">
+                        {products.map((product: Product) => (
+                            <Card key={product._id} className="p-5 border-none shadow-premium bg-white dark:bg-slate-900 rounded-3xl group relative">
                                 <div className="flex gap-4">
-                                    <div className="w-20 h-20 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 flex-shrink-0 shadow-sm relative flex items-center justify-center">
+                                    <div className="w-20 h-20 rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 flex-shrink-0 shadow-sm relative flex items-center justify-center">
                                         <SafeProductImg imageUrl={product.imageUrl} name={product.name} sizes="80px" />
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className="flex justify-between items-start">
-                                            <p className="font-black text-slate-900 text-sm tracking-tight leading-tight line-clamp-2">{product.name}</p>
+                                            <div>
+                                                <p className="font-black text-slate-900 dark:text-slate-100 text-sm tracking-tight leading-tight line-clamp-2">{product.name}</p>
+                                                {product.status === 'pending' && (
+                                                    <span className="inline-block mt-1 bg-amber-100 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-widest">Pending Approval</span>
+                                                )}
+                                            </div>
                                             <button
                                                 onClick={async () => {
                                                     const res = await fetch(`/api/products/${product._id}`, {
@@ -372,46 +427,50 @@ export default function AdminProducts() {
                                                     });
                                                     if (res.ok) refetch();
                                                 }}
-                                                className={`flex-shrink-0 transition-all ${product.isFeatured ? 'text-primary' : 'text-slate-200'}`}
+                                                className={`flex-shrink-0 transition-all ${product.isFeatured ? 'text-primary' : 'text-slate-200 dark:text-slate-800'}`}
                                             >
                                                 <Star size={18} fill={product.isFeatured ? 'currentColor' : 'none'} />
                                             </button>
                                         </div>
                                         <div className="flex items-center gap-1.5 mt-1.5">
-                                            <MapPin size={10} className="text-slate-300" />
-                                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest truncate">{product.storeLocation || 'Unassigned Depot'}</p>
+                                            <MapPin size={10} className="text-slate-300 dark:text-slate-600" />
+                                            <p className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest truncate">{product.storeLocation || 'Unassigned Depot'}</p>
                                         </div>
                                         <div className="flex items-center justify-between mt-3">
-                                            <p className="font-black text-slate-900 text-sm">{formatPriceRange(product.price, product.maxPrice)}</p>
-                                            <div className="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest">
+                                            <p className="font-black text-slate-900 dark:text-slate-100 text-sm">{formatPriceRange(product.price, product.maxPrice)}</p>
+                                            <div className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-2.5 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest">
                                                 {product.category}
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="mt-5 pt-4 border-t border-slate-50 flex items-center justify-between gap-2">
-                                    {mergeSourceId ? (
+                                <div className="mt-5 pt-4 border-t border-slate-50 dark:border-slate-800 flex items-center justify-between gap-2">
+                                    {product.status === 'pending' ? (
+                                        <button onClick={() => handleApprove(product._id)} className="flex-1 py-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 font-black text-[9px] uppercase tracking-widest flex items-center justify-center gap-2">
+                                            <Check size={14} /> Approve
+                                        </button>
+                                    ) : mergeSourceId ? (
                                         mergeSourceId === product._id ? (
-                                            <button onClick={() => setMergeSourceId(null)} className="flex-1 py-3 rounded-xl bg-rose-50 text-rose-500 font-black text-[9px] uppercase tracking-widest flex items-center justify-center gap-2">
+                                            <button onClick={() => setMergeSourceId(null)} className="flex-1 py-3 rounded-xl bg-rose-50 dark:bg-rose-950/20 text-rose-500 dark:text-rose-400 font-black text-[9px] uppercase tracking-widest flex items-center justify-center gap-2">
                                                 <X size={14} /> Abort Merge
                                             </button>
                                         ) : (
-                                            <button onClick={() => handleMerge(product._id)} className="flex-1 py-3 rounded-xl bg-emerald-50 text-emerald-500 font-black text-[9px] uppercase tracking-widest flex items-center justify-center gap-2">
+                                            <button onClick={() => handleMerge(product._id)} className="flex-1 py-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 text-emerald-500 dark:text-emerald-400 font-black text-[9px] uppercase tracking-widest flex items-center justify-center gap-2">
                                                 <GitMerge size={14} /> Commit Merge
                                             </button>
                                         )
                                     ) : (
                                         <div className="grid grid-cols-4 gap-2 w-full">
-                                            <button onClick={() => setMergeSourceId(product._id)} className="p-3 rounded-xl bg-slate-50 text-slate-600 flex justify-center hover:bg-primary hover:text-white transition-all">
+                                            <button onClick={() => setMergeSourceId(product._id)} className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 flex justify-center hover:bg-primary hover:text-white transition-all">
                                                 <GitMerge size={16} />
                                             </button>
-                                            <button onClick={() => handleDuplicate(product._id)} className="p-3 rounded-xl bg-slate-50 text-slate-600 flex justify-center hover:bg-primary hover:text-white transition-all">
+                                            <button onClick={() => handleDuplicate(product._id)} className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 flex justify-center hover:bg-primary hover:text-white transition-all">
                                                 <Copy size={16} />
                                             </button>
-                                            <button onClick={() => handleEdit(product)} className="p-3 rounded-xl bg-slate-50 text-slate-600 flex justify-center hover:bg-primary hover:text-white transition-all">
+                                            <button onClick={() => handleEdit(product)} className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 flex justify-center hover:bg-primary hover:text-white transition-all">
                                                 <Edit2 size={16} />
                                             </button>
-                                            <button onClick={() => handleDelete(product._id)} className="p-3 rounded-xl bg-rose-50 text-rose-500 flex justify-center hover:bg-rose-500 hover:text-white transition-all">
+                                            <button onClick={() => handleDelete(product._id)} className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/20 text-rose-500 dark:text-rose-400 flex justify-center hover:bg-rose-500 hover:text-white transition-all">
                                                 <Trash2 size={16} />
                                             </button>
                                         </div>
@@ -422,43 +481,43 @@ export default function AdminProducts() {
                     </div>
 
                     {/* Desktop View: Table */}
-                    <Card className="hidden md:block p-0 border-none shadow-premium bg-white overflow-hidden rounded-[2.5rem]">
+                    <Card className="hidden md:block p-0 border-none shadow-premium bg-white dark:bg-slate-900 overflow-hidden rounded-[2.5rem]">
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
-                                <thead className="bg-slate-50/50 border-b border-slate-50">
+                                <thead className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-50 dark:border-slate-800">
                                     <tr>
-                                        <th className="py-6 px-8 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Product Blueprint</th>
-                                        <th className="py-6 px-8 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Taxonomy</th>
-                                        <th className="py-6 px-8 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Market Value</th>
-                                        <th className="py-6 px-8 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">Status</th>
-                                        <th className="py-6 px-8 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">Operations</th>
+                                        <th className="py-6 px-8 text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">Product Blueprint</th>
+                                        <th className="py-6 px-8 text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">Taxonomy</th>
+                                        <th className="py-6 px-8 text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">Market Value</th>
+                                        <th className="py-6 px-8 text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] text-center">Status</th>
+                                        <th className="py-6 px-8 text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] text-right">Operations</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {filteredProducts.map((product) => (
-                                        <tr key={product._id} className="border-b border-slate-50 group hover:bg-slate-50/30 transition-all">
+                                    {products.map((product: Product) => (
+                                        <tr key={product._id} className="border-b border-slate-50 dark:border-slate-800 group hover:bg-slate-50/30 dark:hover:bg-slate-800/30 transition-all">
                                             <td className="py-6 px-8">
                                                 <div className="flex items-center gap-6">
-                                                    <div className="w-16 h-16 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 flex-shrink-0 shadow-sm relative flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+                                                    <div className="w-16 h-16 rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 flex-shrink-0 shadow-sm relative flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
                                                         <SafeProductImg imageUrl={product.imageUrl} name={product.name} sizes="64px" />
                                                     </div>
                                                     <div>
-                                                        <p className="font-black text-slate-900 text-sm tracking-tight leading-tight mb-1">{product.name}</p>
+                                                        <p className="font-black text-slate-900 dark:text-slate-100 text-sm tracking-tight leading-tight mb-1">{product.name}</p>
                                                         <div className="flex items-center gap-2">
-                                                            <MapPin size={10} className="text-slate-300" />
-                                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{product.storeLocation || 'Unassigned Depot'}</p>
+                                                            <MapPin size={10} className="text-slate-300 dark:text-slate-600" />
+                                                            <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{product.storeLocation || 'Unassigned Depot'}</p>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td className="py-6 px-8">
-                                                <div className="bg-slate-100 text-slate-600 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest w-fit">
+                                                <div className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest w-fit">
                                                     {product.category}
                                                 </div>
                                             </td>
                                             <td className="py-6 px-8">
-                                                <p className="font-black text-slate-900">{formatPriceRange(product.price, product.maxPrice)}</p>
-                                                <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest mt-1">
+                                                <p className="font-black text-slate-900 dark:text-slate-100">{formatPriceRange(product.price, product.maxPrice)}</p>
+                                                <p className="text-[8px] font-black text-slate-300 dark:text-slate-600 uppercase tracking-widest mt-1">
                                                     Updated {new Date(product.lastUpdated).toLocaleDateString()}
                                                 </p>
                                             </td>
@@ -473,41 +532,46 @@ export default function AdminProducts() {
                                                             });
                                                             if (res.ok) refetch();
                                                         }}
-                                                        className={`w-10 h-6 rounded-full transition-all relative ${product.isFeatured ? 'bg-primary shadow-glow-sm' : 'bg-slate-200'}`}
+                                                        className={`w-10 h-6 rounded-full transition-all relative ${product.isFeatured ? 'bg-primary shadow-glow-sm' : 'bg-slate-200 dark:bg-slate-800'}`}
                                                     >
-                                                        <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${product.isFeatured ? 'left-5' : 'left-1'}`} />
+                                                        <div className={`absolute top-1 w-4 h-4 rounded-full bg-white dark:bg-slate-400 transition-all ${product.isFeatured ? 'left-5' : 'left-1'}`} />
                                                     </button>
-                                                    <span className={`text-[7px] font-black uppercase tracking-widest ${product.isFeatured ? 'text-primary' : 'text-slate-400'}`}>
+                                                    <span className={`text-[7px] font-black uppercase tracking-widest ${product.isFeatured ? 'text-primary' : 'text-slate-400 dark:text-slate-600'}`}>
                                                         {product.isFeatured ? 'Featured' : 'Standard'}
                                                     </span>
                                                 </div>
                                             </td>
-                                            <td className="py-6 px-8 text-right space-x-3">
+                                            <td className="py-6 px-8 text-right">
                                                 <div className="flex items-center justify-end gap-2">
-                                                    {mergeSourceId ? (
+                                                    {product.status === 'pending' ? (
+                                                        <button onClick={() => handleApprove(product._id)} className="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 text-emerald-500 hover:bg-emerald-500 hover:text-white transition-all shadow-sm flex items-center gap-2 px-4 group">
+                                                            <Check size={16} />
+                                                            <span className="text-[8px] font-black uppercase tracking-widest">Approve</span>
+                                                        </button>
+                                                    ) : mergeSourceId ? (
                                                         mergeSourceId === product._id ? (
-                                                            <button onClick={() => setMergeSourceId(null)} className="p-2.5 rounded-xl bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white transition-all shadow-sm flex items-center gap-2 px-4 group">
+                                                            <button onClick={() => setMergeSourceId(null)} className="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/20 text-rose-500 hover:bg-rose-500 hover:text-white transition-all shadow-sm flex items-center gap-2 px-4 group">
                                                                 <X size={16} />
                                                                 <span className="text-[8px] font-black uppercase tracking-widest">Abort Merge</span>
                                                             </button>
                                                         ) : (
-                                                            <button onClick={() => handleMerge(product._id)} className="p-2.5 rounded-xl bg-emerald-50 text-emerald-500 hover:bg-emerald-500 hover:text-white transition-all shadow-sm flex items-center gap-2 px-4 group">
+                                                            <button onClick={() => handleMerge(product._id)} className="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 text-emerald-500 hover:bg-emerald-500 hover:text-white transition-all shadow-sm flex items-center gap-2 px-4 group">
                                                                 <GitMerge size={16} />
                                                                 <span className="text-[8px] font-black uppercase tracking-widest">Commit Merge</span>
                                                             </button>
                                                         )
                                                     ) : (
                                                         <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
-                                                            <button onClick={() => setMergeSourceId(product._id)} className="p-2.5 rounded-xl bg-slate-900 text-white hover:bg-primary transition-all shadow-sm" title="Merge Logic">
+                                                            <button onClick={() => setMergeSourceId(product._id)} className="p-2.5 rounded-xl bg-slate-900 dark:bg-slate-800 text-white hover:bg-primary transition-all shadow-sm" title="Merge Logic">
                                                                 <GitMerge size={14} />
                                                             </button>
-                                                            <button onClick={() => handleDuplicate(product._id)} className="p-2.5 rounded-xl bg-slate-900 text-white hover:bg-primary transition-all shadow-sm" title="Clone Entry">
+                                                            <button onClick={() => handleDuplicate(product._id)} className="p-2.5 rounded-xl bg-slate-900 dark:bg-slate-800 text-white hover:bg-primary transition-all shadow-sm" title="Clone Entry">
                                                                 <Copy size={14} />
                                                             </button>
-                                                            <button onClick={() => handleEdit(product)} className="p-2.5 rounded-xl bg-slate-900 text-white hover:bg-primary transition-all shadow-sm" title="Edit Parameters">
+                                                            <button onClick={() => handleEdit(product)} className="p-2.5 rounded-xl bg-slate-900 dark:bg-slate-800 text-white hover:bg-primary transition-all shadow-sm" title="Edit Parameters">
                                                                 <Edit2 size={14} />
                                                             </button>
-                                                            <button onClick={() => handleDelete(product._id)} className="p-2.5 rounded-xl bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white transition-all shadow-sm" title="Purge Record">
+                                                            <button onClick={() => handleDelete(product._id)} className="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/20 text-rose-500 hover:bg-rose-500 hover:text-white transition-all shadow-sm" title="Purge Record">
                                                                 <Trash2 size={14} />
                                                             </button>
                                                         </div>
@@ -516,27 +580,62 @@ export default function AdminProducts() {
                                             </td>
                                         </tr>
                                     ))}
-                                    {filteredProducts.length === 0 && (
-                                        <tr>
-                                            <td colSpan={5} className="py-24 text-center">
-                                                <div className="flex flex-col items-center gap-3">
-                                                    <Box size={40} className="text-slate-100" />
-                                                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">No matching blueprints found</p>
-                                                    <Button 
-                                                        variant="secondary" 
-                                                        onClick={() => setSearchTerm('')}
-                                                        className="mt-2 text-[8px] font-black uppercase underline decoration-primary decoration-2 underline-offset-4"
-                                                    >
-                                                        Clear Filter Stack
-                                                    </Button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    )}
                                 </tbody>
                             </table>
                         </div>
                     </Card>
+
+                    {/* Pagination */}
+                    {totalPages > 1 && (
+                        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-10 border-t border-slate-100 dark:border-slate-800">
+                            <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em]">
+                                Page <span className="text-primary">{currentPage}</span> of {totalPages}
+                            </p>
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                    disabled={currentPage === 1}
+                                    variant="secondary"
+                                    className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 p-4 rounded-2xl disabled:opacity-30 transition-all hover:bg-slate-50 dark:hover:bg-slate-800"
+                                >
+                                    <ChevronLeft size={20} />
+                                </Button>
+                                <div className="flex items-center gap-2 px-4">
+                                    {[...Array(totalPages)].map((_, i) => (
+                                        <button
+                                            key={i}
+                                            onClick={() => setCurrentPage(i + 1)}
+                                            className={`w-2 h-2 rounded-full transition-all duration-500 ${currentPage === i + 1 ? 'w-8 bg-primary shadow-glow-sm' : 'bg-slate-200 dark:bg-slate-800 hover:bg-slate-300'}`}
+                                        />
+                                    ))}
+                                </div>
+                                <Button
+                                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                                    disabled={currentPage === totalPages}
+                                    variant="secondary"
+                                    className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 p-4 rounded-2xl disabled:opacity-30 transition-all hover:bg-slate-50 dark:hover:bg-slate-800"
+                                >
+                                    <ChevronRight size={20} />
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+
+                    {products.length === 0 && (
+                        <div className="py-24 text-center">
+                            <div className="flex flex-col items-center gap-3">
+                                <Box size={40} className="text-slate-100 dark:text-slate-800" />
+                                <p className="text-[10px] font-black text-slate-300 dark:text-slate-600 uppercase tracking-widest">No matching blueprints found</p>
+                                <Button 
+                                    variant="secondary" 
+                                    onClick={() => { setSearchTerm(''); setCurrentPage(1); }}
+                                    className="mt-2 text-[8px] font-black uppercase underline decoration-primary decoration-2 underline-offset-4"
+                                >
+                                    Clear Filter Stack
+                                </Button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             )}
         </div>

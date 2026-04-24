@@ -26,6 +26,7 @@ export async function POST(req: NextRequest) {
             imageUrl: imageUrl || 'https://placehold.co/400x400/png?text=No+Image',
             storeLocation: storeLocation || 'User Added',
             isUserAdded: true, // Mark as user added
+            status: 'pending', // Require approval
             lastUpdatedBy: user.name,
             priceHistory: [{
                 price: Number(price),

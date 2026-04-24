@@ -57,7 +57,7 @@ export function Navbar() {
         };
 
         fetchCounts();
-        const interval = setInterval(fetchCounts, 30000);
+        const interval = setInterval(fetchCounts, 5000);
         return () => clearInterval(interval);
     }, [pathname]);
 

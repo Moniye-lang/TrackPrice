@@ -39,11 +39,16 @@ export function useAdminAction() {
   });
 }
 
-export function useAdminProducts() {
+export function useAdminProducts({ page = 1, limit = 50, search = '' }: { page?: number; limit?: number; search?: string } = {}) {
   return useQuery({
-    queryKey: ['admin-products'],
+    queryKey: ['admin-products', page, search],
     queryFn: async () => {
-      const res = await fetch('/api/products');
+      const url = new URL('/api/products', window.location.origin);
+      url.searchParams.set('page', page.toString());
+      url.searchParams.set('limit', limit.toString());
+      if (search) url.searchParams.set('search', search);
+      
+      const res = await fetch(url.toString());
       if (!res.ok) throw new Error('Failed to fetch admin products');
       return res.json();
     },

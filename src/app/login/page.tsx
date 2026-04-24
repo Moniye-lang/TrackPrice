@@ -68,10 +68,10 @@ export default function LoginPage() {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-mesh px-4">
-            <Card className="w-full max-w-md p-8 backdrop-blur-xl bg-white/70 border border-white/50 shadow-2xl">
+            <Card className="w-full max-w-md p-8 backdrop-blur-xl bg-white/70 dark:bg-slate-900/70 border border-white/50 dark:border-slate-800 shadow-2xl">
                 <div className="text-center mb-6">
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Welcome Back</h1>
-                    <p className="text-slate-500 font-medium mt-2">Log in to update prices and view the leaderboard.</p>
+                    <h1 className="text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tight">Welcome Back</h1>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium mt-2">Log in to update prices and view the leaderboard.</p>
                 </div>
 
                 <div className="flex justify-center mb-6">
@@ -86,10 +86,10 @@ export default function LoginPage() {
 
                 <div className="relative mb-6">
                     <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-slate-200"></div>
+                        <div className="w-full border-t border-slate-200 dark:border-slate-800"></div>
                     </div>
                     <div className="relative flex justify-center text-sm">
-                        <span className="px-2 bg-white text-slate-500">Or continue with</span>
+                        <span className="px-2 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400">Or continue with</span>
                     </div>
                 </div>
 

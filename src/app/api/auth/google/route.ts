@@ -15,7 +15,15 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Missing credential' }, { status: 400 });
         }
 
-        const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID || '';
+        const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID;
+        
+        if (!clientId) {
+            console.error('[Google Auth] CRITICAL: Google Client ID is missing from environment variables.');
+            return NextResponse.json({ error: 'Configuration error: Google Client ID not found' }, { status: 500 });
+        }
+
+        console.log('[Google Auth] Verifying token for client:', clientId.substring(0, 10) + '...');
+
         const ticket = await client.verifyIdToken({
             idToken: credential,
             audience: clientId,
@@ -23,6 +31,7 @@ export async function POST(req: NextRequest) {
 
         const payload = ticket.getPayload();
         if (!payload) {
+            console.error('[Google Auth] Failed to get payload from ticket');
             return NextResponse.json({ error: 'Invalid Google Token' }, { status: 401 });
         }
 

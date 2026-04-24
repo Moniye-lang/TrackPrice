@@ -21,6 +21,7 @@ export interface IProduct extends Document {
     lastUpdated: Date;
     lastUpdatedBy?: string;
     isUserAdded?: boolean;
+    status: 'pending' | 'approved' | 'rejected';
     createdAt: Date;
     updatedAt: Date;
 }
@@ -50,6 +51,7 @@ const ProductSchema: Schema = new Schema(
         lastUpdated: { type: Date, default: Date.now },
         lastUpdatedBy: { type: String, default: null },
         isUserAdded: { type: Boolean, default: false },
+        status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'approved' },
     },
     {
         timestamps: true,

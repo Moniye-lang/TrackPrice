@@ -22,21 +22,20 @@ const fetchProducts = async (params: {
     stale: boolean;
     page: string | null;
     limit: string | null;
+    isAdmin: boolean;
 }) => {
-    const { search, category, marketCategory, city, storeId, sort, featured, stale, page: pageStr, limit: limitStr } = params;
+    const { search, category, marketCategory, city, storeId, sort, featured, stale, page: pageStr, limit: limitStr, isAdmin } = params;
     
     const conditions: any[] = [];
     
     if (search) {
-        const terms = search.split(',').map(t => t.trim()).filter(Boolean);
-        if (terms.length > 1) {
-            conditions.push({
-                $or: terms.map(term => ({
-                    name: { $regex: escapeRegex(term), $options: 'i' }
-                }))
-            });
-        } else if (terms.length === 1) {
-            conditions.push({ name: { $regex: escapeRegex(terms[0]), $options: 'i' } });
+        const words = search.trim().split(/\s+/).filter(Boolean);
+        if (words.length > 0) {
+            // Every word must be present in the name (case-insensitive)
+            const searchConditions = words.map(word => ({
+                name: { $regex: escapeRegex(word), $options: 'i' }
+            }));
+            conditions.push({ $and: searchConditions });
         }
     }
     if (category && category !== 'All') {
@@ -86,6 +85,11 @@ const fetchProducts = async (params: {
                 { category: { $ne: 'Oil and Gas' }, lastUpdated: { $lt: sevenDaysAgo } }
             ]
         });
+    }
+
+    // Status Filter: Non-admins only see approved products
+    if (!isAdmin) {
+        conditions.push({ status: 'approved' });
     }
 
     const query = conditions.length > 0 ? { $and: conditions } : {};
@@ -217,6 +221,7 @@ const getCachedProducts = unstable_cache(
 export async function GET(req: NextRequest) {
     try {
         const { searchParams } = req.nextUrl;
+        const isAdmin = await isServerAdmin();
         const params = {
             search: searchParams.get('search'),
             category: searchParams.get('category'),
@@ -228,6 +233,7 @@ export async function GET(req: NextRequest) {
             stale: searchParams.get('stale') === 'true',
             page: searchParams.get('page'),
             limit: searchParams.get('limit'),
+            isAdmin
         };
 
         const result = await getCachedProducts(params);
