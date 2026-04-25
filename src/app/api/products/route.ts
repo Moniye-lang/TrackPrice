@@ -31,13 +31,26 @@ const fetchProducts = async (params: {
     if (search) {
         const words = search.trim().split(/\s+/).filter(Boolean);
         if (words.length > 0) {
-            // For every word typed, it must match at least one of these fields
+            // Find stores that match any of the words (for location-based search)
+            const storeSearchConditions = words.map(word => ({
+                $or: [
+                    { name: { $regex: escapeRegex(word), $options: 'i' } },
+                    { area: { $regex: escapeRegex(word), $options: 'i' } },
+                    { city: { $regex: escapeRegex(word), $options: 'i' } }
+                ]
+            }));
+            const matchingStores = await Store.find({ $or: storeSearchConditions }).select('_id').lean();
+            const matchingStoreIds = matchingStores.map(s => s._id);
+
+            // For every word typed, it must match at least one field (Name, Brand, Category, OR Location)
             const searchConditions = words.map(word => ({
                 $or: [
                     { name: { $regex: escapeRegex(word), $options: 'i' } },
                     { brand: { $regex: escapeRegex(word), $options: 'i' } },
                     { variant: { $regex: escapeRegex(word), $options: 'i' } },
                     { category: { $regex: escapeRegex(word), $options: 'i' } },
+                    { storeLocation: { $regex: escapeRegex(word), $options: 'i' } },
+                    { storeId: { $in: matchingStoreIds } }
                 ]
             }));
             conditions.push({ $and: searchConditions });
