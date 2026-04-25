@@ -134,17 +134,26 @@ async function getProducts(params: any) {
     if (search) {
         const words = search.trim().split(/\s+/).filter(Boolean);
         if (words.length > 0) {
-            const storeSearchConditions = words.map(word => ({
-                $or: [
-                    { name: { $regex: escapeRegex(word), $options: 'i' } },
-                    { area: { $regex: escapeRegex(word), $options: 'i' } },
-                    { city: { $regex: escapeRegex(word), $options: 'i' } }
-                ]
-            }));
+            const storeSearchConditions = words.map((word: string) => {
+                const lower = word.toLowerCase();
+                const possibleCities = [word];
+                if (lower.startsWith('iba')) possibleCities.push('Oyo');
+                if (lower.startsWith('ike') || lower.startsWith('lek')) possibleCities.push('Lagos');
+
+                return {
+                    $or: [
+                        { name: { $regex: `^${escapeRegex(word)}`, $options: 'i' } }, // Start of name
+                        { name: { $regex: `\\s${escapeRegex(word)}`, $options: 'i' } }, // Start of word in name
+                        { area: { $regex: `^${escapeRegex(word)}`, $options: 'i' } },
+                        { city: { $regex: `^${escapeRegex(word)}`, $options: 'i' } },
+                        { city: { $in: possibleCities.map(c => new RegExp(`^${escapeRegex(c)}`, 'i')) } }
+                    ]
+                };
+            });
             const matchingStores = await Store.find({ $or: storeSearchConditions }).select('_id').lean();
             matchingStoreIds = matchingStores.map(s => s._id);
 
-            const searchConditions = words.map(word => ({
+            const searchConditions = words.map((word: string) => ({
                 $or: [
                     { name: { $regex: escapeRegex(word), $options: 'i' } },
                     { brand: { $regex: escapeRegex(word), $options: 'i' } },

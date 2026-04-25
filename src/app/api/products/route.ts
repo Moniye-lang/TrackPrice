@@ -33,18 +33,27 @@ const fetchProducts = async (params: {
         const words = search.trim().split(/\s+/).filter(Boolean);
         if (words.length > 0) {
             // Find stores that match any of the words (for location-based search)
-            const storeSearchConditions = words.map(word => ({
-                $or: [
-                    { name: { $regex: escapeRegex(word), $options: 'i' } },
-                    { area: { $regex: escapeRegex(word), $options: 'i' } },
-                    { city: { $regex: escapeRegex(word), $options: 'i' } }
-                ]
-            }));
+            const storeSearchConditions = words.map((word: string) => {
+                const lower = word.toLowerCase();
+                const possibleCities = [word];
+                if (lower.startsWith('iba')) possibleCities.push('Oyo');
+                if (lower.startsWith('ike') || lower.startsWith('lek')) possibleCities.push('Lagos');
+
+                return {
+                    $or: [
+                        { name: { $regex: `^${escapeRegex(word)}`, $options: 'i' } }, // Start of name
+                        { name: { $regex: `\\s${escapeRegex(word)}`, $options: 'i' } }, // Start of word in name
+                        { area: { $regex: `^${escapeRegex(word)}`, $options: 'i' } },
+                        { city: { $regex: `^${escapeRegex(word)}`, $options: 'i' } },
+                        { city: { $in: possibleCities.map(c => new RegExp(`^${escapeRegex(c)}`, 'i')) } }
+                    ]
+                };
+            });
             const matchingStores = await Store.find({ $or: storeSearchConditions }).select('_id').lean();
             matchingStoreIds = matchingStores.map(s => s._id);
 
             // For every word typed, it must match at least one field (Name, Brand, Category, OR Location)
-            const searchConditions = words.map(word => ({
+            const searchConditions = words.map((word: string) => ({
                 $or: [
                     { name: { $regex: escapeRegex(word), $options: 'i' } },
                     { brand: { $regex: escapeRegex(word), $options: 'i' } },
