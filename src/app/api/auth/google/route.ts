@@ -4,7 +4,6 @@ import User from '@/models/User';
 import { signToken } from '@/lib/auth';
 import { OAuth2Client } from 'google-auth-library';
 
-const client = new OAuth2Client(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID);
 
 export async function POST(req: NextRequest) {
     try {
@@ -22,9 +21,10 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Configuration error: Google Client ID not found' }, { status: 500 });
         }
 
+        const oauthClient = new OAuth2Client(clientId);
         console.log('[Google Auth] Verifying token for client:', clientId.substring(0, 10) + '...');
 
-        const ticket = await client.verifyIdToken({
+        const ticket = await oauthClient.verifyIdToken({
             idToken: credential,
             audience: clientId,
         });
@@ -67,6 +67,11 @@ export async function POST(req: NextRequest) {
             if (updated) await user.save();
         }
 
+        if (user.isBanned) {
+            console.error('[Google Auth] Banned user attempted login:', email);
+            return NextResponse.json({ error: 'This account has been suspended.' }, { status: 403 });
+        }
+
         // Generate JWT locally using standardized utility
         const token = signToken({ 
             id: user._id, 
@@ -80,18 +85,30 @@ export async function POST(req: NextRequest) {
             user: { id: user._id, name: user.name, role: user.role } 
         }, { status: 200 });
         
-        response.cookies.set('token', token, {
+        // Consistent cookie naming
+        const cookieName = user.role === 'admin' ? 'admin_token' : 'user_token';
+        
+        response.cookies.set(cookieName, token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax',
-            maxAge: 60 * 60 * 24, // 1 day (standardized)
+            maxAge: 60 * 60 * 24, // 1 day
             path: '/',
         });
 
+        console.log(`[Google Auth] Successful for: ${email}. Cookie: ${cookieName}`);
         return response;
 
-    } catch (error) {
-        console.error('Google Auth Error:', error);
-        return NextResponse.json({ error: 'Google sign-in failed' }, { status: 500 });
+    } catch (error: any) {
+        console.error('[Google Auth] Error during authentication flow:');
+        console.error('Message:', error.message);
+        console.error('Stack:', error.stack);
+        if (error.response) {
+            console.error('Response Data:', error.response.data);
+        }
+        return NextResponse.json({ 
+            error: 'Google sign-in failed', 
+            details: error.message 
+        }, { status: 500 });
     }
 }
