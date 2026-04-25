@@ -19,7 +19,11 @@ export async function PUT(req: Request) {
         const user = await User.findById(userPayload.id);
         if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
-        if (name) user.name = name;
+        if (name && name !== user.name) {
+            const existing = await User.findOne({ name: name.trim() });
+            if (existing) return NextResponse.json({ error: 'Display name already taken' }, { status: 400 });
+            user.name = name.trim();
+        }
         if (city !== undefined) user.city = city;
 
         await user.save();

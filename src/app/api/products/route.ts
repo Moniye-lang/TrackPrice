@@ -28,6 +28,7 @@ const fetchProducts = async (params: {
     
     const conditions: any[] = [];
     
+    let matchingStoreIds: any[] = [];
     if (search) {
         const words = search.trim().split(/\s+/).filter(Boolean);
         if (words.length > 0) {
@@ -40,7 +41,7 @@ const fetchProducts = async (params: {
                 ]
             }));
             const matchingStores = await Store.find({ $or: storeSearchConditions }).select('_id').lean();
-            const matchingStoreIds = matchingStores.map(s => s._id);
+            matchingStoreIds = matchingStores.map(s => s._id);
 
             // For every word typed, it must match at least one field (Name, Brand, Category, OR Location)
             const searchConditions = words.map(word => ({
@@ -136,13 +137,51 @@ const fetchProducts = async (params: {
         queryChain = queryChain.skip(skip).limit(limit) as any;
     }
 
-    const products = await queryChain.lean();
+    let products = await queryChain.lean();
+    let isFuzzyMatch = false;
+    let suggestions: string[] = [];
+
+    // "Did you mean?" / Fuzzy Fallback logic
+    if (products.length === 0 && search) {
+        console.log('[Products GET] No exact match, trying fuzzy/OR fallback...');
+        const words = search.trim().split(/\s+/).filter(Boolean);
+        if (words.length > 1) {
+            // Try OR instead of AND
+            const fallbackQuery = { ...query, $or: words.map(word => ({
+                $or: [
+                    { name: { $regex: escapeRegex(word), $options: 'i' } },
+                    { brand: { $regex: escapeRegex(word), $options: 'i' } },
+                    { variant: { $regex: escapeRegex(word), $options: 'i' } },
+                    { category: { $regex: escapeRegex(word), $options: 'i' } },
+                    { storeLocation: { $regex: escapeRegex(word), $options: 'i' } },
+                    { storeId: { $in: matchingStoreIds } }
+                ]
+            })) };
+            
+            const fallbackResults = await Product.find(fallbackQuery).populate('storeId').sort(sortOption).limit(12).lean();
+            if (fallbackResults.length > 0) {
+                products = fallbackResults;
+                isFuzzyMatch = true;
+            }
+        }
+        
+        // If still no results, or to provide spelling suggestions
+        if (products.length === 0) {
+            // Get some sample names for "Did you mean"
+            const sampleProducts = await Product.find({ status: 'approved' }).select('name').limit(500).lean();
+            const names = Array.from(new Set(sampleProducts.map(p => p.name)));
+            // Simple suggestion: find names that contain parts of the search
+            suggestions = names.filter(name => 
+                words.some(word => name.toLowerCase().includes(word.toLowerCase()) || word.toLowerCase().includes(name.toLowerCase()))
+            ).slice(0, 5);
+        }
+    }
 
     if (products.length === 0) {
         if (isPaginated) {
-            return { products: [], currentPage: parseInt(pageStr!, 10), totalPages: 0, totalCount: 0 };
+            return { products: [], currentPage: parseInt(pageStr!, 10), totalPages: 0, totalCount: 0, isFuzzyMatch, suggestions };
         }
-        return [];
+        return { products: [], isFuzzyMatch, suggestions };
     }
 
     const productIds = products.map((p: any) => p._id);

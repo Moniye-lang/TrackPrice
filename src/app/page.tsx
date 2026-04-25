@@ -130,6 +130,34 @@ async function getProducts(params: any) {
         ]
     });
 
+    let matchingStoreIds: any[] = [];
+    if (search) {
+        const words = search.trim().split(/\s+/).filter(Boolean);
+        if (words.length > 0) {
+            const storeSearchConditions = words.map(word => ({
+                $or: [
+                    { name: { $regex: escapeRegex(word), $options: 'i' } },
+                    { area: { $regex: escapeRegex(word), $options: 'i' } },
+                    { city: { $regex: escapeRegex(word), $options: 'i' } }
+                ]
+            }));
+            const matchingStores = await Store.find({ $or: storeSearchConditions }).select('_id').lean();
+            matchingStoreIds = matchingStores.map(s => s._id);
+
+            const searchConditions = words.map(word => ({
+                $or: [
+                    { name: { $regex: escapeRegex(word), $options: 'i' } },
+                    { brand: { $regex: escapeRegex(word), $options: 'i' } },
+                    { variant: { $regex: escapeRegex(word), $options: 'i' } },
+                    { category: { $regex: escapeRegex(word), $options: 'i' } },
+                    { storeLocation: { $regex: escapeRegex(word), $options: 'i' } },
+                    { storeId: { $in: matchingStoreIds } }
+                ]
+            }));
+            conditions.push({ $and: searchConditions });
+        }
+    }
+
     const query = conditions.length > 0 ? { $and: conditions } : {};
     
     let sortOption: any = {};
@@ -139,15 +167,51 @@ async function getProducts(params: any) {
     else sortOption.createdAt = -1;
 
     const skip = (page - 1) * limit;
-    const [products, totalCount] = await Promise.all([
+    let [products, totalCount] = await Promise.all([
         Product.find(query).populate('storeId').sort(sortOption).skip(skip).limit(limit).lean(),
         Product.countDocuments(query)
     ]);
 
+    let isFuzzyMatch = false;
+    let suggestions: string[] = [];
+
+    if (products.length === 0 && search) {
+        const words = search.trim().split(/\s+/).filter(Boolean);
+        if (words.length > 1) {
+            const fallbackQuery = { ...query, $and: [{ $or: words.map(word => ({
+                $or: [
+                    { name: { $regex: escapeRegex(word), $options: 'i' } },
+                    { brand: { $regex: escapeRegex(word), $options: 'i' } },
+                    { variant: { $regex: escapeRegex(word), $options: 'i' } },
+                    { category: { $regex: escapeRegex(word), $options: 'i' } },
+                    { storeLocation: { $regex: escapeRegex(word), $options: 'i' } },
+                    { storeId: { $in: matchingStoreIds } }
+                ]
+            })) }] };
+            
+            const fallbackResults = await Product.find(fallbackQuery).populate('storeId').sort(sortOption).limit(limit).lean();
+            if (fallbackResults.length > 0) {
+                products = fallbackResults;
+                isFuzzyMatch = true;
+                totalCount = fallbackResults.length;
+            }
+        }
+
+        if (products.length === 0) {
+            const sampleProducts = await Product.find({ status: 'approved' }).select('name').limit(500).lean();
+            const names = Array.from(new Set(sampleProducts.map(p => p.name)));
+            suggestions = names.filter(name => 
+                words.some(word => name.toLowerCase().includes(word.toLowerCase()) || word.toLowerCase().includes(name.toLowerCase()))
+            ).slice(0, 5);
+        }
+    }
+
     return {
         products: JSON.parse(JSON.stringify(products)),
         totalPages: Math.ceil(totalCount / limit),
-        totalCount
+        totalCount,
+        isFuzzyMatch,
+        suggestions
     };
 }
 
@@ -286,13 +350,40 @@ export default async function Home({ searchParams }: { searchParams: Promise<any
             {/* Main Content */}
             <main className="max-w-7xl mx-auto px-4 py-16 grid grid-cols-1 lg:grid-cols-4 gap-12 pb-32 min-h-[1000px]">
                 <div className="lg:col-span-3">
-                    {!products || products.length === 0 ? (
+                    {/* Did you mean? / Fuzzy Match Notification */}
+                    {productsData.isFuzzyMatch && (
+                        <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-2xl flex items-center gap-3">
+                            <Search size={18} className="text-blue-500" />
+                            <p className="text-sm font-medium text-blue-800 dark:text-blue-300">
+                                No exact match for "<span className="font-bold">{params.search}</span>". Showing similar results:
+                            </p>
+                        </div>
+                    )}
+
+                    {!productsData.products || productsData.products.length === 0 ? (
                         <div className="text-center py-20 bg-slate-50/50 dark:bg-slate-900/50 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-800 flex flex-col items-center">
                             <div className="bg-white dark:bg-slate-800 w-24 h-24 rounded-full flex items-center justify-center mb-6 shadow-premium">
                                 <Search size={40} className="text-slate-200 dark:text-slate-600" />
                             </div>
                             <h3 className="text-2xl font-black text-slate-700 dark:text-slate-200 mb-2">No products found</h3>
-                            <p className="text-slate-400 font-medium mb-8 max-w-sm">We couldn't find any products matching your search criteria. Try a different term or add it yourself!</p>
+                            
+                            {productsData.suggestions && productsData.suggestions.length > 0 ? (
+                                <div className="mb-8">
+                                    <p className="text-slate-400 font-medium mb-3">Did you mean?</p>
+                                    <div className="flex flex-wrap justify-center gap-2">
+                                        {productsData.suggestions.map((s: string) => (
+                                            <Link key={s} href={`/?search=${encodeURIComponent(s)}`}>
+                                                <button className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold text-primary hover:bg-primary hover:text-white transition-all">
+                                                    {s}
+                                                </button>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </div>
+                            ) : (
+                                <p className="text-slate-400 font-medium mb-8 max-w-sm">We couldn't find any products matching your search criteria. Try a different term or add it yourself!</p>
+                            )}
+                            
                             <Link href="/add-product">
                                 <Button className="px-10 py-4 font-black text-xs tracking-[0.2em] uppercase shadow-glow rounded-2xl flex items-center gap-2">
                                     <Plus size={16} />

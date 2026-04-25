@@ -19,9 +19,14 @@ export async function POST(req: Request) {
 
         await connectDB();
 
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
+        const existingEmail = await User.findOne({ email });
+        if (existingEmail) {
             return NextResponse.json({ error: 'Email already in use.' }, { status: 400 });
+        }
+
+        const existingName = await User.findOne({ name: name.trim() });
+        if (existingName) {
+            return NextResponse.json({ error: 'This display name is already taken. Please choose another.' }, { status: 400 });
         }
 
         // Add regular user role

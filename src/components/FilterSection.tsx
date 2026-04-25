@@ -81,18 +81,19 @@ export function FilterSection({ stores, categories }: FilterSectionProps) {
     const activeStoreId = searchParams.get('storeId') || 'All';
 
     const normalizeCity = (city: string) => {
-        if (!city) return '';
-        const lower = city.toLowerCase();
+        if (!city) return 'Other';
+        const lower = city.toLowerCase().trim();
         if (lower === 'online') return 'Online';
-        if (lower.endsWith('oyo')) return 'Oyo';
-        if (lower.endsWith('lagos')) return 'Lagos';
+        
+        // Match Oyo or Lagos as part of the string
+        if (lower.includes('oyo') || lower.startsWith('iba')) return 'Oyo';
+        if (lower.includes('lagos') || lower.startsWith('ike') || lower.startsWith('lek')) return 'Lagos';
+        
         return city;
     };
 
     // Derive unique cities from stores list (excluding Online stores)
-    const cities = ['All', ...Array.from(new Set(
-        stores.map(s => normalizeCity(s.city)).filter(c => c && c !== 'Online')
-    )).sort()];
+    const cities = ['All', 'Oyo', 'Lagos'];
 
     // Filter stores to only show those in the selected city
     const filteredStores = activeCity === 'All'

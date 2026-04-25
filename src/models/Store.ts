@@ -22,8 +22,8 @@ export function normalizeCity(city: string): string {
     const trimmed = city.trim();
     const lower = trimmed.toLowerCase();
     if (lower === 'online') return trimmed;
-    if (lower.endsWith('oyo')) return 'Oyo';
-    if (lower.endsWith('lagos')) return 'Lagos';
+    if (lower.includes('oyo') || lower.startsWith('iba')) return 'Oyo';
+    if (lower.includes('lagos') || lower.startsWith('ike') || lower.startsWith('lek')) return 'Lagos';
     return trimmed;
 }
 
