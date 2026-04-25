@@ -122,7 +122,7 @@ export default function StalePricesPage() {
                     <div>
                         <h3 className="font-black text-amber-900 uppercase tracking-tightest mb-1">How it works</h3>
                         <p className="text-amber-800/80 text-sm font-medium">
-                            Prices in Ibadan change fast. Oil and Gas prices are tracked every 2 days, while others are tracked weekly. 
+                            Prices in Oyo and Lagos change fast. Oil and Gas prices are tracked every 2 days, while others are tracked weekly. 
                             Click on a product to suggest a new price and earn reputation points!
                         </p>
                     </div>

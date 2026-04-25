@@ -352,7 +352,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         "@type": "Product",
         "name": product.name,
         "image": product.imageUrl,
-        "description": `Check the latest price for ${product.name} in Ibadan.`,
+        "description": `Check the latest price for ${product.name} in Oyo and Lagos.`,
         "brand": {
             "@type": "Brand",
             "name": product.brand || "Generic"

@@ -180,7 +180,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<any
         "@type": "WebSite",
         "name": "TrackPricely",
         "url": "https://trackpricely.com",
-        "description": "Live price tracking for markets in Ibadan. Check prices before you buy anything.",
+        "description": "Live price tracking for markets in Oyo and Lagos. Check prices before you buy anything.",
     };
 
     return (
@@ -202,7 +202,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<any
                         Live Market Insights
                     </div>
                     <h1 className="text-4xl md:text-7xl font-black mb-6 tracking-tight text-slate-900 dark:text-white leading-[1] antialiased">
-                        Check prices before you <span className="text-primary italic">buy anything</span> in Ibadan
+                        Check prices before you <span className="text-primary italic">buy anything</span> in Oyo and Lagos
                     </h1>
                     <p className="text-slate-500 dark:text-slate-400 mb-8 text-lg md:text-xl font-medium max-w-2xl mx-auto px-4">
                         Prices change daily — check before you buy today. Join people tracking live prices in Bodija, Dugbe, and beyond.
