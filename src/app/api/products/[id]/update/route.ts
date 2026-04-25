@@ -174,6 +174,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             }
         }
 
+        product.reportCount = validReportCount;
+
+        const isExactMatch = parsedPrice.price === product.price;
         const isTrusted = user && (user.reputationLevel === 'Trusted Contributor' || user.reputationLevel === 'Elite Contributor');
 
         if (totalWeight >= rule.verificationThreshold || isExactMatch || isTrusted) {
