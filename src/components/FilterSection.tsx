@@ -29,6 +29,18 @@ export function FilterSection({ stores, categories }: FilterSectionProps) {
         setSearchTerm(searchParams.get('search') || '');
     }, [searchParams]);
 
+    // Live search debounce (Update results as you type)
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            const currentUrlSearch = searchParams.get('search') || '';
+            if (searchTerm !== currentUrlSearch) {
+                updateFilter('search', searchTerm);
+            }
+        }, 400); // 400ms delay for smooth typing
+
+        return () => clearTimeout(timeoutId);
+    }, [searchTerm]);
+
     const updateFilter = (key: string, value: string) => {
         const params = new URLSearchParams(searchParams.toString());
         if (value && value !== 'All') {
@@ -125,8 +137,9 @@ export function FilterSection({ stores, categories }: FilterSectionProps) {
                     </select>
                 </div>
 
-                <Button type="submit" className="w-full sm:w-auto px-10 py-4 shadow-glow font-black h-16 rounded-2xl text-base">
-                    Check Prices
+                <Button type="submit" className="w-full sm:w-auto px-10 py-4 shadow-glow font-black h-16 rounded-2xl text-base flex items-center gap-2 group">
+                    Search
+                    <span className="flex h-2 w-2 rounded-full bg-emerald-400 group-hover:animate-ping" />
                 </Button>
             </form>
 
