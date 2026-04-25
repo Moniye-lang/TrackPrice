@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import Product from '@/models/Product';
 import PriceUpdate from '@/models/PriceUpdate';
+import User from '@/models/User';
 import GamificationRule from '@/models/GamificationRule';
 import crypto from 'crypto';
 import { revalidateProducts, revalidateLeaderboard } from '@/lib/cache';
@@ -58,8 +59,17 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         await update.save();
 
         // Calculate total weight (Anonymous vouches count as 1, Trusted users count as instant)
-        const user = await getServerUser();
-        const isTrusted = user && (user.reputationLevel === 'Trusted Contributor' || user.reputationLevel === 'Elite Contributor');
+        const session = await getServerUser();
+        let isTrusted = false;
+        let displayName = 'Trusted Contributor';
+
+        if (session) {
+            const fullUser = await User.findById(session.id);
+            if (fullUser) {
+                isTrusted = fullUser.reputationLevel === 'Trusted Contributor' || fullUser.reputationLevel === 'Elite Contributor';
+                displayName = fullUser.name;
+            }
+        }
         
         const anonWeight = update.anonymousConfirmations.length;
         const threshold = 3; 
@@ -75,7 +85,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             product.price = update.price;
             if (update.maxPrice) product.maxPrice = update.maxPrice;
             product.lastUpdated = new Date();
-            product.lastUpdatedBy = isTrusted ? (user.name || 'Trusted Contributor') : 'Community Vouch';
+            product.lastUpdatedBy = isTrusted ? displayName : 'Community Vouch';
             
             await product.save();
             
