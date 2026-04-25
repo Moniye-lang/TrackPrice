@@ -6,6 +6,7 @@ import GamificationRule from '@/models/GamificationRule';
 import crypto from 'crypto';
 import { revalidateProducts, revalidateLeaderboard } from '@/lib/cache';
 import { cookies } from 'next/headers';
+import { getServerUser } from '@/lib/server-auth';
 
 function getIpHash(req: Request) {
     const forwarded = req.headers.get('x-forwarded-for');
@@ -56,15 +57,16 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         
         await update.save();
 
-        // Calculate total weight (Anonymous vouches count less or have a different threshold)
-        // For now, let's say 3 anonymous vouches = 1 point of weight, or just count them separately
-        const anonWeight = update.anonymousConfirmations.length;
+        // Calculate total weight (Anonymous vouches count as 1, Trusted users count as instant)
+        const user = await getServerUser();
+        const isTrusted = user && (user.reputationLevel === 'Trusted Contributor' || user.reputationLevel === 'Elite Contributor');
         
-        // Let's assume 3 anonymous vouches is enough to "verify" if the product is stale
+        const anonWeight = update.anonymousConfirmations.length;
         const threshold = 3; 
 
         let verified = false;
-        if (anonWeight >= threshold) {
+        if (anonWeight >= threshold || isTrusted) {
+            console.log('[Vouch] Verifying price via community or trusted user');
             product.priceHistory.push({ 
                 price: update.price, 
                 maxPrice: update.maxPrice, 
@@ -73,7 +75,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             product.price = update.price;
             if (update.maxPrice) product.maxPrice = update.maxPrice;
             product.lastUpdated = new Date();
-            product.lastUpdatedBy = 'Community Vouch';
+            product.lastUpdatedBy = isTrusted ? (user.name || 'Trusted Contributor') : 'Community Vouch';
             
             await product.save();
             

@@ -103,9 +103,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             }
         }
 
-        // 1. Spam Prevention & Daily Limits (Relaxed for testing)
+        // 1. Spam Prevention & Daily Limits (Reinstated for Launch)
         if (user) {
-            const relaxationPeriod = 10 * 1000;
+            const relaxationPeriod = 10 * 60 * 1000; // 10 minutes (Launch ready)
             const limitTime = new Date(Date.now() - relaxationPeriod);
             const existingUpdate = await PriceUpdate.findOne({
                 productId: product._id,
@@ -174,14 +174,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             }
         }
 
-        console.log('[Price Update] Calculated Weight:', { totalWeight, threshold: rule.verificationThreshold });
+        const isTrusted = user && (user.reputationLevel === 'Trusted Contributor' || user.reputationLevel === 'Elite Contributor');
 
-        product.reportCount = validReportCount;
-
-        const isExactMatch = parsedPrice.price === product.price;
-
-        if (totalWeight >= rule.verificationThreshold || isExactMatch) {
-            console.log('[Price Update] Threshold reached or exact match confirmed, updating product...');
+        if (totalWeight >= rule.verificationThreshold || isExactMatch || isTrusted) {
+            console.log('[Price Update] Verified via weight, exact match, or trusted status:', { totalWeight, isExactMatch, isTrusted });
 
             // Safeguard against division by zero or NaN
             const oldPrice = product.price || 1;
@@ -232,9 +228,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
                             updater.points += rule.pointsPerUpdate + streakBonus;
                             updater.rewardedUpdatesToday += 1;
 
-                            if (updater.points >= 50 && updater.reputationLevel === 'Beginner') {
+                            if (updater.points >= 250 && updater.reputationLevel === 'Beginner') {
                                 updater.reputationLevel = 'Trusted Contributor';
-                            } else if (updater.points >= 200 && updater.reputationLevel === 'Trusted Contributor') {
+                            } else if (updater.points >= 1000 && updater.reputationLevel === 'Trusted Contributor') {
                                 updater.reputationLevel = 'Elite Contributor';
                             }
                             await updater.save();
