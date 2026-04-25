@@ -58,6 +58,14 @@ const ProductSchema: Schema = new Schema(
     }
 );
 
+// Indexes for performance
+ProductSchema.index({ name: 'text', brand: 'text', variant: 'text', category: 'text' });
+ProductSchema.index({ status: 1, lastUpdated: -1 });
+ProductSchema.index({ isFeatured: 1 });
+ProductSchema.index({ category: 1 });
+ProductSchema.index({ storeId: 1 });
+ProductSchema.index({ lastUpdated: -1 });
+
 // Prevent model overwrite error in development
 const Product: Model<IProduct> = mongoose.models.Product || mongoose.model<IProduct>('Product', ProductSchema);
 

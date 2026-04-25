@@ -31,9 +31,14 @@ const fetchProducts = async (params: {
     if (search) {
         const words = search.trim().split(/\s+/).filter(Boolean);
         if (words.length > 0) {
-            // Every word must be present in the name (case-insensitive)
+            // For every word typed, it must match at least one of these fields
             const searchConditions = words.map(word => ({
-                name: { $regex: escapeRegex(word), $options: 'i' }
+                $or: [
+                    { name: { $regex: escapeRegex(word), $options: 'i' } },
+                    { brand: { $regex: escapeRegex(word), $options: 'i' } },
+                    { variant: { $regex: escapeRegex(word), $options: 'i' } },
+                    { category: { $regex: escapeRegex(word), $options: 'i' } },
+                ]
             }));
             conditions.push({ $and: searchConditions });
         }

@@ -20,7 +20,15 @@ export function Pagination({ currentPage, totalPages }: PaginationProps) {
         } else {
             params.delete('page');
         }
-        router.push(`?${params.toString()}`, { scroll: true });
+        router.push(`?${params.toString()}`, { scroll: false });
+        
+        // Custom scroll to the product list container
+        setTimeout(() => {
+            const element = document.getElementById('main-product-list');
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 100);
     };
 
     if (totalPages <= 1) return null;

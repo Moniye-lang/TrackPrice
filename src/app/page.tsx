@@ -301,7 +301,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<any
                             </Link>
                         </div>
                     ) : (
-                        <div className="space-y-12">
+                        <div id="main-product-list" className="space-y-12">
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                                 {products?.map((product: any, index: number) => (
                                     <ProductCard key={product._id} product={product} priority={index < 3} />
