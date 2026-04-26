@@ -94,7 +94,7 @@ export default function AdminLayout({
     }
 
     return (
-        <div className="min-h-screen bg-slate-950 flex overflow-hidden font-sans selection:bg-primary/30">
+        <div className="min-h-screen bg-slate-950 flex overflow-x-hidden font-sans selection:bg-primary/30 relative">
             {/* Mobile Header with Glassmorphism */}
             <div className="md:hidden fixed top-0 w-full z-40 bg-slate-950/80 backdrop-blur-xl border-b border-white/5 p-4 px-6 flex items-center justify-between shadow-sm">
                 <Link href="/management-gate/dashboard" className="text-xl font-black text-white tracking-tighter uppercase">
@@ -190,8 +190,8 @@ export default function AdminLayout({
             )}
 
             {/* Main Content Area */}
-            <main className="flex-1 flex flex-col h-screen overflow-hidden">
-                <div className="flex-1 overflow-y-auto pt-20 md:pt-0 p-4 md:p-10 bg-mesh selection:bg-primary/20">
+            <main className="flex-1 flex flex-col h-screen overflow-hidden min-w-0">
+                <div className="flex-1 overflow-y-auto overflow-x-hidden pt-20 md:pt-0 p-4 md:p-10 bg-mesh selection:bg-primary/20">
                     <div className="max-w-[1600px] mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
                         {children}
                     </div>

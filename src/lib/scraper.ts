@@ -2,6 +2,7 @@ export interface ExtractedProduct {
     name: string;
     price: number;
     imageUrl: string;
+    category?: string;
 }
 
 // -------------------------------------------------------
@@ -31,13 +32,14 @@ async function fetchAndExtract(url: string): Promise<ExtractedProduct[]> {
         return isNaN(val) || val <= 0 ? null : val;
     };
 
-    const add = (name: string, price: number, imageUrl?: string) => {
+    const add = (name: string, price: number, imageUrl?: string, category?: string) => {
         const key = name.toLowerCase().trim();
         if (name && name.length > 2 && !seen.has(key) && price > 0) {
             results.push({ 
                 name: name.replace(/\s+/g, ' ').trim(), 
                 price,
-                imageUrl: imageUrl || `https://placehold.co/600x400/png?text=${encodeURIComponent(name)}`
+                imageUrl: imageUrl || `https://placehold.co/600x400/png?text=${encodeURIComponent(name)}`,
+                category: category || 'Uncategorized'
             });
             seen.add(key);
         }
@@ -185,13 +187,14 @@ export async function scrapeProducts(url: string): Promise<ExtractedProduct[]> {
                 return isNaN(val) || val <= 0 ? null : val;
             };
 
-            const addProduct = (name: string, price: number, imageUrl?: string) => {
+            const addProduct = (name: string, price: number, imageUrl?: string, category?: string) => {
                 const key = name.toLowerCase().trim();
                 if (name && name.length > 2 && !processedNames.has(key) && price > 0) {
                     results.push({ 
                         name: name.replace(/\s+/g, ' ').trim(), 
                         price,
-                        imageUrl: imageUrl || `https://placehold.co/600x400/png?text=${encodeURIComponent(name)}`
+                        imageUrl: imageUrl || `https://placehold.co/600x400/png?text=${encodeURIComponent(name)}`,
+                        category: category || 'Uncategorized'
                     });
                     processedNames.add(key);
                 }
@@ -199,16 +202,18 @@ export async function scrapeProducts(url: string): Promise<ExtractedProduct[]> {
 
             // Jumia
             if (pageUrl.includes('jumia.com')) {
+                const breadcrumb = document.querySelector('.brdms, .breadcrumb, [class*="breadcrumb"]') as HTMLElement;
+                const pageCategory = breadcrumb?.innerText.split('>').pop()?.trim() || 'Uncategorized';
+
                 document.querySelectorAll('article.prd, div.prd, [class*="sku-"], [class*="productItem"]').forEach(card => {
                     const nameEl = card.querySelector('div.name, h3.name, a.core, [class*="name"], [class*="title"]') as HTMLElement | null;
                     const priceEl = card.querySelector('div.prc, span.prc, [class*="price"]') as HTMLElement | null;
                     const imgEl = card.querySelector('img.img, img[data-src], [class*="image"] img') as HTMLImageElement | null;
                     if (nameEl && priceEl) {
                         const price = parsePrice(priceEl.innerText);
-                        // Check multiple sources for lazy-loaded images (Jumia uses data-src or src)
                         let imageUrl = imgEl?.getAttribute('data-src') || imgEl?.src || '';
                         if (imageUrl.startsWith('data:image')) imageUrl = imgEl?.getAttribute('data-src') || '';
-                        if (price) addProduct(nameEl.innerText.trim(), price, imageUrl);
+                        if (price) addProduct(nameEl.innerText.trim(), price, imageUrl, pageCategory);
                     }
                 });
                 if (results.length > 0) return results;

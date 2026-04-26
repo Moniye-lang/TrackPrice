@@ -168,7 +168,7 @@ export default function AdminDashboard() {
                                         {i + 1}
                                     </div>
                                     <div>
-                                        <p className="font-black text-slate-800 text-xs uppercase tracking-tight">{user.name}</p>
+                                        <p className="font-black text-slate-800 text-xs uppercase tracking-tight truncate max-w-[120px]">{user.name}</p>
                                         <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mt-0.5">{user.reputationLevel}</p>
                                     </div>
                                 </div>

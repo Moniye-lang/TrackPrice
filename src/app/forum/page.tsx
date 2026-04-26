@@ -48,7 +48,8 @@ export default function ForumPage() {
     const [systemConfig, setSystemConfig] = useState<{ forumLocked: boolean, forumLockedMessage: string } | null>(null);
     
     // City Scoping State
-    const [cities, setCities] = useState<string[]>([]);
+    const [cities, setCities] = useState<{name: string, hasNew: boolean}[]>([]);
+    const [hasAnyNew, setHasAnyNew] = useState(false);
     const [selectedCity, setSelectedCity] = useState<string | null>(null);
 
     const fetchCities = async () => {
@@ -56,8 +57,8 @@ export default function ForumPage() {
             const res = await fetch('/api/cities');
             if (res.ok) {
                 const data = await res.json();
-                setCities(data);
-                // No longer defaulting to first city - will remain null (All Cities)
+                setCities(data.cities || []);
+                setHasAnyNew(data.hasAnyNew || false);
             }
         } catch (e) {
             console.error('Failed to fetch cities');
@@ -210,17 +211,36 @@ export default function ForumPage() {
                                  Select Forum
                             </span>
                             <div className="flex items-center gap-2">
-                            {['All Cities', ...cities].map((city) => (
+                            {/* All Cities Button */}
+                            <button
+                                onClick={() => setSelectedCity(null)}
+                                className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.15em] transition-all whitespace-nowrap relative ${
+                                    !selectedCity
+                                    ? 'bg-primary text-white shadow-glow-sm scale-105'
+                                    : 'bg-white text-slate-500 hover:bg-slate-50 border border-slate-100 shadow-sm'
+                                }`}
+                            >
+                                All Cities
+                                {hasAnyNew && (
+                                    <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-white animate-pulse" />
+                                )}
+                            </button>
+
+                            {/* Specific City Buttons */}
+                            {cities.map((city) => (
                                 <button
-                                    key={city}
-                                    onClick={() => setSelectedCity(city === 'All Cities' ? null : city)}
-                                    className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.15em] transition-all whitespace-nowrap ${
-                                        (selectedCity === city || (city === 'All Cities' && !selectedCity))
+                                    key={city.name}
+                                    onClick={() => setSelectedCity(city.name)}
+                                    className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.15em] transition-all whitespace-nowrap relative ${
+                                        selectedCity === city.name
                                         ? 'bg-primary text-white shadow-glow-sm scale-105'
                                         : 'bg-white text-slate-500 hover:bg-slate-50 border border-slate-100 shadow-sm'
                                     }`}
                                 >
-                                    {city}
+                                    {city.name}
+                                    {city.hasNew && (
+                                        <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-white animate-pulse" />
+                                    )}
                                 </button>
                             ))}
                             </div>

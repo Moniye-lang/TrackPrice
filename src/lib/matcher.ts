@@ -5,12 +5,13 @@ import connectDB from '@/lib/db';
 export interface MatchResult {
     name: string;
     price: number;
+    category?: string;
     matchedProductId: string | null;
     matchScore: number;
     matchedProductName?: string;
 }
 
-export async function matchScrapedProducts(scraped: { name: string, price: number }[], location?: string, marketCategory?: string): Promise<MatchResult[]> {
+export async function matchScrapedProducts(scraped: { name: string, price: number, category?: string }[], location?: string, marketCategory?: string): Promise<MatchResult[]> {
     await connectDB();
 
     // Fetch products to match against, filtering by location and category if provided
@@ -56,6 +57,7 @@ export async function matchScrapedProducts(scraped: { name: string, price: numbe
             results.push({
                 name: item.name,
                 price: item.price,
+                category: item.category,
                 matchedProductId: bestMatch.item._id!.toString(),
                 matchedProductName: bestMatch.item.name,
                 matchScore: bestMatch.score || 0,
@@ -64,6 +66,7 @@ export async function matchScrapedProducts(scraped: { name: string, price: numbe
             results.push({
                 name: item.name,
                 price: item.price,
+                category: item.category,
                 matchedProductId: null,
                 matchScore: 0,
             });

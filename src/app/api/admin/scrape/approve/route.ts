@@ -44,7 +44,7 @@ export async function POST(req: Request) {
                 await Product.create({
                     name: item.name,
                     price: item.price,
-                    category: 'Uncategorized',
+                    category: item.category || 'Uncategorized',
                     marketCategory: marketCategory || 'Physical',
                     imageUrl: item.imageUrl || `https://placehold.co/600x400?text=${encodeURIComponent(item.name)}`,
                     storeLocation: marketCategory === 'Online' ? undefined : (location || undefined),

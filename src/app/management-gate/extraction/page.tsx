@@ -256,6 +256,7 @@ export default function ExtractionPage() {
                                     <tr className="bg-slate-50/50">
                                         <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] w-20">Img</th>
                                         <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Product Name (Mutable)</th>
+                                        <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Category</th>
                                         <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Price (₦)</th>
                                         <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Match Logic</th>
                                         <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Status</th>
@@ -286,6 +287,15 @@ export default function ExtractionPage() {
                                                     onChange={e => handleUpdateResult(i, 'name', e.target.value)}
                                                     className="w-full bg-transparent border-none text-slate-900 font-black text-sm tracking-tight focus:ring-0 placeholder:text-slate-300"
                                                 />
+                                            </td>
+                                            <td className="px-8 py-6">
+                                                <div className="flex items-center gap-1.5 bg-slate-100/50 px-3 py-2 rounded-xl group-hover:bg-white transition-colors border border-transparent group-hover:border-slate-100">
+                                                    <input
+                                                        value={item.category || 'Uncategorized'}
+                                                        onChange={e => handleUpdateResult(i, 'category', e.target.value)}
+                                                        className="w-full bg-transparent border-none p-0 text-slate-600 font-bold text-xs focus:ring-0 uppercase tracking-widest"
+                                                    />
+                                                </div>
                                             </td>
                                             <td className="px-8 py-6">
                                                 <div className="flex items-center gap-1.5 bg-slate-100/50 px-3 py-2 rounded-xl group-hover:bg-white transition-colors border border-transparent group-hover:border-slate-100">
