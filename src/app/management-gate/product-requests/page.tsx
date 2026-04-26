@@ -170,7 +170,7 @@ export default function ProductRequestsAdmin() {
                                             <Button 
                                                 onClick={() => {
                                                     alert('Redirecting to registry creator...');
-                                                    window.location.href = `/admin/products?name=${encodeURIComponent(req.name)}&category=${encodeURIComponent(req.category)}&brand=${encodeURIComponent(req.brand || '')}`;
+                                                    window.location.href = `/management-gate/products?name=${encodeURIComponent(req.name)}&category=${encodeURIComponent(req.category)}&brand=${encodeURIComponent(req.brand || '')}`;
                                                 }}
                                                 className="w-full py-4 rounded-2xl bg-slate-900 text-white font-black uppercase tracking-widest shadow-glow flex items-center justify-center gap-3 transition-all active:scale-95 group/btn"
                                             >

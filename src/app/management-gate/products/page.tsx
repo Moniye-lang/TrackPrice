@@ -18,6 +18,7 @@ interface Product {
     lastUpdated: string;
     isFeatured?: boolean;
     status: 'pending' | 'approved' | 'rejected';
+    isUserAdded?: boolean;
 }
 
 import { 
@@ -430,6 +431,9 @@ export default function AdminProducts() {
                                                 {product.status === 'pending' && (
                                                     <span className="inline-block mt-1 bg-amber-100 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-widest">Pending Approval</span>
                                                 )}
+                                                {product.isUserAdded && (
+                                                    <span className="inline-block mt-1 ml-1 bg-indigo-100 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-widest">User Added Product</span>
+                                                )}
                                             </div>
                                             <button
                                                 onClick={async () => {
@@ -519,6 +523,9 @@ export default function AdminProducts() {
                                                         <div className="flex items-center gap-2">
                                                             <MapPin size={10} className="text-slate-300 dark:text-slate-600" />
                                                             <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{product.storeLocation || 'Unassigned Depot'}</p>
+                                                            {product.isUserAdded && (
+                                                                <span className="ml-2 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-500 dark:text-indigo-400 text-[7px] font-black px-2 py-0.5 rounded uppercase tracking-[0.1em] border border-indigo-100 dark:border-indigo-900/50">User Added</span>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 </div>

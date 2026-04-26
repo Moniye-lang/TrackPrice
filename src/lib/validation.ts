@@ -12,6 +12,8 @@ export const ProductSchema = z.object({
     storeId: z.string().optional(),
     storeLocation: z.string().optional(),
     isFeatured: z.boolean().optional(),
+    status: z.enum(['pending', 'approved', 'rejected']).optional(),
+    isUserAdded: z.boolean().optional(),
 });
 
 export const MessageSchema = z.object({

@@ -45,12 +45,12 @@ const fetchProducts = async (params: {
                         { name: { $regex: `\\s${escapeRegex(word)}`, $options: 'i' } }, // Start of word in name
                         { area: { $regex: `^${escapeRegex(word)}`, $options: 'i' } },
                         { city: { $regex: `^${escapeRegex(word)}`, $options: 'i' } },
-                        { city: { $in: possibleCities.map(c => new RegExp(`^${escapeRegex(c)}`, 'i')) } }
+                    { city: { $in: possibleCities.map((c: string) => new RegExp(`^${escapeRegex(c)}`, 'i')) } }
                     ]
                 };
             });
             const matchingStores = await Store.find({ $or: storeSearchConditions }).select('_id').lean();
-            matchingStoreIds = matchingStores.map(s => s._id);
+            matchingStoreIds = matchingStores.map((s: any) => s._id);
 
             // For every word typed, it must match at least one field (Name, Brand, Category, OR Location)
             const searchConditions = words.map((word: string) => ({
@@ -156,7 +156,7 @@ const fetchProducts = async (params: {
         const words = search.trim().split(/\s+/).filter(Boolean);
         if (words.length > 1) {
             // Try OR instead of AND
-            const fallbackQuery = { ...query, $or: words.map(word => ({
+            const fallbackQuery = { ...query, $or: words.map((word: string) => ({
                 $or: [
                     { name: { $regex: escapeRegex(word), $options: 'i' } },
                     { brand: { $regex: escapeRegex(word), $options: 'i' } },
@@ -178,7 +178,7 @@ const fetchProducts = async (params: {
         if (products.length === 0) {
             // Get some sample names for "Did you mean"
             const sampleProducts = await Product.find({ status: 'approved' }).select('name').limit(500).lean();
-            const names = Array.from(new Set(sampleProducts.map(p => p.name)));
+            const names = Array.from(new Set(sampleProducts.map((p: any) => p.name)));
             // Simple suggestion: find names that contain parts of the search
             suggestions = names.filter(name => 
                 words.some(word => name.toLowerCase().includes(word.toLowerCase()) || word.toLowerCase().includes(name.toLowerCase()))

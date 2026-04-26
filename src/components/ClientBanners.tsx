@@ -72,7 +72,7 @@ export function ClientBanners() {
                                 <span className="text-lg font-black text-primary">+20 <span className="text-[10px] font-bold text-slate-500 uppercase">pts</span></span>
                             </div>
                             <div>
-                                <p className="text-sm font-black text-white">Request a Product</p>
+                                <p className="text-sm font-black text-white">Add a Product</p>
                                 <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">Don't see an item listed? Request it and earn a bonus when it's added.</p>
                             </div>
                         </div>

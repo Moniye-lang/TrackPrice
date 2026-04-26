@@ -146,12 +146,12 @@ async function getProducts(params: any) {
                         { name: { $regex: `\\s${escapeRegex(word)}`, $options: 'i' } }, // Start of word in name
                         { area: { $regex: `^${escapeRegex(word)}`, $options: 'i' } },
                         { city: { $regex: `^${escapeRegex(word)}`, $options: 'i' } },
-                        { city: { $in: possibleCities.map(c => new RegExp(`^${escapeRegex(c)}`, 'i')) } }
+                        { city: { $in: possibleCities.map((c: string) => new RegExp(`^${escapeRegex(c)}`, 'i')) } }
                     ]
                 };
             });
             const matchingStores = await Store.find({ $or: storeSearchConditions }).select('_id').lean();
-            matchingStoreIds = matchingStores.map(s => s._id);
+            matchingStoreIds = matchingStores.map((s: any) => s._id);
 
             const searchConditions = words.map((word: string) => ({
                 $or: [
@@ -187,7 +187,7 @@ async function getProducts(params: any) {
     if (products.length === 0 && search) {
         const words = search.trim().split(/\s+/).filter(Boolean);
         if (words.length > 1) {
-            const fallbackQuery = { ...query, $and: [{ $or: words.map(word => ({
+            const fallbackQuery = { ...query, $and: [{ $or: words.map((word: string) => ({
                 $or: [
                     { name: { $regex: escapeRegex(word), $options: 'i' } },
                     { brand: { $regex: escapeRegex(word), $options: 'i' } },
@@ -208,7 +208,7 @@ async function getProducts(params: any) {
 
         if (products.length === 0) {
             const sampleProducts = await Product.find({ status: 'approved' }).select('name').limit(500).lean();
-            const names = Array.from(new Set(sampleProducts.map(p => p.name)));
+            const names = Array.from(new Set(sampleProducts.map((p: any) => p.name)));
             suggestions = names.filter(name => 
                 words.some(word => name.toLowerCase().includes(word.toLowerCase()) || word.toLowerCase().includes(name.toLowerCase()))
             ).slice(0, 5);
