@@ -70,7 +70,10 @@ export async function GET() {
         const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
         const totalUsers = await User.countDocuments();
+        const newUsersToday = await User.countDocuments({ createdAt: { $gte: twentyFourHoursAgo } });
         const newUsersThisWeek = await User.countDocuments({ createdAt: { $gte: sevenDaysAgo } });
+        const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        const newUsersThisMonth = await User.countDocuments({ createdAt: { $gte: thirtyDaysAgo } });
         
         const totalProducts = await Product.countDocuments();
         const newProductsToday = await Product.countDocuments({ createdAt: { $gte: twentyFourHoursAgo } });
@@ -87,7 +90,9 @@ export async function GET() {
             topContributors,
             stats: {
                 totalUsers,
+                newUsersToday,
                 newUsersThisWeek,
+                newUsersThisMonth,
                 totalProducts,
                 newProductsToday,
                 totalUpdates,

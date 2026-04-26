@@ -120,7 +120,33 @@ export default function AdminDashboard() {
 
             {/* Top Level Stats */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <StatCard title="Global Users" value={stats.stats.totalUsers} icon={Users} color="blue" trend={`+${stats.stats.newUsersThisWeek} this week`} />
+                <Card className="p-8 relative overflow-hidden group hover:scale-[1.02] transition-all duration-500 border-none shadow-premium bg-white lg:col-span-1">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-blue-500 opacity-50"></div>
+                    <div className="flex justify-between items-start relative z-10">
+                        <div>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Total Ecosystem Users</p>
+                            <h3 className="text-4xl font-black text-slate-800 tracking-tight">{stats.stats.totalUsers}</h3>
+                            <div className="mt-6 space-y-2">
+                                <div className="flex items-center justify-between gap-4">
+                                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Today</span>
+                                    <span className="text-[10px] font-black text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-lg">+{stats.stats.newUsersToday}</span>
+                                </div>
+                                <div className="flex items-center justify-between gap-4">
+                                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">This Week</span>
+                                    <span className="text-[10px] font-black text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-lg">+{stats.stats.newUsersThisWeek}</span>
+                                </div>
+                                <div className="flex items-center justify-between gap-4">
+                                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">This Month</span>
+                                    <span className="text-[10px] font-black text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-lg">+{stats.stats.newUsersThisMonth}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-500 shadow-sm">
+                            <Users size={24} />
+                        </div>
+                    </div>
+                </Card>
+
                 <StatCard title="Active Products" value={stats.stats.totalProducts} icon={Box} color="primary" trend={`+${stats.stats.newProductsToday} today`} />
                 <StatCard title="Price Updates" value={stats.stats.totalUpdates} icon={Activity} color="emerald" trend={`+${stats.stats.updatesToday} today`} />
                 <StatCard title="Queue Status" value={stats.stats.pendingUpdates} icon={ShieldCheck} color="amber" />

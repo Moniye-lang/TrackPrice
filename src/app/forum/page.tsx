@@ -69,7 +69,7 @@ export default function ForumPage() {
             const url = selectedCity && selectedCity !== 'All' 
                 ? `/api/messages?city=${selectedCity}` 
                 : '/api/messages';
-            const res = await fetch(url);
+            const res = await fetch(url, { cache: 'no-store' });
             const data = await res.json();
             if (Array.isArray(data)) {
                 setMessages(data);
