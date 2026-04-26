@@ -180,8 +180,8 @@ const fetchProducts = async (params: {
             const sampleProducts = await Product.find({ status: 'approved' }).select('name').limit(500).lean();
             const names = Array.from(new Set(sampleProducts.map((p: any) => p.name)));
             // Simple suggestion: find names that contain parts of the search
-            suggestions = names.filter(name => 
-                words.some(word => name.toLowerCase().includes(word.toLowerCase()) || word.toLowerCase().includes(name.toLowerCase()))
+            suggestions = names.filter((name: string) => 
+                words.some((word: string) => name.toLowerCase().includes(word.toLowerCase()) || word.toLowerCase().includes(name.toLowerCase()))
             ).slice(0, 5);
         }
     }
@@ -260,7 +260,7 @@ const fetchProducts = async (params: {
     });
 
     const finalProducts = sort === 'updated' 
-        ? productsWithCounts.filter(p => p.priceStatus !== 'stable')
+        ? productsWithCounts.filter((p: any) => p.priceStatus !== 'stable')
         : productsWithCounts;
 
     if (isPaginated) {

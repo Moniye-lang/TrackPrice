@@ -28,14 +28,14 @@ export async function POST() {
                 const store = stores.find(s => s._id.toString() === p.storeId?.toString());
                 if (store && (store.type as string) === 'Online') {
                     isOnline = true;
-                } else if (store && strictOnline.some(k => store.name.toLowerCase().includes(k))) {
+                } else if (store && strictOnline.some((k: string) => store.name.toLowerCase().includes(k))) {
                     isOnline = true;
                 }
             }
             
             // Check storeLocation string
             if (!isOnline && p.storeLocation) {
-                if (strictOnline.some(k => p.storeLocation!.toLowerCase().includes(k))) {
+                if (strictOnline.some((k: string) => p.storeLocation!.toLowerCase().includes(k))) {
                     isOnline = true;
                 }
             }
@@ -47,12 +47,12 @@ export async function POST() {
             let newCat = p.category;
             
             if (p.category === 'All' || p.category === 'Other' || !p.category) {
-                if (['iphone', 'samsung', 'laptop', 'tv', 'television', 'infinix', 'tecno', 'charger', 'usb'].some(k => nameLower.includes(k))) newCat = 'Electronics';
-                else if (['rice', 'beans', 'garri', 'yam', 'egg', 'bread', 'oil', 'chicken', 'beef', 'fish', 'tomato', 'pepper', 'onion'].some(k => nameLower.includes(k))) newCat = 'Groceries';
-                else if (['shirt', 'shoe', 'sneaker', 'dress', 'trouser', 'jeans', 'bag'].some(k => nameLower.includes(k))) newCat = 'Clothing';
-                else if (['petrol', 'diesel', 'gas', 'pms', 'ago', 'lpg'].some(k => nameLower.includes(k))) newCat = 'Oil and Gas';
-                else if (['book', 'pen', 'pencil', 'textbook', 'notebook'].some(k => nameLower.includes(k))) newCat = 'Books';
-                else if (['chair', 'table', 'bed', 'mattress', 'generator'].some(k => nameLower.includes(k))) newCat = 'Home';
+                if (['iphone', 'samsung', 'laptop', 'tv', 'television', 'infinix', 'tecno', 'charger', 'usb'].some((k: string) => nameLower.includes(k))) newCat = 'Electronics';
+                else if (['rice', 'beans', 'garri', 'yam', 'egg', 'bread', 'oil', 'chicken', 'beef', 'fish', 'tomato', 'pepper', 'onion'].some((k: string) => nameLower.includes(k))) newCat = 'Groceries';
+                else if (['shirt', 'shoe', 'sneaker', 'dress', 'trouser', 'jeans', 'bag'].some((k: string) => nameLower.includes(k))) newCat = 'Clothing';
+                else if (['petrol', 'diesel', 'gas', 'pms', 'ago', 'lpg'].some((k: string) => nameLower.includes(k))) newCat = 'Oil and Gas';
+                else if (['book', 'pen', 'pencil', 'textbook', 'notebook'].some((k: string) => nameLower.includes(k))) newCat = 'Books';
+                else if (['chair', 'table', 'bed', 'mattress', 'generator'].some((k: string) => nameLower.includes(k))) newCat = 'Home';
                 
                 if (newCat !== p.category) {
                     p.category = newCat;

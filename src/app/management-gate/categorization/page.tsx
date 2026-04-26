@@ -73,7 +73,7 @@ export default function CategorizationPage() {
                 body: JSON.stringify(updates),
             });
             if (res.ok) {
-                setProducts(products.map(p => p._id === id ? { ...p, ...updates } : p));
+                setProducts(products.map((p: Product) => p._id === id ? { ...p, ...updates } : p));
             }
         } catch (error) {
             console.error('Update failed');
@@ -81,7 +81,7 @@ export default function CategorizationPage() {
     };
 
     const handleBulkMarket = async (newMarket: 'Online' | 'Physical') => {
-        const filtered = filteredProducts.map(p => p._id);
+        const filtered = filteredProducts.map((p: Product) => p._id);
         if (filtered.length === 0) return;
         
         setSaving(true);
@@ -104,7 +104,7 @@ export default function CategorizationPage() {
         }
     };
 
-    const filteredProducts = products.filter(p => {
+    const filteredProducts = products.filter((p: Product) => {
         const matchesSearch = p.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
                              p.category?.toLowerCase().includes(searchTerm.toLowerCase());
         
@@ -135,12 +135,12 @@ export default function CategorizationPage() {
                                 {products.length}
                              </div>
                              <div className="w-8 h-8 rounded-full bg-primary border-2 border-white flex items-center justify-center text-[10px] font-black text-white">
-                                {products.filter(p => !p.marketCategory).length}
+                                {products.filter((p: Product) => !p.marketCategory).length}
                              </div>
                         </div>
                         <div className="pr-4 border-r border-slate-100 mr-2">
                             <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Uncategorized</p>
-                            <p className="text-xs font-bold text-slate-700">{products.filter(p => !p.marketCategory).length} Entities</p>
+                            <p className="text-xs font-bold text-slate-700">{products.filter((p: Product) => !p.marketCategory).length} Entities</p>
                         </div>
                         <Button onClick={fetchProducts} className="p-2 hover:bg-slate-50 rounded-xl bg-transparent text-slate-400">
                             <RefreshCw size={18} className={loading ? 'animate-spin text-primary' : 'text-slate-400'} />

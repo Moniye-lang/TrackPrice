@@ -69,7 +69,7 @@ export default function ExtractionPage() {
     };
 
     const setAllStatus = (status: 'approved' | 'rejected') => {
-        setResults(results.map(r => ({ ...r, status })));
+        setResults(results.map((r: any) => ({ ...r, status })));
     };
 
     const handleSubmit = async () => {
@@ -138,7 +138,7 @@ export default function ExtractionPage() {
                                     setUrl(val);
                                     // Auto-detect category
                                     const onlineDomains = ['jumia', 'konga', 'amazon', 'ebay', 'aliexpress', 'chowdeck', 'glovo'];
-                                    if (onlineDomains.some(d => val.toLowerCase().includes(d))) {
+                                    if (onlineDomains.some((d: string) => val.toLowerCase().includes(d))) {
                                         setMarketCategory('Online');
                                     } else if (val.length > 5) {
                                         setMarketCategory('Physical');

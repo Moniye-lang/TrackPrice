@@ -209,8 +209,8 @@ async function getProducts(params: any) {
         if (products.length === 0) {
             const sampleProducts = await Product.find({ status: 'approved' }).select('name').limit(500).lean();
             const names = Array.from(new Set(sampleProducts.map((p: any) => p.name)));
-            suggestions = names.filter(name => 
-                words.some(word => name.toLowerCase().includes(word.toLowerCase()) || word.toLowerCase().includes(name.toLowerCase()))
+            suggestions = names.filter((name: string) => 
+                words.some((word: string) => name.toLowerCase().includes(word.toLowerCase()) || word.toLowerCase().includes(name.toLowerCase()))
             ).slice(0, 5);
         }
     }
