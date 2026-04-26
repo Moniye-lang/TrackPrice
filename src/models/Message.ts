@@ -33,6 +33,9 @@ const MessageSchema: Schema = new Schema(
     }
 );
 
+MessageSchema.index({ createdAt: -1 });
+MessageSchema.index({ city: 1, createdAt: -1 });
+
 const Message: Model<IMessage> = mongoose.models.Message || mongoose.model<IMessage>('Message', MessageSchema);
 
 export default Message;

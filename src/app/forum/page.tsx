@@ -6,7 +6,7 @@ import { Navbar } from '@/components/Navbar';
 import { BackToTop } from '@/components/BackToTop';
 import { formatTimestamp } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
-import { Edit2, Trash2, Lock, AlertCircle, MoreHorizontal, Reply, Flag, X } from 'lucide-react';
+import { Edit2, Trash2, Lock, AlertCircle, MoreHorizontal, Reply, Flag, X, RefreshCw } from 'lucide-react';
 
 import { formatPriceRange } from '@/lib/price-utils';
 import { getAnonymousIdentity } from '@/lib/identity';
@@ -68,8 +68,8 @@ export default function ForumPage() {
     const fetchMessages = async () => {
         try {
             const url = selectedCity && selectedCity !== 'All' 
-                ? `/api/messages?city=${selectedCity}` 
-                : '/api/messages';
+                ? `/api/messages?city=${selectedCity}&t=${Date.now()}` 
+                : `/api/messages?t=${Date.now()}`;
             const res = await fetch(url, { cache: 'no-store' });
             const data = await res.json();
             if (Array.isArray(data)) {
@@ -210,6 +210,14 @@ export default function ForumPage() {
                             <span className="flex items-center gap-1.5 text-[10px] font-black text-slate-400 uppercase tracking-widest px-3 border-r border-slate-200 whitespace-nowrap">
                                  Select Forum
                             </span>
+                            <button 
+                                onClick={() => fetchMessages()}
+                                disabled={loading}
+                                className={`p-2 hover:bg-slate-50 text-slate-400 hover:text-primary transition-all active:scale-95 border-r border-slate-100 ${loading ? 'animate-spin' : ''}`}
+                                title="Refresh Feed"
+                            >
+                                <RefreshCw size={14} />
+                            </button>
                             <div className="flex items-center gap-2">
                             {/* All Cities Button */}
                             <button
@@ -279,6 +287,7 @@ export default function ForumPage() {
                                         "{systemConfig.forumLockedMessage}"
                                     </p>
                                 </div>
+
                             </div>
                         </Card>
                     ) : (
