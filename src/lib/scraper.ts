@@ -134,15 +134,27 @@ export async function scrapeProducts(url: string): Promise<ExtractedProduct[]> {
         const chromium = require('@sparticuz/chromium');
         const { chromium: coreChromium } = require('playwright-core');
         chromium.setGraphicsMode = false;
-        try {
-            browser = await coreChromium.launch({
-                args: chromium.args,
-                defaultViewport: chromium.defaultViewport,
-                executablePath: await chromium.executablePath(),
-                headless: chromium.headless,
-            });
-        } catch (err: any) {
-            throw new Error(`Cloud Browser Launch Failed: ${err.message}. Check @sparticuz/chromium compatibility.`);
+        
+        let retries = 3;
+        while (retries > 0) {
+            try {
+                const executablePath = await chromium.executablePath();
+                browser = await coreChromium.launch({
+                    args: chromium.args,
+                    defaultViewport: chromium.defaultViewport,
+                    executablePath,
+                    headless: chromium.headless,
+                });
+                break; // Success
+            } catch (err: any) {
+                retries--;
+                if (err.message.includes('ETXTBSY') && retries > 0) {
+                    console.warn(`ETXTBSY encountered. Retrying browser launch... (${retries} attempts left)`);
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                } else {
+                    throw new Error(`Cloud Browser Launch Failed: ${err.message}. Check @sparticuz/chromium compatibility.`);
+                }
+            }
         }
     }
 
