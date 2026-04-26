@@ -178,7 +178,7 @@ export async function scrapeProducts(url: string): Promise<ExtractedProduct[]> {
         }
 
         const products = await page.evaluate((pageUrl: string) => {
-            const results: { name: string, price: number, imageUrl: string }[] = [];
+            const results: { name: string, price: number, imageUrl: string, category?: string }[] = [];
             const processedNames = new Set<string>();
 
             const parsePrice = (text: string): number | null => {
