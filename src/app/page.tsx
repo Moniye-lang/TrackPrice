@@ -246,7 +246,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<any
     const { products, totalPages } = productsData;
     const currentPage = parseInt(page || '1', 10);
 
-    const categories = ['All', 'Groceries', 'Oil and Gas', 'Beverages', 'Home', 'Electronics', 'Clothing', 'Health & Beauty', 'Books', 'Building Materials'];
+    const categories = ['All', 'Fresh Food', 'Groceries', 'Oil and Gas', 'Beverages', 'Home', 'Electronics', 'Clothing', 'Health & Beauty', 'Books', 'Building Materials'];
 
     const jsonLd = {
         "@context": "https://schema.org",

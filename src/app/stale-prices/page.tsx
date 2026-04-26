@@ -51,7 +51,7 @@ export default function StalePricesPage() {
         fetchStaleProducts();
     };
 
-    const categories = ['All', 'Electronics', 'Clothing', 'Home', 'Groceries', 'Books', 'Oil and Gas'];
+    const categories = ['All', 'Fresh Food', 'Electronics', 'Clothing', 'Home', 'Groceries', 'Books', 'Oil and Gas'];
 
     return (
         <div className="min-h-screen bg-mesh selection:bg-primary/20">
