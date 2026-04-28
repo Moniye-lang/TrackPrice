@@ -23,12 +23,12 @@ import { escapeRegex } from '@/lib/utils';
 const getHomeData = unstable_cache(
     async () => {
         await connectDB();
-        
+
         const [featured, stale, recent, leaderboard, stats, stores] = await Promise.all([
             // Featured
-            Product.find({ 
-                isFeatured: true, 
-                $or: [{ status: 'approved' }, { status: { $exists: false } }] 
+            Product.find({
+                isFeatured: true,
+                $or: [{ status: 'approved' }, { status: { $exists: false } }]
             }).limit(4).populate('storeId').lean(),
             // Stale
             Product.find({
@@ -38,8 +38,8 @@ const getHomeData = unstable_cache(
                 ]
             }).limit(5).lean(),
             // Recent updates
-            Product.find({ 
-                $or: [{ status: 'approved' }, { status: { $exists: false } }] 
+            Product.find({
+                $or: [{ status: 'approved' }, { status: { $exists: false } }]
             }).sort({ lastUpdated: -1 }).limit(5).lean(),
             // Leaderboard
             User.find({ role: 'user', isBanned: false }).sort({ points: -1 }).limit(3).select('name points reputationLevel').lean(),
@@ -49,8 +49,8 @@ const getHomeData = unstable_cache(
                 today.setHours(0, 0, 0, 0);
                 const updatesToday = await PriceUpdate.countDocuments({ status: 'verified', updatedAt: { $gt: today } });
                 const marketsTracked = await Store.countDocuments({});
-                const latestUpdate = await Product.findOne({ 
-                    $or: [{ status: 'approved' }, { status: { $exists: false } }] 
+                const latestUpdate = await Product.findOne({
+                    $or: [{ status: 'approved' }, { status: { $exists: false } }]
                 }).sort({ lastUpdated: -1 }).select('lastUpdated');
                 const lastUpdateMins = latestUpdate ? Math.floor((Date.now() - latestUpdate.lastUpdated.getTime()) / 60000) : 0;
                 return { updatesToday, marketsTracked, lastUpdateMins };
@@ -75,7 +75,7 @@ const getHomeData = unstable_cache(
 async function getProducts(params: any) {
     await connectDB();
     const { search, category, marketCategory, storeId, city, sort, page = 1, limit = 12 } = params;
-    
+
     const conditions: any[] = [];
     if (search) {
         const words = search.trim().split(/\s+/).filter(Boolean);
@@ -91,7 +91,7 @@ async function getProducts(params: any) {
     }
     // Market Channel Filtering: Default to Physical if not specified
     const activeMarketCat = marketCategory || 'Physical';
-    
+
     if (activeMarketCat === 'Physical') {
         conditions.push({
             $or: [
@@ -103,7 +103,7 @@ async function getProducts(params: any) {
     } else if (activeMarketCat === 'Online') {
         conditions.push({ marketCategory: 'Online' });
     }
-    
+
     if (storeId && storeId !== 'All') {
         conditions.push({ storeId });
     } else if (city && city !== 'All') {
@@ -123,7 +123,7 @@ async function getProducts(params: any) {
     }
 
     // Always filter by status: 'approved' for home page
-    conditions.push({ 
+    conditions.push({
         $or: [
             { status: 'approved' },
             { status: { $exists: false } }
@@ -168,7 +168,7 @@ async function getProducts(params: any) {
     }
 
     const query = conditions.length > 0 ? { $and: conditions } : {};
-    
+
     let sortOption: any = {};
     if (sort === 'price_asc') sortOption.price = 1;
     else if (sort === 'price_desc') sortOption.price = -1;
@@ -187,17 +187,21 @@ async function getProducts(params: any) {
     if (products.length === 0 && search) {
         const words = search.trim().split(/\s+/).filter(Boolean);
         if (words.length > 1) {
-            const fallbackQuery = { ...query, $and: [{ $or: words.map((word: string) => ({
-                $or: [
-                    { name: { $regex: escapeRegex(word), $options: 'i' } },
-                    { brand: { $regex: escapeRegex(word), $options: 'i' } },
-                    { variant: { $regex: escapeRegex(word), $options: 'i' } },
-                    { category: { $regex: escapeRegex(word), $options: 'i' } },
-                    { storeLocation: { $regex: escapeRegex(word), $options: 'i' } },
-                    { storeId: { $in: matchingStoreIds } }
-                ]
-            })) }] };
-            
+            const fallbackQuery = {
+                ...query, $and: [{
+                    $or: words.map((word: string) => ({
+                        $or: [
+                            { name: { $regex: escapeRegex(word), $options: 'i' } },
+                            { brand: { $regex: escapeRegex(word), $options: 'i' } },
+                            { variant: { $regex: escapeRegex(word), $options: 'i' } },
+                            { category: { $regex: escapeRegex(word), $options: 'i' } },
+                            { storeLocation: { $regex: escapeRegex(word), $options: 'i' } },
+                            { storeId: { $in: matchingStoreIds } }
+                        ]
+                    }))
+                }]
+            };
+
             const fallbackResults = await Product.find(fallbackQuery).populate('storeId').sort(sortOption).limit(limit).lean();
             if (fallbackResults.length > 0) {
                 products = fallbackResults;
@@ -209,7 +213,7 @@ async function getProducts(params: any) {
         if (products.length === 0) {
             const sampleProducts = await Product.find({ status: 'approved' }).select('name').limit(500).lean();
             const names = Array.from(new Set(sampleProducts.map((p: any) => p.name)));
-            suggestions = names.filter((name: string) => 
+            suggestions = names.filter((name: string) =>
                 words.some((word: string) => name.toLowerCase().includes(word.toLowerCase()) || word.toLowerCase().includes(name.toLowerCase()))
             ).slice(0, 5);
         }
@@ -251,8 +255,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<any
     const locationLabel = selectedStore
         ? `${selectedStore.name} (${selectedStore.area})`
         : city && city !== 'All'
-        ? city
-        : null;
+            ? city
+            : null;
 
     // Build "check other locations" URL (same search, no storeId/city)
     const otherLocationsParams = new URLSearchParams();
@@ -361,10 +365,10 @@ export default async function Home({ searchParams }: { searchParams: Promise<any
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                         {featuredProducts.map((p: any, index: number) => (
-                            <ProductCard 
-                                key={p._id} 
-                                product={p} 
-                                priority={index < 4} 
+                            <ProductCard
+                                key={p._id}
+                                product={p}
+                                priority={index < 4}
                             />
                         ))}
                     </div>
@@ -377,9 +381,14 @@ export default async function Home({ searchParams }: { searchParams: Promise<any
                     {/* Did you mean? / Fuzzy Match Notification */}
                     {productsData.isFuzzyMatch && (
                         <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-2xl flex items-center gap-3">
-                            <Search size={18} className="text-blue-500" />
+                            <Search size={18} className="text-blue-500 flex-shrink-0" />
                             <p className="text-sm font-medium text-blue-800 dark:text-blue-300">
-                                No exact match for "<span className="font-bold">{params.search}</span>". Showing similar results:
+                                No exact match for{' '}
+                                <span className="font-black text-blue-900 dark:text-white">&ldquo;{params.search}&rdquo;</span>
+                                {locationLabel && (
+                                    <> in <span className="font-black text-primary">{locationLabel}</span></>
+                                )}
+                                . Showing similar results:
                             </p>
                         </div>
                     )}
@@ -468,7 +477,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<any
                                     <ProductCard key={product._id} product={product} priority={index < 3} />
                                 ))}
                             </div>
-                            
+
                             <Pagination currentPage={currentPage} totalPages={totalPages} />
                         </div>
                     )}
@@ -481,10 +490,10 @@ export default async function Home({ searchParams }: { searchParams: Promise<any
                         <div className="space-y-6">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                     <AlertCircle size={14} className="text-rose-500" />
-                                     <h3 className="text-xs font-black text-slate-800 uppercase tracking-[0.2em]">
+                                    <AlertCircle size={14} className="text-rose-500" />
+                                    <h3 className="text-xs font-black text-slate-800 uppercase tracking-[0.2em]">
                                         Needs Update
-                                     </h3>
+                                    </h3>
                                 </div>
                                 <Link href="/stale-prices" className="text-xs font-black text-primary hover:underline uppercase tracking-widest">
                                     View All
@@ -495,10 +504,10 @@ export default async function Home({ searchParams }: { searchParams: Promise<any
                                     <Link key={p._id} href={`/product/${p._id}`} className="flex items-center gap-4 group">
                                         <div className="w-12 h-12 rounded-2xl overflow-hidden bg-slate-50 flex-shrink-0 border border-slate-100 relative flex items-center justify-center font-bold text-slate-300">
                                             {p.imageUrl ? (
-                                                <Image 
-                                                    src={p.imageUrl} 
-                                                    alt={p.name} 
-                                                    fill 
+                                                <Image
+                                                    src={p.imageUrl}
+                                                    alt={p.name}
+                                                    fill
                                                     sizes="48px"
                                                     className="object-cover"
                                                 />
@@ -528,10 +537,10 @@ export default async function Home({ searchParams }: { searchParams: Promise<any
                             </h3>
                             <div className="space-y-5">
                                 {recentUpdates.map((p: any) => {
-                                    const priceStatus = p.priceHistory && p.priceHistory.length >= 2 
-                                        ? (p.price < p.priceHistory[p.priceHistory.length-2].price ? 'down' : 'up')
+                                    const priceStatus = p.priceHistory && p.priceHistory.length >= 2
+                                        ? (p.price < p.priceHistory[p.priceHistory.length - 2].price ? 'down' : 'up')
                                         : 'up';
-                                    
+
                                     return (
                                         <Link key={p._id} href={`/product/${p._id}`} className="flex items-start gap-4 group">
                                             <div className={`mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0 ${priceStatus === 'down' ? 'bg-rose-500' : 'bg-emerald-500 opacity-50'}`}></div>
