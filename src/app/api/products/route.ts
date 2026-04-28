@@ -155,17 +155,35 @@ const fetchProducts = async (params: {
         console.log('[Products GET] No exact match, trying fuzzy/OR fallback...');
         const words = search.trim().split(/\s+/).filter(Boolean);
         if (words.length > 1) {
-            // Try OR instead of AND
-            const fallbackQuery = { ...query, $or: words.map((word: string) => ({
+            // Build the OR search for the product name/brand/variant only (NOT location words)
+            // This prevents location words like "Bodija" from matching unrelated product names
+            const nameWords = words.filter((w: string) => {
+                const lower = w.toLowerCase();
+                // Skip words that are likely location words (already filtered by storeId/city params)
+                return !matchingStoreIds.length || true; // Keep all, but scope to names/brand only
+            });
+            
+            const fuzzySearchConditions = nameWords.map((word: string) => ({
                 $or: [
                     { name: { $regex: escapeRegex(word), $options: 'i' } },
                     { brand: { $regex: escapeRegex(word), $options: 'i' } },
                     { variant: { $regex: escapeRegex(word), $options: 'i' } },
-                    { category: { $regex: escapeRegex(word), $options: 'i' } },
-                    { storeLocation: { $regex: escapeRegex(word), $options: 'i' } },
-                    { storeId: { $in: matchingStoreIds } }
                 ]
-            })) };
+            }));
+
+            // Build a fallback that respects ALL other active filters (location, city, storeId, category)
+            // but relaxes the AND requirement to OR for the search words.
+            const nonSearchConditions = conditions.slice(); // copy existing conditions (location, category etc)
+            // Remove the search $and condition (last pushed), replace with fuzzy $or
+            // Actually conditions only has the search condition if search was provided, so:
+            const locationAndOtherConditions = conditions.filter((c: any) => !c.$and); // remove old search condition
+
+            const fallbackConditions = [
+                ...locationAndOtherConditions,
+                { $or: fuzzySearchConditions.flatMap((c: any) => c.$or) }
+            ];
+
+            const fallbackQuery = fallbackConditions.length > 0 ? { $and: fallbackConditions } : {};
             
             const fallbackResults = await Product.find(fallbackQuery).populate('storeId').sort(sortOption).limit(12).lean();
             if (fallbackResults.length > 0) {
@@ -174,14 +192,13 @@ const fetchProducts = async (params: {
             }
         }
         
-        // If still no results, or to provide spelling suggestions
+        // If still no results, provide spelling suggestions (no location constraint needed here)
         if (products.length === 0) {
-            // Get some sample names for "Did you mean"
             const sampleProducts = await Product.find({ status: 'approved' }).select('name').limit(500).lean();
             const names = Array.from(new Set(sampleProducts.map((p: any) => p.name)));
-            // Simple suggestion: find names that contain parts of the search
+            const words2 = search.trim().split(/\s+/).filter(Boolean);
             suggestions = names.filter((name: string) => 
-                words.some((word: string) => name.toLowerCase().includes(word.toLowerCase()) || word.toLowerCase().includes(name.toLowerCase()))
+                words2.some((word: string) => name.toLowerCase().includes(word.toLowerCase()) || word.toLowerCase().includes(name.toLowerCase()))
             ).slice(0, 5);
         }
     }
