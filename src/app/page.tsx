@@ -380,13 +380,22 @@ export default async function Home({ searchParams }: { searchParams: Promise<any
                                 <div className="mb-8">
                                     <p className="text-slate-400 font-medium mb-3">Did you mean?</p>
                                     <div className="flex flex-wrap justify-center gap-2">
-                                        {productsData.suggestions.map((s: string) => (
-                                            <Link key={s} href={`/?search=${encodeURIComponent(s)}`}>
-                                                <button className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold text-primary hover:bg-primary hover:text-white transition-all">
-                                                    {s}
-                                                </button>
-                                            </Link>
-                                        ))}
+                                        {productsData.suggestions.map((s: string) => {
+                                            // Build query string preserving all active filters except search
+                                            const suggestionParams = new URLSearchParams();
+                                            suggestionParams.set('search', s);
+                                            if (params.storeId && params.storeId !== 'All') suggestionParams.set('storeId', params.storeId);
+                                            if (params.city && params.city !== 'All') suggestionParams.set('city', params.city);
+                                            if (params.category && params.category !== 'All') suggestionParams.set('category', params.category);
+                                            if (params.marketCategory) suggestionParams.set('marketCategory', params.marketCategory);
+                                            return (
+                                                <Link key={s} href={`/?${suggestionParams.toString()}`}>
+                                                    <button className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold text-primary hover:bg-primary hover:text-white transition-all">
+                                                        {s}
+                                                    </button>
+                                                </Link>
+                                            );
+                                        })}
                                     </div>
                                 </div>
                             ) : (
