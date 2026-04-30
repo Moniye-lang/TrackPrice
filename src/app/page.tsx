@@ -250,21 +250,6 @@ export default async function Home({ searchParams }: { searchParams: Promise<any
     const { products, totalPages } = productsData;
     const currentPage = parseInt(page || '1', 10);
 
-    // Resolve the human-readable location name for the no-results message
-    const selectedStore = storeId ? stores.find((s: any) => s._id === storeId) : null;
-    const locationLabel = selectedStore
-        ? `${selectedStore.name} (${selectedStore.area})`
-        : city && city !== 'All'
-            ? city
-            : null;
-
-    // Build "check other locations" URL (same search, no storeId/city)
-    const otherLocationsParams = new URLSearchParams();
-    if (search) otherLocationsParams.set('search', search);
-    if (category && category !== 'All') otherLocationsParams.set('category', category);
-    if (marketCategory) otherLocationsParams.set('marketCategory', marketCategory);
-    const otherLocationsUrl = `/?${otherLocationsParams.toString()}`;
-
     const categories = ['All', 'Fresh Food', 'Groceries', 'Oil and Gas', 'Beverages', 'Home', 'Electronics', 'Clothing', 'Health & Beauty', 'Books', 'Building Materials'];
 
     const jsonLd = {
@@ -381,94 +366,52 @@ export default async function Home({ searchParams }: { searchParams: Promise<any
                     {/* Did you mean? / Fuzzy Match Notification */}
                     {productsData.isFuzzyMatch && (
                         <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-2xl flex items-center gap-3">
-                            <Search size={18} className="text-blue-500 flex-shrink-0" />
+                            <Search size={18} className="text-blue-500" />
                             <p className="text-sm font-medium text-blue-800 dark:text-blue-300">
-                                No exact match for{' '}
-                                <span className="font-black text-blue-900 dark:text-white">&ldquo;{params.search}&rdquo;</span>
-                                {locationLabel && (
-                                    <> in <span className="font-black text-primary">{locationLabel}</span></>
-                                )}
-                                . Showing similar results:
+                                No exact match for "<span className="font-bold">{params.search}</span>". Showing similar results:
                             </p>
                         </div>
                     )}
 
                     {!productsData.products || productsData.products.length === 0 ? (
-                        <div className="text-center py-20 bg-slate-50/50 dark:bg-slate-900/50 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-800 flex flex-col items-center px-6">
+                        <div className="text-center py-20 bg-slate-50/50 dark:bg-slate-900/50 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-800 flex flex-col items-center">
                             <div className="bg-white dark:bg-slate-800 w-24 h-24 rounded-full flex items-center justify-center mb-6 shadow-premium">
                                 <Search size={40} className="text-slate-200 dark:text-slate-600" />
                             </div>
+                            <h3 className="text-2xl font-black text-slate-700 dark:text-slate-200 mb-2">No products found</h3>
 
-                            {search ? (
-                                <>
-                                    <h3 className="text-2xl font-black text-slate-700 dark:text-slate-200 mb-2">
-                                        No exact match found
-                                    </h3>
-                                    <p className="text-slate-500 dark:text-slate-400 font-medium mb-6 max-w-md">
-                                        We couldn&apos;t find{' '}
-                                        <span className="font-black text-slate-800 dark:text-white">&ldquo;{search}&rdquo;</span>
-                                        {locationLabel && (
-                                            <> at <span className="font-black text-primary">{locationLabel}</span></>
-                                        )}
-                                    </p>
-
-                                    {/* Check Other Locations button — only show if a location was selected */}
-                                    {locationLabel && (
-                                        <Link href={otherLocationsUrl} className="mb-8">
-                                            <button className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-black text-slate-700 dark:text-slate-200 hover:border-primary hover:text-primary transition-all">
-                                                <Globe size={16} />
-                                                Check Other Locations
-                                            </button>
-                                        </Link>
-                                    )}
-
-                                    {/* Did you mean? suggestions */}
-                                    {productsData.suggestions && productsData.suggestions.length > 0 && (
-                                        <div className="mb-8">
-                                            <p className="text-slate-400 font-medium mb-3 text-sm">Did you mean?</p>
-                                            <div className="flex flex-wrap justify-center gap-2">
-                                                {productsData.suggestions.map((s: string) => {
-                                                    const suggestionParams = new URLSearchParams();
-                                                    suggestionParams.set('search', s);
-                                                    if (params.storeId && params.storeId !== 'All') suggestionParams.set('storeId', params.storeId);
-                                                    if (params.city && params.city !== 'All') suggestionParams.set('city', params.city);
-                                                    if (params.category && params.category !== 'All') suggestionParams.set('category', params.category);
-                                                    if (params.marketCategory) suggestionParams.set('marketCategory', params.marketCategory);
-                                                    return (
-                                                        <Link key={s} href={`/?${suggestionParams.toString()}`}>
-                                                            <button className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold text-primary hover:bg-primary hover:text-white transition-all">
-                                                                {s}
-                                                            </button>
-                                                        </Link>
-                                                    );
-                                                })}
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {/* Divider */}
-                                    <div className="w-full max-w-xs h-px bg-slate-200 dark:bg-slate-700 my-4" />
-
-                                    <p className="text-slate-400 text-sm font-medium mb-4">Don&apos;t see it anywhere? Be the first to add it!</p>
-                                    <Link href={`/add-product?name=${encodeURIComponent(search)}${locationLabel ? `&location=${encodeURIComponent(locationLabel)}` : ''}`}>
-                                        <Button className="px-10 py-4 font-black text-xs tracking-[0.2em] uppercase shadow-glow rounded-2xl flex items-center gap-2">
-                                            <Plus size={16} />
-                                            Add &ldquo;{search}&rdquo; to Market
-                                        </Button>
-                                    </Link>
-                                </>
+                            {productsData.suggestions && productsData.suggestions.length > 0 ? (
+                                <div className="mb-8">
+                                    <p className="text-slate-400 font-medium mb-3">Did you mean?</p>
+                                    <div className="flex flex-wrap justify-center gap-2">
+                                        {productsData.suggestions.map((s: string) => {
+                                            // Build query string preserving all active filters except search
+                                            const suggestionParams = new URLSearchParams();
+                                            suggestionParams.set('search', s);
+                                            if (params.storeId && params.storeId !== 'All') suggestionParams.set('storeId', params.storeId);
+                                            if (params.city && params.city !== 'All') suggestionParams.set('city', params.city);
+                                            if (params.category && params.category !== 'All') suggestionParams.set('category', params.category);
+                                            if (params.marketCategory) suggestionParams.set('marketCategory', params.marketCategory);
+                                            return (
+                                                <Link key={s} href={`/?${suggestionParams.toString()}`}>
+                                                    <button className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold text-primary hover:bg-primary hover:text-white transition-all">
+                                                        {s}
+                                                    </button>
+                                                </Link>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
                             ) : (
-                                <>
-                                    <h3 className="text-2xl font-black text-slate-700 dark:text-slate-200 mb-2">No products found</h3>
-                                    <p className="text-slate-400 font-medium mb-8 max-w-sm">Try a different filter or add a product yourself!</p>
-                                    <Link href="/add-product">
-                                        <Button className="px-10 py-4 font-black text-xs tracking-[0.2em] uppercase shadow-glow rounded-2xl flex items-center gap-2">
-                                            <Plus size={16} />
-                                            Add Missing Product
-                                        </Button>
-                                    </Link>
-                                </>
+                                <p className="text-slate-400 font-medium mb-8 max-w-sm">We couldn't find any products matching your search criteria. Try a different term or add it yourself!</p>
                             )}
+
+                            <Link href="/add-product">
+                                <Button className="px-10 py-4 font-black text-xs tracking-[0.2em] uppercase shadow-glow rounded-2xl flex items-center gap-2">
+                                    <Plus size={16} />
+                                    Add Missing Product
+                                </Button>
+                            </Link>
                         </div>
                     ) : (
                         <div id="main-product-list" className="space-y-12">

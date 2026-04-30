@@ -69,6 +69,10 @@ export default function AdminProducts() {
     const [submitting, setSubmitting] = useState(false);
     const [autoImageLoading, setAutoImageLoading] = useState(false);
     const [cleaningDuplicates, setCleaningDuplicates] = useState(false);
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
+    const [batchUpdating, setBatchUpdating] = useState(false);
+    const [showBatchMove, setShowBatchMove] = useState(false);
+    const [batchLocation, setBatchLocation] = useState('');
 
     const products = Array.isArray(productsData) ? productsData : (productsData?.products || []);
     const totalPages = productsData?.totalPages || 1;
@@ -244,6 +248,50 @@ export default function AdminProducts() {
         }
     };
 
+    const handleBatchUpdate = async () => {
+        if (!batchLocation) {
+            alert('Please specify a location');
+            return;
+        }
+        if (!confirm(`Update ${selectedIds.length} products to "${batchLocation}"?`)) return;
+        
+        setBatchUpdating(true);
+        try {
+            const res = await fetch('/api/admin/products/batch-update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ productIds: selectedIds, storeLocation: batchLocation }),
+            });
+            const data = await res.json();
+            if (res.ok) {
+                alert(data.message);
+                setSelectedIds([]);
+                setShowBatchMove(false);
+                refetch();
+            } else {
+                alert(data.error || 'Batch update failed');
+            }
+        } catch (error) {
+            console.error('Batch update failed');
+        } finally {
+            setBatchUpdating(false);
+        }
+    };
+
+    const toggleSelect = (id: string) => {
+        setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+    };
+
+    const selectAllOnPage = () => {
+        const pageIds = products.map((p: Product) => p._id);
+        const allSelected = pageIds.every((id: string) => selectedIds.includes(id));
+        if (allSelected) {
+            setSelectedIds(prev => prev.filter(id => !pageIds.includes(id)));
+        } else {
+            setSelectedIds(prev => [...new Set([...prev, ...pageIds])]);
+        }
+    };
+
     const handleDelete = async (id: string) => {
         if (!confirm('Are you sure you want to delete this product?')) return;
         try {
@@ -305,6 +353,67 @@ export default function AdminProducts() {
                     </Button>
                 </div>
             </div>
+
+            {/* Batch Action Bar */}
+            {selectedIds.length > 0 && (
+                <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[70] w-[90%] max-w-4xl">
+                    <Card className="bg-slate-900 text-white p-4 md:p-6 rounded-[2rem] shadow-premium-lg border-none flex flex-col md:flex-row items-center justify-between gap-4 animate-in slide-in-from-bottom-10 duration-500">
+                        <div className="flex items-center gap-4">
+                            <div className="bg-primary/20 text-primary p-3 rounded-2xl">
+                                <Box size={24} />
+                            </div>
+                            <div>
+                                <p className="text-sm font-black tracking-tight">{selectedIds.length} Products Selected</p>
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Perform batch operations</p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-3 w-full md:w-auto">
+                            <Button 
+                                onClick={() => setSelectedIds([])}
+                                variant="secondary"
+                                className="flex-1 md:flex-none bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest"
+                            >
+                                Deselect
+                            </Button>
+                            <Button 
+                                onClick={() => setShowBatchMove(true)}
+                                className="flex-1 md:flex-none bg-primary hover:bg-primary/90 text-white shadow-glow px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2"
+                            >
+                                <MapPin size={16} />
+                                Move to Location
+                            </Button>
+                        </div>
+                    </Card>
+                </div>
+            )}
+
+            {showBatchMove && (
+                <div className="fixed inset-0 z-[80] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-md" onClick={() => setShowBatchMove(false)} />
+                    <Card className="max-w-md w-full p-8 relative z-10 animate-in zoom-in-95 duration-300 border-none shadow-premium-lg rounded-[2.5rem] bg-white dark:bg-slate-900">
+                        <h2 className="text-2xl font-black text-slate-900 mb-2">Batch Move</h2>
+                        <p className="text-slate-400 text-sm font-bold mb-8">Set a new location for {selectedIds.length} products.</p>
+                        
+                        <div className="space-y-6">
+                            <div>
+                                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 px-1">Target Store / Market</label>
+                                <Input 
+                                    value={batchLocation} 
+                                    onChange={(e) => setBatchLocation(e.target.value)}
+                                    placeholder="e.g. Bodija Market, Ibadan"
+                                    className="rounded-2xl py-4"
+                                />
+                            </div>
+                            <div className="flex gap-3 pt-4">
+                                <Button onClick={() => setShowBatchMove(false)} variant="secondary" className="flex-1 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest">Cancel</Button>
+                                <Button onClick={handleBatchUpdate} disabled={batchUpdating} className="flex-1 py-4 rounded-2xl bg-primary text-white font-black text-[10px] uppercase tracking-widest shadow-glow">
+                                    {batchUpdating ? 'Updating...' : 'Commit Batch'}
+                                </Button>
+                            </div>
+                        </div>
+                    </Card>
+                </div>
+            )}
 
             {/* Filter Section */}
             <div className="relative group w-full lg:max-w-xl">
@@ -419,9 +528,17 @@ export default function AdminProducts() {
                     {/* Mobile View: Cards */}
                     <div className="grid grid-cols-1 gap-4 md:hidden">
                         {products.map((product: Product) => (
-                            <Card key={product._id} className="p-5 border-none shadow-premium bg-white dark:bg-slate-900 rounded-3xl group relative">
+                            <Card key={product._id} className={`p-5 border-none shadow-premium bg-white dark:bg-slate-900 rounded-3xl group relative transition-all ${selectedIds.includes(product._id) ? 'ring-2 ring-primary ring-offset-2' : ''}`}>
+                                <div className="absolute top-4 left-4 z-10">
+                                    <input 
+                                        type="checkbox" 
+                                        checked={selectedIds.includes(product._id)}
+                                        onChange={() => toggleSelect(product._id)}
+                                        className="w-5 h-5 rounded-lg border-2 border-slate-200 checked:bg-primary transition-all cursor-pointer"
+                                    />
+                                </div>
                                 <div className="flex gap-4">
-                                    <div className="w-20 h-20 rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 flex-shrink-0 shadow-sm relative flex items-center justify-center">
+                                    <div className="w-20 h-20 rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 flex-shrink-0 shadow-sm relative flex items-center justify-center ml-8">
                                         <SafeProductImg imageUrl={product.imageUrl} name={product.name} sizes="80px" />
                                     </div>
                                     <div className="flex-1 min-w-0">
@@ -503,7 +620,15 @@ export default function AdminProducts() {
                             <table className="w-full text-left">
                                 <thead className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-50 dark:border-slate-800">
                                     <tr>
-                                        <th className="py-6 px-8 text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">Product Blueprint</th>
+                                        <th className="py-6 px-8 w-10">
+                                            <input 
+                                                type="checkbox" 
+                                                checked={products.length > 0 && products.every((p: Product) => selectedIds.includes(p._id))}
+                                                onChange={selectAllOnPage}
+                                                className="w-5 h-5 rounded-lg border-2 border-slate-200 checked:bg-primary transition-all cursor-pointer"
+                                            />
+                                        </th>
+                                        <th className="py-6 px-4 text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">Product Blueprint</th>
                                         <th className="py-6 px-8 text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">Taxonomy</th>
                                         <th className="py-6 px-8 text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">Market Value</th>
                                         <th className="py-6 px-8 text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] text-center">Status</th>
@@ -512,8 +637,16 @@ export default function AdminProducts() {
                                 </thead>
                                 <tbody>
                                     {products.map((product: Product) => (
-                                        <tr key={product._id} className="border-b border-slate-50 dark:border-slate-800 group hover:bg-slate-50/30 dark:hover:bg-slate-800/30 transition-all">
+                                        <tr key={product._id} className={`border-b border-slate-50 dark:border-slate-800 group hover:bg-slate-50/30 dark:hover:bg-slate-800/30 transition-all ${selectedIds.includes(product._id) ? 'bg-primary/5' : ''}`}>
                                             <td className="py-6 px-8">
+                                                <input 
+                                                    type="checkbox" 
+                                                    checked={selectedIds.includes(product._id)}
+                                                    onChange={() => toggleSelect(product._id)}
+                                                    className="w-5 h-5 rounded-lg border-2 border-slate-200 checked:bg-primary transition-all cursor-pointer"
+                                                />
+                                            </td>
+                                            <td className="py-6 px-4">
                                                 <div className="flex items-center gap-6">
                                                     <div className="w-16 h-16 rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 flex-shrink-0 shadow-sm relative flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
                                                         <SafeProductImg imageUrl={product.imageUrl} name={product.name} sizes="64px" />
