@@ -27,9 +27,21 @@ async function fetchAndExtract(url: string): Promise<ExtractedProduct[]> {
     const seen = new Set<string>();
 
     const parsePrice = (text: string): number | null => {
-        const clean = text.replace(/[^\d.]/g, '');
-        const val = parseFloat(clean);
-        return isNaN(val) || val <= 0 ? null : val;
+        // Priority 1: Find the number immediately following a currency symbol
+        const currencyMatch = text.match(/[₦$£€]\s?([\d,]+(\.\d+)?)/);
+        if (currencyMatch) {
+            return parseFloat(currencyMatch[1].replace(/,/g, ''));
+        }
+
+        // Priority 2: Extract the last valid number in the string (often the price)
+        const allNumbers = text.match(/[\d,]+(\.\d+)?/g);
+        if (allNumbers && allNumbers.length > 0) {
+            const lastNum = allNumbers[allNumbers.length - 1].replace(/,/g, '');
+            const val = parseFloat(lastNum);
+            if (!isNaN(val) && val > 0) return val;
+        }
+
+        return null;
     };
 
     const add = (name: string, price: number, imageUrl?: string, category?: string) => {
@@ -194,9 +206,21 @@ export async function scrapeProducts(url: string): Promise<ExtractedProduct[]> {
             const processedNames = new Set<string>();
 
             const parsePrice = (text: string): number | null => {
-                const cleanText = text.replace(/[^\d.]/g, '');
-                const val = parseFloat(cleanText);
-                return isNaN(val) || val <= 0 ? null : val;
+                // Priority 1: Find the number immediately following a currency symbol
+                const currencyMatch = text.match(/[₦$£€]\s?([\d,]+(\.\d+)?)/);
+                if (currencyMatch) {
+                    return parseFloat(currencyMatch[1].replace(/,/g, ''));
+                }
+
+                // Priority 2: Extract the last valid number in the string (often the price)
+                const allNumbers = text.match(/[\d,]+(\.\d+)?/g);
+                if (allNumbers && allNumbers.length > 0) {
+                    const lastNum = allNumbers[allNumbers.length - 1].replace(/,/g, '');
+                    const val = parseFloat(lastNum);
+                    if (!isNaN(val) && val > 0) return val;
+                }
+
+                return null;
             };
 
             const addProduct = (name: string, price: number, imageUrl?: string, category?: string) => {
@@ -250,11 +274,14 @@ export async function scrapeProducts(url: string): Promise<ExtractedProduct[]> {
                 let currentCategory = 'Uncategorized';
                 
                 // Target all elements that look like a product container
-                document.querySelectorAll('div, span, article').forEach(card => {
-                    // Skip if the element is too large or too small
-                    if (card.children.length < 2 || card.clientHeight > 1000) return;
+                // We use a more specific set of selectors to avoid matching the whole page
+                document.querySelectorAll('div[role="tabpanel"] span, div[role="tabpanel"] div, article').forEach(card => {
+                    // Skip if the element is a container for other potential products
+                    if (card.querySelectorAll('span, p, h3').length > 15) return;
+                    
+                    // Small elements are usually children of the actual card
+                    if (card.clientHeight < 50 || card.clientWidth < 50) return;
 
-                    // Look for price first (mandatory)
                     const priceText = (card as HTMLElement).innerText;
                     if (!priceText.includes('₦')) return;
                     
@@ -262,24 +289,24 @@ export async function scrapeProducts(url: string): Promise<ExtractedProduct[]> {
                     if (priceText.toLowerCase().includes('out of stock')) return;
 
                     // Find product name: usually a heading or bold text
-                    const nameEl = card.querySelector('h1, h2, h3, h4, h5, p, span, strong') as HTMLElement | null;
-                    const priceEl = Array.from(card.querySelectorAll('p, span')).find(el => el.textContent?.includes('₦')) as HTMLElement | null;
+                    const nameEl = card.querySelector('h1, h2, h3, h4, h5, strong, p[class*="font-bold"]') as HTMLElement | null;
+                    const priceEl = Array.from(card.querySelectorAll('p, span, div')).find(el => el.textContent?.includes('₦')) as HTMLElement | null;
                     const imgEl = card.querySelector('img') as HTMLImageElement | null;
 
                     if (nameEl && priceEl) {
                         const name = nameEl.innerText.trim();
-                        // Ignore the store title (usually "New Road Local Market")
+                        // Ignore the store title and very short names
                         if (name.toLowerCase().includes('market') && name.length > 15) return;
+                        if (name.length < 3) return;
                         
                         const price = parsePrice(priceEl.innerText);
+                        if (!price) return;
+
                         let imageUrl = imgEl?.getAttribute('data-src') || imgEl?.src || '';
-                        
-                        // Ignore placeholder data-urls
                         if (imageUrl.startsWith('data:image')) imageUrl = '';
 
-                        if (price && name && name.length > 2) {
-                            addProduct(name, price, imageUrl, currentCategory);
-                        }
+                        // Only add if we haven't seen this exact name/price combo or if this name is shorter (cleaner)
+                        addProduct(name, price, imageUrl, currentCategory);
                     }
                 });
                 
