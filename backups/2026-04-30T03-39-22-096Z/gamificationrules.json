@@ -1,0 +1,14 @@
+[
+  {
+    "_id": "69b735756ba84d111e4f434f",
+    "pointsPerUpdate": 5,
+    "bonusPointsRequest": 10,
+    "dailyUpdateLimit": 25,
+    "verificationThreshold": 2,
+    "createdAt": "2026-03-15T22:40:53.078Z",
+    "updatedAt": "2026-04-19T13:56:27.520Z",
+    "__v": 0,
+    "forumLocked": false,
+    "forumLockedMessage": "The forum is currently undergoing maintenance. Please check back later."
+  }
+]

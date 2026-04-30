@@ -1,0 +1,32 @@
+[
+  {
+    "productId": "69e4e96eab7b473fe735876b",
+    "productName": "Cabbage - White",
+    "price": 1500.00205,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4e96fab7b473fe7358783",
+    "productName": "Red Grapes - Seedless",
+    "price": 6000.0069,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4e970ab7b473fe73587ae",
+    "productName": "Apples - Green x10",
+    "price": 3900,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4e971ab7b473fe73587d5",
+    "productName": "Parmesan Cheese ~200 g",
+    "price": 10900.00119,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4e972ab7b473fe73587ea",
+    "productName": "Maestrella Mozzarella ~200 g",
+    "price": 6420.003193,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  }
+]

@@ -1,0 +1,206 @@
+[
+  {
+    "productId": "69e4e96eab7b473fe735876b",
+    "productName": "Cabbage - White",
+    "price": 1500.00205,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4e96fab7b473fe7358783",
+    "productName": "Red Grapes - Seedless",
+    "price": 6000.0069,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4e970ab7b473fe73587ae",
+    "productName": "Apples - Green x10",
+    "price": 3900,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4e971ab7b473fe73587d5",
+    "productName": "Parmesan Cheese ~200 g",
+    "price": 10900.00119,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4e972ab7b473fe73587ea",
+    "productName": "Maestrella Mozzarella ~200 g",
+    "price": 6420.003193,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4f76997713281f8d9e482",
+    "productName": "Emborg Ugo Milk Dessert Raspberry 100 g",
+    "price": 1270,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4f76997713281f8d9e485",
+    "productName": "Baby Marrow ~1 kg",
+    "price": 4200,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4f76997713281f8d9e488",
+    "productName": "Farm Fresh Yoghurt Banana 1 L",
+    "price": 6170,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4f76a97713281f8d9e4a3",
+    "productName": "De Thirsty Natural Yoghurt Tub 750 g",
+    "price": 2630,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4f76a97713281f8d9e4a6",
+    "productName": "Pascual Greek Style Plain Sweetened Yoghurt 126 g x4",
+    "price": 8780,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4f76b97713281f8d9e4ac",
+    "productName": "Emborg Ugo Milk Dessert Strawberry 100 g",
+    "price": 1270,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4f76b97713281f8d9e4b8",
+    "productName": "Broccoli ~1 kg",
+    "price": 9000,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4f76b97713281f8d9e4bb",
+    "productName": "Pascual Yoghurt Non Fat Strawberries 125 g x4",
+    "price": 7580,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4f76b97713281f8d9e4be",
+    "productName": "Pascual Lite Fruit Salad Flavoured Yoghurt 126 g x4",
+    "price": 7580,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4f76c97713281f8d9e4cd",
+    "productName": "Lebanese Cucumber ~1 kg",
+    "price": 5500,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4f76c97713281f8d9e4d3",
+    "productName": "Pascual Yoghurt Fruit Salad 125 g x4",
+    "price": 7130,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4f76c97713281f8d9e4d6",
+    "productName": "Ginger 2 L",
+    "price": 18700.00205,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4f76c97713281f8d9e4d9",
+    "productName": "Iceberg Lettuce - Imported",
+    "price": 14030.0014035,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4f76c97713281f8d9e4df",
+    "productName": "Cabbage - Red 1 kg",
+    "price": 6000,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4f76c97713281f8d9e4e2",
+    "productName": "Spring Onions ~1.5 kg",
+    "price": 7200,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4f76c97713281f8d9e4e5",
+    "productName": "Sweet Potato - Half Bag",
+    "price": 41000.0045,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4f76c97713281f8d9e4e8",
+    "productName": "Sweet Potato - Full Bag",
+    "price": 79000.0084,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4f76d97713281f8d9e4eb",
+    "productName": "Irish Potato - Half Bag",
+    "price": 112000.0013,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4f76d97713281f8d9e4ee",
+    "productName": "Irish Potato - Full Bag",
+    "price": 220000,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4f76d97713281f8d9e4f1",
+    "productName": "Garlic - Imported ~1 kg",
+    "price": 5700.0069,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4f76d97713281f8d9e4f4",
+    "productName": "Garlic - Imported ~10 kg",
+    "price": 52500.0065,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4f76d97713281f8d9e4f7",
+    "productName": "Ginger (Fresh) - Full Bag",
+    "price": 495500,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4f76d97713281f8d9e4fd",
+    "productName": "Sweet Potato - Quarter Bag",
+    "price": 22500,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4f76d97713281f8d9e500",
+    "productName": "Irish Potato - Quarter Bag",
+    "price": 60000.0085,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4f76d97713281f8d9e503",
+    "productName": "Avocado - Unripe - Small x25",
+    "price": 17950.0027,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4f76d97713281f8d9e506",
+    "productName": "Avocado - Unripe - Large x25",
+    "price": 27000.0032,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4f76d97713281f8d9e509",
+    "productName": "Pumpkin - Red x5",
+    "price": 6000,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4f76d97713281f8d9e50c",
+    "productName": "Pumpkin - White x3",
+    "price": 5250,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  },
+  {
+    "productId": "69e4f76e97713281f8d9e50f",
+    "productName": "Onions 1 kg",
+    "price": 1200.0014,
+    "newLocation": "Supermart.ng (Fresh Food)"
+  }
+]

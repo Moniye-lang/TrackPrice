@@ -1,0 +1,335 @@
+[
+  {
+    "_id": "69dd636076b329deda59c2a0",
+    "name": "Bodija",
+    "state": "Oyo",
+    "isActive": true,
+    "createdAt": "2026-04-13T21:42:56.784Z",
+    "updatedAt": "2026-04-13T21:42:56.784Z",
+    "__v": 0
+  },
+  {
+    "_id": "69dd636676b329deda59c2a3",
+    "name": "Ojoo",
+    "state": "Oyo",
+    "isActive": true,
+    "createdAt": "2026-04-13T21:43:02.020Z",
+    "updatedAt": "2026-04-13T21:43:02.020Z",
+    "__v": 0
+  },
+  {
+    "_id": "69dd636e76b329deda59c2a6",
+    "name": "Dugbe",
+    "state": "Oyo",
+    "isActive": true,
+    "createdAt": "2026-04-13T21:43:10.687Z",
+    "updatedAt": "2026-04-13T21:43:10.687Z",
+    "__v": 0
+  },
+  {
+    "_id": "69dd637976b329deda59c2a9",
+    "name": "Akobo",
+    "state": "Oyo",
+    "isActive": true,
+    "createdAt": "2026-04-13T21:43:21.291Z",
+    "updatedAt": "2026-04-13T21:43:21.291Z",
+    "__v": 0
+  },
+  {
+    "_id": "69dd637f76b329deda59c2ac",
+    "name": "Mokola",
+    "state": "Oyo",
+    "isActive": true,
+    "createdAt": "2026-04-13T21:43:27.651Z",
+    "updatedAt": "2026-04-13T21:43:27.651Z",
+    "__v": 0
+  },
+  {
+    "_id": "69dd63a276b329deda59c2af",
+    "name": "Ikeja",
+    "state": "Lagos",
+    "isActive": true,
+    "createdAt": "2026-04-13T21:44:02.412Z",
+    "updatedAt": "2026-04-13T21:44:02.412Z",
+    "__v": 0
+  },
+  {
+    "_id": "69edd9432f7d84d3032dfc76",
+    "name": "Gbagada",
+    "state": "Lagos",
+    "isActive": true,
+    "createdAt": "2026-04-26T09:22:11.560Z",
+    "updatedAt": "2026-04-26T09:22:11.560Z",
+    "__v": 0
+  },
+  {
+    "_id": "69edd94d2f7d84d3032dfc7a",
+    "name": "Shomolu",
+    "state": "Lagos",
+    "isActive": true,
+    "createdAt": "2026-04-26T09:22:21.887Z",
+    "updatedAt": "2026-04-26T09:22:21.887Z",
+    "__v": 0
+  },
+  {
+    "_id": "69edd9542f7d84d3032dfc7d",
+    "name": "Yaba",
+    "state": "Lagos",
+    "isActive": true,
+    "createdAt": "2026-04-26T09:22:28.224Z",
+    "updatedAt": "2026-04-26T09:22:28.224Z",
+    "__v": 0
+  },
+  {
+    "_id": "69edd95d2f7d84d3032dfc80",
+    "name": "Surulere",
+    "state": "Lagos",
+    "isActive": true,
+    "createdAt": "2026-04-26T09:22:37.029Z",
+    "updatedAt": "2026-04-26T09:22:37.029Z",
+    "__v": 0
+  },
+  {
+    "_id": "69edd9672f7d84d3032dfc83",
+    "name": "Oshodi",
+    "state": "Lagos",
+    "isActive": true,
+    "createdAt": "2026-04-26T09:22:47.892Z",
+    "updatedAt": "2026-04-26T09:22:47.892Z",
+    "__v": 0
+  },
+  {
+    "_id": "69edd96f2f7d84d3032dfc86",
+    "name": "Mushin",
+    "state": "Lagos",
+    "isActive": true,
+    "createdAt": "2026-04-26T09:22:55.267Z",
+    "updatedAt": "2026-04-26T09:22:55.267Z",
+    "__v": 0
+  },
+  {
+    "_id": "69edd97a2f7d84d3032dfc89",
+    "name": "Ikorodu",
+    "state": "Lagos",
+    "isActive": true,
+    "createdAt": "2026-04-26T09:23:06.238Z",
+    "updatedAt": "2026-04-26T09:23:06.238Z",
+    "__v": 0
+  },
+  {
+    "_id": "69edd9832f7d84d3032dfc8c",
+    "name": "Agege",
+    "state": "Lagos",
+    "isActive": true,
+    "createdAt": "2026-04-26T09:23:15.050Z",
+    "updatedAt": "2026-04-26T09:23:15.050Z",
+    "__v": 0
+  },
+  {
+    "_id": "69edd98c2f7d84d3032dfc8f",
+    "name": "Iyana Ipaja",
+    "state": "Lagos",
+    "isActive": true,
+    "createdAt": "2026-04-26T09:23:24.488Z",
+    "updatedAt": "2026-04-26T09:23:24.488Z",
+    "__v": 0
+  },
+  {
+    "_id": "69edd9982f7d84d3032dfc92",
+    "name": "Alimosho",
+    "state": "Lagos",
+    "isActive": true,
+    "createdAt": "2026-04-26T09:23:36.864Z",
+    "updatedAt": "2026-04-26T09:23:36.864Z",
+    "__v": 0
+  },
+  {
+    "_id": "69edd9a32f7d84d3032dfc95",
+    "name": "Lekki Phase 1",
+    "state": "Lagos",
+    "isActive": true,
+    "createdAt": "2026-04-26T09:23:47.467Z",
+    "updatedAt": "2026-04-26T09:23:47.467Z",
+    "__v": 0
+  },
+  {
+    "_id": "69edd9ae2f7d84d3032dfc9d",
+    "name": "Ajah",
+    "state": "Lagos",
+    "isActive": true,
+    "createdAt": "2026-04-26T09:23:58.827Z",
+    "updatedAt": "2026-04-26T09:23:58.827Z",
+    "__v": 0
+  },
+  {
+    "_id": "69edd9c42f7d84d3032dfca8",
+    "name": "Sangotedo",
+    "state": "Lagos",
+    "isActive": true,
+    "createdAt": "2026-04-26T09:24:20.794Z",
+    "updatedAt": "2026-04-26T09:24:20.794Z",
+    "__v": 0
+  },
+  {
+    "_id": "69edd9d12f7d84d3032dfcb1",
+    "name": "Fadeyi",
+    "state": "Lagos",
+    "isActive": true,
+    "createdAt": "2026-04-26T09:24:33.668Z",
+    "updatedAt": "2026-04-26T09:24:33.668Z",
+    "__v": 0
+  },
+  {
+    "_id": "69edd9e42f7d84d3032dfcbe",
+    "name": "Mowe",
+    "state": "Lagos",
+    "isActive": true,
+    "createdAt": "2026-04-26T09:24:52.267Z",
+    "updatedAt": "2026-04-26T09:24:52.267Z",
+    "__v": 0
+  },
+  {
+    "_id": "69edd9e92f7d84d3032dfcc3",
+    "name": "Soba",
+    "state": "Lagos",
+    "isActive": true,
+    "createdAt": "2026-04-26T09:24:57.943Z",
+    "updatedAt": "2026-04-26T09:24:57.943Z",
+    "__v": 0
+  },
+  {
+    "_id": "69edd9f92f7d84d3032dfcc8",
+    "name": "Fola Agoro",
+    "state": "Lagos",
+    "isActive": true,
+    "createdAt": "2026-04-26T09:25:13.284Z",
+    "updatedAt": "2026-04-26T09:25:13.284Z",
+    "__v": 0
+  },
+  {
+    "_id": "69edda002f7d84d3032dfccb",
+    "name": "Bariga",
+    "state": "Lagos",
+    "isActive": true,
+    "createdAt": "2026-04-26T09:25:20.207Z",
+    "updatedAt": "2026-04-26T09:25:20.207Z",
+    "__v": 0
+  },
+  {
+    "_id": "69ee83f219d0598a09082bc4",
+    "name": "Monatan",
+    "state": "Oyo",
+    "isActive": true,
+    "createdAt": "2026-04-26T21:30:26.289Z",
+    "updatedAt": "2026-04-26T21:30:26.289Z",
+    "__v": 0
+  },
+  {
+    "_id": "69ee840319d0598a09082bcd",
+    "name": "Akobo Ojurin",
+    "state": "Oyo",
+    "isActive": true,
+    "createdAt": "2026-04-26T21:30:43.480Z",
+    "updatedAt": "2026-04-26T21:30:43.480Z",
+    "__v": 0
+  },
+  {
+    "_id": "69ee840f19d0598a09082bd8",
+    "name": "Bus stop",
+    "state": "Oyo",
+    "isActive": true,
+    "createdAt": "2026-04-26T21:30:55.123Z",
+    "updatedAt": "2026-04-26T21:30:55.123Z",
+    "__v": 0
+  },
+  {
+    "_id": "69ee842319d0598a09082be5",
+    "name": "Oje",
+    "state": "Oyo",
+    "isActive": true,
+    "createdAt": "2026-04-26T21:31:15.340Z",
+    "updatedAt": "2026-04-26T21:31:15.340Z",
+    "__v": 0
+  },
+  {
+    "_id": "69ee843219d0598a09082be8",
+    "name": "Iyana Church",
+    "state": "Oyo",
+    "isActive": true,
+    "createdAt": "2026-04-26T21:31:30.122Z",
+    "updatedAt": "2026-04-26T21:31:30.122Z",
+    "__v": 0
+  },
+  {
+    "_id": "69ee84ad19d0598a09082bf6",
+    "name": "Gbagi",
+    "state": "Oyo",
+    "isActive": true,
+    "createdAt": "2026-04-26T21:33:33.159Z",
+    "updatedAt": "2026-04-26T21:33:33.159Z",
+    "__v": 0
+  },
+  {
+    "_id": "69ee84bc19d0598a09082bf9",
+    "name": "Bashorun",
+    "state": "Oyo",
+    "isActive": true,
+    "createdAt": "2026-04-26T21:33:48.635Z",
+    "updatedAt": "2026-04-26T21:33:48.635Z",
+    "__v": 0
+  },
+  {
+    "_id": "69ee84e019d0598a09082c00",
+    "name": "Molete",
+    "state": "Oyo",
+    "isActive": true,
+    "createdAt": "2026-04-26T21:34:24.974Z",
+    "updatedAt": "2026-04-26T21:34:24.974Z",
+    "__v": 0
+  },
+  {
+    "_id": "69ee850619d0598a09082c07",
+    "name": "Omolayo",
+    "state": "Oyo",
+    "isActive": true,
+    "createdAt": "2026-04-26T21:35:02.774Z",
+    "updatedAt": "2026-04-26T21:35:02.774Z",
+    "__v": 0
+  },
+  {
+    "_id": "69ee852219d0598a09082c0a",
+    "name": "Olodo",
+    "state": "Oyo",
+    "isActive": true,
+    "createdAt": "2026-04-26T21:35:30.955Z",
+    "updatedAt": "2026-04-26T21:35:30.955Z",
+    "__v": 0
+  },
+  {
+    "_id": "69ee853a19d0598a09082c0f",
+    "name": "Iwo Road",
+    "state": "Oyo",
+    "isActive": true,
+    "createdAt": "2026-04-26T21:35:54.784Z",
+    "updatedAt": "2026-04-26T21:35:54.784Z",
+    "__v": 0
+  },
+  {
+    "_id": "69ee857e19d0598a09082c25",
+    "name": "Olorunda",
+    "state": "Oyo",
+    "isActive": true,
+    "createdAt": "2026-04-26T21:37:02.396Z",
+    "updatedAt": "2026-04-26T21:37:02.396Z",
+    "__v": 0
+  },
+  {
+    "_id": "69ee859719d0598a09082c32",
+    "name": "Academy",
+    "state": "Oyo",
+    "isActive": true,
+    "createdAt": "2026-04-26T21:37:27.064Z",
+    "updatedAt": "2026-04-26T21:37:27.064Z",
+    "__v": 0
+  }
+]

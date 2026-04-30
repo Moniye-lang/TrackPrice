@@ -33,4 +33,5 @@ for (let i = 0; i < lines.length; i++) {
     }
 }
 
-console.log(JSON.stringify(products, null, 2));
+fs.writeFileSync('scratch/supermart_products.json', JSON.stringify(products, null, 2));
+console.log(`Extracted ${products.length} products to scratch/supermart_products.json`);

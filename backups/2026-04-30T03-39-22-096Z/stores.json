@@ -1,0 +1,276 @@
+[
+  {
+    "_id": "69bfc258d8061b0d94863981",
+    "name": "Shoprite",
+    "area": "Ikeja Mall",
+    "city": "Lagos",
+    "type": "Supermarket",
+    "imageUrl": "https://images.unsplash.com/photo-1534723452862-4c874018d66d?auto=format&fit=crop&q=80&w=800",
+    "createdAt": "2026-03-22T10:20:08.891Z",
+    "updatedAt": "2026-03-22T10:20:08.891Z",
+    "__v": 0
+  },
+  {
+    "_id": "69bfc259d8061b0d94863984",
+    "name": "Spar",
+    "area": "Lekki Phase 1",
+    "city": "Lagos",
+    "type": "Supermarket",
+    "imageUrl": "https://images.unsplash.com/photo-1604719312563-8912e9223c6a?auto=format&fit=crop&q=80&w=800",
+    "createdAt": "2026-03-22T10:20:09.067Z",
+    "updatedAt": "2026-03-22T10:20:09.067Z",
+    "__v": 0
+  },
+  {
+    "_id": "69bfc259d8061b0d94863987",
+    "name": "Balogun Market",
+    "area": "Lagos Island",
+    "city": "Lagos",
+    "type": "Market",
+    "imageUrl": "https://images.unsplash.com/photo-1533900298318-6b8da08a523e?auto=format&fit=crop&q=80&w=800",
+    "createdAt": "2026-03-22T10:20:09.239Z",
+    "updatedAt": "2026-03-22T10:20:09.239Z",
+    "__v": 0
+  },
+  {
+    "_id": "69c5b09902dd0c2fae4cbfcf",
+    "name": "Bodija Market",
+    "area": "Bodija",
+    "city": "Oyo",
+    "type": "Market",
+    "createdAt": "2026-03-26T22:18:01.504Z",
+    "updatedAt": "2026-03-26T22:18:01.504Z",
+    "__v": 0
+  },
+  {
+    "_id": "69c5b09a02dd0c2fae4cbfd2",
+    "name": "Dugbe Market",
+    "area": "Dugbe",
+    "city": "Oyo",
+    "type": "Market",
+    "createdAt": "2026-03-26T22:18:02.352Z",
+    "updatedAt": "2026-03-26T22:18:02.352Z",
+    "__v": 0
+  },
+  {
+    "_id": "69c5b09a02dd0c2fae4cbfd5",
+    "name": "Oja'ba Market",
+    "area": "Oja'ba",
+    "city": "Oyo",
+    "type": "Market",
+    "createdAt": "2026-03-26T22:18:02.756Z",
+    "updatedAt": "2026-03-26T22:18:02.756Z",
+    "__v": 0
+  },
+  {
+    "_id": "69c5b09b02dd0c2fae4cbfd8",
+    "name": "Agbeni Market",
+    "area": "Agbeni",
+    "city": "Oyo",
+    "type": "Market",
+    "createdAt": "2026-03-26T22:18:03.164Z",
+    "updatedAt": "2026-03-26T22:18:03.164Z",
+    "__v": 0
+  },
+  {
+    "_id": "69c5b09b02dd0c2fae4cbfdb",
+    "name": "Iwo Road Market",
+    "area": "Iwo Road",
+    "city": "Oyo",
+    "type": "Market",
+    "createdAt": "2026-03-26T22:18:03.575Z",
+    "updatedAt": "2026-03-26T22:18:03.575Z",
+    "__v": 0
+  },
+  {
+    "_id": "69c5b09b02dd0c2fae4cbfde",
+    "name": "Gbagi Market",
+    "area": "Old-Ife Road",
+    "city": "Oyo",
+    "type": "Market",
+    "createdAt": "2026-03-26T22:18:03.983Z",
+    "updatedAt": "2026-03-26T22:18:03.983Z",
+    "__v": 0
+  },
+  {
+    "_id": "69c5b09c02dd0c2fae4cbfe1",
+    "name": "Mokola Market",
+    "area": "Mokola",
+    "city": "Oyo",
+    "type": "Market",
+    "createdAt": "2026-03-26T22:18:04.699Z",
+    "updatedAt": "2026-03-26T22:18:04.699Z",
+    "__v": 0
+  },
+  {
+    "_id": "69c5b09d02dd0c2fae4cbfe4",
+    "name": "Sango Market",
+    "area": "Sango",
+    "city": "Oyo",
+    "type": "Market",
+    "createdAt": "2026-03-26T22:18:05.080Z",
+    "updatedAt": "2026-03-26T22:18:05.080Z",
+    "__v": 0
+  },
+  {
+    "_id": "69c5b09d02dd0c2fae4cbfe7",
+    "name": "Apata Market",
+    "area": "Apata",
+    "city": "Oyo",
+    "type": "Market",
+    "createdAt": "2026-03-26T22:18:05.420Z",
+    "updatedAt": "2026-03-26T22:18:05.420Z",
+    "__v": 0
+  },
+  {
+    "_id": "69c5b09d02dd0c2fae4cbfea",
+    "name": "Challenge Market",
+    "area": "Challenge",
+    "city": "Oyo",
+    "type": "Market",
+    "createdAt": "2026-03-26T22:18:05.827Z",
+    "updatedAt": "2026-03-26T22:18:05.827Z",
+    "__v": 0
+  },
+  {
+    "_id": "69c5b09e02dd0c2fae4cbfed",
+    "name": "Eleyele Market",
+    "area": "Eleyele",
+    "city": "Oyo",
+    "type": "Market",
+    "createdAt": "2026-03-26T22:18:06.236Z",
+    "updatedAt": "2026-03-26T22:18:06.236Z",
+    "__v": 0
+  },
+  {
+    "_id": "69c5b0a002dd0c2fae4cbff0",
+    "name": "Ojoo Market",
+    "area": "Ojoo",
+    "city": "Oyo",
+    "type": "Market",
+    "createdAt": "2026-03-26T22:18:08.112Z",
+    "updatedAt": "2026-03-26T22:18:08.112Z",
+    "__v": 0
+  },
+  {
+    "_id": "69c5b0a002dd0c2fae4cbff3",
+    "name": "Moniya Market",
+    "area": "Moniya",
+    "city": "Oyo",
+    "type": "Market",
+    "createdAt": "2026-03-26T22:18:08.727Z",
+    "updatedAt": "2026-03-26T22:18:08.727Z",
+    "__v": 0
+  },
+  {
+    "_id": "69c5b0a102dd0c2fae4cbff6",
+    "name": "Akinyele Market",
+    "area": "Akinyele",
+    "city": "Oyo",
+    "type": "Market",
+    "createdAt": "2026-03-26T22:18:09.034Z",
+    "updatedAt": "2026-03-26T22:18:09.034Z",
+    "__v": 0
+  },
+  {
+    "_id": "69c5b0a102dd0c2fae4cbff9",
+    "name": "Idi-Ayunre Market",
+    "area": "Oluyole",
+    "city": "Oyo",
+    "type": "Market",
+    "createdAt": "2026-03-26T22:18:09.343Z",
+    "updatedAt": "2026-03-26T22:18:09.343Z",
+    "__v": 0
+  },
+  {
+    "_id": "69c5b0a202dd0c2fae4cbffc",
+    "name": "Shoprite (Heritage Mall)",
+    "area": "Dugbe",
+    "city": "Oyo",
+    "type": "Supermarket",
+    "createdAt": "2026-03-26T22:18:10.028Z",
+    "updatedAt": "2026-03-26T22:18:10.028Z",
+    "__v": 0
+  },
+  {
+    "_id": "69c5b0a202dd0c2fae4cbfff",
+    "name": "Shoprite (Palms Mall)",
+    "area": "Dugbe",
+    "city": "Oyo",
+    "type": "Supermarket",
+    "createdAt": "2026-03-26T22:18:10.339Z",
+    "updatedAt": "2026-04-19T15:50:00.696Z",
+    "__v": 0,
+    "imageUrl": ""
+  },
+  {
+    "_id": "69c5b0a202dd0c2fae4cc002",
+    "name": "Ventura Mall",
+    "area": "Samonda",
+    "city": "Oyo",
+    "type": "Supermarket",
+    "createdAt": "2026-03-26T22:18:10.815Z",
+    "updatedAt": "2026-03-26T22:18:10.815Z",
+    "__v": 0
+  },
+  {
+    "_id": "69c5b0a302dd0c2fae4cc005",
+    "name": "FoodCo (Bodija)",
+    "area": "Bodija",
+    "city": "Oyo",
+    "type": "Supermarket",
+    "createdAt": "2026-03-26T22:18:11.253Z",
+    "updatedAt": "2026-03-26T22:18:11.253Z",
+    "__v": 0
+  },
+  {
+    "_id": "69c5b0a302dd0c2fae4cc008",
+    "name": "FoodCo (Akobo)",
+    "area": "Akobo",
+    "city": "Oyo",
+    "type": "Supermarket",
+    "createdAt": "2026-03-26T22:18:11.765Z",
+    "updatedAt": "2026-03-26T22:18:11.765Z",
+    "__v": 0
+  },
+  {
+    "_id": "69c5b0a402dd0c2fae4cc00b",
+    "name": "Ace Supermarket (Bodija)",
+    "area": "Bodija",
+    "city": "Oyo",
+    "type": "Supermarket",
+    "createdAt": "2026-03-26T22:18:12.176Z",
+    "updatedAt": "2026-03-26T22:18:12.176Z",
+    "__v": 0
+  },
+  {
+    "_id": "69c5b0a402dd0c2fae4cc00e",
+    "name": "Ace Supermarket (Ring Road)",
+    "area": "Ring Road",
+    "city": "Oyo",
+    "type": "Supermarket",
+    "createdAt": "2026-03-26T22:18:12.585Z",
+    "updatedAt": "2026-03-26T22:18:12.585Z",
+    "__v": 0
+  },
+  {
+    "_id": "69c5b0a402dd0c2fae4cc011",
+    "name": "Feather Lite Market",
+    "area": "Bashorun",
+    "city": "Oyo",
+    "type": "Market",
+    "createdAt": "2026-03-26T22:18:12.994Z",
+    "updatedAt": "2026-03-26T22:18:12.994Z",
+    "__v": 0
+  },
+  {
+    "_id": "69c852ac34eefd6482c28db8",
+    "name": "AMStores",
+    "area": "Akobo",
+    "city": "Oyo",
+    "type": "Supermarket",
+    "__v": 0,
+    "imageUrl": "",
+    "updatedAt": "2026-04-23T06:55:49.281Z"
+  }
+]

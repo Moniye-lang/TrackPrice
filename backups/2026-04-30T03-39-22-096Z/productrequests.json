@@ -1,0 +1,15 @@
+[
+  {
+    "_id": "69c15944fc7b165ced1d59e5",
+    "name": "Bread",
+    "brand": "AMSTORES ",
+    "variant": "Normal Loaf",
+    "size": "",
+    "category": "bread",
+    "userId": "69b889fe52aad3ce6b0a016e",
+    "status": "pending",
+    "createdAt": "2026-03-23T15:16:20.161Z",
+    "updatedAt": "2026-03-23T15:16:20.161Z",
+    "__v": 0
+  }
+]

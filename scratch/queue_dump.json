@@ -1,0 +1,3546 @@
+[
+  {
+    "updateId": "69c25b39486d6c733f0138c6",
+    "productName": "Black elubo (Half congo)",
+    "currentLocation": "Bodija Market (Bodija, Oyo)",
+    "currentPrice": 2000,
+    "updatePrice": 6000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25b39486d6c733f0138c8",
+    "productName": "Ayoola Poundo yam 1kg",
+    "currentLocation": "Bodija Market (Bodija, Oyo)",
+    "currentPrice": 3700,
+    "updatePrice": 3500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25b39486d6c733f0138d0",
+    "productName": "Sokoto beans - per congo",
+    "currentLocation": "Bodija Market (Bodija, Oyo)",
+    "currentPrice": 2300,
+    "updatePrice": 2000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25b3a486d6c733f0138d8",
+    "productName": "Oloyin beans-per congo",
+    "currentLocation": "Bodija Market (Bodija, Oyo)",
+    "currentPrice": 2500,
+    "updatePrice": 2000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25b3b486d6c733f013903",
+    "productName": "Ayoola Poundo yam 1kg",
+    "currentLocation": "Bodija Market (Bodija, Oyo)",
+    "currentPrice": 3700,
+    "updatePrice": 3500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25b3e486d6c733f01396d",
+    "productName": "Fayrouz Pineapple",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 550,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25b3f486d6c733f013992",
+    "productName": "Beef",
+    "currentLocation": "AMStores (Akobo, Oyo)",
+    "currentPrice": 7300,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25b41486d6c733f0139c4",
+    "productName": "Golden Penny Macaroni 500gx20",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 21000,
+    "updatePrice": 1100,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25b41486d6c733f0139db",
+    "productName": "Crate of Egg ",
+    "currentLocation": "AMStores (Akobo, Oyo)",
+    "currentPrice": 5500,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25b42486d6c733f0139fb",
+    "productName": "Titus Sardines 125gx50",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 45000,
+    "updatePrice": 2000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25b43486d6c733f013a21",
+    "productName": "Beef",
+    "currentLocation": "AMStores (Akobo, Oyo)",
+    "currentPrice": 7300,
+    "updatePrice": 6500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25b43486d6c733f013a23",
+    "productName": "Full Cream Milk",
+    "currentLocation": "Spar (Lekki Phase 1, Lagos)",
+    "currentPrice": 750,
+    "updatePrice": 5000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25b44486d6c733f013a2b",
+    "productName": "Titus Sardines 125gx50",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 45000,
+    "updatePrice": 7500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25b44486d6c733f013a42",
+    "productName": "Refined Sugar",
+    "currentLocation": "Balogun Market (Lagos Island, Lagos)",
+    "currentPrice": 85000,
+    "updatePrice": 4500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25b49486d6c733f013ae6",
+    "productName": "5alive Berry Blast",
+    "currentLocation": "AMStores (Akobo, Oyo)",
+    "currentPrice": 1300,
+    "updatePrice": 2000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25b50486d6c733f013bc7",
+    "productName": "Full Cream Milk",
+    "currentLocation": "Spar (Lekki Phase 1, Lagos)",
+    "currentPrice": 750,
+    "updatePrice": 1000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25b50486d6c733f013bcf",
+    "productName": "Golden Morn 900gx6",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 25000,
+    "updatePrice": 5000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25b50486d6c733f013bd1",
+    "productName": "Golden Morn 300gx12",
+    "currentLocation": "24Hours Market (Ibadan, Oyo)",
+    "currentPrice": 20000,
+    "updatePrice": 2700,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25b50486d6c733f013bd3",
+    "productName": "Golden Morn 900gx6",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 25000,
+    "updatePrice": 3800,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25bfa1aa180b52934f85d",
+    "productName": "Vegetable Stew Combo (Efo Riro)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1800,
+    "updatePrice": 1900,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25bfa1aa180b52934f85f",
+    "productName": "Quick Fix Indomitable Combo",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 1200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25bfb1aa180b52934f883",
+    "productName": "Groundnut Oil (1 bottle)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2000,
+    "updatePrice": 3500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25bfb1aa180b52934f885",
+    "productName": "Red millet",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 6000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25bfb1aa180b52934f887",
+    "productName": "Oloyin beans (paint size)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 10500,
+    "updatePrice": 15000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25bfb1aa180b52934f88a",
+    "productName": "Oloyin beans-per congo",
+    "currentLocation": "Bodija Market (Bodija, Oyo)",
+    "currentPrice": 2500,
+    "updatePrice": 1700,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25bfb1aa180b52934f88d",
+    "productName": " Olo drum beans-per congo",
+    "currentLocation": "Bodija Market (Bodija, Oyo)",
+    "currentPrice": 2500,
+    "updatePrice": 2000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25bfc1aa180b52934f88f",
+    "productName": "Rodo (Half paint)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 3000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25bfc1aa180b52934f891",
+    "productName": "Rice (medium)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1300,
+    "updatePrice": 2000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25bfc1aa180b52934f893",
+    "productName": "Rice(long)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1500,
+    "updatePrice": 2000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25bfc1aa180b52934f895",
+    "productName": "Indomietables - Chicken Flavour (1 Carton)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 9500,
+    "updatePrice": 10000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25bfc1aa180b52934f897",
+    "productName": "De Rica Tomatoes",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 900,
+    "updatePrice": 1100,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25bfc1aa180b52934f899",
+    "productName": "Morning Fresh",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2700,
+    "updatePrice": 3000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25bfc1aa180b52934f89b",
+    "productName": "Mama Lemon Dishwashing Liquid",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1400,
+    "updatePrice": 3000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25bfc1aa180b52934f89d",
+    "productName": "Golden Penny Noodles (carton)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 8500,
+    "updatePrice": 9000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25bfc1aa180b52934f89f",
+    "productName": "Indomie Super Pack (1 carton)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 15500,
+    "updatePrice": 17000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25bfd1aa180b52934f8a9",
+    "productName": "Ayoola Poundo yam 1kg",
+    "currentLocation": "Bodija Market (Bodija, Oyo)",
+    "currentPrice": 3700,
+    "updatePrice": 5000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25bfd1aa180b52934f8b1",
+    "productName": "Ayoola poundo yam (450g)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2000,
+    "updatePrice": 1800,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25bfd1aa180b52934f8b3",
+    "productName": "Golden penny semovita ( 1kg)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1800,
+    "updatePrice": 1700,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25bfd1aa180b52934f8b5",
+    "productName": "Golden penny semovita (2kg)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4000,
+    "updatePrice": 3400,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25bfd1aa180b52934f8b7",
+    "productName": "Golden penny semovita (5kg)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 8900,
+    "updatePrice": 7800,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25bfd1aa180b52934f8bd",
+    "productName": "Honeywell Semolina (1kg)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1800,
+    "updatePrice": 1700,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25bfe1aa180b52934f8c2",
+    "productName": "Ijebu garri (paint)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3000,
+    "updatePrice": 4500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25bfe1aa180b52934f8c4",
+    "productName": "Mama gold semolina (1kg)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1800,
+    "updatePrice": 1600,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25bfe1aa180b52934f8c8",
+    "productName": "Sokoto beans - per congo",
+    "currentLocation": "Bodija Market (Bodija, Oyo)",
+    "currentPrice": 2300,
+    "updatePrice": 2800,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25bff1aa180b52934f8ed",
+    "productName": "Unripe plantain",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1500,
+    "updatePrice": 3500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25bff1aa180b52934f8ef",
+    "productName": "Ripe Banana",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25bff1aa180b52934f8f1",
+    "productName": "Uziza leaf",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 200,
+    "updatePrice": 600,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25bff1aa180b52934f8f3",
+    "productName": "garlic",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 700,
+    "updatePrice": 300,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c001aa180b52934f904",
+    "productName": "bitterleaf",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 200,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c001aa180b52934f906",
+    "productName": "Kings Oil (2L )",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 8500,
+    "updatePrice": 10500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c001aa180b52934f908",
+    "productName": "Egusi one cup(Blended)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 500,
+    "updatePrice": 800,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c001aa180b52934f90a",
+    "productName": "Groundnut Oil (1 bottle)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2000,
+    "updatePrice": 3500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c001aa180b52934f90c",
+    "productName": "Sliced Pineapple",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 300,
+    "updatePrice": 2500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c001aa180b52934f90e",
+    "productName": "Green apples (small)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 300,
+    "updatePrice": 800,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c001aa180b52934f913",
+    "productName": "Rodo (Half paint)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c001aa180b52934f915",
+    "productName": "Bawa ( Half Paint )",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2500,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c011aa180b52934f917",
+    "productName": "Lettuce",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 300,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c011aa180b52934f919",
+    "productName": "Egusi(Unblend)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 500,
+    "updatePrice": 800,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c011aa180b52934f91d",
+    "productName": "Corned beef(small)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2000,
+    "updatePrice": 2700,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c011aa180b52934f91f",
+    "productName": "Sunripe red kidney beans(Big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1500,
+    "updatePrice": 2500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c011aa180b52934f921",
+    "productName": "Heinz ketchup(Big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 9000,
+    "updatePrice": 7600,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c011aa180b52934f923",
+    "productName": "Green giant sweet corn(big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1500,
+    "updatePrice": 1400,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c011aa180b52934f925",
+    "productName": "Sunripe sweet corn(big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1500,
+    "updatePrice": 1700,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c011aa180b52934f927",
+    "productName": "Frolic ketchup",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3000,
+    "updatePrice": 3500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c011aa180b52934f929",
+    "productName": "Watermelon(Big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3800,
+    "updatePrice": 3500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c021aa180b52934f92e",
+    "productName": "Sonia can tomato(small)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 900,
+    "updatePrice": 1100,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c021aa180b52934f930",
+    "productName": "Ata gungun",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 500,
+    "updatePrice": 1000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c021aa180b52934f932",
+    "productName": "Nagiko can tomato(derica size)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2500,
+    "updatePrice": 3600,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c021aa180b52934f934",
+    "productName": "Bay leaves",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 1700,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c021aa180b52934f936",
+    "productName": "Plastic thyme",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 800,
+    "updatePrice": 1000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c021aa180b52934f938",
+    "productName": "Plastic curry",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 800,
+    "updatePrice": 1000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c021aa180b52934f93a",
+    "productName": "Heinz ketchup(small)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2500,
+    "updatePrice": 2000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c021aa180b52934f93f",
+    "productName": "Sunripe Red kidney beans(small)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 1700,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c021aa180b52934f941",
+    "productName": "Green giant sweet corn (small)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c031aa180b52934f945",
+    "productName": "Watermelon(small)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3000,
+    "updatePrice": 2500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c031aa180b52934f947",
+    "productName": "Ginger",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2400,
+    "updatePrice": 700,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c031aa180b52934f94c",
+    "productName": "Yellow Pepper",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1500,
+    "updatePrice": 2000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c031aa180b52934f94e",
+    "productName": "Cabbage",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 2000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c031aa180b52934f956",
+    "productName": "bitterleaf",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 200,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c031aa180b52934f95a",
+    "productName": "Carrot (small)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 300,
+    "updatePrice": 200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c031aa180b52934f95c",
+    "productName": "Cucumber",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1400,
+    "updatePrice": 700,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c031aa180b52934f95e",
+    "productName": "Dry green pea",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 200,
+    "updatePrice": 400,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c041aa180b52934f960",
+    "productName": "Beef",
+    "currentLocation": "AMStores (Akobo, Oyo)",
+    "currentPrice": 7300,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c041aa180b52934f962",
+    "productName": "Ewedu",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 500,
+    "updatePrice": 200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c041aa180b52934f96c",
+    "productName": "Fanta orange 33cl can (6pcs)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3900,
+    "updatePrice": 100,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c041aa180b52934f96e",
+    "productName": "Palm Oil (2 bottles)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4000,
+    "updatePrice": 2500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c041aa180b52934f970",
+    "productName": "Palm Oil (2 bottles)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4000,
+    "updatePrice": 3600,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c041aa180b52934f972",
+    "productName": "Red apple (big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 500,
+    "updatePrice": 800,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c051aa180b52934f976",
+    "productName": "Runner beans",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 200,
+    "updatePrice": 400,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c051aa180b52934f978",
+    "productName": "Spring onion",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 300,
+    "updatePrice": 200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c051aa180b52934f97e",
+    "productName": "Ugwu",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 500,
+    "updatePrice": 200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c061aa180b52934f993",
+    "productName": "Crayfish(Unblend)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 500,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c061aa180b52934f995",
+    "productName": "Smoked Catfish",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c061aa180b52934f99d",
+    "productName": "Eggs (Full crate)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 6000,
+    "updatePrice": 6300,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c061aa180b52934f99f",
+    "productName": "Egg (half crate)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3000,
+    "updatePrice": 3500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c061aa180b52934f9a1",
+    "productName": "Titus Sardines 125gx50",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 45000,
+    "updatePrice": 7000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c061aa180b52934f9a3",
+    "productName": "Tilapia",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 5700,
+    "updatePrice": 9000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c061aa180b52934f9a5",
+    "productName": "Stockfish head",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1500,
+    "updatePrice": 3000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c061aa180b52934f9a7",
+    "productName": "Stock fish (medium pack)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c071aa180b52934f9a9",
+    "productName": "Stock fish (small pack)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 500,
+    "updatePrice": 1000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c071aa180b52934f9ab",
+    "productName": "Frozen Panla",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4000,
+    "updatePrice": 3400,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c071aa180b52934f9b2",
+    "productName": "Live catfish (big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 5000,
+    "updatePrice": 7000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c071aa180b52934f9b4",
+    "productName": "Refined Sugar",
+    "currentLocation": "Balogun Market (Lagos Island, Lagos)",
+    "currentPrice": 85000,
+    "updatePrice": 4000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c071aa180b52934f9b6",
+    "productName": "Hake medium size",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4000,
+    "updatePrice": 5500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c071aa180b52934f9b8",
+    "productName": "Hake",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4000,
+    "updatePrice": 7500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c071aa180b52934f9ba",
+    "productName": "Crocker per kg",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 5000,
+    "updatePrice": 8000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c071aa180b52934f9bc",
+    "productName": "Catfish medium",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3000,
+    "updatePrice": 4000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c071aa180b52934f9be",
+    "productName": "Crayfish(Blended)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 500,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c081aa180b52934f9c0",
+    "productName": "Titus Sardines 125gx50",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 45000,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c081aa180b52934f9c2",
+    "productName": "Ogbono (Blended)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 3000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c081aa180b52934f9c4",
+    "productName": "Smoked titus(Big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3000,
+    "updatePrice": 3500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c081aa180b52934f9c6",
+    "productName": "Smoked titus(small)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2500,
+    "updatePrice": 3300,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c081aa180b52934f9ca",
+    "productName": "Chicken wings",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 7500,
+    "updatePrice": 7200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c081aa180b52934f9cc",
+    "productName": "Ogbono (unblend)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 3000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c081aa180b52934f9d0",
+    "productName": "Locust beans",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 400,
+    "updatePrice": 600,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c081aa180b52934f9d2",
+    "productName": "Watermelon(small)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3000,
+    "updatePrice": 200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c091aa180b52934f9dc",
+    "productName": "Whole chicken",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 7500,
+    "updatePrice": 8000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c091aa180b52934f9e1",
+    "productName": "5alive Berry Blast",
+    "currentLocation": "AMStores (Akobo, Oyo)",
+    "currentPrice": 1300,
+    "updatePrice": 2000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c091aa180b52934f9f0",
+    "productName": "Chivita Exotic 315ml",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1200,
+    "updatePrice": 2200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c0c1aa180b52934fa34",
+    "productName": "Viva plus detergent 800g",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2500,
+    "updatePrice": 1400,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c0d1aa180b52934fa4a",
+    "productName": "Cadbury Hot chocolate 3 in 1 Roll",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 2800,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c0e1aa180b52934fa5a",
+    "productName": "Milo Refill 400g",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4000,
+    "updatePrice": 4500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c0e1aa180b52934fa5c",
+    "productName": "Milo Refill 800g",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 7500,
+    "updatePrice": 8000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c0f1aa180b52934fa7b",
+    "productName": "Checkers custard vanilla flavour 1kg",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 4000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c101aa180b52934fa96",
+    "productName": "Full Cream Milk",
+    "currentLocation": "Spar (Lekki Phase 1, Lagos)",
+    "currentPrice": 750,
+    "updatePrice": 1000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c101aa180b52934fa98",
+    "productName": "Golden Morn 900gx6",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 25000,
+    "updatePrice": 5000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c111aa180b52934fa9a",
+    "productName": "Golden Morn 300gx12",
+    "currentLocation": "24Hours Market (Ibadan, Oyo)",
+    "currentPrice": 20000,
+    "updatePrice": 2700,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c111aa180b52934fa9c",
+    "productName": "Golden Morn 900gx6",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 25000,
+    "updatePrice": 3800,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c121aa180b52934fab1",
+    "productName": "peanut butter medium",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2500,
+    "updatePrice": 3300,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c121aa180b52934fab5",
+    "productName": "Semovita 1kg",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1800,
+    "updatePrice": 10000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c121aa180b52934fac6",
+    "productName": "Simas Margarine",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 1200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c121aa180b52934fac8",
+    "productName": "Tasty Cubes Chicken Flavour Cubes",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 400,
+    "updatePrice": 2000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c121aa180b52934faca",
+    "productName": "Peak Milk Tin 2500g",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 57000,
+    "updatePrice": 5000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c121aa180b52934facc",
+    "productName": "Milo 400g",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3900,
+    "updatePrice": 4000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c131aa180b52934face",
+    "productName": "Checkers custard vanilla flavour 1kg",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 2500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c131aa180b52934fad2",
+    "productName": "peanut butter medium",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2500,
+    "updatePrice": 3500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c131aa180b52934fad4",
+    "productName": "Cling Flim",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 7000,
+    "updatePrice": 9500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c131aa180b52934fadc",
+    "productName": "Tasty Cubes Chicken Flavour Cubes",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 400,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c131aa180b52934fade",
+    "productName": "Gino Tomatoes Paste",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c141aa180b52934fae4",
+    "productName": "Bama Mayonnaise (Big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4800,
+    "updatePrice": 4000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c141aa180b52934fae6",
+    "productName": "Simas Margarine",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 1200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c141aa180b52934fae8",
+    "productName": "Blue b& spread for bread(Big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3000,
+    "updatePrice": 4500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c141aa180b52934faea",
+    "productName": "Geisha",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69c25c141aa180b52934faec",
+    "productName": "Blue b& spread for bread (small)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1800,
+    "updatePrice": 3000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69cd8106f480fb8b6b106111",
+    "productName": "Lipton tea",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 1200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6d96873433bed882a86ff",
+    "productName": "SOFT DRINK PINEAPPLE SCHWEPPES PET 40CL",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 460,
+    "updatePrice": 550,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6d96973433bed882a871c",
+    "productName": "Soft Drnk Coca Cola 500Ml Nrb, Orig",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 450,
+    "updatePrice": 530,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6d96a73433bed882a8738",
+    "productName": "Liqueur Marula Cream Best 200Ml",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2000,
+    "updatePrice": 7200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6d96b73433bed882a874d",
+    "productName": "CEREAL OATS QUAKER 385G PACK",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2900,
+    "updatePrice": 3080,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6d96b73433bed882a8755",
+    "productName": "Natural Swt White Four Cousins 750Ml",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 8300,
+    "updatePrice": 8700,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6d96b73433bed882a875a",
+    "productName": "Soft Drnk Pepsi 330Ml, Reg",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 600,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6d96e73433bed882a87aa",
+    "productName": "Bath Soap Dettol 110G, Skincare",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1400,
+    "updatePrice": 2100,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6d96e73433bed882a87ac",
+    "productName": "Body Lotion Perft&Radiant Nivea 400Ml",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 5300,
+    "updatePrice": 3500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6d96f73433bed882a87c9",
+    "productName": "Cooking Oil Vegetable Mamador 3.5L",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 12550,
+    "updatePrice": 14980,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6d97073433bed882a87e5",
+    "productName": "Mama Gold Semolina (2kg)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 3550,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6d97073433bed882a87e9",
+    "productName": "Golden Penny Semovita 5kg",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 7600,
+    "updatePrice": 950,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6d97173433bed882a8800",
+    "productName": "FLOUR POUNDO YAM AYOOLA FOODS 4.5KG",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 22100,
+    "updatePrice": 22300,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6d97173433bed882a8802",
+    "productName": "FLOUR POUNDO YAM AYOOLA FOODS 900G",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4400,
+    "updatePrice": 4600,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6d97173433bed882a8804",
+    "productName": "FLOUR POUNDO YAM AYOOLA FOODS 4.5KG",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 22100,
+    "updatePrice": 2300,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6d97373433bed882a8847",
+    "productName": "Porridges Oats White Quaker 1.9Kg",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 12500,
+    "updatePrice": 6600,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6d97773433bed882a88aa",
+    "productName": "Antiseptic Liquid Dettol 2L Bottle",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 29400,
+    "updatePrice": 14500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6d97973433bed882a88df",
+    "productName": "Bleach Super Hypo 1L",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 2950,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6d97973433bed882a88e3",
+    "productName": "Bags Refuse Heavy Duty Regal 20S Pack",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 5000,
+    "updatePrice": 2500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6dd17d74f0e1d0f716f60",
+    "productName": "Soft Drnk Fanta 330Ml, Orng",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 530,
+    "updatePrice": 535,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6dd18d74f0e1d0f716f7d",
+    "productName": "SOFT DRINK CHAPMAN SCHWEPPES 330ML CAN",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 550,
+    "updatePrice": 559,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6dd18d74f0e1d0f716f8b",
+    "productName": "Aperitif Herb Bitters Orijin 600Ml Bottl",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1350,
+    "updatePrice": 4500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6dd18d74f0e1d0f716f8d",
+    "productName": "Gin Dry Moringa C/Blend Gordon'S 750Ml",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 6600,
+    "updatePrice": 8500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6dd19d74f0e1d0f716f8f",
+    "productName": "Whisky Honey Tennesse Jack Daniels 700Ml",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 35000,
+    "updatePrice": 37000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6dd19d74f0e1d0f716f9a",
+    "productName": "Aperitif Herb Bitters Orijin 600Ml Bottl",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1350,
+    "updatePrice": 5500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6dd1bd74f0e1d0f716fd8",
+    "productName": "Wht Wine Natural Swt Four Cousins 1.5L",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 18500,
+    "updatePrice": 20499,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6dd1bd74f0e1d0f716fe9",
+    "productName": "CHAMPAGNE GOLD VINO BOTTEGA 750ML",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 68000,
+    "updatePrice": 74999,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6dd1bd74f0e1d0f716feb",
+    "productName": "SPARKLING WINE MOSCATO PROSPERO 750ML",
+    "currentLocation": "Spar (Lekki Phase 1, Lagos)",
+    "currentPrice": 12620,
+    "updatePrice": 16519,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6dd1cd74f0e1d0f716ff0",
+    "productName": "SPARKLING WINE BRUT MONSIEUR PASCAL 750ML",
+    "currentLocation": "Spar (Lekki Phase 1, Lagos)",
+    "currentPrice": 9000,
+    "updatePrice": 11099,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6dd1cd74f0e1d0f716ff2",
+    "productName": "SPARKLING WINE ROSE MONSIEUR PASCAL 750ML",
+    "currentLocation": "Spar (Lekki Phase 1, Lagos)",
+    "currentPrice": 9500,
+    "updatePrice": 12499,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6dd1cd74f0e1d0f717008",
+    "productName": "Beverage Active Go Milo 400G Sachet",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4150,
+    "updatePrice": 4500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6dd25d74f0e1d0f71711b",
+    "productName": "Cereal Grainsmart Golden Morn 300G",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2500,
+    "updatePrice": 2650,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6dd27d74f0e1d0f717165",
+    "productName": "Toilet Cleaner Floral Hypo 725Ml",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4300,
+    "updatePrice": 4500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6dd2ad74f0e1d0f7171bf",
+    "productName": "Angel baby wipes 125pcs",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2000,
+    "updatePrice": 1399,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6dd2bd74f0e1d0f7171f7",
+    "productName": "Ayoola poundo yam (450g)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2000,
+    "updatePrice": 2600,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6dd2cd74f0e1d0f717208",
+    "productName": "TOOTHPASTE HERBAL COLGATE 140G",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1900,
+    "updatePrice": 2050,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6dd30d74f0e1d0f71727e",
+    "productName": "FRIED RICE PWDR SPICITY 100G",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1240,
+    "updatePrice": 1800,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6dd30d74f0e1d0f717283",
+    "productName": "Chicken wings",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 7500,
+    "updatePrice": 3300,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6dd30d74f0e1d0f71728b",
+    "productName": "Chicken laps(native)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 6500,
+    "updatePrice": 4500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6dd30d74f0e1d0f71729c",
+    "productName": "Cucumber",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1400,
+    "updatePrice": 1060,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6dd31d74f0e1d0f7172a1",
+    "productName": "dates ( 250g)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2500,
+    "updatePrice": 4000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac0c6347d84687778a8",
+    "productName": "Vegetable Stew Combo (Efo Riro)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1800,
+    "updatePrice": 2100,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac0c6347d84687778ae",
+    "productName": "Bawa ( Half Paint )",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2500,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac1c6347d84687778c8",
+    "productName": "Rodo (Half paint)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac1c6347d84687778cc",
+    "productName": "Tatase",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 500,
+    "updatePrice": 1000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac1c6347d84687778ce",
+    "productName": "Tomatoes(Big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac1c6347d84687778d6",
+    "productName": "Ayoola Poundo Yam 0.9kg",
+    "currentLocation": "Foodlocker (Ibadan, Oyo)",
+    "currentPrice": 3950,
+    "updatePrice": 3500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac1c6347d84687778d8",
+    "productName": "Black elubo Half paint",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4700,
+    "updatePrice": 6000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac2c6347d84687778e3",
+    "productName": "Golden penny semovita (2kg)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4000,
+    "updatePrice": 3500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac2c6347d84687778e7",
+    "productName": "Golden Penny Spaghetti",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1200,
+    "updatePrice": 1000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac2c6347d84687778e9",
+    "productName": "Golden Penny Spaghettini",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1200,
+    "updatePrice": 1000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac2c6347d84687778f1",
+    "productName": "Indomie Super Pack (1 carton)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 15500,
+    "updatePrice": 15000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac3c6347d84687778f6",
+    "productName": "Indomietables - Chicken Flavour (1 Carton)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 9500,
+    "updatePrice": 9600,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac3c6347d84687778fc",
+    "productName": "Mama Lemon Dishwashing Liquid",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1400,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac4c6347d8468777913",
+    "productName": "Oloyin beans (paint size)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 10500,
+    "updatePrice": 7000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac4c6347d846877791d",
+    "productName": "Sokoto beans - per congo",
+    "currentLocation": "Bodija Market (Bodija, Oyo)",
+    "currentPrice": 2300,
+    "updatePrice": 1200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac4c6347d8468777929",
+    "productName": "Yellow garri (paint size)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 5000,
+    "updatePrice": 3000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac5c6347d8468777931",
+    "productName": "Yam (big tuber)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 4500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac5c6347d8468777936",
+    "productName": "Bay leaves",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 800,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac5c6347d846877793a",
+    "productName": "Cabbage",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac5c6347d8468777940",
+    "productName": "Corned beef(Big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 4500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac5c6347d8468777942",
+    "productName": "Corned beef(small)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2000,
+    "updatePrice": 2500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac6c6347d8468777948",
+    "productName": "Beef",
+    "currentLocation": "AMStores (Akobo, Oyo)",
+    "currentPrice": 7300,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac7c6347d846877795a",
+    "productName": "Green apples (small)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 300,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac7c6347d846877795c",
+    "productName": "Green giant sweet corn (small)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac7c6347d846877795e",
+    "productName": "Green giant sweet corn(big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1500,
+    "updatePrice": 2000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac7c6347d8468777960",
+    "productName": "Green pepper (big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac7c6347d8468777962",
+    "productName": "Groundnut Oil (1 bottle)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2000,
+    "updatePrice": 3000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac7c6347d8468777964",
+    "productName": "Groundnut oil ( Half bottle)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac7c6347d8468777968",
+    "productName": "Heinz ketchup(small)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2500,
+    "updatePrice": 2000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac7c6347d846877796a",
+    "productName": "Kings Oil (2L )",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 8500,
+    "updatePrice": 9000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac8c6347d8468777972",
+    "productName": "Okro",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 500,
+    "updatePrice": 200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac8c6347d8468777976",
+    "productName": "Fanta orange 33cl can (6pcs)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3900,
+    "updatePrice": 200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac8c6347d846877797a",
+    "productName": "Palm oil ( Half bottle)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2000,
+    "updatePrice": 1300,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac8c6347d8468777986",
+    "productName": "Red apple (big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 500,
+    "updatePrice": 700,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac8c6347d8468777988",
+    "productName": "Red pepper",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2000,
+    "updatePrice": 2500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac9c6347d846877798a",
+    "productName": "Ripe Banana",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac9c6347d846877798c",
+    "productName": "Ripe Plantain",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1500,
+    "updatePrice": 3000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac9c6347d8468777990",
+    "productName": "Sliced Pineapple",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 300,
+    "updatePrice": 200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac9c6347d8468777992",
+    "productName": "Sonia can tomato(small)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 900,
+    "updatePrice": 700,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac9c6347d8468777994",
+    "productName": "Spring onion",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 300,
+    "updatePrice": 100,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac9c6347d8468777996",
+    "productName": "Sunripe red kidney beans(Big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1500,
+    "updatePrice": 2000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eac9c6347d846877799c",
+    "productName": "Sunripe sweet corn(big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1500,
+    "updatePrice": 2000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eacac6347d84687779a4",
+    "productName": "Unripe plantain",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1500,
+    "updatePrice": 2000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eacac6347d84687779aa",
+    "productName": "Watermelon(Big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3800,
+    "updatePrice": 4500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eacac6347d84687779ac",
+    "productName": "Watermelon(small)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3000,
+    "updatePrice": 4000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eacac6347d84687779ae",
+    "productName": "Yellow Pepper",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1500,
+    "updatePrice": 2500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eacac6347d84687779b2",
+    "productName": "Tatashe ( Half Paint)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 6000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eacac6347d84687779b4",
+    "productName": "Rodo (Half paint)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 3000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eacbc6347d84687779c1",
+    "productName": "Goat meat",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 5000,
+    "updatePrice": 3000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eacbc6347d84687779c3",
+    "productName": "Hake medium size",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4000,
+    "updatePrice": 2500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eacbc6347d84687779ce",
+    "productName": "Sawa",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 3000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eaccc6347d84687779d5",
+    "productName": "Smoked titus(small)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2500,
+    "updatePrice": 2000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eaccc6347d84687779dd",
+    "productName": "Titus Sardines 125gx50",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 45000,
+    "updatePrice": 2000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eacdc6347d84687779eb",
+    "productName": "Bokoto (cowleg)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 10000,
+    "updatePrice": 8000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eacec6347d8468777a14",
+    "productName": "Chicken laps(native)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 6500,
+    "updatePrice": 7500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eacec6347d8468777a18",
+    "productName": "Chicken wings half kg",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3750,
+    "updatePrice": 3500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eacec6347d8468777a1d",
+    "productName": "Gizzard",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 8000,
+    "updatePrice": 7000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eacec6347d8468777a22",
+    "productName": "Whole chicken",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 7500,
+    "updatePrice": 8500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eacfc6347d8468777a26",
+    "productName": "5alive Berry Blast",
+    "currentLocation": "AMStores (Akobo, Oyo)",
+    "currentPrice": 1300,
+    "updatePrice": 2000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eacfc6347d8468777a28",
+    "productName": "Aquadana table water 33cl pack (20pcs)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4000,
+    "updatePrice": 3500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eacfc6347d8468777a30",
+    "productName": "Chivita Exotic 315ml",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1200,
+    "updatePrice": 2200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ead1c6347d8468777a52",
+    "productName": "Always ultra thin pads 3 in 1 (Extra long)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1700,
+    "updatePrice": 2200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ead2c6347d8468777a6e",
+    "productName": "Viva plus detergent 800g",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2500,
+    "updatePrice": 1400,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ead3c6347d8468777a94",
+    "productName": "Milo Refill 400g",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4000,
+    "updatePrice": 4500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ead4c6347d8468777a96",
+    "productName": "Milo Refill 800g",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 7500,
+    "updatePrice": 8000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ead4c6347d8468777a9c",
+    "productName": "Nescafe classic 50g",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4000,
+    "updatePrice": 5500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ead7c6347d8468777ad3",
+    "productName": "Pear Packham 1.5kg Econo x8 Box",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 6800,
+    "updatePrice": 1000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ead7c6347d8468777adb",
+    "productName": "Tatashe ( Half Paint)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 3000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ead7c6347d8468777add",
+    "productName": "Tomatoes ( Half paint)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 2500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ead7c6347d8468777adf",
+    "productName": "Tomatoes ( Paint )",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 5000,
+    "updatePrice": 5500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ead7c6347d8468777ae1",
+    "productName": "Golden Morn 900gx6",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 25000,
+    "updatePrice": 5000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ead7c6347d8468777ae3",
+    "productName": "Golden Morn 300gx12",
+    "currentLocation": "24Hours Market (Ibadan, Oyo)",
+    "currentPrice": 20000,
+    "updatePrice": 3000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ead7c6347d8468777ae5",
+    "productName": "Golden Morn 900gx6",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 25000,
+    "updatePrice": 3800,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ead8c6347d8468777af1",
+    "productName": "Ice block nylon",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 500,
+    "updatePrice": 700,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ead8c6347d8468777afe",
+    "productName": "Bama Mayonnaise (Big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4800,
+    "updatePrice": 5000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ead8c6347d8468777b00",
+    "productName": "Blue b& spread for bread (small)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1800,
+    "updatePrice": 1700,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ead9c6347d8468777b0b",
+    "productName": "egg roll",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 750,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ead9c6347d8468777b19",
+    "productName": "Jago Mayonnaise (Big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3000,
+    "updatePrice": 3500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eadac6347d8468777b21",
+    "productName": "Laziz Mayonnaise (Big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3000,
+    "updatePrice": 3500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eadac6347d8468777b23",
+    "productName": "Locust beans",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 400,
+    "updatePrice": 200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eadac6347d8468777b25",
+    "productName": "Morning Fresh 1Ltr",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3000,
+    "updatePrice": 2700,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eadbc6347d8468777b39",
+    "productName": "Sugar Cubes Golden penny 500g",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1949,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eadbc6347d8468777b3b",
+    "productName": "Sweet Corn",
+    "currentLocation": "AMStores (Akobo, Oyo)",
+    "currentPrice": 1300,
+    "updatePrice": 200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eadbc6347d8468777b49",
+    "productName": "Plastic container",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2000,
+    "updatePrice": 2500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6eadbc6347d8468777b4d",
+    "productName": "Stainless sieve",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 4500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebb944d67de605f658db",
+    "productName": "Vegetable Stew Combo (Efo Riro)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1800,
+    "updatePrice": 2300,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebb944d67de605f658dd",
+    "productName": "Pepper Stew Combo",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1200,
+    "updatePrice": 2300,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebb944d67de605f658e1",
+    "productName": "Pepper Soup Combo",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 5000,
+    "updatePrice": 7000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebb944d67de605f658e3",
+    "productName": "Cucumber",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1400,
+    "updatePrice": 1000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebb944d67de605f658e5",
+    "productName": "Banga oil (2litres)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 7500,
+    "updatePrice": 2000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebba44d67de605f658f6",
+    "productName": "curry leaf",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 500,
+    "updatePrice": 300,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebba44d67de605f658f8",
+    "productName": "Grape Red Seedless Punnet x11Box",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 7000,
+    "updatePrice": 6500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebba44d67de605f658fa",
+    "productName": "Ripe Banana",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebba44d67de605f658fc",
+    "productName": "Unripe plantain",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1500,
+    "updatePrice": 3500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebba44d67de605f65904",
+    "productName": "Uziza leaf",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 200,
+    "updatePrice": 1000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbb44d67de605f65909",
+    "productName": "Pear Packham 1.5kg Econo x8 Box",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 6800,
+    "updatePrice": 1000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbb44d67de605f6590d",
+    "productName": "scent leaf",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 300,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbb44d67de605f6590f",
+    "productName": "lemon bag",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 5900,
+    "updatePrice": 700,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbb44d67de605f65911",
+    "productName": "coconut",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2000,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbb44d67de605f65913",
+    "productName": "COOLER LIME & LEMON TEEZERS 400ML PET",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 550,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbb44d67de605f65915",
+    "productName": "Celery Table Import Per Kg",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 19000,
+    "updatePrice": 2200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbb44d67de605f6591c",
+    "productName": "bitterleaf",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 200,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbc44d67de605f65921",
+    "productName": "Bawa ( Half Paint )",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2500,
+    "updatePrice": 1000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbc44d67de605f65923",
+    "productName": "Tatase",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 500,
+    "updatePrice": 2000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbc44d67de605f65925",
+    "productName": "1 Paint of tomatoes ",
+    "currentLocation": "Bodija Market (Bodija, Oyo)",
+    "currentPrice": 7000,
+    "updatePrice": 10000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbc44d67de605f65929",
+    "productName": "1 paint of Rodo",
+    "currentLocation": "Bodija Market (Bodija, Oyo)",
+    "currentPrice": 7000,
+    "updatePrice": 10000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbc44d67de605f6592b",
+    "productName": "Rodo (Half paint)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 1000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbc44d67de605f6592d",
+    "productName": "Pineapple (whole)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1500,
+    "updatePrice": 1300,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbc44d67de605f6592f",
+    "productName": "Red apple (big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 500,
+    "updatePrice": 700,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbc44d67de605f65931",
+    "productName": "Fanta orange 33cl can (6pcs)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3900,
+    "updatePrice": 300,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbc44d67de605f65933",
+    "productName": "Green apples (small)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 300,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbc44d67de605f65935",
+    "productName": "Unripe banana",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbd44d67de605f6593b",
+    "productName": "Uziza leaf",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 200,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbd44d67de605f6593d",
+    "productName": "bitterleaf",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 200,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbd44d67de605f65941",
+    "productName": "Spring onion",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 300,
+    "updatePrice": 1000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbd44d67de605f65943",
+    "productName": "Rodo (Half paint)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 5500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbd44d67de605f65949",
+    "productName": "Okazi leaf",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 500,
+    "updatePrice": 1000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbe44d67de605f6594d",
+    "productName": "Beef",
+    "currentLocation": "AMStores (Akobo, Oyo)",
+    "currentPrice": 7300,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbe44d67de605f6594f",
+    "productName": "Ripe Plantain",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1500,
+    "updatePrice": 3500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbe44d67de605f65951",
+    "productName": "Runner beans",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 200,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbe44d67de605f65953",
+    "productName": "Lettuce",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 300,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbe44d67de605f65955",
+    "productName": "Green pepper ( small)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 500,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbe44d67de605f65957",
+    "productName": "Green pepper (big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 2500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbe44d67de605f65959",
+    "productName": "Dry green pea",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 200,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbe44d67de605f6595b",
+    "productName": "Carrot (big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2850,
+    "updatePrice": 1000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbe44d67de605f6595d",
+    "productName": "Carrot (small)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 300,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbe44d67de605f6595f",
+    "productName": "Egusi(Unblend)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 500,
+    "updatePrice": 1200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbe44d67de605f65961",
+    "productName": "Corned beef(Big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 6000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbf44d67de605f65963",
+    "productName": "Corned beef(small)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2000,
+    "updatePrice": 3000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbf44d67de605f65965",
+    "productName": "Sunripe red kidney beans(Big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1500,
+    "updatePrice": 2000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbf44d67de605f6596b",
+    "productName": "Sunripe sweet corn(big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1500,
+    "updatePrice": 3000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbf44d67de605f6596d",
+    "productName": "Frolic ketchup",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3000,
+    "updatePrice": 7000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbf44d67de605f6596f",
+    "productName": "Watermelon(Big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3800,
+    "updatePrice": 3500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbf44d67de605f65973",
+    "productName": "Sonia can tomato(small)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 900,
+    "updatePrice": 1000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbf44d67de605f65975",
+    "productName": "Ata gungun",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 500,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebbf44d67de605f65979",
+    "productName": "Bay leaves",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc044d67de605f6597b",
+    "productName": "Plastic thyme",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 800,
+    "updatePrice": 1200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc044d67de605f6597d",
+    "productName": "Plastic curry",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 800,
+    "updatePrice": 1200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc044d67de605f6597f",
+    "productName": "Heinz ketchup(small)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2500,
+    "updatePrice": 3300,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc044d67de605f65981",
+    "productName": "Sunripe Red kidney beans(small)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 1200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc044d67de605f65985",
+    "productName": "Sunripe sweet corn (small)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1200,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc044d67de605f65987",
+    "productName": "Watermelon(Big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3800,
+    "updatePrice": 3500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc044d67de605f65989",
+    "productName": "Ginger",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2400,
+    "updatePrice": 1000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc044d67de605f6598b",
+    "productName": "Red pepper",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2000,
+    "updatePrice": 3500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc044d67de605f6598d",
+    "productName": "Yellow Pepper",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1500,
+    "updatePrice": 2000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc044d67de605f6598f",
+    "productName": "Cabbage",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 2500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc144d67de605f65991",
+    "productName": "Palm Oil",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2000,
+    "updatePrice": 2700,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc144d67de605f65993",
+    "productName": "Kings Oil (2L )",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 8500,
+    "updatePrice": 10500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc144d67de605f65995",
+    "productName": "Egusi one cup(Blended)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 500,
+    "updatePrice": 700,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc144d67de605f65997",
+    "productName": "Groundnut Oil (1 bottle)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2000,
+    "updatePrice": 3200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc144d67de605f65999",
+    "productName": "Palm Oil (2 bottles)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4000,
+    "updatePrice": 5400,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc144d67de605f659a1",
+    "productName": "Honeywell semolina (2kg)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 9000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc244d67de605f659ac",
+    "productName": "Golden penny Couscous 500g",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1300,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc244d67de605f659ae",
+    "productName": "Golden sella basmati rice (2kg)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 13000,
+    "updatePrice": 24000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc244d67de605f659b0",
+    "productName": "Yellow Garri (Derica)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 600,
+    "updatePrice": 3500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc244d67de605f659b2",
+    "productName": "Golden Penny Macaroni 500gx20",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 21000,
+    "updatePrice": 1400,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc244d67de605f659b4",
+    "productName": "Golden Penny Spaghettini",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1200,
+    "updatePrice": 1300,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc244d67de605f659b8",
+    "productName": "Mama gold semolina (1kg)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1800,
+    "updatePrice": 1700,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc244d67de605f659ba",
+    "productName": "Mama Gold Semolina (2kg)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 3600,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc344d67de605f659c2",
+    "productName": "Golden penny semovita (5kg)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 8900,
+    "updatePrice": 9000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc344d67de605f659c4",
+    "productName": "Golden penny semovita (2kg)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4000,
+    "updatePrice": 3750,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc344d67de605f659c6",
+    "productName": "Black elubo Half paint",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4700,
+    "updatePrice": 5500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc344d67de605f659ca",
+    "productName": "White millet",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 5000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc344d67de605f659d2",
+    "productName": "Red millet",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 5000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc344d67de605f659d7",
+    "productName": "Oloyin beans (Derica)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1200,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc344d67de605f659d9",
+    "productName": "Olo drum beans (derica)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1200,
+    "updatePrice": 2800,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc444d67de605f659e1",
+    "productName": "Rice (medium grain) - Derica",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1300,
+    "updatePrice": 1600,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc444d67de605f659e3",
+    "productName": "Rice(long grain) - Derica",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1500,
+    "updatePrice": 2000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc444d67de605f659e5",
+    "productName": "Indomietables - Chicken Flavour (1 Carton)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 9500,
+    "updatePrice": 11000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc444d67de605f659e7",
+    "productName": "De Rica Tomatoes",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 900,
+    "updatePrice": 1200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc444d67de605f659e9",
+    "productName": "Golden Penny Spaghetti",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1200,
+    "updatePrice": 1300,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc444d67de605f659eb",
+    "productName": "Morning Fresh",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2700,
+    "updatePrice": 3500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc444d67de605f659ed",
+    "productName": "Mama Lemon Dishwashing Liquid",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1400,
+    "updatePrice": 3000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc444d67de605f659ef",
+    "productName": "Golden Penny Noodles (carton)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 8500,
+    "updatePrice": 9500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc444d67de605f659f1",
+    "productName": "Indomie Super Pack (1 carton)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 15500,
+    "updatePrice": 19500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc544d67de605f659f3",
+    "productName": "Rice (medium grain) - Half Derica",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 650,
+    "updatePrice": 800,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc544d67de605f659f8",
+    "productName": "White garri (1 derica)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 500,
+    "updatePrice": 600,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc544d67de605f659fa",
+    "productName": "Yellow Garri (Derica)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 600,
+    "updatePrice": 800,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc544d67de605f659fc",
+    "productName": "Yellow garri (Half paint)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1500,
+    "updatePrice": 1800,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc544d67de605f65a01",
+    "productName": "Golden penny Couscous 500g",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1300,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc544d67de605f65a03",
+    "productName": "Sweet potato",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 6000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc544d67de605f65a05",
+    "productName": "Irish potato",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2000,
+    "updatePrice": 15000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc544d67de605f65a07",
+    "productName": "Yam (big tuber)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 7500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc644d67de605f65a0f",
+    "productName": "Turkey Gizzard per kg",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 6000,
+    "updatePrice": 9000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc644d67de605f65a17",
+    "productName": "Salmon (kg)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1800,
+    "updatePrice": 7500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc644d67de605f65a19",
+    "productName": "Live catfish (big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 5000,
+    "updatePrice": 7500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc644d67de605f65a1b",
+    "productName": "Kote Fish 1kg",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4500,
+    "updatePrice": 5000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc644d67de605f65a1d",
+    "productName": "Hake medium size",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4000,
+    "updatePrice": 5000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc644d67de605f65a22",
+    "productName": "Crocker per kg",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 5000,
+    "updatePrice": 6500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc644d67de605f65a24",
+    "productName": "Catfish medium",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3000,
+    "updatePrice": 5500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc644d67de605f65a26",
+    "productName": "Whole chicken",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 7500,
+    "updatePrice": 13500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc744d67de605f65a28",
+    "productName": "Turkey",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 10000,
+    "updatePrice": 11000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc744d67de605f65a2f",
+    "productName": "Crayfish(Blended)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 500,
+    "updatePrice": 1000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc744d67de605f65a31",
+    "productName": "Titus Sardines 125gx50",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 45000,
+    "updatePrice": 1900,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc744d67de605f65a33",
+    "productName": "Ogbono (Blended)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 4500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc744d67de605f65a35",
+    "productName": "Smoked titus(Big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3000,
+    "updatePrice": 4000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc744d67de605f65a37",
+    "productName": "Smoked titus(small)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2500,
+    "updatePrice": 4000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc744d67de605f65a39",
+    "productName": "Chicken Laps",
+    "currentLocation": "Foodlocker (Ibadan, Oyo)",
+    "currentPrice": 5100,
+    "updatePrice": 6500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc744d67de605f65a3b",
+    "productName": "Chicken wings",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 7500,
+    "updatePrice": 8000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc744d67de605f65a3d",
+    "productName": "Ogbono (unblend)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 4500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc844d67de605f65a41",
+    "productName": "Locust beans",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 400,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc844d67de605f65a43",
+    "productName": "Smoked Catfish",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 1200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc844d67de605f65a45",
+    "productName": "Goat meat",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 5000,
+    "updatePrice": 7000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc844d67de605f65a47",
+    "productName": "Ponmo",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 500,
+    "updatePrice": 600,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc844d67de605f65a49",
+    "productName": "Bokoto (cowleg)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 10000,
+    "updatePrice": 8000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc844d67de605f65a4e",
+    "productName": "Assorted meat",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 5000,
+    "updatePrice": 7000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc844d67de605f65a52",
+    "productName": "Titus Sardines 125gx50",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 45000,
+    "updatePrice": 6500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc844d67de605f65a54",
+    "productName": "Tilapia",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 5700,
+    "updatePrice": 6000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc944d67de605f65a56",
+    "productName": "Stockfish head",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1500,
+    "updatePrice": 2000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc944d67de605f65a5a",
+    "productName": "Stock fish (small pack)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 500,
+    "updatePrice": 700,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc944d67de605f65a5c",
+    "productName": "Smoked fish (panla)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 1200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc944d67de605f65a5e",
+    "productName": "Frozen Panla",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4000,
+    "updatePrice": 5000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc944d67de605f65a63",
+    "productName": "Beef (Raw)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2000,
+    "updatePrice": 3000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebc944d67de605f65a6b",
+    "productName": "Turkey half kilo",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 5000,
+    "updatePrice": 5500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebca44d67de605f65a82",
+    "productName": "2Sure Oat milk & honey h&-wash 500ml",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2000,
+    "updatePrice": 2500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebca44d67de605f65a84",
+    "productName": "Holl&ia yoghurt plain sweetened 1L",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2200,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebca44d67de605f65a86",
+    "productName": "Aquadana table water 33cl pack (20pcs)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4000,
+    "updatePrice": 3500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebca44d67de605f65a88",
+    "productName": "Aquafina water 50cl pack (12pcs)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3000,
+    "updatePrice": 3500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebca44d67de605f65a8a",
+    "productName": "Caprisonne orange 200ml carton (40pcs)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 13500,
+    "updatePrice": 14300,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebcb44d67de605f65a90",
+    "productName": "Chivita Exotic 315ml",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1200,
+    "updatePrice": 2200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebcb44d67de605f65a94",
+    "productName": "Chivita Happy Hour 125ml X 24pcs (Tasty tango )",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4300,
+    "updatePrice": 5300,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebcd44d67de605f65ad0",
+    "productName": "Viva plus detergent 800g",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2500,
+    "updatePrice": 2300,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebd044d67de605f65b11",
+    "productName": "Cameroon pepper",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 200,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebd144d67de605f65b32",
+    "productName": "Oxford cabin biscuit",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2000,
+    "updatePrice": 250,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebd244d67de605f65b6a",
+    "productName": "Coconut milk. Small size",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1700,
+    "updatePrice": 1600,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebd444d67de605f65ba8",
+    "productName": "Kings Oil (2L )",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 8500,
+    "updatePrice": 40000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebd544d67de605f65bb6",
+    "productName": "SOYA SAUCE DARK CHINGS SECRET 200G",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3150,
+    "updatePrice": 1200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebd844d67de605f65c1b",
+    "productName": "Tomatoes(Big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 5000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebd944d67de605f65c4d",
+    "productName": "Cadbury Hot chocolate 3 in 1 Roll",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 3700,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebda44d67de605f65c5d",
+    "productName": "Milo Refill 400g",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4000,
+    "updatePrice": 4500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebda44d67de605f65c5f",
+    "productName": "Milo Refill 800g",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 7500,
+    "updatePrice": 8000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebda44d67de605f65c65",
+    "productName": "Nescafe classic 50g",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4000,
+    "updatePrice": 5000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebdc44d67de605f65c98",
+    "productName": "Avocado",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1800,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebdc44d67de605f65c9a",
+    "productName": "Golden Morn 900gx6",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 25000,
+    "updatePrice": 5000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebdd44d67de605f65c9c",
+    "productName": "Golden Morn 300gx12",
+    "currentLocation": "24Hours Market (Ibadan, Oyo)",
+    "currentPrice": 20000,
+    "updatePrice": 2700,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebdd44d67de605f65c9e",
+    "productName": "Golden Morn 900gx6",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 25000,
+    "updatePrice": 3800,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebde44d67de605f65cb6",
+    "productName": "Groundnut Oil (1 bottle)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2000,
+    "updatePrice": 3500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebde44d67de605f65cc6",
+    "productName": "Ayoola Poundo yam 1kg",
+    "currentLocation": "Bodija Market (Bodija, Oyo)",
+    "currentPrice": 3700,
+    "updatePrice": 4000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebde44d67de605f65cc8",
+    "productName": "Custard Banana Checkers 45g",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 349,
+    "updatePrice": 5500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebde44d67de605f65cca",
+    "productName": "Kings Oil (2L )",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 8500,
+    "updatePrice": 5500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebde44d67de605f65ccc",
+    "productName": "Dangote Sugar",
+    "currentLocation": "Bodija Market (Bodija, Oyo)",
+    "currentPrice": 3000,
+    "updatePrice": 800,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebde44d67de605f65cce",
+    "productName": "Simas Margarine",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 1300,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebdf44d67de605f65cd2",
+    "productName": "Geisha",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 1200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebdf44d67de605f65cd4",
+    "productName": "Blue b& spread for bread (small)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1800,
+    "updatePrice": 2000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebdf44d67de605f65cd6",
+    "productName": "Cling Flim",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 7000,
+    "updatePrice": 5500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebdf44d67de605f65cda",
+    "productName": "Mr Chef Salt (1kg )",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 600,
+    "updatePrice": 700,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebdf44d67de605f65cdc",
+    "productName": "Mr Chef Salt (500g)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 300,
+    "updatePrice": 400,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebdf44d67de605f65cde",
+    "productName": "Tasty Cubes Chicken Flavour Cubes",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 400,
+    "updatePrice": 500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebdf44d67de605f65ce0",
+    "productName": "Gino Tomatoes Paste",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 300,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebdf44d67de605f65ce2",
+    "productName": "Jago Mayonnaise (Big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3000,
+    "updatePrice": 4000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebdf44d67de605f65ce4",
+    "productName": "Laziz Mayonnaise (Big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3000,
+    "updatePrice": 3500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebe044d67de605f65ce6",
+    "productName": "Bama Mayonnaise (Big)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4800,
+    "updatePrice": 4500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebe044d67de605f65ce8",
+    "productName": "Groundnut oil ( Half bottle)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 1000,
+    "updatePrice": 1500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebe044d67de605f65cea",
+    "productName": "Palm oil ( Half bottle)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2000,
+    "updatePrice": 1000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebe044d67de605f65cf6",
+    "productName": "Stainless 5-sided grater",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 4500,
+    "updatePrice": 6500,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69d6ebe044d67de605f65cf8",
+    "productName": "Stainless sieve",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 3500,
+    "updatePrice": 4000,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69eb9e52bb7fb19668072c08",
+    "productName": "Gino can tomato(medium size)",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2000,
+    "updatePrice": 2200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  },
+  {
+    "updateId": "69ecce3639270ebf9b935731",
+    "productName": "KNORR CHIC. SEASONING 48CUBES 384G",
+    "currentLocation": "Oje market,Oje - Oyo",
+    "currentPrice": 2250,
+    "updatePrice": 2200,
+    "updateLocation": "Oje market,Oje - Oyo"
+  }
+]
