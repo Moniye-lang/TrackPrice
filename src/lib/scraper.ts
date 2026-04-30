@@ -246,14 +246,43 @@ export async function scrapeProducts(url: string): Promise<ExtractedProduct[]> {
 
             // Chowdeck / food apps
             if (pageUrl.includes('chowdeck.com') || pageUrl.includes('food')) {
-                document.querySelectorAll('[class*="menu-item"], [class*="MenuItem"], [class*="product"]').forEach(card => {
-                    const nameEl = card.querySelector('h3, h4, strong, [class*="name"], [class*="title"]') as HTMLElement | null;
-                    const priceEl = card.querySelector('[class*="price"], [class*="Price"]') as HTMLElement | null;
+                // Determine current category if possible from headers
+                let currentCategory = 'Uncategorized';
+                
+                // Target all elements that look like a product container
+                document.querySelectorAll('div, span, article').forEach(card => {
+                    // Skip if the element is too large or too small
+                    if (card.children.length < 2 || card.clientHeight > 1000) return;
+
+                    // Look for price first (mandatory)
+                    const priceText = (card as HTMLElement).innerText;
+                    if (!priceText.includes('₦')) return;
+                    
+                    // Skip if out of stock
+                    if (priceText.toLowerCase().includes('out of stock')) return;
+
+                    // Find product name: usually a heading or bold text
+                    const nameEl = card.querySelector('h1, h2, h3, h4, h5, p, span, strong') as HTMLElement | null;
+                    const priceEl = Array.from(card.querySelectorAll('p, span')).find(el => el.textContent?.includes('₦')) as HTMLElement | null;
+                    const imgEl = card.querySelector('img') as HTMLImageElement | null;
+
                     if (nameEl && priceEl) {
+                        const name = nameEl.innerText.trim();
+                        // Ignore the store title (usually "New Road Local Market")
+                        if (name.toLowerCase().includes('market') && name.length > 15) return;
+                        
                         const price = parsePrice(priceEl.innerText);
-                        if (price) addProduct(nameEl.innerText.trim(), price);
+                        let imageUrl = imgEl?.getAttribute('data-src') || imgEl?.src || '';
+                        
+                        // Ignore placeholder data-urls
+                        if (imageUrl.startsWith('data:image')) imageUrl = '';
+
+                        if (price && name && name.length > 2) {
+                            addProduct(name, price, imageUrl, currentCategory);
+                        }
                     }
                 });
+                
                 if (results.length > 0) return results;
             }
 
