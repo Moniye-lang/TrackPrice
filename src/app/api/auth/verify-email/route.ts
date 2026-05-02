@@ -49,7 +49,9 @@ export async function POST(req: Request) {
             user: { id: user._id, name: user.name, role: user.role }
         });
 
-        response.cookies.set('token', token, {
+        const cookieName = user.role === 'admin' ? 'admin_token' : 'user_token';
+
+        response.cookies.set(cookieName, token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax',

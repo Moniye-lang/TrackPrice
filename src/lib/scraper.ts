@@ -47,8 +47,8 @@ async function fetchAndExtract(url: string): Promise<ExtractedProduct[]> {
     const add = (name: string, price: number, imageUrl?: string, category?: string) => {
         const key = name.toLowerCase().trim();
         if (name && name.length > 2 && !seen.has(key) && price > 0) {
-            results.push({ 
-                name: name.replace(/\s+/g, ' ').trim(), 
+            results.push({
+                name: name.replace(/\s+/g, ' ').trim(),
                 price,
                 imageUrl: imageUrl || `https://placehold.co/600x400/png?text=${encodeURIComponent(name)}`,
                 category: category || 'Uncategorized'
@@ -146,7 +146,7 @@ export async function scrapeProducts(url: string): Promise<ExtractedProduct[]> {
         const chromium = require('@sparticuz/chromium');
         const { chromium: coreChromium } = require('playwright-core');
         chromium.setGraphicsMode = false;
-        
+
         let retries = 3;
         while (retries > 0) {
             try {
@@ -226,8 +226,8 @@ export async function scrapeProducts(url: string): Promise<ExtractedProduct[]> {
             const addProduct = (name: string, price: number, imageUrl?: string, category?: string) => {
                 const key = name.toLowerCase().trim();
                 if (name && name.length > 2 && !processedNames.has(key) && price > 0) {
-                    results.push({ 
-                        name: name.replace(/\s+/g, ' ').trim(), 
+                    results.push({
+                        name: name.replace(/\s+/g, ' ').trim(),
                         price,
                         imageUrl: imageUrl || `https://placehold.co/600x400/png?text=${encodeURIComponent(name)}`,
                         category: category || 'Uncategorized'
@@ -272,19 +272,19 @@ export async function scrapeProducts(url: string): Promise<ExtractedProduct[]> {
             if (pageUrl.includes('chowdeck.com') || pageUrl.includes('food')) {
                 // Determine current category if possible from headers
                 let currentCategory = 'Uncategorized';
-                
+
                 // Target all elements that look like a product container
                 // We use a more specific set of selectors to avoid matching the whole page
                 document.querySelectorAll('div[role="tabpanel"] span, div[role="tabpanel"] div, article').forEach(card => {
                     // Skip if the element is a container for other potential products
                     if (card.querySelectorAll('span, p, h3').length > 15) return;
-                    
+
                     // Small elements are usually children of the actual card
                     if (card.clientHeight < 50 || card.clientWidth < 50) return;
 
                     const priceText = (card as HTMLElement).innerText;
                     if (!priceText.includes('₦')) return;
-                    
+
                     // Skip if out of stock
                     if (priceText.toLowerCase().includes('out of stock')) return;
 
@@ -298,7 +298,7 @@ export async function scrapeProducts(url: string): Promise<ExtractedProduct[]> {
                         // Ignore the store title and very short names
                         if (name.toLowerCase().includes('market') && name.length > 15) return;
                         if (name.length < 3) return;
-                        
+
                         const price = parsePrice(priceEl.innerText);
                         if (!price) return;
 
@@ -309,7 +309,7 @@ export async function scrapeProducts(url: string): Promise<ExtractedProduct[]> {
                         addProduct(name, price, imageUrl, currentCategory);
                     }
                 });
-                
+
                 if (results.length > 0) return results;
             }
 
