@@ -1,8 +1,9 @@
 import mongoose from 'mongoose';
 import fs from 'fs';
 import path from 'path';
+import 'dotenv/config';
 
-const MONGODB_URI = "mongodb+srv://davidadeniyi269:Moniye@cluster0.zwijmfw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const MONGODB_URI = process.env.MONGODB_URI;
 
 const filePaths = [
     'C:\\Users\\HP\\.gemini\\antigravity\\brain\\a5bda870-d66d-4b93-9e94-2216e0c89d4a\\.system_generated\\steps\\230\\content.md',

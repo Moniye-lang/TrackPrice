@@ -46,19 +46,25 @@ export async function POST() {
             const nameLower = p.name.toLowerCase();
             let newCat = p.category;
             
-            if (p.category === 'All' || p.category === 'Other' || p.category === 'Uncategorized' || !p.category) {
+            // Aggressive re-categorization for specific items requested by user
+            if (['rodo', 'tatashe', 'tomato'].some((k: string) => nameLower.includes(k))) {
+                newCat = 'Fresh Food';
+            } else if (['ice block'].some((k: string) => nameLower.includes(k))) {
+                newCat = 'Home';
+            } else if (p.category === 'All' || p.category === 'Other' || p.category === 'Uncategorized' || !p.category) {
                 if (['paint'].some((k: string) => nameLower.includes(k))) newCat = 'Fresh Food';
                 else if (['iphone', 'samsung', 'laptop', 'tv', 'television', 'infinix', 'tecno', 'charger', 'usb'].some((k: string) => nameLower.includes(k))) newCat = 'Electronics';
-                else if (['rice', 'beans', 'garri', 'yam', 'egg', 'bread', 'oil', 'chicken', 'beef', 'fish', 'tomato', 'pepper', 'onion'].some((k: string) => nameLower.includes(k))) newCat = 'Groceries';
+                else if (['rice', 'beans', 'garri', 'yam', 'egg', 'bread', 'oil', 'chicken', 'beef', 'fish', 'onion'].some((k: string) => nameLower.includes(k))) newCat = 'Groceries';
+                else if (['detergent', 'soap', 'hypo', 'harpic', 'mop', 'broom', 'cleaner', 'bleach', 'wash'].some((k: string) => nameLower.includes(k))) newCat = 'Cleaning';
                 else if (['shirt', 'shoe', 'sneaker', 'dress', 'trouser', 'jeans', 'bag'].some((k: string) => nameLower.includes(k))) newCat = 'Clothing';
                 else if (['petrol', 'diesel', 'gas', 'pms', 'ago', 'lpg'].some((k: string) => nameLower.includes(k))) newCat = 'Oil and Gas';
                 else if (['book', 'pen', 'pencil', 'textbook', 'notebook'].some((k: string) => nameLower.includes(k))) newCat = 'Books';
                 else if (['chair', 'table', 'bed', 'mattress', 'generator'].some((k: string) => nameLower.includes(k))) newCat = 'Home';
-                
-                if (newCat !== p.category) {
-                    p.category = newCat;
-                    categoryUpdatedCount++;
-                }
+            }
+
+            if (newCat !== p.category) {
+                p.category = newCat;
+                categoryUpdatedCount++;
             }
             
             if (p.marketCategory === 'Online') onlineCount++;

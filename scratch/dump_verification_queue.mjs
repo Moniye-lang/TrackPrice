@@ -1,7 +1,9 @@
 import mongoose from 'mongoose';
+import 'dotenv/config';
 import fs from 'fs';
+import { MongoClient } from "mongodb";
 
-const MONGODB_URI = "mongodb+srv://davidadeniyi269:Moniye@cluster0.zwijmfw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const MONGODB_URI = process.env.MONGODB_URI;
 
 async function run() {
     try {
