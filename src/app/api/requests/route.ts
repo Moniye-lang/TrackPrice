@@ -6,7 +6,9 @@ import { parsePriceRange } from '@/lib/price-utils';
 import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
 
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret');
+const secretStr = process.env.JWT_SECRET;
+if (!secretStr) throw new Error('JWT_SECRET missing');
+const JWT_SECRET = new TextEncoder().encode(secretStr);
 
 interface UserPayload {
     id: string;

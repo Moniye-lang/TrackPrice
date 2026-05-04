@@ -2,7 +2,9 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
 
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret');
+const secretStr = process.env.JWT_SECRET;
+if (!secretStr) throw new Error('JWT_SECRET missing');
+const JWT_SECRET = new TextEncoder().encode(secretStr);
 
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
@@ -31,7 +33,8 @@ export async function middleware(request: NextRequest) {
         }
 
         try {
-            const secret = process.env.JWT_SECRET || 'fallback_secret';
+            const secret = process.env.JWT_SECRET;
+            if (!secret) throw new Error('JWT_SECRET missing');
             const encodedSecret = new TextEncoder().encode(secret);
             const { payload } = await jwtVerify(token, encodedSecret);
 

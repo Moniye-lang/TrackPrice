@@ -11,8 +11,13 @@ export async function POST(req: Request) {
         console.log(`[Login] Attempt for ${email}`);
 
         // Special check for initial setup
-        const adminEmail = process.env.ADMIN_EMAIL || 'admin@trackpricely.com';
-        const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+        const adminEmail = process.env.ADMIN_EMAIL;
+        const adminPassword = process.env.ADMIN_PASSWORD;
+
+        if (!adminEmail || !adminPassword) {
+            console.error('[Login] ADMIN_EMAIL or ADMIN_PASSWORD not configured');
+            return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+        }
 
         let user = await User.findOne({ email });
 
