@@ -22,6 +22,7 @@ export default function StoreManagement() {
     const [areasByState, setAreasByState] = useState<{ [key: string]: any[] }>({ 'Oyo': [], 'Lagos': [] });
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
     const [filterState, setFilterState] = useState<string>('All');
     
     // Form State
@@ -70,6 +71,13 @@ export default function StoreManagement() {
     useEffect(() => {
         fetchData();
     }, []);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(searchTerm);
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [searchTerm]);
 
     const resetForm = () => {
         setFormData({ name: '', area: '', city: 'Oyo', type: 'Supermarket', imageUrl: '' });
@@ -136,8 +144,8 @@ export default function StoreManagement() {
     };
 
     const filteredStores = stores.filter(s => {
-        const matchesSearch = s.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                             s.area?.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSearch = s.name?.toLowerCase().includes(debouncedSearch.toLowerCase()) || 
+                             s.area?.toLowerCase().includes(debouncedSearch.toLowerCase());
         const matchesState = filterState === 'All' || s.city === filterState;
         return matchesSearch && matchesState;
     });

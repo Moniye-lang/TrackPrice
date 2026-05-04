@@ -43,6 +43,7 @@ export default function AdminUsers() {
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
 
     const fetchUsers = async () => {
         setLoading(true);
@@ -63,9 +64,16 @@ export default function AdminUsers() {
         fetchUsers();
     }, []);
 
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(searchTerm);
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [searchTerm]);
+
     const filteredUsers = users.filter(u => 
-        u.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        u.email?.toLowerCase().includes(searchTerm.toLowerCase())
+        u.name?.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        u.email?.toLowerCase().includes(debouncedSearch.toLowerCase())
     );
 
     const handleUpdateUser = async (id: string, updates: Partial<User>) => {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, TransitionStartFunction } from 'react';
+import { useState, useEffect, TransitionStartFunction, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Search, MapPin, Globe, Building2 } from 'lucide-react';
 import { Input, Button } from '@/components/ui-base';
@@ -23,23 +23,33 @@ export function FilterSection({ stores, categories }: FilterSectionProps) {
 
     // Internal state for search input to prevent jumpy URL updates
     const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
+    const lastPushedSearch = useRef(searchParams.get('search') || '');
     
-    // Sync internal search term with URL if URL changes externally
+    // Sync internal search term with URL if URL changes externally (e.g. back button)
     useEffect(() => {
-        setSearchTerm(searchParams.get('search') || '');
-    }, [searchParams]);
+        const urlSearch = searchParams.get('search') || '';
+        
+        // Only sync from URL if our internal state is currently in sync with our last push.
+        // This prevents stale URL updates (from previous typing) from overwriting the current input.
+        // If we are currently typing (searchTerm !== lastPushedSearch), we ignore URL updates.
+        if (searchTerm === lastPushedSearch.current && urlSearch !== lastPushedSearch.current) {
+            setSearchTerm(urlSearch);
+            lastPushedSearch.current = urlSearch;
+        }
+    }, [searchParams, searchTerm]);
 
     // Live search debounce (Update results as you type)
     useEffect(() => {
         const timeoutId = setTimeout(() => {
             const currentUrlSearch = searchParams.get('search') || '';
             if (searchTerm !== currentUrlSearch) {
+                lastPushedSearch.current = searchTerm;
                 updateFilter('search', searchTerm);
             }
         }, 400); // 400ms delay for smooth typing
 
         return () => clearTimeout(timeoutId);
-    }, [searchTerm]);
+    }, [searchTerm, searchParams]);
 
     const updateFilter = (key: string, value: string) => {
         const params = new URLSearchParams(searchParams.toString());
@@ -72,6 +82,7 @@ export function FilterSection({ stores, categories }: FilterSectionProps) {
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
+        lastPushedSearch.current = searchTerm;
         updateFilter('search', searchTerm);
     };
 

@@ -61,8 +61,9 @@ export default function AdminProducts() {
     const listRef = useRef<HTMLDivElement>(null);
     const searchParams = useSearchParams();
     const [searchTerm, setSearchTerm] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const { data: productsData, isLoading: loading, refetch } = useAdminProducts({ page: currentPage, search: searchTerm });
+    const { data: productsData, isLoading: loading, isFetching: fetching, refetch } = useAdminProducts({ page: currentPage, search: debouncedSearch });
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
     const [showForm, setShowForm] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -78,8 +79,15 @@ export default function AdminProducts() {
     const totalPages = productsData?.totalPages || 1;
 
     useEffect(() => {
-        setCurrentPage(1);
+        const timer = setTimeout(() => {
+            setDebouncedSearch(searchTerm);
+        }, 500);
+        return () => clearTimeout(timer);
     }, [searchTerm]);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [debouncedSearch]);
 
     // Scroll to top of list when page changes
     useEffect(() => {
@@ -415,9 +423,8 @@ export default function AdminProducts() {
                 </div>
             )}
 
-            {/* Filter Section */}
             <div className="relative group w-full lg:max-w-xl">
-                <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={20} />
+                <Search className={`absolute left-6 top-1/2 -translate-y-1/2 transition-colors ${fetching ? 'text-primary animate-pulse' : 'text-slate-400 group-focus-within:text-primary'}`} size={20} />
                 <input 
                     type="text" 
                     placeholder="Search catalogue..."
@@ -426,6 +433,11 @@ export default function AdminProducts() {
                     className="w-full bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 py-4 md:py-5 pl-16 pr-6 rounded-[1.5rem] md:rounded-3xl shadow-premium outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/20 transition-all font-bold text-slate-700 dark:text-slate-200 text-sm placeholder:text-slate-300 dark:placeholder:text-slate-600"
                     aria-label="Search catalogue"
                 />
+                {fetching && (
+                    <div className="absolute right-6 top-1/2 -translate-y-1/2">
+                        <RefreshCw size={16} className="text-primary animate-spin opacity-50" />
+                    </div>
+                )}
             </div>
 
             {showForm && (
