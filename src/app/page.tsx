@@ -78,10 +78,9 @@ const getHomeData = unstable_cache(
 
         locationMapping.forEach((group: any) => {
             const cat = group._id || 'Physical';
-            if (!mapping[cat]) mapping[cat] = { cities: [], storeIds: [] };
             
             const catStoreIds = (group.storeIds || []).filter(Boolean).map((id: any) => id.toString());
-            mapping[cat].storeIds = catStoreIds;
+            mapping[cat].storeIds = Array.from(new Set([...mapping[cat].storeIds, ...catStoreIds]));
 
             // Find cities from these store IDs
             const citiesFromStores = allStores
@@ -100,11 +99,10 @@ const getHomeData = unstable_cache(
                 })
                 .filter(Boolean);
 
-            mapping[cat].cities = Array.from(new Set(['All', ...citiesFromStores, ...citiesFromText]));
+            const mergedCities = new Set([...mapping[cat].cities, 'All', ...citiesFromStores, ...citiesFromText]);
+            mapping[cat].cities = Array.from(mergedCities);
         });
 
-        // Ensure Physical has defaults if empty
-        if (mapping['Physical'].cities.length <= 1) mapping['Physical'].cities = ['All', 'Oyo', 'Lagos'];
 
         return {
             featuredProducts: JSON.parse(JSON.stringify(featured)),
