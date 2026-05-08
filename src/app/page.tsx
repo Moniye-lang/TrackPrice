@@ -24,7 +24,7 @@ const getHomeData = unstable_cache(
     async () => {
         await connectDB();
 
-        const [featured, stale, recent, leaderboard, stats, stores] = await Promise.all([
+        const [featured, stale, recent, leaderboard, stats, stores, locationMapping] = await Promise.all([
             // Featured
             Product.find({
                 isFeatured: true,
@@ -56,8 +56,55 @@ const getHomeData = unstable_cache(
                 return { updatesToday, marketsTracked, lastUpdateMins };
             })(),
             // Stores
-            Store.find().sort({ name: 1 }).lean()
+            Store.find().sort({ name: 1 }).lean(),
+            // Aggregation to find present locations per market category
+            Product.aggregate([
+                { $match: { status: 'approved' } },
+                { $group: {
+                    _id: '$marketCategory',
+                    storeIds: { $addToSet: '$storeId' },
+                    storeLocations: { $addToSet: '$storeLocation' }
+                }}
+            ])
         ]);
+
+        // Process location mapping
+        const mapping: Record<string, { cities: string[], storeIds: string[] }> = {
+            'Physical': { cities: [], storeIds: [] },
+            'Online': { cities: [], storeIds: [] }
+        };
+
+        const allStores = stores as any[];
+
+        locationMapping.forEach((group: any) => {
+            const cat = group._id || 'Physical';
+            if (!mapping[cat]) mapping[cat] = { cities: [], storeIds: [] };
+            
+            const catStoreIds = (group.storeIds || []).filter(Boolean).map((id: any) => id.toString());
+            mapping[cat].storeIds = catStoreIds;
+
+            // Find cities from these store IDs
+            const citiesFromStores = allStores
+                .filter(s => catStoreIds.includes(s._id.toString()))
+                .map(s => s.city);
+            
+            // Also extract cities from storeLocation text (legacy)
+            const citiesFromText = (group.storeLocations || [])
+                .filter(Boolean)
+                .map((loc: string) => {
+                    const l = loc.toLowerCase();
+                    if (l.includes('oyo') || l.includes('ibadan')) return 'Oyo';
+                    if (l.includes('lagos') || l.includes('ikeja') || l.includes('lekki')) return 'Lagos';
+                    if (l.includes('online')) return 'Online';
+                    return null;
+                })
+                .filter(Boolean);
+
+            mapping[cat].cities = Array.from(new Set(['All', ...citiesFromStores, ...citiesFromText]));
+        });
+
+        // Ensure Physical has defaults if empty
+        if (mapping['Physical'].cities.length <= 1) mapping['Physical'].cities = ['All', 'Oyo', 'Lagos'];
 
         return {
             featuredProducts: JSON.parse(JSON.stringify(featured)),
@@ -65,10 +112,11 @@ const getHomeData = unstable_cache(
             recentUpdates: JSON.parse(JSON.stringify(recent)),
             leaderboard: JSON.parse(JSON.stringify(leaderboard)),
             stats,
-            stores: JSON.parse(JSON.stringify(stores))
+            stores: JSON.parse(JSON.stringify(stores)),
+            locationMapping: mapping
         };
     },
-    ['home-page-data'],
+    ['home-page-data-v2'],
     { revalidate: 300, tags: [CACHE_TAGS.PRODUCTS, CACHE_TAGS.STORES, CACHE_TAGS.STATS] }
 );
 
@@ -246,7 +294,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<any
         })
     ]);
 
-    const { featuredProducts, staleProducts, recentUpdates, leaderboard, stats, stores } = homeData;
+    const { featuredProducts, staleProducts, recentUpdates, leaderboard, stats, stores, locationMapping } = homeData;
     const { products, totalPages } = productsData;
     const currentPage = parseInt(page || '1', 10);
 
@@ -321,7 +369,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<any
                     </div>
 
                     {/* Interactive Filter Section */}
-                    <FilterSection stores={stores} categories={categories} />
+                    <FilterSection stores={stores} categories={categories} locationMapping={locationMapping} />
                 </div>
 
                 {/* Background elements */}

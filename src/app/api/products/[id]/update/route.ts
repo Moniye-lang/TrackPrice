@@ -9,6 +9,7 @@ import { parsePriceRange } from '@/lib/price-utils';
 import { getServerUser } from '@/lib/server-auth';
 import { cookies } from 'next/headers';
 import { getAnonymousIdentity } from '@/lib/identity';
+import { revalidateProducts, revalidateLeaderboard } from '@/lib/cache';
 
 const REPUTATION_WEIGHTS = {
     'Beginner': 1,
@@ -198,15 +199,27 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             }
             product.updateRequested = false;
 
-            // Mark updates verified & award points
-            for (const update of recentUpdates) {
-                if (validPrices.includes(update.price) && update.status === 'pending') {
-                    await PriceUpdate.findByIdAndUpdate(update._id, { status: 'verified' });
+            // Mark updates verified & award points in bulk/parallel
+            const updatesToVerify = recentUpdates.filter(u => 
+                validPrices.includes(u.price) && u.status === 'pending'
+            );
 
-                    const updaterId = (update.userId as any)?._id || update.userId;
-                    if (updaterId) {
-                        const updater = await User.findById(updaterId);
-                        if (updater && updater.rewardedUpdatesToday < rule.dailyUpdateLimit) {
+            if (updatesToVerify.length > 0) {
+                // 1. Bulk update PriceUpdate statuses
+                const updateIds = updatesToVerify.map(u => u._id);
+                await PriceUpdate.updateMany({ _id: { $in: updateIds } }, { status: 'verified' });
+
+                // 2. Identify unique users who need points
+                const uniqueUserIds = [...new Set(updatesToVerify.map(u => {
+                    const id = (u.userId as any)?._id || u.userId;
+                    return id ? id.toString() : null;
+                }).filter(Boolean))];
+
+                if (uniqueUserIds.length > 0) {
+                    const updaters = await User.find({ _id: { $in: uniqueUserIds } });
+                    
+                    await Promise.all(updaters.map(async (updater) => {
+                        if (updater.rewardedUpdatesToday < rule.dailyUpdateLimit) {
                             // Streak Logic
                             const now = new Date();
                             const todayStr = now.toDateString();
@@ -238,7 +251,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
                             }
                             await updater.save();
                         }
-                    }
+                    }));
                 }
             }
 
@@ -249,6 +262,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
                 await openRequest.save();
                 if (user) user.points += rule.bonusPointsRequest;
             }
+
+            revalidateLeaderboard(); // Invalidate leaderboard if someone earned points
+            revalidateProducts(productId); // Invalidate cache for this product
         }
 
         await product.save();

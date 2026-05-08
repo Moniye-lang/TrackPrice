@@ -15,9 +15,10 @@ interface Store {
 interface FilterSectionProps {
     stores: Store[];
     categories: string[];
+    locationMapping: Record<string, { cities: string[], storeIds: string[] }>;
 }
 
-export function FilterSection({ stores, categories }: FilterSectionProps) {
+export function FilterSection({ stores, categories, locationMapping }: FilterSectionProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -103,13 +104,21 @@ export function FilterSection({ stores, categories }: FilterSectionProps) {
         return city;
     };
 
-    // Derive unique cities from stores list (excluding Online stores)
-    const cities = ['All', 'Oyo', 'Lagos'];
+    // Derive unique cities from mapped data for the active market category
+    const cities = locationMapping[activeMarketCategory]?.cities || ['All', 'Oyo', 'Lagos'];
 
-    // Filter stores to only show those in the selected city
-    const filteredStores = activeCity === 'All'
-        ? stores
-        : stores.filter(s => normalizeCity(s.city) === activeCity);
+    // Filter stores to only show those in the selected city AND in the active market category
+    const validStoreIds = locationMapping[activeMarketCategory]?.storeIds || [];
+
+    const filteredStores = stores.filter(s => {
+        const matchesCity = activeCity === 'All' || normalizeCity(s.city) === activeCity;
+        // In physical category, if storeIds is empty (first load/legacy), we show all for backward compatibility
+        const matchesCategory = activeMarketCategory === 'Online' 
+            ? validStoreIds.includes(s._id.toString())
+            : (validStoreIds.length === 0 || validStoreIds.includes(s._id.toString()));
+        
+        return matchesCity && matchesCategory;
+    });
 
     return (
         <div className="space-y-8">
