@@ -81,26 +81,32 @@ const getHomeData = unstable_cache(
 
         locationMapping.forEach((group: any) => {
             const cat = group._id || 'Physical';
-            
+            if (cat !== 'Physical' && cat !== 'Online') return; // ignore unexpected categories
+
             const catStoreIds = (group.storeIds || []).filter(Boolean).map((id: any) => id.toString());
             mapping[cat].storeIds = Array.from(new Set([...mapping[cat].storeIds, ...catStoreIds]));
 
-            // Find cities from these store IDs
+            // Helper: normalize raw city strings to only 'Oyo' or 'Lagos'
+            const normalizeToState = (city: string): string | null => {
+                if (!city) return null;
+                const l = city.toLowerCase().trim();
+                if (l === 'online') return null;
+                if (l.includes('oyo') || l.includes('ibadan') || l.startsWith('iba')) return 'Oyo';
+                if (l.includes('lagos') || l.includes('ikeja') || l.includes('lekki') || l.startsWith('ike') || l.startsWith('lek')) return 'Lagos';
+                return null; // discard unrecognised values
+            };
+
+            // Find cities from these store IDs — normalize to state level
             const citiesFromStores = allStores
                 .filter(s => catStoreIds.includes(s._id.toString()))
-                .map(s => s.city);
-            
+                .map(s => normalizeToState(s.city))
+                .filter(Boolean) as string[];
+
             // Also extract cities from storeLocation text (legacy)
             const citiesFromText = (group.storeLocations || [])
                 .filter(Boolean)
-                .map((loc: string) => {
-                    const l = loc.toLowerCase();
-                    if (l.includes('oyo') || l.includes('ibadan')) return 'Oyo';
-                    if (l.includes('lagos') || l.includes('ikeja') || l.includes('lekki')) return 'Lagos';
-                    if (l.includes('online')) return 'Online';
-                    return null;
-                })
-                .filter(Boolean);
+                .map((loc: string) => normalizeToState(loc))
+                .filter(Boolean) as string[];
 
             const mergedCities = new Set([...mapping[cat].cities, 'All', ...citiesFromStores, ...citiesFromText]);
             mapping[cat].cities = Array.from(mergedCities);
@@ -124,7 +130,7 @@ const getHomeData = unstable_cache(
             areasByState
         };
     },
-    ['home-page-data-v2'],
+    ['home-page-data-v3'],
     { revalidate: 300, tags: [CACHE_TAGS.PRODUCTS, CACHE_TAGS.STORES, CACHE_TAGS.STATS] }
 );
 
