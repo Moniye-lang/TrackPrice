@@ -18,13 +18,14 @@ import User from '@/models/User';
 import Message from '@/models/Message';
 import PriceUpdate from '@/models/PriceUpdate';
 import { escapeRegex } from '@/lib/utils';
+import Area from '@/models/Area';
 
 // Reusable data fetching logic (same as API but optimized for direct server use)
 const getHomeData = unstable_cache(
     async () => {
         await connectDB();
 
-        const [featured, stale, recent, leaderboard, stats, stores, locationMapping] = await Promise.all([
+        const [featured, stale, recent, leaderboard, stats, stores, locationMapping, areas] = await Promise.all([
             // Featured
             Product.find({
                 isFeatured: true,
@@ -65,7 +66,9 @@ const getHomeData = unstable_cache(
                     storeIds: { $addToSet: '$storeId' },
                     storeLocations: { $addToSet: '$storeLocation' }
                 }}
-            ])
+            ]),
+            // Fetch all areas grouped by state
+            Area.find({ isActive: true }).sort({ name: 1 }).lean()
         ]);
 
         // Process location mapping
@@ -104,6 +107,12 @@ const getHomeData = unstable_cache(
         });
 
 
+        // Group areas by state
+        const areasByState: Record<string, string[]> = { Oyo: [], Lagos: [] };
+        for (const area of (areas as any[])) {
+            if (areasByState[area.state]) areasByState[area.state].push(area.name);
+        }
+
         return {
             featuredProducts: JSON.parse(JSON.stringify(featured)),
             staleProducts: JSON.parse(JSON.stringify(stale)),
@@ -111,7 +120,8 @@ const getHomeData = unstable_cache(
             leaderboard: JSON.parse(JSON.stringify(leaderboard)),
             stats,
             stores: JSON.parse(JSON.stringify(stores)),
-            locationMapping: mapping
+            locationMapping: mapping,
+            areasByState
         };
     },
     ['home-page-data-v2'],
@@ -120,7 +130,7 @@ const getHomeData = unstable_cache(
 
 async function getProducts(params: any) {
     await connectDB();
-    const { search, category, marketCategory, storeId, city, sort, page = 1, limit = 12 } = params;
+    const { search, category, marketCategory, storeId, city, area, sort, page = 1, limit = 12 } = params;
 
     const conditions: any[] = [];
     if (search) {
@@ -152,6 +162,17 @@ async function getProducts(params: any) {
 
     if (storeId && storeId !== 'All') {
         conditions.push({ storeId });
+    } else if (area && area !== 'All') {
+        // Filter by specific area — find stores in that area, also match storeLocation text
+        const storesInArea = await Store.find({
+            area: { $regex: escapeRegex(area), $options: 'i' }
+        }).select('_id').lean();
+        const areaStoreIds = storesInArea.map((s: any) => s._id);
+        const areaConditions: any[] = [
+            { storeLocation: { $regex: escapeRegex(area), $options: 'i' } }
+        ];
+        if (areaStoreIds.length > 0) areaConditions.push({ storeId: { $in: areaStoreIds } });
+        conditions.push({ $or: areaConditions });
     } else if (city && city !== 'All') {
         const cityRegex = new RegExp(`${escapeRegex(city)}$`, 'i');
         const storesInCity = await Store.find({ city: cityRegex }).select('_id').lean();
@@ -276,7 +297,7 @@ async function getProducts(params: any) {
 
 export default async function Home({ searchParams }: { searchParams: Promise<any> }) {
     const params = await searchParams;
-    const { search, category, marketCategory, storeId, city, sort, page } = params;
+    const { search, category, marketCategory, storeId, city, area, sort, page } = params;
 
     const [homeData, productsData] = await Promise.all([
         getHomeData(),
@@ -286,13 +307,14 @@ export default async function Home({ searchParams }: { searchParams: Promise<any
             marketCategory,
             storeId,
             city,
+            area,
             sort,
             page: parseInt(page || '1', 10),
             limit: 12
         })
     ]);
 
-    const { featuredProducts, staleProducts, recentUpdates, leaderboard, stats, stores, locationMapping } = homeData;
+    const { featuredProducts, staleProducts, recentUpdates, leaderboard, stats, stores, locationMapping, areasByState } = homeData;
     const { products, totalPages } = productsData;
     const currentPage = parseInt(page || '1', 10);
 
@@ -367,7 +389,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<any
                     </div>
 
                     {/* Interactive Filter Section */}
-                    <FilterSection stores={stores} categories={categories} locationMapping={locationMapping} />
+                    <FilterSection stores={stores} categories={categories} locationMapping={locationMapping} areasByState={areasByState} />
                 </div>
 
                 {/* Background elements */}

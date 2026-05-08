@@ -16,9 +16,10 @@ interface FilterSectionProps {
     stores: Store[];
     categories: string[];
     locationMapping: Record<string, { cities: string[], storeIds: string[] }>;
+    areasByState: Record<string, string[]>;
 }
 
-export function FilterSection({ stores, categories, locationMapping }: FilterSectionProps) {
+export function FilterSection({ stores, categories, locationMapping, areasByState }: FilterSectionProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -68,7 +69,7 @@ export function FilterSection({ stores, categories, locationMapping }: FilterSec
         router.push(`?${params.toString()}`, { scroll: false });
     };
 
-    // When city changes, clear the storeId filter too (different scope)
+    // When city changes, clear the storeId and area filters too
     const updateCityFilter = (city: string) => {
         const params = new URLSearchParams(searchParams.toString());
         if (city && city !== 'All') {
@@ -76,7 +77,8 @@ export function FilterSection({ stores, categories, locationMapping }: FilterSec
         } else {
             params.delete('city');
         }
-        params.delete('storeId'); // reset market when city changes
+        params.delete('storeId');
+        params.delete('area');
         params.delete('page');
         router.push(`?${params.toString()}`, { scroll: false });
     };
@@ -90,7 +92,20 @@ export function FilterSection({ stores, categories, locationMapping }: FilterSec
     const activeCategory = searchParams.get('category') || 'All';
     const activeMarketCategory = searchParams.get('marketCategory') || 'Physical';
     const activeCity = searchParams.get('city') || 'All';
+    const activeArea = searchParams.get('area') || 'All';
     const activeStoreId = searchParams.get('storeId') || 'All';
+
+    const updateAreaFilter = (area: string) => {
+        const params = new URLSearchParams(searchParams.toString());
+        if (area && area !== 'All') {
+            params.set('area', area);
+        } else {
+            params.delete('area');
+        }
+        params.delete('storeId'); // reset market when area changes
+        params.delete('page');
+        router.push(`?${params.toString()}`, { scroll: false });
+    };
 
     const normalizeCity = (city: string) => {
         if (!city) return 'Other';
@@ -213,6 +228,40 @@ export function FilterSection({ stores, categories, locationMapping }: FilterSec
                             </div>
                         </div>
                     </div>
+
+                        {/* Area Sub-Filter (appears when a specific city is chosen) */}
+                        {activeCity !== 'All' && areasByState[activeCity] && areasByState[activeCity].length > 0 && (
+                            <div className="flex items-start gap-3 flex-wrap justify-center bg-primary/5 dark:bg-primary/10 p-2 rounded-2xl border border-primary/10">
+                                <span className="flex items-center gap-1.5 text-[10px] font-black text-primary uppercase tracking-widest px-3 border-r border-primary/20 whitespace-nowrap pt-1.5">
+                                    <MapPin size={12} /> Area
+                                </span>
+                                <div className="flex items-center gap-2 flex-wrap">
+                                    <button
+                                        onClick={() => updateAreaFilter('All')}
+                                        className={`px-5 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-[0.15em] transition-all whitespace-nowrap ${
+                                            activeArea === 'All'
+                                                ? 'bg-primary text-white shadow-glow-sm'
+                                                : 'bg-white dark:bg-slate-800 text-slate-500 hover:bg-primary/10 hover:text-primary border border-slate-100 dark:border-slate-700 shadow-sm'
+                                        }`}
+                                    >
+                                        All Areas
+                                    </button>
+                                    {areasByState[activeCity].map((area) => (
+                                        <button
+                                            key={area}
+                                            onClick={() => updateAreaFilter(area)}
+                                            className={`px-5 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-[0.15em] transition-all whitespace-nowrap ${
+                                                activeArea === area
+                                                    ? 'bg-primary text-white shadow-glow-sm'
+                                                    : 'bg-white dark:bg-slate-800 text-slate-500 hover:bg-primary/10 hover:text-primary border border-slate-100 dark:border-slate-700 shadow-sm'
+                                            }`}
+                                        >
+                                            {area}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                 </div>
 
                 {/* Sub-Filters: Categories & Sort */}
