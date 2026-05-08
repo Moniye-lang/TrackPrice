@@ -150,30 +150,7 @@ export function FilterSection({ stores, categories, locationMapping, areasByStat
 
                 <div className="h-10 w-px bg-slate-200 dark:bg-slate-800 self-center hidden sm:block" />
 
-                {/* City Dropdown */}
-                <div className="relative flex-1 group/city">
-                    <span className="absolute -top-6 left-4 text-[9px] font-black text-primary uppercase tracking-widest opacity-0 group-hover/city:opacity-100 group-focus-within/city:opacity-100 transition-opacity">
-                        City
-                    </span>
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2">
-                        <Building2 className="text-slate-400 dark:text-slate-500" size={18} aria-hidden="true" />
-                    </div>
-                    <select
-                        id="city-selector"
-                        value={activeCity}
-                        onChange={(e) => updateCityFilter(e.target.value)}
-                        className="w-full h-16 bg-transparent border-none pl-10 pr-4 text-xs font-black text-slate-700 dark:text-slate-300 focus:ring-0 cursor-pointer outline-none appearance-none"
-                    >
-                        {cities.map((city) => (
-                            <option key={city} value={city}>
-                                {city === 'All' ? 'All Cities' : city}
-                            </option>
-                        ))}
-                    </select>
-                </div>
 
-                {/* Area Dropdown (always visible, options change with city) */}
-                <div className="h-10 w-px bg-slate-200 dark:bg-slate-800 self-center hidden sm:block" />
 
                 <div className="relative flex-1 group/area">
                     <span className="absolute -top-6 left-4 text-[9px] font-black text-primary uppercase tracking-widest opacity-0 group-hover/area:opacity-100 group-focus-within/area:opacity-100 transition-opacity">
@@ -237,6 +214,27 @@ export function FilterSection({ stores, categories, locationMapping, areasByStat
                                 <Globe size={16} className={activeMarketCategory === 'Online' ? 'text-primary' : ''} />
                                 Online Stores
                             </button>
+                        </div>
+
+                        {/* City / State Filter Row */}
+                        <div className="flex items-center gap-3 flex-wrap justify-center bg-white/40 dark:bg-slate-900/40 p-2 rounded-2xl border border-white/60 dark:border-slate-800">
+                            <span className="flex items-center gap-1.5 text-[10px] font-black text-slate-400 uppercase tracking-widest px-3 border-r border-slate-200 dark:border-slate-700">
+                                <Building2 size={12} /> City
+                            </span>
+                            <div className="flex items-center gap-2">
+                                {cities.map((city) => (
+                                    <button
+                                        key={city}
+                                        onClick={() => updateCityFilter(city)}
+                                        className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.15em] transition-all whitespace-nowrap ${activeCity === city
+                                            ? 'bg-primary text-white shadow-glow-sm'
+                                            : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-100 dark:border-slate-700 shadow-sm'
+                                            }`}
+                                    >
+                                        {city === 'All' ? 'All Cities' : city}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
