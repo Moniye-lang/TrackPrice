@@ -268,6 +268,27 @@ export async function scrapeProducts(url: string): Promise<ExtractedProduct[]> {
                 if (results.length > 0) return results;
             }
 
+            // Supermart.ng
+            if (pageUrl.includes('supermart.ng')) {
+                document.querySelectorAll('.product-item, .product-block, [class*="product-item"], [class*="product-card"]').forEach(card => {
+                    const nameEl = card.querySelector('.product-title, .title, [class*="title"], [class*="name"]') as HTMLElement | null;
+                    const priceEl = card.querySelector('.price, .current-price, [class*="price"]') as HTMLElement | null;
+                    const imgEl = card.querySelector('img') as HTMLImageElement | null;
+                    
+                    if (nameEl && priceEl) {
+                        const name = nameEl.innerText.trim();
+                        const price = parsePrice(priceEl.innerText);
+                        let imageUrl = imgEl?.getAttribute('data-src') || imgEl?.src || '';
+                        if (imageUrl.startsWith('data:image')) imageUrl = '';
+                        
+                        if (name && price && name.length > 3) {
+                            addProduct(name, price, imageUrl);
+                        }
+                    }
+                });
+                if (results.length > 0) return results;
+            }
+
             // Chowdeck / food apps
             if (pageUrl.includes('chowdeck.com') || pageUrl.includes('food')) {
                 // Determine current category if possible from headers
@@ -333,34 +354,44 @@ export async function scrapeProducts(url: string): Promise<ExtractedProduct[]> {
 
             for (const pNode of textNodes.filter(n => n.type === 'price')) {
                 const priceVal = parsePrice(pNode.text);
-                if (priceVal === null) continue;
+                if (priceVal === null || priceVal <= 0) continue;
+                
                 let current: HTMLElement | null = pNode.el;
                 let finalName = '';
-                for (let i = 0; i < 5; i++) {
+                
+                // Climb up to find a container that might have a title
+                for (let i = 0; i < 6; i++) {
                     if (!current) break;
-                    for (const h of Array.from(current.querySelectorAll('h1,h2,h3,h4,h5,h6,strong'))) {
+                    
+                    // Look for headings or bold text that isn't too long
+                    const potentialNames = Array.from(current.querySelectorAll('h1,h2,h3,h4,h5,h6,strong,b,span[class*="title"],div[class*="name"]'));
+                    for (const h of potentialNames) {
                         const ht = (h as HTMLElement).innerText.trim();
-                        if (ht && ht.length > 2 && !ht.toLowerCase().includes('add to cart')) { finalName = ht; break; }
+                        // Filter out common UI strings and the price itself
+                        if (ht && ht.length > 3 && ht.length < 100 && 
+                            !ht.includes('₦') && 
+                            !ht.toLowerCase().includes('add to cart') &&
+                            !ht.toLowerCase().includes('view details')) { 
+                            finalName = ht; 
+                            break; 
+                        }
                     }
                     if (finalName) break;
                     current = current.parentElement;
                 }
-                if (!finalName) {
-                    const container = pNode.el.parentElement;
-                    if (container) {
-                        let largestSize = 0;
-                        Array.from(container.querySelectorAll('*')).forEach(sib => {
-                            const sibEl = sib as HTMLElement;
-                            if (sibEl.children.length > 0 || !sibEl.textContent || sibEl.textContent.trim().length <= 2) return;
-                            if (sibEl.closest('button') || sibEl.tagName === 'BUTTON') return;
-                            const size = parseFloat(window.getComputedStyle(sibEl).fontSize) || 16;
-                            if (size > largestSize && !/[₦$£€]/.test(sibEl.innerText)) {
-                                largestSize = size; finalName = sibEl.innerText.trim();
-                            }
-                        });
+                
+                if (finalName) {
+                    // Try to find an image in the same container
+                    let imageUrl = '';
+                    if (current) {
+                        const img = current.querySelector('img') as HTMLImageElement | null;
+                        if (img) {
+                            imageUrl = img.getAttribute('data-src') || img.src || '';
+                            if (imageUrl.startsWith('data:image')) imageUrl = '';
+                        }
                     }
+                    addProduct(finalName, priceVal, imageUrl);
                 }
-                if (finalName) addProduct(finalName, priceVal);
             }
 
             return results;

@@ -161,21 +161,24 @@ export default function AdminLayout({
                 </nav>
 
                 {/* User Profile Footer */}
-                <div className="p-4 mx-4 mb-4 mt-auto rounded-3xl bg-white/5 border border-white/10">
+                <div className="p-4 mx-4 mb-6 mt-auto rounded-[2rem] bg-white/[0.03] backdrop-blur-md border border-white/5 shadow-inner-white">
                     <div className="flex items-center gap-3 p-2">
-                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-black">
-                            {user?.name?.[0]?.toUpperCase() || 'A'}
+                        <div className="relative group">
+                            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary via-accent to-primary bg-[length:200%_200%] animate-gradient-slow flex items-center justify-center text-white font-black text-lg shadow-glow-sm">
+                                {user?.name?.[0]?.toUpperCase() || 'A'}
+                            </div>
+                            <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-[#050a14] rounded-full shadow-glow-sm"></div>
                         </div>
                         <div className="flex-1 overflow-hidden">
-                            <p className="text-xs font-black text-white truncate uppercase tracking-widest">{user?.name || 'Admin User'}</p>
-                            <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest truncate">{user?.email || 'admin@trackpricely.com'}</p>
+                            <p className="text-[11px] font-black text-white truncate uppercase tracking-widest leading-none mb-1">{user?.name || 'Admin User'}</p>
+                            <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest truncate opacity-60">{user?.email || 'admin@trackprice.com'}</p>
                         </div>
                     </div>
                     <button
                         onClick={handleLogout}
-                        className="mt-4 w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-white/5 hover:bg-rose-500/10 text-slate-400 hover:text-rose-500 transition-all font-black text-[10px] uppercase tracking-widest border border-transparent hover:border-rose-500/20"
+                        className="mt-4 w-full flex items-center justify-center gap-3 py-3.5 rounded-[1.25rem] bg-white/[0.05] hover:bg-rose-500 text-slate-400 hover:text-white transition-all duration-500 font-black text-[10px] uppercase tracking-[0.2em] border border-white/5 hover:border-rose-400 shadow-sm active:scale-95 group"
                     >
-                        <LogOut size={16} />
+                        <LogOut size={16} className="group-hover:-translate-x-1 transition-transform" />
                         Sign Out Console
                     </button>
                 </div>
