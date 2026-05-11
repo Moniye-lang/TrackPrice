@@ -20,7 +20,8 @@ import {
     Sparkles,
     Trash2,
     Check,
-    X
+    X,
+    Box
 } from 'lucide-react';
 import { Button, Input, Card } from '@/components/ui-base';
 
