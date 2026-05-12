@@ -195,10 +195,11 @@ export async function scrapeProducts(url: string): Promise<ExtractedProduct[]> {
         });
 
         try {
-            await page.goto(url, { waitUntil: 'networkidle', timeout: 40000 });
+            // Use 'load' instead of 'networkidle' as many sites have persistent background network activity
+            await page.goto(url, { waitUntil: 'load', timeout: 30000 });
         } catch {
-            await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
-            await page.waitForTimeout(5000);
+            await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 20000 });
+            await page.waitForTimeout(3000); // Give it a bit more time for JS to render grid
         }
 
         const products = await page.evaluate((pageUrl: string) => {
@@ -268,21 +269,45 @@ export async function scrapeProducts(url: string): Promise<ExtractedProduct[]> {
                 if (results.length > 0) return results;
             }
 
-            // Supermart.ng
+            // Supermart.ng (Shopify-based structure)
             if (pageUrl.includes('supermart.ng')) {
-                document.querySelectorAll('.product-item, .product-block, [class*="product-item"], [class*="product-card"]').forEach(card => {
-                    const nameEl = card.querySelector('.product-title, .title, [class*="title"], [class*="name"]') as HTMLElement | null;
-                    const priceEl = card.querySelector('.price, .current-price, [class*="price"]') as HTMLElement | null;
+                // Target the grid items specifically
+                const selectors = [
+                    '.grid__item', 
+                    '.product-item', 
+                    '.product-block', 
+                    '.product-card',
+                    '[id^="product-"]',
+                    '.js-prod-link'
+                ];
+                
+                const cards = document.querySelectorAll(selectors.join(', '));
+                
+                cards.forEach(card => {
+                    // Avoid nested cards
+                    if (card.parentElement?.closest(selectors.join(', '))) return;
+
+                    // Supermart often uses .js-prod-link for the name or a descendant
+                    const nameEl = card.querySelector('.js-prod-link, .product-title, .title, [class*="title"], [class*="name"], h3, h4') as HTMLElement | null;
+                    const priceEl = card.querySelector('.price, .price-item, .current-price, [class*="price"], .money') as HTMLElement | null;
                     const imgEl = card.querySelector('img') as HTMLImageElement | null;
                     
                     if (nameEl && priceEl) {
                         const name = nameEl.innerText.trim();
                         const price = parsePrice(priceEl.innerText);
-                        let imageUrl = imgEl?.getAttribute('data-src') || imgEl?.src || '';
-                        if (imageUrl.startsWith('data:image')) imageUrl = '';
                         
-                        if (name && price && name.length > 3) {
-                            addProduct(name, price, imageUrl);
+                        let imageUrl = imgEl?.getAttribute('data-src') || imgEl?.getAttribute('data-lazy-src') || imgEl?.src || '';
+                        
+                        // Handle Shopify's lazy loading images
+                        if (imageUrl.startsWith('data:image') || imageUrl.includes('blank.gif')) {
+                             imageUrl = imgEl?.srcset?.split(' ')?.[0] || imgEl?.getAttribute('data-src') || '';
+                        }
+                        
+                        // Clean up name (remove "Add to cart", "Save", etc.)
+                        const cleanName = name.split('\n')[0].replace(/Sale|Sold Out|New/gi, '').trim();
+                        
+                        if (cleanName && cleanName.length > 2 && price) {
+                            addProduct(cleanName, price, imageUrl);
                         }
                     }
                 });
