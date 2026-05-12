@@ -269,25 +269,47 @@ export async function scrapeProducts(url: string): Promise<ExtractedProduct[]> {
                 if (results.length > 0) return results;
             }
 
-            // Supermart.ng (Shopify-based structure)
+            // Supermart.ng (Enhanced JSON + DOM fallback)
             if (pageUrl.includes('supermart.ng')) {
-                // Target the grid items specifically
-                const selectors = [
-                    '.grid__item', 
-                    '.product-item', 
-                    '.product-block', 
-                    '.product-card',
-                    '[id^="product-"]',
-                    '.js-prod-link'
-                ];
+                // Strategy 1: Try to extract from the getProducts script tag
+                const scripts = Array.from(document.querySelectorAll('script'));
+                for (const s of scripts) {
+                    const content = s.innerText;
+                    if (content.includes('getProducts = () =>')) {
+                        try {
+                            const jsonMatch = content.match(/return\s+(\[[\s\S]*?\])\s*;/);
+                            if (jsonMatch) {
+                                // Since we are in the browser, we can carefully eval the array if it looks safe
+                                // or parse it as JSON if it's clean enough.
+                                // A safer way is to use a regex to extract objects.
+                                const objectRegex = /\{[\s\S]*?productId:[\s\S]*?\}/g;
+                                const objects = jsonMatch[1].match(objectRegex);
+                                if (objects) {
+                                    for (const objStr of objects) {
+                                        try {
+                                            // Extract fields using regex to avoid eval
+                                            const name = objStr.match(/name:\s*"(.*?)"/)?.[1];
+                                            const price = parseFloat(objStr.match(/price:\s*([\d.]+)/)?.[1] || '0');
+                                            const imageUrl = objStr.match(/imageUrl:\s*"(.*?)"/)?.[1];
+                                            if (name && price > 0) {
+                                                addProduct(name, price, imageUrl);
+                                            }
+                                        } catch {}
+                                    }
+                                }
+                            }
+                        } catch (e) {
+                            console.warn('Supermart JSON extraction failed:', e);
+                        }
+                    }
+                }
                 
-                const cards = document.querySelectorAll(selectors.join(', '));
+                if (results.length > 0) return results;
+
+                // Strategy 2: DOM fallback with updated selectors
+                const cards = document.querySelectorAll('.product-item, .product-card, .product-block, [class*="product-item"], [class*="product-card"], .js-prod-link');
                 
                 cards.forEach(card => {
-                    // Avoid nested cards
-                    if (card.parentElement?.closest(selectors.join(', '))) return;
-
-                    // Supermart often uses .js-prod-link for the name or a descendant
                     const nameEl = card.querySelector('.js-prod-link, .product-title, .title, [class*="title"], [class*="name"], h3, h4') as HTMLElement | null;
                     const priceEl = card.querySelector('.price, .price-item, .current-price, [class*="price"], .money') as HTMLElement | null;
                     const imgEl = card.querySelector('img') as HTMLImageElement | null;
@@ -295,17 +317,10 @@ export async function scrapeProducts(url: string): Promise<ExtractedProduct[]> {
                     if (nameEl && priceEl) {
                         const name = nameEl.innerText.trim();
                         const price = parsePrice(priceEl.innerText);
+                        let imageUrl = imgEl?.getAttribute('data-src') || imgEl?.src || '';
+                        if (imageUrl.startsWith('data:image')) imageUrl = imgEl?.srcset?.split(' ')?.[0] || '';
                         
-                        let imageUrl = imgEl?.getAttribute('data-src') || imgEl?.getAttribute('data-lazy-src') || imgEl?.src || '';
-                        
-                        // Handle Shopify's lazy loading images
-                        if (imageUrl.startsWith('data:image') || imageUrl.includes('blank.gif')) {
-                             imageUrl = imgEl?.srcset?.split(' ')?.[0] || imgEl?.getAttribute('data-src') || '';
-                        }
-                        
-                        // Clean up name (remove "Add to cart", "Save", etc.)
                         const cleanName = name.split('\n')[0].replace(/Sale|Sold Out|New/gi, '').trim();
-                        
                         if (cleanName && cleanName.length > 2 && price) {
                             addProduct(cleanName, price, imageUrl);
                         }

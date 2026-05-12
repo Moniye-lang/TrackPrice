@@ -1,4 +1,4 @@
-import { scrapeProducts } from '../src/lib/scraper.js';
+import { scrapeProducts } from '../src/lib/scraper';
 
 (async () => {
     const url = 'https://www.supermart.ng/collections/fresh-food';
