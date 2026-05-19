@@ -526,6 +526,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<any
                                                     alt={p.name}
                                                     fill
                                                     sizes="48px"
+                                                    unoptimized={p.imageUrl?.includes('placehold.co') || p.imageUrl?.startsWith('http') || p.imageUrl?.startsWith('//')}
                                                     className="object-cover"
                                                 />
                                             ) : (

@@ -5,6 +5,39 @@ export interface ExtractedProduct {
     category?: string;
 }
 
+export function cleanAndNormalizeImageUrl(imgUrl: string, sourceUrl: string): string {
+    if (!imgUrl) return '';
+    let url = imgUrl.trim();
+    if (url.startsWith('data:image')) return '';
+
+    // If it's protocol-relative (starts with '//')
+    if (url.startsWith('//')) {
+        return `https:${url}`;
+    }
+
+    // If it's already an absolute URL
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+        // Fix duplicate/concatenated protocols like https://trackpricely.com/https://cdn.sanity.io/...
+        const duplicateSchemeMatch = url.match(/https?:\/\/[^/]+\/(https?:\/\/.*)/);
+        if (duplicateSchemeMatch) {
+            return duplicateSchemeMatch[1];
+        }
+        return url;
+    }
+
+    try {
+        const parsedSource = new URL(sourceUrl);
+        if (url.startsWith('/')) {
+            return `${parsedSource.origin}${url}`;
+        }
+        // Relative path, resolve it relative to base directory of sourceUrl
+        const basePath = parsedSource.pathname.substring(0, parsedSource.pathname.lastIndexOf('/') + 1);
+        return `${parsedSource.origin}${basePath}${url}`;
+    } catch (e) {
+        return url;
+    }
+}
+
 // -------------------------------------------------------
 // Direct HTML fetch approach (no browser) — faster and
 // avoids bot detection on sites that SSR their content.
@@ -125,7 +158,10 @@ export async function scrapeProducts(url: string): Promise<ExtractedProduct[]> {
     try {
         const fetchResults = await fetchAndExtract(url);
         if (fetchResults.length > 0) {
-            return fetchResults;
+            return fetchResults.map(p => ({
+                ...p,
+                imageUrl: cleanAndNormalizeImageUrl(p.imageUrl, url)
+            }));
         }
     } catch (err) {
         console.warn('Fetch-based extraction failed, falling back to browser:', err);
@@ -441,7 +477,10 @@ export async function scrapeProducts(url: string): Promise<ExtractedProduct[]> {
             console.warn('No products detected using structural heuristics.');
         }
 
-        return products;
+        return products.map((p: any) => ({
+            ...p,
+            imageUrl: cleanAndNormalizeImageUrl(p.imageUrl, url)
+        }));
     } catch (error: any) {
         console.error('Scraping error:', error);
         throw error; // Re-throw the original error instead of masking it with a generic one

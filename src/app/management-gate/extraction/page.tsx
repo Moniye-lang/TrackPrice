@@ -263,6 +263,7 @@ export default function ExtractionPage() {
                                                             alt={item.name} 
                                                             fill
                                                             sizes="56px"
+                                                            unoptimized={item.imageUrl?.includes('placehold.co') || item.imageUrl?.startsWith('http') || item.imageUrl?.startsWith('//')}
                                                             className="object-contain p-1"
                                                             onError={() => handleUpdateResult(i, 'imageUrl', '')}
                                                         />

@@ -45,6 +45,7 @@ interface ProductCardProps {
 export function ProductCard({ product, priority }: ProductCardProps) {
     const [imgError, setImgError] = useState(false);
     const isPlaceholder = product.imageUrl?.includes('placehold.co');
+    const isExternal = product.imageUrl?.startsWith('http') || product.imageUrl?.startsWith('//');
     const hasImage = product.imageUrl && 
                      product.imageUrl.length > 5 && 
                      !imgError;
@@ -61,7 +62,7 @@ export function ProductCard({ product, priority }: ProductCardProps) {
                             fill
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             onError={() => setImgError(true)}
-                            unoptimized={isPlaceholder}
+                            unoptimized={isPlaceholder || isExternal}
                             className="object-cover transition-transform duration-700 group-hover:scale-110"
                             priority={priority}
                             loading={priority ? undefined : "lazy"}

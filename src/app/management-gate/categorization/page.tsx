@@ -254,7 +254,7 @@ export default function CategorizationPage() {
 
                             <div className="flex gap-6 items-start mb-8">
                                 <div className="w-20 h-20 rounded-3xl overflow-hidden bg-slate-50 border border-slate-100 flex-shrink-0 shadow-sm relative group-hover:scale-105 transition-transform duration-500">
-                                    <Image src={p.imageUrl} alt={p.name} fill sizes="80px" className="object-cover" />
+                                    <Image src={p.imageUrl} alt={p.name} fill sizes="80px" className="object-cover" unoptimized={p.imageUrl?.includes('placehold.co') || p.imageUrl?.startsWith('http') || p.imageUrl?.startsWith('//')} />
                                 </div>
                                 <div className="flex-1 min-w-0 pr-12">
                                     <h4 className="font-black text-slate-900 text-lg tracking-tight mb-1 truncate leading-tight">{p.name}</h4>

@@ -394,6 +394,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                     fill
                                     priority
                                     onError={() => setImgError(true)}
+                                    unoptimized={product.imageUrl?.includes('placehold.co') || product.imageUrl?.startsWith('http') || product.imageUrl?.startsWith('//')}
                                     className="object-cover transition-transform duration-700 hover:scale-110"
                                 />
                             ) : (

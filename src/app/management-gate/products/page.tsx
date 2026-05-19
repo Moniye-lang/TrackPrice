@@ -51,7 +51,7 @@ function SafeProductImg({ imageUrl, name, sizes }: { imageUrl: string; name: str
     const [err, setErr] = useState(false);
     const valid = imageUrl && imageUrl.length > 5 && !err;
     return valid ? (
-        <Image src={imageUrl} alt={name} fill sizes={sizes} className="object-cover" onError={() => setErr(true)} />
+        <Image src={imageUrl} alt={name} fill sizes={sizes} className="object-cover" onError={() => setErr(true)} unoptimized={imageUrl?.includes('placehold.co') || imageUrl?.startsWith('http') || imageUrl?.startsWith('//')} />
     ) : (
         <span className="text-2xl" aria-hidden="true">📦</span>
     );

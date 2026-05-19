@@ -9,6 +9,7 @@ import { isServerAdmin } from '@/lib/server-auth';
 import { escapeRegex } from '@/lib/utils';
 import { unstable_cache } from 'next/cache';
 import { CACHE_TAGS, revalidateProducts } from '@/lib/cache';
+import { cleanAndNormalizeImageUrl } from '@/lib/scraper';
 
 // Data fetching logic extracted for caching
 const fetchProducts = async (params: {
@@ -354,6 +355,9 @@ export async function POST(req: Request) {
         }
 
         const body = { ...result.data, ...parsePriceRange(result.data.price) };
+        if (body.imageUrl) {
+            body.imageUrl = cleanAndNormalizeImageUrl(body.imageUrl, '');
+        }
         const product = await Product.create(body);
         revalidateProducts(); // Invalidate cache
         console.log('[Products POST] Created product:', product._id);

@@ -10,6 +10,7 @@ import { isServerAdmin, getServerUser } from '@/lib/server-auth';
 import { parsePriceRange } from '@/lib/price-utils';
 import { unstable_cache } from 'next/cache';
 import { CACHE_TAGS, revalidateProducts } from '@/lib/cache';
+import { cleanAndNormalizeImageUrl } from '@/lib/scraper';
 
 // Data fetching logic extracted for caching
 const fetchProductDetail = async (productId: string) => {
@@ -107,6 +108,10 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         }
 
         const updateData: any = { ...body };
+
+        if (body.imageUrl !== undefined) {
+            updateData.imageUrl = cleanAndNormalizeImageUrl(body.imageUrl, '');
+        }
 
         if (body.price !== undefined) {
             const parsed = parsePriceRange(body.price);
